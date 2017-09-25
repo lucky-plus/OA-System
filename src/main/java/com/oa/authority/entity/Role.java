@@ -34,8 +34,8 @@ public class Role {
 	@ManyToMany
 	@JoinTable(
 		name="t_role_module",
-		joinColumns=@JoinColumn(name="role_id"),
-		inverseJoinColumns=@JoinColumn(name="module_id")
+		joinColumns=@JoinColumn(name="roleId"),
+		inverseJoinColumns=@JoinColumn(name="moduleId")
 	)
 	@Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
 	public List<Module> getModules() {

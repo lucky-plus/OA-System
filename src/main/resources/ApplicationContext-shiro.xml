@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"       
+	xmlns:p="http://www.springframework.org/schema/p"  
+	xmlns:context="http://www.springframework.org/schema/context"   
+	xmlns:tx="http://www.springframework.org/schema/tx"  
+	xmlns:aop="http://www.springframework.org/schema/aop"  
+	xsi:schemaLocation="http://www.springframework.org/schema/beans    
+	http://www.springframework.org/schema/beans/spring-beans.xsd    
+	http://www.springframework.org/schema/aop    
+	http://www.springframework.org/schema/aop/spring-aop.xsd    
+	http://www.springframework.org/schema/tx    
+	http://www.springframework.org/schema/tx/spring-tx.xsd    
+	http://www.springframework.org/schema/context    
+	http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<!-- 注解扫描 -->
+	<context:component-scan base-package="com.oa.authority.shiro"></context:component-scan>
+	
+	<!-- filter-name这个名字的值来自于web.xml中filter的名字 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">  
+        <property name="securityManager" ref="securityManager" />  
+        <property name="loginUrl" value="/" />  
+        <property name="successUrl" value="/" />  
+        <property name="unauthorizedUrl" value="/" />  
+        <property name="filterChainDefinitions">  
+            <value>  
+                /** = anon
+            </value>
+        </property>  
+    </bean>  
+  	
+  	<!-- 安全管理 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">  
+        <!--设置自定义realm-->  
+        <property name="realm" ref="monitorRealm" />  
+    </bean>   
+      
+    <!-- 自定义权限认证 -->
+    <bean id="monitorRealm" class="com.oa.authority.shiro.AuthRealm">
+    	<!-- 自定义密码加密算法  -->
+		<property name="credentialsMatcher" ref="passwordMatcher"/>
+    </bean>  
+    
+    <!-- 设置密码加密策略 md5hash -->
+	<bean id="passwordMatcher" class="com.oa.authority.shiro.CustomCredentialsMatcher"/>
+    
+    <!-- 安全管理器 -->
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">  
+   		<property name="securityManager" ref="securityManager"/>      
+	</bean>
+    
+    <!-- securityManager -->  
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">  
+        <property name="staticMethod" value="org.apache.shiro.SecurityUtils.setSecurityManager" />  
+        <property name="arguments" ref="securityManager" />  
+    </bean>  
+    
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" /> 
+    
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"/>  
+    
+</beans>
