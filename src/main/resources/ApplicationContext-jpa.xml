@@ -38,7 +38,7 @@ xsi:schemaLocation="
 	 <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<!--如果删除了persistence.xml，则需要指定实体所在的路径否则会报找不到该文件-->  
-		<property name="packagesToScan" value="com.demo.*.entity"/> 
+		<property name="packagesToScan" value="com.oa.*.entity"/> 
 		<!--用于指定持久化实方言
 		<property name="jpaDialect">    
 		    <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
@@ -86,6 +86,6 @@ xsi:schemaLocation="
 	<tx:annotation-driven proxy-target-class="true" />
 
 	<!--制定JPA实现的持久层的根目录 -->
-	<jpa:repositories base-package="com.demo.*.dao"  />
+	<jpa:repositories base-package="com.oa.*.dao"  />
 	
 </beans>
