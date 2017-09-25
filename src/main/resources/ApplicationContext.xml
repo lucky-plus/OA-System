@@ -17,7 +17,6 @@
  	
 	<!-- 注解扫描 -->
 	<!-- <context:annotation-config/> -->
-	<context:component-scan base-package="com.oa.*.web"/>
 	<context:component-scan base-package="com.oa.*.service"/>
 	
 </beans>
