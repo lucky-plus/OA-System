@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+    
+    <!-- @Controller注解扫描 -->
+    <context:component-scan base-package="com.oa.*.web"></context:component-scan>
+    
+    <mvc:annotation-driven enable-matrix-variables="true">
+    	<mvc:message-converters register-defaults="true">
+    		<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+    			<constructor-arg value="UTF-8"/>
+    		</bean>
+    	</mvc:message-converters>
+    </mvc:annotation-driven>
+    
+    <!-- 设置主页面
+	<mvc:view-controller path="/" view-name="redirect:/authority/login"/> -->
+    
+    <!-- 配置视图解析器 
+	作用:在controller中指定页面路径的时候就不用写页面的完整路径名称了,可以直接写页面去掉扩展名的名称
+	-->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- 真正的页面路径 =  前缀 + 去掉后缀名的页面名称 + 后缀 -->
+		<!-- 前缀 -->
+		<property name="prefix" value="/WEB-INF/views/"></property>
+		<!-- 后缀 -->
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+    
+ 	<!-- 静态资源访问 
+  	<mvc:default-servlet-handler/> -->
+  	<mvc:resources location="/resources/" mapping="/authority/resources/**"/> 
+	<mvc:resources location="/classic/" mapping="/authority/classic/**"/> 
+	<mvc:resources location="/modern/" mapping="/authority/modern/**"/>
+	<mvc:resources location="/" mapping="/authority/*.json"/>
+	
+  	<mvc:resources location="/resources/" mapping="/resources/**"/> 
+	<mvc:resources location="/classic/" mapping="/classic/**"/> 
+	<mvc:resources location="/modern/" mapping="/modern/**"/>
+	<mvc:resources location="/" mapping="*.json"/>
+</beans>
