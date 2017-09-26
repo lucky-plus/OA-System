@@ -99266,6 +99266,7 @@ Ext.define('Admin.model.PanelSetting', {extend:Admin.model.Base, fields:[{name:'
 Ext.define('Admin.model.PersonalInfo', {extend:Admin.model.Base, fields:[{name:'name'}, {name:'status'}, {name:'icon'}]});
 Ext.define('Admin.model.Subscription', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'subscription'}]});
 Ext.define('Admin.model.YearwiseData', {extend:Admin.model.Base, fields:[{name:'year'}, {name:'data'}]});
+<<<<<<< HEAD
 Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {name:'read'}, {type:'string', name:'title'}, {name:'user_id'}, {type:'string', name:'contents'}, {type:'string', name:'from'}, {name:'has_attachments'}, {name:'attachments'}, {name:'received_on', type:'date'}, {name:'favorite'}]});
 Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
 Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
@@ -99830,6 +99831,629 @@ items:[{title:'What are the different membership plans?', iconCls:'x-fa fa-caret
 items:[{title:'What are the payment methods you accept?', iconCls:'x-fa fa-caret-down'}, {title:'What is the refund policy?', iconCls:'x-fa fa-caret-down'}, {title:'How long does it take to process my payment?', iconCls:'x-fa fa-caret-down'}]}]}]});
 Ext.define('Admin.view.profile.ShareUpdate', {extend:Ext.panel.Panel, xtype:'profileshare', bodyPadding:10, layout:'fit', cls:'share-panel', items:[{xtype:'textareafield', emptyText:"What's on your mind?"}], bbar:{defaults:{margin:'0 10 5 0'}, items:[{ui:'header', iconCls:'x-fa fa-video-camera'}, {ui:'header', iconCls:'x-fa fa-camera'}, {ui:'header', iconCls:'x-fa fa-file'}, '-\x3e', {text:'Share', ui:'soft-blue'}]}});
 Ext.define('Admin.view.profile.UserProfile', {extend:Admin.view.profile.UserProfileBase, xtype:'profile', cls:'userProfile-container', layout:'responsivecolumn', items:[{xtype:'profileshare', userCls:'big-100 small-100 shadow'}, {xtype:'profilesocial', userCls:'big-50 small-100 shadow'}, {xtype:'profiledescription', userCls:'big-50 small-100 shadow'}, {xtype:'profilenotifications', userCls:'big-50 small-100 shadow'}, {xtype:'profiletimeline', userCls:'big-50 small-100 shadow'}]});
+=======
+Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:[{name:'addressId', type:'int'}, {name:'addressName', type:'string'}, {name:'addressDepartment', type:'string'}, {name:'addressPhone', type:'int'}, {name:'addressEmail', type:'string'}, {name:'addressQQ', type:'int'}]});
+Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {name:'read'}, {type:'string', name:'title'}, {name:'user_id'}, {type:'string', name:'contents'}, {type:'string', name:'from'}, {name:'has_attachments'}, {name:'attachments'}, {name:'received_on', type:'date'}, {name:'favorite'}]});
+Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
+Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
+Ext.define('Admin.model.faq.Question', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}]});
+Ext.define('Admin.model.notice.NoticeModel', {extend:Admin.model.Base, fields:[{name:'noticeId', type:'int'}, {name:'noticeName', type:'string'}, {name:'noticeTime', type:'date'}, {name:'noticeAuthor', type:'string'}]});
+Ext.define('Admin.model.order.OrderModel', {extend:Admin.model.Base, fields:[{name:'id', type:'int'}, {name:'orderNumber', type:'string'}, {name:'createTime', type:'date'}, {name:'level', type:'string'}, {name:'price', type:'float'}]});
+Ext.define('Admin.model.resources.ResourcesModel', {extend:Admin.model.Base, fields:[{name:'resourcesId', type:'int'}, {name:'resourcesName', type:'string'}, {name:'resourcesTime', type:'date'}]});
+Ext.define('Admin.model.search.Attachment', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'url'}, {type:'string', name:'title'}]});
+Ext.define('Admin.model.search.Result', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'title'}, {type:'string', name:'thumbnail'}, {type:'string', name:'url'}, {type:'string', name:'content'}], hasMany:{name:'attachments', model:'search.Attachment'}});
+Ext.define('Admin.model.search.User', {extend:Admin.model.Base, fields:[{type:'int', name:'identifier'}, {type:'string', name:'fullname'}, {type:'string', name:'email'}, {name:'subscription'}, {type:'date', name:'joinDate'}, {type:'boolean', name:'isActive'}, {name:'profile_pic'}]});
+Ext.define('Admin.proxy.API', {extend:Ext.data.proxy.Ajax, alias:'proxy.api', reader:{type:'json', rootProperty:'data'}});
+Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'信息中心', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'公告中心', iconCls:'x-fa fa-file-o', viewType:'notice', leaf:true}, {text:'资源下载', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'resources', leaf:true}, {text:'通讯录', iconCls:'x-fa fa-book ', viewType:'address', leaf:true}]}, {text:'Dashboard', iconCls:'x-fa fa-desktop', 
+rowCls:'nav-tree-badge nav-tree-badge-new', viewType:'admindashboard', routeId:'dashboard', leaf:true}, {text:'订单管理模块', iconCls:'x-fa fa-balance-scale', viewType:'order', leaf:true}, {text:'Email', iconCls:'x-fa fa-send', rowCls:'nav-tree-badge nav-tree-badge-hot', viewType:'email', leaf:true}, {text:'Profile', iconCls:'x-fa fa-user', viewType:'profile', leaf:true}, {text:'Search results', iconCls:'x-fa fa-search', viewType:'searchresults', leaf:true}, {text:'FAQ', iconCls:'x-fa fa-question', viewType:'faq', 
+leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, 
+{text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}, {text:'Widgets', iconCls:'x-fa fa-flask', viewType:'widgets', leaf:true}, {text:'Forms', iconCls:'x-fa fa-edit', viewType:'forms', leaf:true}, {text:'Charts', iconCls:'x-fa fa-pie-chart', viewType:'charts', leaf:true}]}});
+Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', data:{'items':[{'addressId':1, 'addressName':'Lisa', 'addressDepartment':'销售部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':2, 'addressName':'Lisa', 'addressDepartment':'网络部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':3, 'addressName':'Lisa', 'addressDepartment':'人事部', 'addressPhone':'13631784344', 
+'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':4, 'addressName':'Lisa', 'addressDepartment':'财务部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}]}, proxy:{type:'memory', reader:{type:'json', root:'items'}}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
+Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
+Ext.define('Admin.store.email.Inbox', {extend:Ext.data.Store, alias:'store.inbox', model:'Admin.model.email.Email', pageSize:20, autoLoad:true, proxy:{type:'api', url:'~api/email/inbox'}});
+Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', model:'Admin.model.faq.Category', proxy:{type:'api', url:'~api/faq/faq'}});
+Ext.define('Admin.store.notice.NoticeStore', {extend:Ext.data.Store, alias:'store.noticeStore', data:{'items':[{'noticeId':1, 'noticeName':'文章标题', 'noticeTime':'2017-7-13', 'noticeAuthor':'Lisa'}, {'noticeId':2, 'noticeName':'文章标题', 'noticeTime':'2017-7-13', 'noticeAuthor':'Lisa'}, {'noticeId':3, 'noticeName':'文章标题', 'noticeTime':'2017-7-13', 'noticeAuthor':'Lisa'}]}, proxy:{type:'memory', reader:{type:'json', root:'items'}}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', 
+property:'id'}});
+Ext.define('Admin.store.order.OrderStore', {extend:Ext.data.Store, alias:'store.orderStore', model:'Admin.model.order.OrderModel', proxy:{type:'ajax', url:'order/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
+Ext.define('Admin.store.resources.ResourcesStore', {extend:Ext.data.Store, alias:'store.resourcesStore', data:{'items':[{'resourcesId':1, 'resourcesName':'资料1', 'resourcesTime':'2017-7-13'}, {'resourcesId':2, 'resourcesName':'资料2', 'resourcesTime':'2017-7-13'}, {'resourcesId':3, 'resourcesName':'资料3', 'resourcesTime':'2017-7-13'}]}, proxy:{type:'memory', reader:{type:'json', root:'items'}}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
+Ext.define('Admin.store.search.Results', {extend:Ext.data.Store, alias:'store.searchresults', model:'Admin.model.search.Result', proxy:{type:'api', url:'~api/search/results'}, autoLoad:'true', sorters:{direction:'ASC', property:'title'}});
+Ext.define('Admin.store.search.Users', {extend:Ext.data.Store, alias:'store.searchusers', model:'Admin.model.search.User', proxy:{type:'api', url:'~api/search/users'}, autoLoad:'true', sorters:{direction:'ASC', property:'fullname'}});
+Ext.define('Admin.view.chart.Bounces', {extend:Ext.chart.CartesianChart, xtype:'chartbounces', animation:!Ext.isIE9m && Ext.os.is.Desktop, height:22, background:'rgba(255, 255, 255, 1)', colors:['rgba(250,222,225, 0.8)'], insetPadding:{top:0, left:0, right:0, bottom:0}, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y2value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'area', xField:'xvalue', yField:['y2value']}], 
+interactions:[{type:'panzoom'}]});
+Ext.define('Admin.view.chart.Network', {extend:Ext.chart.CartesianChart, xtype:'chartnetwork', animation:!Ext.isIE9m && Ext.os.is.Desktop, insetPadding:0, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y1value', 'y2value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'line', colors:['rgba(103, 144, 199, 0.6)'], useDarkerStrokeColor:false, xField:'xvalue', yField:'y1value', fill:true, smooth:true}, {type:'line', 
+colors:['rgba(238, 146, 156, 0.6)'], useDarkerStrokeColor:false, xField:'xvalue', yField:'y2value', fill:true, smooth:true}], interactions:[{type:'panzoom'}]});
+Ext.define('Admin.view.chart.Visitors', {extend:Ext.chart.CartesianChart, xtype:'chartvisitors', animation:!Ext.isIE9m && Ext.os.is.Desktop, height:22, background:'rgba(255, 255, 255, 1)', colors:['rgba(225,233,244, 0.8)'], insetPadding:{top:0, left:0, right:0, bottom:0}, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y1value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'area', xField:'xvalue', yField:['y1value']}], 
+interactions:[{type:'panzoom'}]});
+Ext.define('Admin.view.charts.ChartBase', {extend:Ext.Panel, height:300, ui:'light', layout:'fit', platformConfig:{classic:{cls:'quick-graph-panel shadow', headerPosition:'bottom'}, modern:{cls:'quick-graph-panel', shadow:true, header:{docked:'bottom'}}}, defaults:{width:'100%'}});
+Ext.define('Admin.view.charts.Area', {extend:Admin.view.charts.ChartBase, xtype:'chartsareapanel', title:'Area Chart', iconCls:'x-fa fa-area-chart', items:[{xtype:'cartesian', colors:['#115fa6', '#94ae0a'], bind:'{areaData}', series:[{type:'line', colors:['rgba(103, 144, 199, 0.6)'], xField:'xvalue', yField:['y1value'], fill:true, smooth:true}, {type:'line', colors:['rgba(238, 146, 156, 0.6)'], xField:'xvalue', yField:['y2value'], fill:true, smooth:true}], platformConfig:{phone:{touchAction:{panX:true, 
+panY:true}}, '!phone':{interactions:{type:'panzoom', zoomOnPanGesture:true}}}, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y1value', 'y2value', 'y3value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}]}]});
+Ext.define('Admin.view.charts.Bar', {extend:Admin.view.charts.ChartBase, xtype:'chartsbarpanel', title:'Bar Chart', iconCls:'x-fa fa-bar-chart', items:[{xtype:'cartesian', colors:['#6aa5db'], bind:'{barData}', axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['yvalue'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'bar', xField:'xvalue', yField:['yvalue']}], platformConfig:{phone:{touchAction:{panX:true, panY:true}}, 
+'!phone':{interactions:{type:'panzoom', zoomOnPanGesture:true}}}}]});
+Ext.define('Admin.view.charts.ChartsModel', {extend:Ext.app.ViewModel, alias:'viewmodel.charts', stores:{barData:{model:'Admin.model.DataXY', autoLoad:true, proxy:{type:'api', url:'~api/marketshare/oneyear'}}, stackedData:{model:'Admin.model.MultiDataXY', autoLoad:true, proxy:{type:'api', url:'~api/marketshare/multiyear'}}, gaugeData:{data:[{position:40}], fields:[{name:'position'}]}, radialData:{model:'Admin.model.DataXY', autoLoad:true, proxy:{type:'api', url:'~api/radial'}}, lineData:{model:'Admin.model.DataXY', 
+autoLoad:true, proxy:{type:'api', url:'~api/marketshare/oneentity'}}, pieData:{model:'Admin.model.DataXY', autoLoad:true, proxy:{type:'api', url:'~api/pie'}}, areaData:{model:'Admin.model.MultiDataXY', autoLoad:true, proxy:{type:'api', url:'~api/dashboard/full'}}}});
+Ext.define('Admin.view.charts.Gauge', {extend:Admin.view.charts.ChartBase, xtype:'chartsgaugepanel', title:'Gauge Chart', iconCls:'x-fa fa-wifi', items:[{xtype:'polar', colors:['#6aa5db', '#aed581'], bind:'{gaugeData}', series:[{type:'gauge', angleField:'position', needleLength:100}], platformConfig:{phone:{touchAction:{panX:true, panY:true}}}}]});
+Ext.define('Admin.view.charts.Line', {extend:Admin.view.charts.ChartBase, xtype:'chartslinepanel', title:'Line Chart', iconCls:'x-fa fa-line-chart', items:[{xtype:'cartesian', colors:['#6aa5db', '#94ae0a'], bind:'{lineData}', axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['yvalue', 'y1value', 'y2value', 'y3value', 'y4value', 'y5value'], hidden:true, position:'left'}], series:[{type:'line', xField:'xvalue', yField:['yvalue']}, {type:'line', xField:'xvalue', 
+yField:['y1value']}], platformConfig:{phone:{touchAction:{panX:true, panY:true}}, '!phone':{interactions:{type:'panzoom', zoomOnPanGesture:true}}}}]});
+Ext.define('Admin.view.charts.Pie', {extend:Admin.view.charts.ChartBase, xtype:'chartspiepanel', title:'2D Pie Chart', iconCls:'x-fa fa-pie-chart', items:[{xtype:'polar', colors:['#aed581', '#6aa5db', '#ee929c'], bind:'{pieData}', series:[{type:'pie', label:{field:'xvalue', display:'rotate', contrast:true, font:'12px Open Sans', color:'#888'}, xField:'yvalue'}], platformConfig:{'!phone':{interactions:'rotate'}}}]});
+Ext.define('Admin.view.charts.Pie3D', {extend:Admin.view.charts.ChartBase, xtype:'chartspie3dpanel', title:'3D Pie Chart', iconCls:'x-fa fa-pie-chart', items:[{xtype:'polar', colors:['#aed581', '#6aa5db', '#ee929c'], platformConfig:{phone:{touchAction:{panX:true, panY:true}}, '!phone':{interactions:'rotate'}}, bind:'{pieData}', series:[{type:'pie3d', angleField:'yvalue', donut:30}]}]});
+Ext.define('Admin.view.charts.Polar', {extend:Admin.view.charts.ChartBase, xtype:'chartspolarpanel', title:'Radial Chart', iconCls:'x-fa fa-dot-circle-o', items:[{xtype:'polar', colors:['#6aa5db'], bind:'{radialData}', axes:[{type:'numeric', fields:['yvalue'], grid:true, position:'radial'}, {type:'category', fields:['xvalue'], grid:true, position:'angular'}], series:[{type:'radar', xField:'xvalue', yField:'yvalue'}], platformConfig:{phone:{touchAction:{panX:true, panY:true}}, '!phone':{interactions:'rotate'}}}]});
+Ext.define('Admin.view.charts.Stacked', {extend:Admin.view.charts.ChartBase, xtype:'chartsstackedpanel', title:'Stacked Bar Chart', iconCls:'x-fa fa-bar-chart', items:[{xtype:'cartesian', colors:['#6aa5db', '#ee929c'], bind:'{stackedData}', axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y1value', 'y2value', 'y3value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'bar', xField:'xvalue', yField:['y2value', 'y3value']}], 
+platformConfig:{phone:{touchAction:{panX:true, panY:true}}, '!phone':{interactions:{type:'panzoom', zoomOnPanGesture:true}}}}]});
+Ext.define('Admin.view.dashboard.DashboardController', {extend:Ext.app.ViewController, alias:'controller.dashboard', onRefreshToggle:function(tool, e, owner) {
+  var store, runner;
+  if (tool.toggleValue) {
+    this.clearChartUpdates();
+  } else {
+    store = this.getStore('networkData');
+    if (store.getCount()) {
+      runner = this.chartTaskRunner;
+      if (!runner) {
+        this.chartTaskRunner = runner = new Ext.util.TaskRunner;
+      }
+      runner.start({interval:200, run:function() {
+        var rec = store.first();
+        store.remove(rec);
+        store.add(rec);
+      }});
+    }
+  }
+  tool.toggleValue = !tool.toggleValue;
+}, clearChartUpdates:function() {
+  this.chartTaskRunner = Ext.destroy(this.chartTaskRunner);
+}, destroy:function() {
+  this.clearChartUpdates();
+  this.callParent();
+}, onHideView:function() {
+  this.clearChartUpdates();
+}});
+Ext.define('Admin.view.dashboard.DashboardModel', {extend:Ext.app.ViewModel, alias:'viewmodel.dashboard', stores:{hddusage:{autoLoad:true, model:'Admin.model.DataXY', proxy:{type:'api', url:'~api/qg/area'}}, quarterlyGrowth:{autoLoad:true, model:'Admin.model.DataXY', proxy:{type:'api', url:'~api/qg/bar'}}, earnings:{autoLoad:true, model:'Admin.model.DataXY', proxy:{type:'api', url:'~api/qg/line'}}, servicePerformance:{autoLoad:true, model:'Admin.model.DataXY', proxy:{type:'api', url:'~api/qg/pie'}}, 
+topMovies:{autoLoad:true, model:'Admin.model.DataXY', proxy:{type:'api', url:'~api/dashboard/movies'}}, networkData:{autoLoad:true, model:'Admin.model.MultiDataXY', proxy:{type:'api', url:'~api/dashboard/full'}}, visitors:{autoLoad:true, model:'Admin.model.MultiDataXY', proxy:{type:'api', url:'~api/dashboard/visitor'}}, bounces:{autoLoad:true, model:'Admin.model.MultiDataXY', proxy:{type:'api', url:'~api/dashboard/counce'}}, subscriptions:{autoLoad:true, model:'Admin.model.Subscription', proxy:{type:'api', 
+url:'~api/subscriptions'}}, todos:{autoLoad:true, fields:[{type:'int', name:'id'}, {type:'string', name:'task'}, {type:'boolean', name:'done'}], proxy:{type:'api', url:'~api/dashboard/tasks'}}}});
+Ext.define('Admin.view.dashboard.Weather', {extend:Ext.Component, xtype:'weather', baseCls:'weather-panel', border:false, height:80, data:{icon:'cloud-icon.png', forecast:'Partly Cloudy', temperature:25}, tpl:'\x3cdiv class\x3d"weather-image-container"\x3e\x3cimg src\x3d"resources/images/icons/{icon}" alt\x3d"{forecast}"/\x3e\x3c/div\x3e' + '\x3cdiv class\x3d"weather-details-container"\x3e' + '\x3cdiv\x3e{temperature}\x26#176;\x3c/div\x3e' + '\x3cdiv\x3e{forecast}\x3c/div\x3e' + '\x3c/div\x3e'});
+Ext.define('Admin.view.email.EmailModel', {extend:Ext.app.ViewModel, alias:'viewmodel.email', stores:{inbox:{type:'inbox'}, friends:{type:'emailfriends'}}});
+Ext.define('Admin.view.forms.SpecialOffer', {extend:Ext.Component, xtype:'specialoffer', isSpecialOffer:true, cls:'forms-specialoffer', minWidth:200, html:'\x3cdiv class\x3d"specialoffer-outer"\x3e' + '\x3cdiv class\x3d"specialoffer-inner"\x3e' + '\x3ch3\x3eRegister Today\x3c/h3\x3e' + '\x3cspan class\x3d"specialoffer-icon-wrap circular"\x3e' + '\x3ci class\x3d"fa fa-gift fa-5x"\x3e\x3c/i\x3e' + '\x3c/span\x3e' + '\x3cdiv class\x3d"specialoffer-text"\x3e' + 'Members get \x3cspan class\x3d"specialoffer-discount"\x3e50%\x3c/span\x3e more points, ' + 
+'so register today and start earning points for savings on great rewards!' + '\x3c/div\x3e' + '\x3ca class\x3d"specialoffer-link x-fa fa-arrow-right" href\x3d"#faq"\x3e' + 'Learn More...\x3c/a\x3e' + '\x3c/div\x3e' + '\x3c/div\x3e'});
+Ext.define('Admin.view.profile.Description', {extend:Ext.Panel, xtype:'profiledescription', layout:{type:'vbox', align:'stretch'}, cls:'timeline-items-wrap user-profile-desc', height:320, items:[{xtype:'component', userCls:'box x-fa fa-home', html:'San Jose, CA', padding:'0 0 12 0'}, {xtype:'component', userCls:'box x-fa fa-clock-o', html:'Member since 1 years ago', padding:'0 0 12 0'}, {xtype:'component', userCls:'box x-fa fa-globe', html:'\x3ca href\x3d"#"\'\x3ehttp://www.sencha-dash.com/\x3c/a\x3e', 
+padding:'0 0 12 0'}, {xtype:'container', flex:1, cls:'about-me-wrap', html:'\x3ch3 class\x3d"x-fa fa-user"\x3eAbout Me\x3c/h3\x3e\x3cp\x3eLorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.\x3c/p\x3e'}, {xtype:'toolbar', ui:'plain', layout:{type:'hbox', pack:'center'}, userCls:'profiledescription-social-toolbar', items:[{xtype:'component', cls:'large-icon icon-padding', userCls:'x-fa fa-thumbs-up', padding:'8 0 8 0'}, 
+{xtype:'container', layout:{type:'vbox', align:'center', pack:'center'}, items:[{xtype:'component', cls:'likes-value', html:'523'}, {xtype:'component', cls:'likes-label', html:'Likes'}]}, {xtype:'component', cls:'icon-padding', userCls:'x-fa fa-ellipsis-v', padding:'8 0 8 0'}, {xtype:'component', cls:'large-icon icon-padding', userCls:'x-fa fa-user-plus', padding:'8 0 8 0'}, {xtype:'container', layout:{type:'vbox', align:'center', pack:'center'}, items:[{xtype:'component', cls:'friends-value', html:'734'}, 
+{xtype:'component', cls:'friends-label', html:'Friends'}]}]}]});
+Ext.define('Admin.view.profile.Notifications', {extend:Ext.DataView, xtype:'profilenotifications', cls:'user-notifications', scrollable:false, bind:{store:'{userSharedItems}'}, itemSelector:'div.timeline-item', itemTpl:["\x3cdiv class\x3d'comments {[values._id !\x3d\x3d values.parent_id ? 'sub-comments' : '']}'\x3e", "\x3cimg src\x3d'resources/images/user-profile/15.png' alt\x3d'Smiley face' class\x3d'profile-icon'\x3e", "\x3cdiv class\x3d'content-wrap'\x3e", '\x3cdiv\x3e', "\x3ch4 class\x3d'profilenotifications-username'\x3e{name}\x3cspan class\x3d'x-fa fa-mobile'\x3e\x3c/span\x3e\x3c/h4\x3e", 
+"\x3cspan class\x3d'from-now'\x3e\x3cspan class\x3d'x-fa fa-clock-o'\x3e\x3c/span\x3e3 Hours Ago\x3c/span\x3e", '\x3c/div\x3e', "\x3cdiv class\x3d'content'\x3e{content}\x3c/div\x3e", "\x3cdiv class\x3d'like-comment-btn-wrap'\x3e", "\x3cbutton type\x3d'button' class\x3d'x-fa fa-thumbs-up' onclick\x3d''\x3e\x3c/button\x3e", "\x3cbutton type\x3d'button' class\x3d'x-fa fa-thumbs-down' onclick\x3d''\x3e\x3c/button\x3e", "\x3cbutton type\x3d'button' onclick\x3d'' class\x3d'x-fa fa-comments'\x3e\x3c/button\x3e", 
+'\x3c/div\x3e', '\x3c/div\x3e', '\x3c/div\x3e']});
+Ext.define('Admin.view.profile.Social', {extend:Ext.panel.Panel, xtype:'profilesocial', layout:{type:'vbox', align:'middle'}, height:320, bodyPadding:20, items:[{xtype:'image', cls:'userProfilePic', height:120, width:120, alt:'profile-picture', src:'resources/images/user-profile/20.png'}, {xtype:'component', cls:'userProfileName', height:'', html:'Jessica Warren'}, {xtype:'component', cls:'userProfileDesc', html:'CO-FOUNDER, CEO'}, {xtype:'container', layout:'hbox', defaults:{xtype:'button', margin:5}, 
+margin:5, items:[{ui:'facebook', iconCls:'x-fa fa-facebook'}, {ui:'soft-cyan', iconCls:'x-fa fa-twitter'}, {ui:'soft-red', iconCls:'x-fa fa-google-plus'}, {ui:'soft-purple', iconCls:'x-fa fa-envelope'}]}, {xtype:'button', width:220, text:'Follow', platformConfig:{classic:{scale:'large'}, modern:{ui:'action'}}}]});
+Ext.define('Admin.view.profile.Timeline', {extend:Ext.DataView, xtype:'profiletimeline', cls:'timeline-items-wrap', scrollable:false, bind:'{userTimeline}', itemSelector:'.timeline-item', itemTpl:['\x3cdiv class\x3d"timeline-item{userId:this.cls(values,parent[xindex-2],xindex-1,xcount)}"\x3e' + '{date:this.epoch(values,parent[xindex-2],xindex-1,xcount)}' + '\x3cdiv class\x3d"profile-pic-wrap"\x3e' + '\x3cimg src\x3d"resources/images/user-profile/{userId}.png" alt\x3d"Smiley face"\x3e' + '\x3cdiv\x3e{date:this.elapsed} ago\x3c/div\x3e' + 
+'\x3c/div\x3e' + '\x3ctpl if\x3d"notificationType \x3d\x3d \'image_sharing\'"\x3e' + '\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + '\x3cdiv class\x3d"shared-by"\x3e\x3ca href\x3d"#"\x3e{name}\x3c/a\x3e shared an image\x3c/div\x3e' + '\x3cimg src\x3d"resources/images/img2.jpg" class\x3d"shared-img" alt\x3d"Smiley face"\x3e' + '\x3c/div\x3e' + '\x3c/div\x3e' + '\x3ctpl elseif\x3d"notificationType \x3d\x3d \'job_meeting\'"\x3e' + '\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + 
+'\x3cdiv class\x3d"job-meeting"\x3e\x3ca href\x3d"#"\x3eJob Meeting\x3c/a\x3e\x3c/div\x3e' + '\x3cdiv\x3e{content}\x3c/div\x3e' + '\x3c/div\x3e' + '\x3c/div\x3e' + '\x3ctpl elseif\x3d"notificationType \x3d\x3d \'comment_reply\'"\x3e' + '\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + '\x3cdiv class\x3d"shared-by"\x3e\x3ca href\x3d"#"\x3e{name}\x3c/a\x3e commented on The Article\x3c/div\x3e' + '\x3cdiv class\x3d"article-comment"\x3e\x3cspan class\x3d"x-fa fa-quote-left"\x3e\x3c/span\x3e{content}\x3c/div\x3e' + 
+'\x3c/div\x3e' + '\x3c/div\x3e' + '\x3ctpl elseif\x3d"notificationType \x3d\x3d \'new_follower\'"\x3e' + '\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + '\x3cdiv class\x3d"followed-by"\x3e' + '\x3cimg src\x3d"resources/images/user-profile/10.png" alt\x3d"Smiley face"\x3e' + '\x3cdiv class\x3d"followed-by-inner"\x3e\x3ca href\x3d"#"\x3e{name}\x3c/a\x3e followed you.\x3c/div\x3e' + '\x3c/div\x3e' + '\x3c/div\x3e' + '\x3c/div\x3e' + '\x3ctpl elseif\x3d"notificationType \x3d\x3d \'comment\'"\x3e' + 
+'\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + '\x3cdiv class\x3d"shared-by"\x3e\x3ca href\x3d"#"\x3eLorem ipsum dolor sit amet\x3c/a\x3e\x3c/div\x3e' + '\x3cdiv\x3e{content}\x3c/div\x3e' + '\x3c/div\x3e' + '\x3c/div\x3e' + '\x3ctpl elseif\x3d"notificationType \x3d\x3d \'like\'"\x3e' + '\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + '\x3cdiv class\x3d"followed-by"\x3e' + '\x3cimg src\x3d"resources/images/user-profile/1.png" alt\x3d"Smiley face"\x3e' + 
+'\x3cdiv class\x3d"followed-by-inner"\x3e\x3ca href\x3d"#"\x3e{name}\x3c/a\x3e Like The Article.\x3c/div\x3e' + '\x3c/div\x3e' + '\x3c/div\x3e' + '\x3c/tpl\x3e' + '\x3c/div\x3e', {cls:function(value, record, previous, index, count) {
+  var cls = '';
+  if (!index) {
+    cls += ' timeline-item-first';
+  }
+  if (index + 1 === count) {
+    cls += ' timeline-item-last';
+  }
+  return cls;
+}, elapsed:function(value) {
+  var now = Date.now();
+  now = +new Date('2015/08/23 21:15:00');
+  var seconds = Math.floor((now - value) / 1000), minutes = Math.floor(seconds / 60), hours = Math.floor(minutes / 60), days = Math.floor(hours / 24), weeks = Math.floor(days / 7), months = Math.floor(days / 30), years = Math.floor(days / 365), ret;
+  months %= 12;
+  weeks %= 52;
+  days %= 365;
+  hours %= 24;
+  minutes %= 60;
+  seconds %= 60;
+  if (years) {
+    ret = this.part(years, 'Year');
+    ret += this.part(months, 'Month', ' ');
+  } else {
+    if (months) {
+      ret = this.part(months, 'Month');
+      ret += this.part(days, 'Day', ' ');
+    } else {
+      if (weeks) {
+        ret = this.part(weeks, 'Week');
+        ret += this.part(days, 'Day', ' ');
+      } else {
+        if (days) {
+          ret = this.part(days, 'Day');
+          ret += this.part(hours, 'Hour', ' ');
+        } else {
+          if (hours) {
+            ret = this.part(hours, 'Hour');
+          } else {
+            if (minutes) {
+              ret = this.part(minutes, ' Minute');
+            } else {
+              ret = this.part(seconds, 'Second');
+            }
+          }
+        }
+      }
+    }
+  }
+  return ret;
+}, epoch:function(value, record, previous, index, count) {
+  var previousValue = previous && (previous.isModel ? previous.data : previous)['date'];
+  if (index === 4) {
+    return '\x3cdiv class\x3d"timeline-epoch"\x3eYesterday\x3c/div\x3e';
+  }
+  return '';
+}, part:function(value, type, gap) {
+  var ret = value ? (gap || '') + value + ' ' + type : '';
+  if (value > 1) {
+    ret += 's';
+  }
+  return ret;
+}}]});
+Ext.define('Admin.view.profile.UserProfileBase', {extend:Ext.Container, viewModel:{type:'userprofile'}});
+Ext.define('Admin.view.profile.UserProfileModel', {extend:Ext.app.ViewModel, alias:'viewmodel.userprofile', stores:{userSharedItems:{autoLoad:true, fields:[{name:'_id'}, {name:'parent_id'}, {name:'name'}, {name:'source'}, {name:'date'}, {name:'isActive'}, {name:'time'}, {name:'content'}], proxy:{type:'api', url:'~api/usershareditems'}}, userTimeline:{autoLoad:true, fields:[{name:'_id'}, {name:'name'}, {name:'content'}, {name:'date', type:'date'}, {name:'userId'}, {name:'notificationType'}], proxy:{type:'api', 
+url:'~api/usertimeline'}}}});
+Ext.define('Admin.view.main.Main', {extend:Ext.container.Viewport, controller:'main', viewModel:'main', cls:'sencha-dash-viewport', itemId:'mainView', layout:{type:'vbox', align:'stretch'}, listeners:{render:'onMainViewRender'}, items:[{xtype:'toolbar', cls:'sencha-dash-dash-headerbar shadow', height:64, itemId:'headerBar', items:[{xtype:'component', reference:'senchaLogo', cls:'sencha-logo', html:'\x3cdiv class\x3d"main-logo"\x3e\x3cimg src\x3d"resources/images/company-logo.png"\x3eSencha\x3c/div\x3e', 
+width:250}, {margin:'0 0 0 8', ui:'header', iconCls:'x-fa fa-navicon', id:'main-navigation-btn', handler:'onToggleNavigationSize'}, '-\x3e', {xtype:'segmentedbutton', margin:'0 16 0 0', platformConfig:{ie9m:{hidden:true}}, items:[{iconCls:'x-fa fa-desktop', pressed:true}, {iconCls:'x-fa fa-tablet', handler:'onSwitchToModern', tooltip:'Switch to modern toolkit'}]}, {iconCls:'x-fa fa-search', ui:'header', href:'#searchresults', hrefTarget:'_self', tooltip:'See latest search'}, {iconCls:'x-fa fa-envelope', 
+ui:'header', href:'#email', hrefTarget:'_self', tooltip:'Check your email'}, {iconCls:'x-fa fa-question', ui:'header', href:'#faq', hrefTarget:'_self', tooltip:"Help / FAQ's"}, {iconCls:'x-fa fa-th-large', ui:'header', href:'#profile', hrefTarget:'_self', tooltip:'See your profile'}, {xtype:'tbtext', text:'Goff Smith', cls:'top-user-name'}, {xtype:'image', cls:'header-right-profile-image', height:35, width:35, alt:'current user image', src:'resources/images/user-profile/2.png'}]}, {xtype:'maincontainerwrap', 
+id:'main-view-detail-wrap', reference:'mainContainerWrap', flex:1, items:[{xtype:'treelist', reference:'navigationTreeList', itemId:'navigationTreeList', ui:'nav', store:'NavigationTree', width:250, expanderFirst:false, expanderOnly:false, listeners:{selectionchange:'onNavigationTreeSelectionChange'}}, {xtype:'container', flex:1, reference:'mainCardPanel', cls:'sencha-dash-right-main-container', itemId:'contentPanel', layout:{type:'card', anchor:'100%'}}]}]});
+Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', stores:['NavigationTree'], defaultToken:'dashboard', mainView:'Admin.view.main.Main', onAppUpdate:function() {
+  Ext.Msg.confirm('Application Update', 'This application has an update, reload?', function(choice) {
+    if (choice === 'yes') {
+      window.location.reload();
+    }
+  });
+}});
+Ext.define('Admin.view.address.address', {extend:Ext.container.Container, xtype:'address', controller:'addressViewController', viewModel:{type:'addressViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'addressGrid'}]});
+Ext.define('Admin.view.address.AddressGrid', {extend:Ext.grid.Panel, xtype:'addressGrid', title:'\x3cb\x3e通讯中心\x3c/b\x3e', bind:'{addressLists}', id:'addressGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'通讯编号', dataIndex:'addressId', hidden:true}, {text:'联系人', dataIndex:'addressName', flex:1}, {text:'所属部门', dataIndex:'addressDepartment', width:150}, {text:'联系电话', dataIndex:'addressPhone', width:150}, {text:'联系邮箱', dataIndex:'addressEmail', width:150}, {text:'QQ', dataIndex:'addressQQ', 
+width:150}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200}, {xtype:'tbtext', text:'所属部门：'}, {xtype:'combobox', name:'department', store:Ext.create('Ext.data.Store', {fields:['department', 'name'], data:[{'department':'HIGH', 'name':'财务部'}, {'department':'MEDIUM', 'name':'业务部'}, {'department':'LOW', 'name':'人事部'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {text:'查找'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', 
+displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+Ext.define('Admin.view.address.AddressViewController', {extend:Ext.app.ViewController, alias:'controller.addressViewController', noticeGridAdd:function(bt) {
+  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'上传资料'});
+  Ext.create(cfg);
+}});
+Ext.define('Admin.view.address.AddressViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.addressViewModel', stores:{addressLists:{type:'addressStore', autoLoad:true}}});
+Ext.define('Admin.view.authentication.AuthenticationController', {extend:Ext.app.ViewController, alias:'controller.authentication', onFaceBookLogin:function() {
+  this.redirectTo('dashboard', true);
+}, onLoginButton:function(btn) {
+  var me = this;
+  Ext.Ajax.request({url:'loginAction', method:'post', params:{userName:btn.up('form').getForm().findField('userName').getValue(), password:btn.up('form').getForm().findField('password').getValue()}, success:function(response, options) {
+    var json = Ext.util.JSON.decode(response.responseText);
+    if (json.success) {
+      me.redirectTo('dashboard', true);
+      window.location.reload();
+    } else {
+      Ext.Msg.alert('登录失败', json.msg);
+    }
+  }});
+}, onLoginAsButton:function() {
+  this.redirectTo('login', true);
+}, onNewAccount:function() {
+  this.redirectTo('register', true);
+}, onSignupClick:function() {
+  this.redirectTo('dashboard', true);
+}, onResetClick:function() {
+  this.redirectTo('dashboard', true);
+}});
+Ext.define('Admin.view.authentication.AuthenticationModel', {extend:Ext.app.ViewModel, alias:'viewmodel.authentication', data:{userid:'', fullName:'', password:'', email:'', persist:false, agrees:false}});
+Ext.define('Admin.view.authentication.Dialog', {extend:Ext.form.Panel, xtype:'authdialog', controller:'authentication', viewModel:{type:'authentication'}, defaultFocus:'textfield:focusable:not([hidden]):not([disabled]):not([value])', autoComplete:false, initComponent:function() {
+  var me = this, listen;
+  if (me.autoComplete) {
+    me.autoEl = Ext.applyIf(me.autoEl || {}, {tag:'form', name:'authdialog', method:'post'});
+  }
+  me.addCls('auth-dialog');
+  me.callParent();
+  if (me.autoComplete) {
+    listen = {afterrender:'doAutoComplete', scope:me, single:true};
+    Ext.each(me.query('textfield'), function(field) {
+      field.on(listen);
+    });
+  }
+}, doAutoComplete:function(target) {
+  if (target.inputEl && target.autoComplete !== false) {
+    target.inputEl.set({autocomplete:'on'});
+  }
+}});
+Ext.define('Admin.view.authentication.LockingWindow', {extend:Ext.window.Window, xtype:'lockingwindow', cls:'auth-locked-window', closable:false, resizable:false, autoShow:true, titleAlign:'center', maximized:true, modal:true, scrollable:true, layout:{type:'vbox', align:'center', pack:'center'}, controller:'authentication'});
+Ext.define('Admin.view.authentication.LockScreen', {extend:Admin.view.authentication.LockingWindow, xtype:'lockscreen', title:'Session Expired', defaultFocus:'authdialog', items:[{xtype:'authdialog', reference:'authDialog', defaultButton:'loginButton', autoComplete:false, width:455, cls:'auth-dialog-login', defaultFocus:'textfield[inputType\x3dpassword]', layout:{type:'vbox', align:'stretch'}, items:[{xtype:'container', cls:'auth-profile-wrap', height:120, layout:{type:'hbox', align:'center'}, items:[{xtype:'image', 
+height:80, margin:20, width:80, alt:'lockscreen-image', cls:'lockscreen-profile-img auth-profile-img', src:'resources/images/user-profile/2.png'}, {xtype:'box', html:"\x3cdiv class\x3d'user-name-text'\x3e Goff Smith \x3c/div\x3e\x3cdiv class\x3d'user-post-text'\x3e Project manager \x3c/div\x3e"}]}, {xtype:'container', padding:'0 20', layout:{type:'vbox', align:'stretch'}, defaults:{margin:'10 0'}, items:[{xtype:'textfield', labelAlign:'top', cls:'lock-screen-password-textbox', labelSeparator:'', 
+fieldLabel:"It's been a while. please enter your password to resume", emptyText:'Password', inputType:'password', allowBlank:false, triggers:{glyphed:{cls:'trigger-glyph-noop password-trigger'}}}, {xtype:'button', reference:'loginButton', scale:'large', ui:'soft-blue', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Login', formBind:true, listeners:{click:'onLoginButton'}}, {xtype:'component', html:'\x3cdiv style\x3d"text-align:right"\x3e' + '\x3ca href\x3d"#login" class\x3d"link-forgot-password"\x3e' + 
+'or, sign in using other credentials\x3c/a\x3e' + '\x3c/div\x3e'}]}]}]});
+Ext.define('Admin.view.authentication.Login', {extend:Admin.view.authentication.LockingWindow, xtype:'login', title:"Let's Log In", defaultFocus:'authdialog', items:[{xtype:'authdialog', defaultButton:'loginButton', autoComplete:true, bodyPadding:'20 20', cls:'auth-dialog-login', header:false, width:415, layout:{type:'vbox', align:'stretch'}, defaults:{margin:'5 0'}, items:[{xtype:'label', text:'Sign into your account'}, {xtype:'textfield', cls:'auth-textbox', name:'userName', bind:'{userName}', 
+height:55, hideLabel:true, allowBlank:false, emptyText:'user id', triggers:{glyphed:{cls:'trigger-glyph-noop auth-email-trigger'}}}, {xtype:'textfield', cls:'auth-textbox', height:55, hideLabel:true, emptyText:'Password', inputType:'password', name:'password', bind:'{password}', allowBlank:false, triggers:{glyphed:{cls:'trigger-glyph-noop auth-password-trigger'}}}, {xtype:'container', layout:'hbox', items:[{xtype:'checkboxfield', flex:1, cls:'form-panel-font-color rememberMeCheckbox', height:30, 
+bind:'{persist}', boxLabel:'Remember me'}, {xtype:'box', html:'\x3ca href\x3d"#passwordreset" class\x3d"link-forgot-password"\x3e Forgot Password ?\x3c/a\x3e'}]}, {xtype:'button', reference:'loginButton', scale:'large', ui:'soft-green', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Login', formBind:true, listeners:{click:'onLoginButton'}}]}], initComponent:function() {
+  this.addCls('user-login-register-container');
+  this.callParent(arguments);
+}});
+Ext.define('Admin.view.authentication.PasswordReset', {extend:Admin.view.authentication.LockingWindow, xtype:'passwordreset', title:'Reset Password', defaultFocus:'authdialog', items:[{xtype:'authdialog', width:455, defaultButton:'resetPassword', autoComplete:true, bodyPadding:'20 20', layout:{type:'vbox', align:'stretch'}, defaults:{margin:'10 0'}, cls:'auth-dialog-login', items:[{xtype:'label', cls:'lock-screen-top-label', text:'Enter your email address for further reset instructions'}, {xtype:'textfield', 
+cls:'auth-textbox', height:55, name:'email', hideLabel:true, allowBlank:false, emptyText:'user@example.com', vtype:'email', triggers:{glyphed:{cls:'trigger-glyph-noop auth-email-trigger'}}}, {xtype:'button', reference:'resetPassword', scale:'large', ui:'soft-blue', formBind:true, iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Reset Password', listeners:{click:'onResetClick'}}, {xtype:'component', html:'\x3cdiv style\x3d"text-align:right"\x3e' + '\x3ca href\x3d"#login" class\x3d"link-forgot-password"\x3e' + 
+'Back to Log In\x3c/a\x3e' + '\x3c/div\x3e'}]}]});
+Ext.define('Admin.view.authentication.Register', {extend:Admin.view.authentication.LockingWindow, xtype:'register', title:'User Registration', defaultFocus:'authdialog', items:[{xtype:'authdialog', bodyPadding:'20 20', width:455, reference:'authDialog', defaultButton:'submitButton', autoComplete:true, cls:'auth-dialog-register', layout:{type:'vbox', align:'stretch'}, defaults:{margin:'10 0', selectOnFocus:true}, items:[{xtype:'label', cls:'lock-screen-top-label', text:'Create an account'}, {xtype:'textfield', 
+cls:'auth-textbox', height:55, hideLabel:true, allowBlank:false, emptyText:'Fullname', name:'fullName', bind:'{fullName}', triggers:{glyphed:{cls:'trigger-glyph-noop auth-email-trigger'}}}, {xtype:'textfield', cls:'auth-textbox', height:55, hideLabel:true, allowBlank:false, name:'userid', bind:'{userid}', emptyText:'Username', triggers:{glyphed:{cls:'trigger-glyph-noop auth-email-trigger'}}}, {xtype:'textfield', cls:'auth-textbox', height:55, hideLabel:true, allowBlank:false, name:'email', emptyText:'user@example.com', 
+vtype:'email', bind:'{email}', triggers:{glyphed:{cls:'trigger-glyph-noop auth-envelope-trigger'}}}, {xtype:'textfield', cls:'auth-textbox', height:55, hideLabel:true, allowBlank:false, emptyText:'Password', name:'password', inputType:'password', bind:'{password}', triggers:{glyphed:{cls:'trigger-glyph-noop auth-password-trigger'}}}, {xtype:'checkbox', flex:1, name:'agrees', cls:'form-panel-font-color rememberMeCheckbox', height:32, bind:'{agrees}', allowBlank:false, boxLabel:'I agree with the Terms and Conditions', 
+isValid:function() {
+  var me = this;
+  return me.checked || me.disabled;
+}}, {xtype:'button', scale:'large', ui:'soft-blue', formBind:true, reference:'submitButton', bind:false, margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Signup', listeners:{click:'onSignupClick'}}, {xtype:'box', html:'\x3cdiv class\x3d"outer-div"\x3e\x3cdiv class\x3d"seperator"\x3eOR\x3c/div\x3e\x3c/div\x3e'}, {xtype:'button', scale:'large', ui:'facebook', margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-facebook', text:'Login with Facebook', listeners:{click:'onFaceBookLogin'}}, 
+{xtype:'component', html:'\x3cdiv style\x3d"text-align:right"\x3e' + '\x3ca href\x3d"#login" class\x3d"link-forgot-password"\x3e' + 'Back to Log In\x3c/a\x3e' + '\x3c/div\x3e'}]}]});
+Ext.define('Admin.view.charts.Charts', {extend:Ext.container.Container, xtype:'charts', viewModel:{type:'charts'}, layout:'responsivecolumn', defaults:{defaults:{animation:!Ext.isIE9m && Ext.os.is.Desktop}}, items:[{xtype:'chartsareapanel', userCls:'big-50 small-100'}, {xtype:'chartspie3dpanel', userCls:'big-50 small-100'}, {xtype:'chartspolarpanel', userCls:'big-50 small-100'}, {xtype:'chartsstackedpanel', userCls:'big-50 small-100'}, {xtype:'chartsbarpanel', userCls:'big-50 small-100'}, {xtype:'chartsgaugepanel', 
+userCls:'big-50 small-100'}]});
+Ext.define('Admin.view.dashboard.Dashboard', {extend:Ext.container.Container, xtype:'admindashboard', controller:'dashboard', viewModel:{type:'dashboard'}, layout:'responsivecolumn', listeners:{hide:'onHideView'}, items:[{xtype:'network', userCls:'big-60 small-100'}, {xtype:'hddusage', userCls:'big-20 small-50'}, {xtype:'earnings', userCls:'big-20 small-50'}, {xtype:'sales', userCls:'big-20 small-50'}, {xtype:'topmovies', userCls:'big-20 small-50'}, {xtype:'weather', cls:'weather-panel shadow', userCls:'big-40 small-100'}, 
+{xtype:'todo', userCls:'big-60 small-100'}, {xtype:'services', userCls:'big-40 small-100'}]});
+Ext.define('Admin.view.dashboard.Earnings', {extend:Ext.Panel, xtype:'earnings', title:'Earnings', ui:'light', iconCls:'x-fa fa-dollar', headerPosition:'bottom', cls:'quick-graph-panel shadow', height:130, layout:'fit', items:[{xtype:'cartesian', animation:!Ext.isIE9m && Ext.os.is.Desktop, background:'#35baf6', colors:['#483D8B', '#94ae0a', '#a61120', '#ff8809', '#ffd13e', '#a61187', '#24ad9a', '#7c7474', '#a66111'], bind:{store:'{earnings}'}, axes:[{type:'category', fields:['xvalue'], hidden:true, 
+position:'bottom'}, {type:'numeric', fields:['yvalue'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'line', style:{stroke:'#FFFFFF', 'stroke-width':'2px'}, xField:'xvalue', yField:['yvalue']}], interactions:[{type:'panzoom'}]}], tools:[{xtype:'tool', cls:'quick-graph-panel-tool x-fa fa-ellipsis-v'}]});
+Ext.define('Admin.view.dashboard.HDDUsage', {extend:Ext.panel.Panel, xtype:'hddusage', title:'HDD Usage', ui:'light', iconCls:'x-fa fa-database', headerPosition:'bottom', cls:'quick-graph-panel shadow', height:130, layout:'fit', items:[{xtype:'cartesian', animation:!Ext.isIE9m && Ext.os.is.Desktop, constrain:true, constrainHeader:true, background:'#70bf73', colors:['#a9d9ab'], bind:{store:'{hddusage}'}, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['yvalue'], 
+grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'area', style:{stroke:'#FFFFFF', 'stroke-width':'2px'}, useDarkerStrokeColor:false, xField:'xvalue', yField:['yvalue']}], interactions:[{type:'panzoom'}]}]});
+Ext.define('Admin.view.dashboard.Network', {extend:Ext.panel.Panel, xtype:'network', cls:'dashboard-main-chart shadow', height:380, bodyPadding:15, title:'Network', layout:{type:'vbox', align:'stretch'}, tools:[{type:'refresh', toggleValue:false, listeners:{click:'onRefreshToggle'}}, {type:'wrench'}], items:[{xtype:'container', flex:1, layout:'fit', items:[{xtype:'chartnetwork', bind:'{networkData}'}]}, {xtype:'container', cls:'graph-analysis-left', height:138, layout:{type:'hbox', align:'stretch'}, 
+items:[{xtype:'container', flex:1, cls:'dashboard-graph-analysis-left', layout:{type:'vbox', align:'stretch'}, items:[{xtype:'container', flex:1, padding:'10 0 10 0', layout:{type:'hbox', align:'stretch'}, items:[{xtype:'component', flex:1, cls:'top-info-container', html:'\x3cdiv class\x3d"inner"\x3e\x3cspan class\x3d"x-fa fa-pie-chart"\x3e\x3c/span\x3e\x3cspan class\x3d"dashboard-analytics-percentage"\x3e 25% \x3c/span\x3eserver load\x3c/div\x3e', padding:'15 10 10 0'}, {xtype:'component', flex:1, 
+cls:'top-info-container', html:'\x3cdiv class\x3d"inner"\x3e\x3cspan class\x3d"x-fa fa-user"\x3e\x3c/span\x3e\x3cspan class\x3d"dashboard-analytics-percentage"\x3e 156 \x3c/span\x3e online users\x3c/div\x3e', padding:'15 10 10 0'}]}, {xtype:'progressbar', flex:1, cls:'left-top-text progressbar-no-text', height:3, hideMode:'offsets', margin:'0 15 0 0', maxHeight:5, minHeight:3, value:0.4}, {xtype:'component', flex:1, cls:'left-top-text', html:'Tip: Download the analytics mobile app for real time updates on the server.', 
+padding:'15 5 5 0', layout:{type:'hbox', align:'stretch'}}]}, {xtype:'container', flex:1, cls:'graph-analysis-right', margin:'15 0 0 0', padding:'0 0 0 15', layout:{type:'vbox', align:'stretch'}, itemPadding:'0 0 10 0', items:[{xtype:'container', flex:1, layout:{type:'hbox', align:'stretch'}, padding:'0 0 10 0', items:[{xtype:'component', flex:1, cls:'graph-analysis-right-inner-container', html:'Visitors'}, {xtype:'chartvisitors', flex:1, cls:'graph-analysis-right-inner-container right-value', bind:{store:'{visitors}'}}]}, 
+{xtype:'container', flex:1, layout:{type:'hbox', align:'stretch'}, padding:'0 0 10 0', items:[{xtype:'component', flex:1, cls:'graph-analysis-right-inner-container', html:'Bounce Rates'}, {xtype:'chartbounces', flex:1, cls:'graph-analysis-right-inner-container right-value', bind:{store:'{bounces}'}}]}, {xtype:'container', flex:1, layout:{type:'hbox', align:'stretch'}, padding:'0 0 10 0', items:[{xtype:'component', flex:1, cls:'graph-analysis-right-inner-container', html:"Today's Sales"}, {xtype:'component', 
+flex:1, cls:'graph-analysis-right-inner-container right-value', html:'189,000'}]}, {xtype:'container', flex:1, layout:{type:'hbox', align:'stretch'}, padding:'0 0 10 0', items:[{xtype:'component', flex:1, cls:'graph-analysis-right-inner-container', html:'Broken Links'}, {xtype:'component', flex:1, cls:'graph-analysis-right-inner-container right-value', html:'4'}]}]}]}]});
+Ext.define('Admin.view.dashboard.Sales', {extend:Ext.panel.Panel, xtype:'sales', title:'Sales', ui:'light', iconCls:'x-fa fa-briefcase', headerPosition:'bottom', cls:'quick-graph-panel shadow', height:130, layout:'fit', items:[{xtype:'cartesian', animation:!Ext.isIE9m && Ext.os.is.Desktop, height:75, background:'#8561c5', colors:['#ffffff'], bind:'{quarterlyGrowth}', axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['yvalue'], grid:{odd:{fill:'#e8e8e8'}}, 
+hidden:true, position:'left'}], series:[{type:'bar', xField:'xvalue', yField:['yvalue']}], interactions:[{type:'panzoom'}]}]});
+Ext.define('Admin.view.dashboard.Services', {extend:Ext.Panel, xtype:'services', cls:'service-type shadow', height:320, bodyPadding:15, title:'Services', layout:{type:'hbox', align:'stretch'}, items:[{xtype:'container', width:140, defaults:{height:126, insetPadding:'7.5 7.5 7.5 7.5', background:'rgba(255, 255, 255, 1)', colors:['#6aa5dc', '#fdbf00', '#ee929d'], bind:'{servicePerformance}', series:[{type:'pie', label:{field:'xField', display:'rotate', contrast:true, font:'12px Arial'}, useDarkerStrokeColor:false, 
+xField:'yvalue', donut:50, padding:0}], interactions:[{type:'rotate'}]}, items:[{xtype:'polar'}, {xtype:'polar'}]}, {xtype:'container', flex:1, layout:{type:'vbox', align:'stretch'}, items:[{xtype:'component', data:{name:'Finance', value:'20%'}, tpl:'\x3cdiv class\x3d"left-aligned-div"\x3e{name}\x3c/div\x3e\x3cdiv class\x3d"right-aligned-div"\x3e{value}\x3c/div\x3e'}, {xtype:'progressbar', cls:'bottom-indent service-finance', height:4, minHeight:4, value:0.2}, {xtype:'component', data:{name:'Research', 
+value:'68%'}, tpl:'\x3cdiv class\x3d"left-aligned-div"\x3e{name}\x3c/div\x3e\x3cdiv class\x3d"right-aligned-div"\x3e{value}\x3c/div\x3e'}, {xtype:'progressbar', cls:'bottom-indent service-research', height:4, minHeight:4, value:0.68}, {xtype:'component', data:{name:'Marketing', value:'12%'}, tpl:'\x3cdiv class\x3d"left-aligned-div"\x3e{name}\x3c/div\x3e\x3cdiv class\x3d"right-aligned-div"\x3e{value}\x3c/div\x3e'}, {xtype:'progressbar', cls:'bottom-indent service-marketing', height:4, value:0.12}, 
+{xtype:'component', html:'\x3cdiv class\x3d"services-text"\x3e' + 'The year 2015 saw a significant change in the job market ' + 'for the industry. With increasing goverment expenditure on research \x26 development, jobs in ' + 'the research sector rose to 68% from 47% in the previous financial year. Share of jobs in ' + 'the finance sector remained more or less constant while that in marketing sector dropped to ' + '12%. The reduction in marketing jobs is attributed to increasing use of online advertising ' + 
+'in recent years, which is largely automated.' + '\x3c/div\x3e' + '\x3cdiv class\x3d"services-legend"\x3e' + '\x3cspan\x3e\x3cdiv class\x3d"legend-finance"\x3e\x3c/div\x3eFinance\x3c/span\x3e' + '\x3cspan\x3e\x3cdiv class\x3d"legend-research"\x3e\x3c/div\x3eResearch\x3c/span\x3e' + '\x3cspan\x3e\x3cdiv class\x3d"legend-marketing"\x3e\x3c/div\x3eMarketing\x3c/span\x3e' + '\x3cdiv\x3e'}]}]});
+Ext.define('Admin.view.dashboard.Todos', {extend:Ext.panel.Panel, xtype:'todo', cls:'todo-list shadow-panel', title:'TODO List', height:320, bodyPadding:15, layout:'fit', items:[{xtype:'gridpanel', cls:'dashboard-todo-list', header:false, title:'My Grid Panel', hideHeaders:true, scrollable:{x:false, y:false}, bind:{store:'{todos}'}, columns:[{xtype:'gridcolumn', dataIndex:'task', text:'Task', flex:1}], dockedItems:[{xtype:'container', layout:'hbox', dock:'bottom', padding:'10 0 0 0', items:[{xtype:'textfield', 
+flex:1, fieldLabel:'Add Task', hideLabel:true, width:540, emptyText:'Add New Task'}, {xtype:'button', ui:'soft-green', width:40, iconCls:'x-fa fa-plus', margin:'0 0 0 10'}]}], selModel:{selType:'checkboxmodel'}}]});
+Ext.define('Admin.view.dashboard.TopMovie', {extend:Ext.panel.Panel, xtype:'topmovies', title:'Top Movie', ui:'light', iconCls:'x-fa fa-video-camera', headerPosition:'bottom', cls:'quick-graph-panel shadow', height:130, layout:'fit', items:[{xtype:'polar', animation:!Ext.isIE9m && Ext.os.is.Desktop, height:75, background:'#33abaa', colors:['#115fa6', '#94ae0a', '#a61120', '#ff8809', '#ffd13e', '#a61187', '#24ad9a', '#7c7474', '#a66111'], radius:100, bind:'{topMovies}', series:[{type:'pie', colors:['#ffffff'], 
+label:{field:'x', display:'rotate', contrast:true, font:'12px Arial'}, xField:'yvalue'}], interactions:[{type:'rotate'}]}]});
+Ext.define('Admin.view.dashboard.Widgets', {extend:Ext.Panel, xtype:'dashboardwidgetspanel', cls:'dashboard-widget-block shadow', bodyPadding:15, title:'Widgets', layout:{type:'vbox', align:'stretch'}, items:[{xtype:'slider', width:400, fieldLabel:'Single Slider', value:40}, {xtype:'tbspacer', flex:0.3}, {xtype:'multislider', width:400, fieldLabel:'Range Slider', values:[10, 40]}, {xtype:'tbspacer', flex:0.3}, {xtype:'pagingtoolbar', width:360, displayInfo:false}, {xtype:'tbspacer', flex:0.3}, {xtype:'progressbar', 
+cls:'widget-progressbar', value:0.4}, {xtype:'tbspacer'}]});
+Ext.define('Admin.view.email.Compose', {extend:Ext.form.Panel, alias:'widget.emailcompose', viewModel:{type:'emailcompose'}, controller:'emailcompose', cls:'email-compose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'textfield', fieldLabel:'To'}, {xtype:'textfield', fieldLabel:'Subject'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'Message'}], 
+bbar:{overflowHandler:'menu', items:[{xtype:'filefield', width:400, labelWidth:80, fieldLabel:'Attachment', labelSeparator:'', buttonConfig:{xtype:'filebutton', glyph:'', iconCls:'x-fa fa-cloud-upload', text:'Browse'}}, '-\x3e', {xtype:'button', ui:'soft-red', text:'Discard', handler:'onComposeDiscardClick'}, {xtype:'button', ui:'gray', text:'Save'}, {xtype:'button', ui:'soft-green', text:'Send'}]}});
+Ext.define('Admin.view.email.ComposeViewController', {extend:Ext.app.ViewController, alias:'controller.emailcompose', onComposeDiscardClick:function(bt) {
+  var win = bt.up('window');
+  if (win) {
+    win.close();
+  }
+}});
+Ext.define('Admin.view.email.ComposeViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.emailcompose'});
+Ext.define('Admin.view.email.DetailsViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.emaildetails'});
+Ext.define('Admin.view.email.Details', {extend:Ext.form.Panel, xtype:'emaildetails', viewModel:{type:'emaildetails'}, cls:'shadow', bodyPadding:10, layout:{type:'anchor', anchor:'100%'}, listeners:{beforerender:'beforeDetailsRender'}, tbar:[{iconCls:'x-fa fa-angle-left', listeners:{click:'onBackBtnClick'}}, {iconCls:'x-fa fa-trash'}, {iconCls:'x-fa fa-exclamation-circle'}, {iconCls:'x-fa fa-print'}, {iconCls:'x-fa fa-forward'}], bbar:{cls:'single-mail-action-button', defaults:{margin:'0 15 0 0'}, 
+items:['-\x3e', {ui:'gray', text:'Save'}, {ui:'soft-green', text:'Send'}]}, items:[{xtype:'container', height:82, layout:{type:'hbox', align:'stretch'}, items:[{xtype:'image', itemId:'userImage', cls:'email-sender-img', alt:'profileImage', height:80, width:80}, {xtype:'component', flex:1, cls:'single-mail-email-subject', data:{}, itemId:'emailSubjectContainer', padding:10, tpl:['\x3cdiv class\x3d"user-name"\x3e{from}\x3c/div\x3e', '\x3cdiv class\x3d"user-info"\x3e{title}\x3c/div\x3e']}]}, {xtype:'box', 
+cls:'mail-body', itemId:'mailBody'}, {xtype:'box', itemId:'attachments', cls:'attachment-container', data:null, tpl:['\x3ctpl for\x3d"."\x3e', '\x3cimg class\x3d"single-mail-attachment" src\x3d"resources/images/{.}" ', 'alt\x3d"profile image"\x3e', '\x3c/tpl\x3e']}, {xtype:'htmleditor', height:250, fieldLabel:'Reply', labelAlign:'top', labelSeparator:''}]});
+Ext.define('Admin.view.email.Email', {extend:Ext.container.Container, xtype:'email', controller:'email', viewModel:{type:'email'}, itemId:'emailMainContainer', layout:{type:'hbox', align:'stretch'}, margin:'20 0 0 20', items:[{xtype:'container', itemId:'navigationPanel', layout:{type:'vbox', align:'stretch'}, width:'30%', minWidth:180, maxWidth:240, defaults:{cls:'navigation-email', margin:'0 20 20 0'}, items:[{xtype:'emailmenu', listeners:{click:'onMenuClick'}}, {xtype:'emailfriendslist'}]}, {xtype:'container', 
+itemId:'contentPanel', margin:'0 20 20 0', flex:1, layout:{type:'anchor', anchor:'100%'}}]});
+Ext.define('Admin.view.email.EmailController', {extend:Ext.app.ViewController, alias:'controller.email', init:function() {
+  this.setCurrentView('inbox');
+}, onBackBtnClick:function() {
+  this.setCurrentView('inbox');
+}, onMenuClick:function(menu, item) {
+  if (item && item.routeId === 'emailcompose') {
+    this.setCurrentView(item.routeId, item.params);
+  }
+}, setCurrentView:function(view, params) {
+  var contentPanel = this.getView().down('#contentPanel');
+  if (!contentPanel || view === '' || contentPanel.down() && contentPanel.down().xtype === view) {
+    return false;
+  }
+  if (params && params.openWindow) {
+    var cfg = Ext.apply({xtype:'emailwindow', items:[Ext.apply({xtype:view}, params.targetCfg)]}, params.windowCfg);
+    Ext.create(cfg);
+  } else {
+    Ext.suspendLayouts();
+    contentPanel.removeAll(true);
+    contentPanel.add(Ext.apply({xtype:view}, params));
+    Ext.resumeLayouts(true);
+  }
+}, onGridCellItemClick:function(view, td, cellIndex, record) {
+  if (cellIndex > 1) {
+    this.setCurrentView('emaildetails', {record:record});
+  } else {
+    if (cellIndex === 1) {
+      record.set('favorite', !record.get('favorite'));
+    }
+  }
+}, beforeDetailsRender:function(view) {
+  var record = view.record ? view.record : {};
+  view.down('#mailBody').setHtml(record.get('contents'));
+  view.down('#attachments').setData(record.get('attachments'));
+  view.down('#emailSubjectContainer').setData(record.data ? record.data : {});
+  view.down('#userImage').setSrc('resources/images/user-profile/' + record.get('user_id') + '.png');
+}});
+Ext.define('Admin.view.email.FriendsList', {extend:Ext.menu.Menu, alias:'widget.emailfriendslist', viewModel:{type:'emailfriendslist'}, controller:'emailfriendslist', title:'Friends', cls:'navigation-email', iconCls:'x-fa fa-group', floating:false});
+Ext.define('Admin.view.email.FriendsListViewController', {extend:Ext.app.ViewController, alias:'controller.emailfriendslist', init:function() {
+  var me = this, friendsStore = me.getViewModel().getStore('friends');
+  friendsStore.on('load', function(store) {
+    store.sort();
+  });
+  friendsStore.on('sort', function(store) {
+    me.mutateData(store, store.getRange());
+  });
+  me.callParent(arguments);
+}, mutateData:function(store, records) {
+  var view = this.getView(), arr = [], len = records.length, i;
+  for (i = 0; i < len; i++) {
+    arr.push({xtype:'menuitem', text:records[i].get('name'), cls:'font-icon ' + (records[i].get('online') ? 'online-user' : 'offline-user')});
+  }
+  Ext.suspendLayouts();
+  view.removeAll(true);
+  view.add(arr);
+  Ext.resumeLayouts(true);
+}});
+Ext.define('Admin.view.email.FriendsListViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.emailfriendslist', stores:{friends:{type:'emailfriends', autoLoad:true}}});
+Ext.define('Admin.view.email.Inbox', {extend:Ext.grid.Panel, xtype:'inbox', cls:'email-inbox-panel shadow', bind:{store:'{inbox}'}, viewConfig:{preserveScrollOnRefresh:true, preserveScrollOnReload:true}, selModel:{selType:'checkboxmodel', checkOnly:true, showHeaderCheckbox:true}, listeners:{cellclick:'onGridCellItemClick'}, headerBorders:false, rowLines:false, scrollable:false, columns:[{dataIndex:'favorite', menuDisabled:true, text:'\x3cspan class\x3d"x-fa fa-heart"\x3e\x3c/span\x3e', width:40, 
+renderer:function(value) {
+  return '\x3cspan class\x3d"x-fa fa-heart' + (value ? '' : '-o') + '"\x3e\x3c/span\x3e';
+}}, {dataIndex:'from', text:'From', width:140}, {dataIndex:'title', text:'Title', flex:1}, {dataIndex:'has_attachments', text:'\x3cspan class\x3d"x-fa fa-paperclip"\x3e\x3c/span\x3e', width:40, renderer:function(value) {
+  return value ? '\x3cspan class\x3d"x-fa fa-paperclip"\x3e\x3c/span\x3e' : '';
+}}, {xtype:'datecolumn', dataIndex:'received_on', width:90, text:'Received'}]});
+Ext.define('Admin.view.email.Menu', {extend:Ext.menu.Menu, alias:'widget.emailmenu', viewModel:{type:'emailmenu'}, title:'Email', iconCls:'x-fa fa-inbox', floating:false, items:[{routeId:'emailcompose', params:{openWindow:true, targetCfg:{}, windowCfg:{title:'Compose Message'}}, iconCls:'x-fa fa-edit', text:'Compose'}, {routeId:'', iconCls:'x-fa fa-inbox', text:'Inbox'}, {routeId:'', iconCls:'x-fa fa-check-circle', text:'Sent Mail'}, {routeId:'', iconCls:'x-fa fa-exclamation-circle', text:'Spam'}, 
+{routeId:'', iconCls:'x-fa fa-trash-o', text:'Trash'}]});
+Ext.define('Admin.view.email.MenuViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.emailmenu'});
+Ext.define('Admin.view.email.Window', {extend:Ext.window.Window, alias:'widget.emailwindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.9), Math.floor(height * 0.9));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
+Ext.define('Admin.view.forms.WizardFormModel', {extend:Ext.app.ViewModel, alias:'viewmodel.wizardform', data:{atBeginning:true, atEnd:false}});
+Ext.define('Admin.view.forms.WizardForm', {extend:Ext.panel.Panel, xtype:'wizardform', bodyPadding:15, height:340, layout:'card', viewModel:{type:'wizardform'}, controller:'wizardform', defaults:{defaultFocus:'textfield:not([value]):focusable:not([disabled])', defaultButton:'nextbutton'}, items:[{xtype:'form', defaultType:'textfield', defaults:{labelWidth:90, labelAlign:'top', labelSeparator:'', submitEmptyText:false, anchor:'100%'}, items:[{emptyText:'Username must be unique.'}, {emptyText:'ex: me@somewhere.com', 
+vtype:'email'}, {emptyText:'Enter a password', inputType:'password', cls:'wizard-form-break'}, {emptyText:'Passwords must match', inputType:'password'}]}, {xtype:'form', defaultType:'textfield', defaults:{labelWidth:90, labelAlign:'top', labelSeparator:'', submitEmptyText:false, anchor:'100%'}, items:[{emptyText:'First Name'}, {emptyText:'Last Name'}, {emptyText:'Company'}, {xtype:'fieldcontainer', cls:'wizard-form-break', fieldLabel:'MemberType', defaultType:'radiofield', defaults:{flex:1}, layout:'hbox', 
+items:[{boxLabel:'Free', name:'MemberType', inputValue:'Free'}, {boxLabel:'Personal', name:'MemberType', inputValue:'Perosnal'}, {boxLabel:'Black', name:'MemberType', inputValue:'Business'}]}]}, {xtype:'form', defaultType:'textfield', defaults:{labelWidth:90, labelAlign:'top', labelSeparator:'', submitEmptyText:false, anchor:'100%'}, items:[{emptyText:'Phone number'}, {emptyText:'Address'}, {emptyText:'City'}, {emptyText:'Postal Code / Zip Code'}]}, {xtype:'form', items:[{html:'\x3ch2\x3eThank You\x3c/h2\x3e\x3cp\x3eLorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.\x3c/p\x3e'}]}], 
+initComponent:function() {
+  this.tbar = {reference:'progress', defaultButtonUI:'wizard-' + this.colorScheme, cls:'wizardprogressbar', defaults:{disabled:true, iconAlign:'top'}, layout:{pack:'center'}, items:[{step:0, iconCls:'fa fa-info', pressed:true, enableToggle:true, text:'Account'}, {step:1, iconCls:'fa fa-user', enableToggle:true, text:'Profile'}, {step:2, iconCls:'fa fa-home', enableToggle:true, text:'Address'}, {step:3, iconCls:'fa fa-heart', enableToggle:true, text:'Finish'}]};
+  this.bbar = {reference:'navigation-toolbar', margin:8, items:['-\x3e', {text:'Previous', ui:this.colorScheme, formBind:true, bind:{disabled:'{atBeginning}'}, listeners:{click:'onPreviousClick'}}, {text:'Next', ui:this.colorScheme, formBind:true, reference:'nextbutton', bind:{disabled:'{atEnd}'}, listeners:{click:'onNextClick'}}]};
+  this.callParent();
+}});
+Ext.define('Admin.view.forms.WizardFormController', {extend:Ext.app.ViewController, alias:'controller.wizardform', init:function(view) {
+  var tb = this.lookupReference('navigation-toolbar'), buttons = tb.items.items, ui = view.colorScheme;
+  if (ui) {
+    buttons[1].setUI(ui);
+    buttons[2].setUI(ui);
+  }
+}, onNextClick:function(button) {
+  var panel = button.up('panel');
+  panel.getViewModel().set('atBeginning', false);
+  this.navigate(button, panel, 'next');
+}, onPreviousClick:function(button) {
+  var panel = button.up('panel');
+  panel.getViewModel().set('atEnd', false);
+  this.navigate(button, panel, 'prev');
+}, navigate:function(button, panel, direction) {
+  var layout = panel.getLayout(), progress = this.lookupReference('progress'), model = panel.getViewModel(), progressItems = progress.items.items, item, i, activeItem, activeIndex;
+  layout[direction]();
+  activeItem = layout.getActiveItem();
+  activeIndex = panel.items.indexOf(activeItem);
+  for (i = 0; i < progressItems.length; i++) {
+    item = progressItems[i];
+    if (activeIndex === item.step) {
+      item.setPressed(true);
+    } else {
+      item.setPressed(false);
+    }
+    if (Ext.isIE8) {
+      item.btnIconEl.syncRepaint();
+    }
+  }
+  activeItem.focus();
+  if (activeIndex === 0) {
+    model.set('atBeginning', true);
+  }
+  if (activeIndex === 3) {
+    model.set('atEnd', true);
+  }
+}});
+Ext.define('Admin.view.forms.WizardOne', {extend:Ext.panel.Panel, alias:'widget.formswizardone', cls:'wizardone shadow', plugins:{responsive:true}, responsiveConfig:{'width \x3e\x3d 1000':{layout:{type:'box', align:'stretch', vertical:false}}, 'width \x3c 1000':{layout:{type:'box', align:'stretch', vertical:true}}}, items:[{xtype:'specialoffer', plugins:{responsive:true}, height:338, responsiveConfig:{'width \x3c 1000':{flex:null}, 'width \x3e\x3d 1000':{flex:1}}}, {xtype:'wizardform', cls:'wizardone', 
+colorScheme:'blue', flex:1}]});
+Ext.define('Admin.view.forms.Wizards', {extend:Ext.container.Container, xtype:'forms', cls:'wizards', defaultFocus:'wizardform', layout:'responsivecolumn', items:[{xtype:'formswizardone', userCls:'big-100'}, {xtype:'wizardform', cls:'wizardtwo shadow', colorScheme:'soft-purple', userCls:'big-50 small-100'}, {xtype:'wizardform', cls:'wizardthree shadow', colorScheme:'soft-green', userCls:'big-50 small-100'}]});
+Ext.define('Admin.view.main.MainContainerWrap', {extend:Ext.container.Container, xtype:'maincontainerwrap', scrollable:'y', layout:{type:'hbox', align:'stretchmax', animate:true, animatePolicy:{x:true, width:true}}, beforeLayout:function() {
+  var me = this, height = Ext.Element.getViewportHeight() - 64, navTree = me.getComponent('navigationTreeList');
+  me.minHeight = height;
+  navTree.setStyle({'min-height':height + 'px'});
+  me.callParent(arguments);
+}});
+Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, alias:'controller.main', listen:{controller:{'#':{unmatchedroute:'onRouteChange'}}}, routes:{':node':'onRouteChange'}, lastView:null, setCurrentView:function(hashTag) {
+  hashTag = (hashTag || '').toLowerCase();
+  var me = this, refs = me.getReferences(), mainCard = refs.mainCardPanel, mainLayout = mainCard.getLayout(), navigationList = refs.navigationTreeList, store = navigationList.getStore(), node = store.findNode('routeId', hashTag) || store.findNode('viewType', hashTag), view = node && node.get('viewType') || 'page404', lastView = me.lastView, existingItem = mainCard.child('component[routeId\x3d' + hashTag + ']'), newView;
+  if (lastView && lastView.isWindow) {
+    lastView.destroy();
+  }
+  lastView = mainLayout.getActiveItem();
+  if (!existingItem) {
+    newView = Ext.create({xtype:view, routeId:hashTag, hideMode:'offsets'});
+  }
+  if (!newView || !newView.isWindow) {
+    if (existingItem) {
+      if (existingItem !== lastView) {
+        mainLayout.setActiveItem(existingItem);
+      }
+      newView = existingItem;
+    } else {
+      Ext.suspendLayouts();
+      mainLayout.setActiveItem(mainCard.add(newView));
+      Ext.resumeLayouts(true);
+    }
+  }
+  navigationList.setSelection(node);
+  if (newView.isFocusable(true)) {
+    newView.focus();
+  }
+  me.lastView = newView;
+}, onNavigationTreeSelectionChange:function(tree, node) {
+  var to = node && (node.get('routeId') || node.get('viewType'));
+  if (to) {
+    this.redirectTo(to);
+  }
+}, onToggleNavigationSize:function() {
+  var me = this, refs = me.getReferences(), navigationList = refs.navigationTreeList, wrapContainer = refs.mainContainerWrap, collapsing = !navigationList.getMicro(), new_width = collapsing ? 64 : 250;
+  if (Ext.isIE9m || !Ext.os.is.Desktop) {
+    Ext.suspendLayouts();
+    refs.senchaLogo.setWidth(new_width);
+    navigationList.setWidth(new_width);
+    navigationList.setMicro(collapsing);
+    Ext.resumeLayouts();
+    wrapContainer.layout.animatePolicy = wrapContainer.layout.animate = null;
+    wrapContainer.updateLayout();
+  } else {
+    if (!collapsing) {
+      navigationList.setMicro(false);
+    }
+    navigationList.canMeasure = false;
+    refs.senchaLogo.animate({dynamic:true, to:{width:new_width}});
+    navigationList.width = new_width;
+    wrapContainer.updateLayout({isRoot:true});
+    navigationList.el.addCls('nav-tree-animating');
+    if (collapsing) {
+      navigationList.on({afterlayoutanimation:function() {
+        navigationList.setMicro(true);
+        navigationList.el.removeCls('nav-tree-animating');
+        navigationList.canMeasure = true;
+      }, single:true});
+    }
+  }
+}, onMainViewRender:function() {
+  if (!window.location.hash) {
+    this.redirectTo('login');
+  }
+}, onRouteChange:function(id) {
+  this.setCurrentView(id);
+}, onSearchRouteChange:function() {
+  this.setCurrentView('searchresults');
+}, onSwitchToModern:function() {
+  Ext.Msg.confirm('Switch to Modern', 'Are you sure you want to switch toolkits?', this.onSwitchToModernConfirmed, this);
+}, onSwitchToModernConfirmed:function(choice) {
+  if (choice === 'yes') {
+    var s = window.location.search;
+    s = s.replace(/(^\?|&)classic($|&)/, '').replace(/^\?/, '');
+    window.location.search = ('?modern\x26' + s).replace(/&$/, '');
+  }
+}, onEmailRouteChange:function() {
+  this.setCurrentView('email');
+}});
+Ext.define('Admin.view.main.MainModel', {extend:Ext.app.ViewModel, alias:'viewmodel.main', data:{currentView:null}});
+Ext.define('Admin.view.notice.notice', {extend:Ext.container.Container, xtype:'notice', controller:'NoticeViewController', viewModel:{type:'noticeViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'NoticeGrid'}]});
+Ext.define('Admin.view.notice.noticeCompose', {extend:Ext.form.Panel, alias:'widget.noticeCompose', viewModel:{type:'noticeCompose'}, controller:'NoticeViewController', cls:'noticeCompose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'textfield', fieldLabel:'标题：'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'正文：'}], bbar:{overflowHandler:'menu', 
+items:['-\x3e', {xtype:'button', ui:'soft-red', text:'关闭'}, {xtype:'button', ui:'gray', text:'存为草稿'}, {xtype:'button', ui:'soft-green', text:'发布'}]}});
+Ext.define('Admin.view.notice.NoticeGrid', {extend:Ext.grid.Panel, xtype:'NoticeGrid', title:'\x3cb\x3e公告列表\x3c/b\x3e', bind:'{noticeLists}', id:'noticeGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1, listeners:{click:function() {
+  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'公告', items:[Ext.apply({xtype:'noticeCompose'})]});
+  Ext.create(cfg);
+}}}, {text:'发布时间', sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'发布者', dataIndex:'noticeAuthor', width:150}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:function() {
+  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'公告', items:[Ext.apply({xtype:'noticeCompose'})]});
+  Ext.create(cfg);
+}}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除'}]}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'新增', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'orderGridDelete'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield'}, {text:'查找'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{orderLists}', displayInfo:true, 
+displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+Ext.define('Admin.model.notcie.NoticeModel', {extend:Admin.model.Base, fields:[{name:'noticeId', type:'int'}, {name:'noticeName', type:'string'}, {name:'noticeTime', type:'date'}, {name:'noticeAuthor', type:'string'}]});
+Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewController, alias:'controller.NoticeViewController', noticeGridAdd:function(bt) {
+  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'新建公告', items:[Ext.apply({xtype:'noticeCompose'})]});
+  Ext.create(cfg);
+}});
+Ext.define('Admin.view.notice.NoticeViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.noticeViewModel', stores:{noticeLists:{type:'noticeStore', autoLoad:true}}});
+Ext.define('Admin.view.order.Order', {extend:Ext.container.Container, xtype:'order', controller:'OrderViewController', viewModel:{type:'orderViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'orderGrid'}]});
+Ext.define('Admin.view.order.OrderForm', {extend:Ext.form.Panel, alias:'widget.orderForm', controller:'OrderViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'id', handler:'orderGridEdit'}, {xtype:'textfield', fieldLabel:'订单编号', name:'orderNumber'}, {xtype:'datefield', format:'Y/m/d H:i:s', fieldLabel:'创建时间', name:'createTime'}, {xtype:'combobox', fieldLabel:'优先级', name:'level', 
+store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'HIGH', 'name':'高'}, {'value':'MEDIUM', 'name':'中'}, {'value':'LOW', 'name':'低'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {xtype:'textfield', fieldLabel:'Price', name:'price'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'orderGridFromSubmit'}, {xtype:'button', text:'取消', handler:'orderGridWindowsClose'}]}});
+Ext.define('Admin.view.order.OrderGrid', {extend:Ext.grid.Panel, xtype:'orderGrid', title:'\x3cb\x3e订单列表\x3c/b\x3e', bind:'{orderLists}', id:'orderGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'ID', sortable:true, dataIndex:'id', hidden:true}, {text:'订单编号', sortable:true, dataIndex:'orderNumber', width:120}, {text:'创建时间', sortable:true, dataIndex:'createTime', width:125, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'优先级', sortable:true, dataIndex:'level', 
+width:125}, {text:'价格', sortable:true, dataIndex:'price', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'Add', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'orderGridOnClick'}}, '-', {text:'Edit', iconCls:'x-fa fa-edit', handler:'orderGridEdit'}, '-', {text:'Delete', iconCls:'x-fa fa-trash', handler:'orderGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{orderLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+Ext.define('Admin.view.order.OrderViewController', {extend:Ext.app.ViewController, alias:'controller.OrderViewController', orderGridOnClick:function(bt) {
+  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'新建订单', items:[Ext.apply({xtype:'orderForm'})]});
+  Ext.create(cfg);
+}, orderGridEdit:function(btn) {
+  var grid = btn.up('gridpanel');
+  var selModel = grid.getSelectionModel();
+  if (selModel.hasSelection()) {
+    var record = selModel.getSelection()[0];
+    var orderWindow = Ext.widget('orderWindow', {title:'修改订单', items:[{xtype:'orderForm'}]});
+    orderWindow.down('form').getForm().loadRecord(record);
+  } else {
+    Ext.Msg.alert('提示', '请选择一行数据进行编辑!');
+  }
+}, orderGridDelete:function(btn) {
+  var grid = btn.up('gridpanel');
+  var selModel = grid.getSelectionModel();
+  if (selModel.hasSelection()) {
+    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+      if (button == 'yes') {
+        var selected = selModel.getSelection();
+        var selectIds = [];
+        Ext.each(selected, function(record) {
+          selectIds.push(record.data.id);
+        });
+        Ext.Ajax.request({url:'order/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
+          var json = Ext.util.JSON.decode(response.responseText);
+          if (json.success) {
+            Ext.Msg.alert('操作成功', json.msg);
+            grid.getStore().reload();
+          } else {
+            Ext.Msg.alert('操作失败', json.msg);
+          }
+        }});
+      }
+    });
+  }
+}, orderGridFromSubmit:function(btn) {
+  var orderForm = btn.up('form').getForm();
+  var win = btn.up('window');
+  orderForm.submit({url:'order/saveOrUpdate', method:'post', success:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+    win.close();
+    Ext.getCmp('orderGrid').store.reload();
+  }, failure:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+  }});
+}, orderGridWindowsClose:function(btn) {
+  var win = btn.up('window');
+  if (win) {
+    win.close();
+  }
+}});
+Ext.define('Admin.view.order.OrderViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.orderViewModel', stores:{orderLists:{type:'orderStore', autoLoad:true}}});
+Ext.define('Admin.view.order.OrderWindow', {extend:Ext.window.Window, alias:'widget.orderWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.5), Math.floor(height * 0.8));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
+Ext.define('Admin.view.pages.BlankPage', {extend:Ext.container.Container, xtype:'pageblank', anchor:'100% -1', layout:{type:'vbox', pack:'center', align:'center'}, items:[{xtype:'box', cls:'blank-page-container', html:"\x3cdiv class\x3d'fa-outer-class'\x3e\x3cspan class\x3d'x-fa fa-clock-o'\x3e\x3c/span\x3e\x3c/div\x3e\x3ch1\x3eComing Soon!\x3c/h1\x3e\x3cspan class\x3d'blank-page-text'\x3eStay tuned for updates\x3c/span\x3e"}]});
+Ext.define('Admin.view.pages.ErrorBase', {extend:Ext.window.Window, controller:'authentication', autoShow:true, cls:'error-page-container', closable:false, title:'Sencha', titleAlign:'center', maximized:true, modal:true, layout:{type:'vbox', align:'center', pack:'center'}});
+Ext.define('Admin.view.pages.Error404Window', {extend:Admin.view.pages.ErrorBase, xtype:'page404', items:[{xtype:'container', width:400, cls:'error-page-inner-container', layout:{type:'vbox', align:'center', pack:'center'}, items:[{xtype:'label', cls:'error-page-top-text', text:'404'}, {xtype:'label', cls:'error-page-desc', html:'\x3cdiv\x3eSeems you\'ve hit a wall!\x3c/div\x3e\x3cdiv\x3eTry going back to our \x3ca href\x3d"#dashboard"\x3e Home page \x3c/a\x3e\x3c/div\x3e'}, {xtype:'tbspacer', flex:1}]}]});
+Ext.define('Admin.view.pages.Error500Window', {extend:Admin.view.pages.ErrorBase, xtype:'page500', items:[{xtype:'container', width:600, cls:'error-page-inner-container', layout:{type:'vbox', align:'center', pack:'center'}, items:[{xtype:'label', cls:'error-page-top-text', text:'500'}, {xtype:'label', cls:'error-page-desc', html:'\x3cdiv\x3eSomething went wrong and server could not process your request.\x3c/div\x3e' + '\x3cdiv\x3eTry going back to our \x3ca href\x3d"#dashboard"\x3e Home page \x3c/a\x3e\x3c/div\x3e'}, 
+{xtype:'tbspacer', flex:1}]}]});
+Ext.define('Admin.view.pages.FAQ', {extend:Ext.container.Container, xtype:'faq', layout:{type:'hbox', align:'stretch'}, padding:10, items:[{xtype:'panel', cls:'faq-left-sidebar shadow', margin:10, header:false, ui:'light', responsiveConfig:{'width \x3c 1000':{width:0, visible:false}, 'width \x3e\x3d 1000 \x26\x26 width \x3c 1600':{width:230, visible:true}, 'width \x3e\x3d 1600':{width:300, visible:true}}, items:[{xtype:'panel', title:'Useful Tips', ui:'light', cls:'shadow pages-faq-container', iconCls:'x-fa fa-lightbulb-o', 
+html:"\x3cp\x3eWe have created the following list of tips for our users. We hope that they will help you get the most of this website.\x3c/p\x3e \n\x3cul class\x3d'faq-tips-list'\x3e\x3cli class\x3d'pointone'\x3ePoint One\x3c/li\x3e\x3cli class\x3d'pointtwo'\x3ePoint Two\x3c/li\x3e\x3cli class\x3d'pointthree'\x3ePoint Three\x3c/li\x3e\n\x3cli class\x3d'pointfour'\x3ePoint Four\x3c/li\x3e\x3c/ul\x3e", bodyPadding:15}, {xtype:'panel', bodyPadding:20, ui:'light', cls:'shadow pages-faq-container', iconCls:'x-fa fa-question', 
+title:"Can't find the answer?", layout:{type:'vbox', align:'stretch'}, items:[{xtype:'box', html:'\x3cp\x3eHelp is just an email or a phone call away. If you cannot find what you are looking for on this page, our customer service representatives will be happy to help you.\x3c/p\x3e\x3cbr\x3e'}, {xtype:'button', ui:'soft-blue', margin:'20 20 20 20', text:'Contact Us'}]}], plugins:{responsive:true}}, {xtype:'panel', ui:'light', margin:10, flex:1, cls:'pages-faq-container shadow', iconCls:'x-fa fa-question-circle', 
+title:'FAQs', bodyPadding:15, items:[{xtype:'panel', cls:'FAQPanel', layout:'accordion', title:'General', height:340, ui:'light', defaults:{html:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}, 
+items:[{title:'How can I access high resolution images?', iconCls:'x-fa fa-caret-down'}, {title:'Can I download the application on my PC?', iconCls:'x-fa fa-caret-down'}, {title:'How often does the database get updated?', iconCls:'x-fa fa-caret-down'}, {title:'Can I use the downloaded images on a commercial website?', iconCls:'x-fa fa-caret-down'}]}, {xtype:'panel', cls:'FAQPanel', layout:'accordion', title:'Account', height:340, bodyPadding:10, ui:'light', defaults:{html:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}, 
+items:[{title:'What are the different membership plans?', iconCls:'x-fa fa-caret-down'}, {title:'Can I change my plan in between?', iconCls:'x-fa fa-caret-down'}, {title:'How can I deactivate my account?', iconCls:'x-fa fa-caret-down'}, {title:'Can I transfer my account to another user?', iconCls:'x-fa fa-caret-down'}]}, {xtype:'panel', cls:'FAQPanel', layout:'accordion', title:'Payment', height:300, bodyPadding:10, ui:'light', defaults:{html:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}, 
+items:[{title:'What are the payment methods you accept?', iconCls:'x-fa fa-caret-down'}, {title:'What is the refund policy?', iconCls:'x-fa fa-caret-down'}, {title:'How long does it take to process my payment?', iconCls:'x-fa fa-caret-down'}]}]}]});
+Ext.define('Admin.view.profile.ShareUpdate', {extend:Ext.panel.Panel, xtype:'profileshare', bodyPadding:10, layout:'fit', cls:'share-panel', items:[{xtype:'textareafield', emptyText:"What's on your mind?"}], bbar:{defaults:{margin:'0 10 5 0'}, items:[{ui:'header', iconCls:'x-fa fa-video-camera'}, {ui:'header', iconCls:'x-fa fa-camera'}, {ui:'header', iconCls:'x-fa fa-file'}, '-\x3e', {text:'Share', ui:'soft-blue'}]}});
+Ext.define('Admin.view.profile.UserProfile', {extend:Admin.view.profile.UserProfileBase, xtype:'profile', cls:'userProfile-container', layout:'responsivecolumn', items:[{xtype:'profileshare', userCls:'big-100 small-100 shadow'}, {xtype:'profilesocial', userCls:'big-50 small-100 shadow'}, {xtype:'profiledescription', userCls:'big-50 small-100 shadow'}, {xtype:'profilenotifications', userCls:'big-50 small-100 shadow'}, {xtype:'profiletimeline', userCls:'big-50 small-100 shadow'}]});
+Ext.define('Admin.view.resources.resources', {extend:Ext.container.Container, xtype:'resources', controller:'resourcesViewController', viewModel:{type:'resourcesViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'resourcesGrid'}]});
+Ext.define('Admin.view.resources.ResourcesGrid', {extend:Ext.grid.Panel, xtype:'resourcesGrid', title:'\x3cb\x3e资料中心\x3c/b\x3e', bind:'{resourcesLists}', id:'resourcesGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'资料编号', dataIndex:'resourcesId', hidden:true}, {text:'资料名称', dataIndex:'resourcesName', flex:1, listeners:{click:function() {
+  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'资料'});
+  Ext.create(cfg);
+}}}, {text:'发布时间', sortable:true, dataIndex:'resourcesTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {xtype:'actioncolumn', text:'操作', width:150, tdCls:'action', items:['-', {icon:'resources/images/icons/delete.png', tooltip:'下载'}, '-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:function() {
+  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'公告', items:[Ext.apply({xtype:'noticeCompose'})]});
+  Ext.create(cfg);
+}}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除'}]}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'上传', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'批量下载', iconCls:'x-fa fa-arrow-circle-o-down'}, '-', {text:'批量删除', iconCls:'x-fa fa-trash'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield'}, {text:'查找'}]}), bbar:Ext.create('Ext.PagingToolbar', 
+{bind:'{resourcesLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewController, alias:'controller.resourcesViewController', noticeGridAdd:function(bt) {
+  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'上传资料'});
+  Ext.create(cfg);
+}});
+Ext.define('Admin.view.resources.ResourcesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.resourcesViewModel', stores:{resourcesLists:{type:'resourcesStore', autoLoad:true}}});
+>>>>>>> branch 'master' of https://github.com/lucky-plus/OA-System.git
 Ext.define('Admin.view.search.Results', {extend:Ext.tab.Panel, xtype:'searchresults', controller:'searchresults', viewModel:{type:'searchresults'}, cls:'shadow', activeTab:0, margin:20, items:[{xtype:'gridpanel', cls:'allRecordsCls', scrollable:false, hideHeaders:true, border:false, title:'All', routeId:'all', bind:'{allResults}', viewConfig:{preserveScrollOnRefresh:true, stripeRows:false}, columns:[{xtype:'gridcolumn', renderer:function(value, metaData, record, rowIndex) {
   var page = "\x3cdiv class\x3d'resultsItemCls'\x3e\x3cdiv class\x3d'resultsTitleCls'\x3e" + record.data.title + "\x3c/div\x3e\x3cdiv class\x3d'resultsUrlCls'\x3e\x3ca href\x3d'#'\x3e" + record.data.url + "\x3c/a\x3e\x3c/div\x3e\x3cdiv class\x3d'resultsContentCls'\x3e" + record.data.content + '\x3c/div\x3e\x3c/div\x3e';
   if (rowIndex === 3) {

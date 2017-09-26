@@ -8,7 +8,7 @@ Ext.define('Admin.view.order.Order', {		//1.修改文件路径
 	//3.重写继承组件的属性：
     xtype: 'order',
 
-    controller: 'orderViewController',		//视图绑定viewController
+    controller: 'OrderViewController',			//视图绑定viewController
     viewModel : {type: 'orderViewModel'},	//视图绑定viewModel
 	
 
