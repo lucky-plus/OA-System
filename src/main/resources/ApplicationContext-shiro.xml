@@ -30,7 +30,7 @@
             </value>
         </property>  
     </bean>  
-  	
+  
   	<!-- 安全管理 -->
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">  
         <!--设置自定义realm-->  

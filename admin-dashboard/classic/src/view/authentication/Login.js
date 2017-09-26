@@ -39,8 +39,8 @@ Ext.define('Admin.view.authentication.Login', {
                 {
                     xtype: 'textfield',
                     cls: 'auth-textbox',
-                    name: 'userid',
-                    bind: '{userid}',
+                    name: 'userName',
+                    bind: '{userName}',
                     height: 55,
                     hideLabel: true,
                     allowBlank : false,
@@ -97,13 +97,15 @@ Ext.define('Admin.view.authentication.Login', {
                     listeners: {
                         click: 'onLoginButton'
                     }
-                },
-                {
+                }
+                /*
+                , {
                     xtype: 'box',
                     html: '<div class="outer-div"><div class="seperator">OR</div></div>',
                     margin: '10 0'
-                },
-                {
+                }
+                
+                ,{
                     xtype: 'button',
                     scale: 'large',
                     ui: 'facebook',
@@ -113,8 +115,9 @@ Ext.define('Admin.view.authentication.Login', {
                     listeners: {
                         click: 'onFaceBookLogin'
                     }
-                },
-                {
+                }
+                
+                ,{
                     xtype: 'box',
                     html: '<div class="outer-div"><div class="seperator">OR</div></div>',
                     margin: '10 0'
@@ -129,7 +132,7 @@ Ext.define('Admin.view.authentication.Login', {
                     listeners: {
                         click: 'onNewAccount'
                     }
-                }
+                }*/
             ]
         }
     ],
