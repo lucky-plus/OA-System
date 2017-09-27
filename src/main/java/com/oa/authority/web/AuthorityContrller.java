@@ -20,7 +20,7 @@ public class AuthorityContrller {
 	public @ResponseBody AJAXResultMessage login(HttpSession session, UserInfornation staff) {
 		if(staff.getUserName() != null){
 			
-//			try {
+			try {
 				//1.得到Subject
 				Subject subject = SecurityUtils.getSubject();
 				//2.调用登录方法
@@ -34,9 +34,9 @@ public class AuthorityContrller {
 				session.setAttribute("user", user);
 	            return new AJAXResultMessage(true,"登录成功!");
 	            
-//			} catch (Exception e) {
-//	        	return new AJAXResultMessage(false,"帐号或者密码有误!请重新登录!");
-//			}
+			} catch (Exception e) {
+	        	return new AJAXResultMessage(false,"帐号或者密码有误!请重新登录!");
+			}
 		}
     	return new AJAXResultMessage(false,"用户名不能为空!请重新登录!");
 	}
