@@ -1,7 +1,7 @@
 Ext.define('Admin.store.role.RoleStore', {
     extend: 'Ext.data.Store',
     alias: 'store.roleStore',			  //1.Store取别名（reference）
-    model: 'Admin.model.order.OrderModel',//2.设置model的全路径
+    model: 'Admin.model.role.RoleModel',//2.设置model的全路径
 	proxy: {
 		type: 'ajax',
 		url: 'role/findPage.json',	//后台OrderController中的接口url地址
