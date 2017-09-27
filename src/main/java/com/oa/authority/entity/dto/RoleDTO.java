@@ -1,5 +1,12 @@
 package com.oa.authority.entity.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+
+import com.oa.authority.entity.Module;
+import com.oa.authority.entity.Role;
 
 public class RoleDTO {
 	
@@ -7,11 +14,37 @@ public class RoleDTO {
 	private String roleName;
 	private Integer roleLevel;
 	private String modulesText;
+	private Integer[] modulesId;
 	
-	public static void entityToDto() {
+	public static void dtoToEntity(RoleDTO dto, Role entity) {
+		
+		BeanUtils.copyProperties(dto, entity);
+		
+		List<Module> modules = new ArrayList<Module>();
+		for(Integer moduleId : dto.getModulesId()) {
+			Module module = new Module();
+			module.setModuleId(moduleId);
+			modules.add(module);
+		}
+		if(modules.size() > 0) {
+			entity.setModules(modules);
+		}
 		
 	}
-	
+
+	public static void entityToDto(RoleDTO dto, Role entity) {
+		
+		BeanUtils.copyProperties(entity, dto);
+		List<Module> list = entity.getModules();
+		StringBuffer str = new StringBuffer();
+		
+		for(Module module : list) {
+			str.append(module.getModelName()+"、");
+		}
+		
+		dto.setModulesText(str.toString());
+		
+	}
 	
 	public Integer getRoleId() {
 		return roleId;
@@ -36,6 +69,12 @@ public class RoleDTO {
 	}
 	public void setModulesText(String modulesText) {
 		this.modulesText = modulesText;
+	}
+	public Integer[] getModulesId() {
+		return modulesId;
+	}
+	public void setModulesId(Integer[] modulesId) {
+		this.modulesId = modulesId;
 	}
 	
 }
