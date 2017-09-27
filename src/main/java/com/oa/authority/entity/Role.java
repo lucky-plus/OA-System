@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 
@@ -22,6 +23,7 @@ public class Role {
 	private String roleName;
 	private Integer roleLevel;
 	private List<Module> modules = new ArrayList<Module>();
+	private String modulesText;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -41,7 +43,14 @@ public class Role {
 	public List<Module> getModules() {
 		return modules;
 	}
+	@Transient
+	public String getModulesText() {
+		return modulesText;
+	}
 	
+	public void setModulesText(String modulesText) {
+		this.modulesText = modulesText;
+	}
 	public void setRoleId(Integer roleId) {
 		this.roleId = roleId;
 	}

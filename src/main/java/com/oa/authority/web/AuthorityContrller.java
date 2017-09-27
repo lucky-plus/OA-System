@@ -14,7 +14,6 @@ import com.oa.staff.entity.UserInfornation;
 import com.oa.utils.AJAXResultMessage;
 
 @Controller
-@RequestMapping("/authority")
 public class AuthorityContrller {
 
 	@RequestMapping("/loginAction")
@@ -32,7 +31,7 @@ public class AuthorityContrller {
 				UserInfornation user = (UserInfornation) subject.getPrincipal();
 				
 				//4.将用户放入session域中
-				session.setAttribute("user", user);
+				session.setAttribute("userName", user.getUserName());
 	            return new AJAXResultMessage(true,"登录成功!");
 	            
 			} catch (Exception e) {
@@ -42,10 +41,12 @@ public class AuthorityContrller {
     	return new AJAXResultMessage(false,"用户名不能为空!请重新登录!");
 	}
 	
-
-    @RequestMapping(value="/login") 
-    public String index(){ 
-    	return "login"; 
-    }
-	
+	@RequestMapping("/logoutAction")
+	public @ResponseBody AJAXResultMessage logout(HttpSession session, String userName) {
+		if(userName != null && !"".equals(userName.trim())) {
+			session.removeAttribute("userName");
+			return new AJAXResultMessage(true,"注销成功!");
+		}
+    	return new AJAXResultMessage(false,"用户名不能为空!");
+	}
 }

@@ -17,7 +17,7 @@ public class CustomCredentialsMatcher extends SimpleCredentialsMatcher {
 		
 		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 //		Object pwd = MD5Util.getMD5Value(new String(upToken.getPassword()));
-		Object pwd = upToken.getPassword();
+		Object pwd = new String(upToken.getPassword());
 		Object dbPwd = info.getCredentials();
 		return this.equals(pwd, dbPwd);
 		

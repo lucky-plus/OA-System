@@ -6,7 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10, user-scalable=yes">
 
-    <title>Admin</title>
+    <title>Home Page</title>
+    <script type="text/javascript">
+			var loginUser = '<%=session.getAttribute("userName")%>';
+	</script>
 
     <script type="text/javascript">
         var Ext = Ext || {}; // Ext namespace won't be defined yet...

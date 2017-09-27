@@ -55,6 +55,29 @@ Ext.define('Admin.store.NavigationTree', {
                 leaf: true
             },
             {
+                text: '用户管理',
+                iconCls: 'x-fa fa-leanpub',
+                expanded: false,
+                selectable: false,
+                //routeId: 'pages-parent',
+                //id: 'pages-parent',
+
+                children: [
+                    {
+                        text: '角色管理',
+                        iconCls: 'x-fa fa-file-o',
+                        viewType: 'role',
+                        leaf: true
+                    },
+                    {
+                        text: '权限设置',
+                        iconCls: 'x-fa  fa-arrow-circle-o-down',
+                        viewType: 'authority',
+                        leaf: true
+                    }
+                    ]
+            },
+            {
                 text: 'Email',
                 iconCls: 'x-fa fa-send',
                 rowCls: 'nav-tree-badge nav-tree-badge-hot',
