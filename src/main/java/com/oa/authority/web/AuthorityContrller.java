@@ -31,7 +31,7 @@ public class AuthorityContrller {
 				UserInfornation user = (UserInfornation) subject.getPrincipal();
 				
 				//4.将用户放入session域中
-				session.setAttribute("user", user);
+				session.setAttribute("userName", user.getUserName());
 	            return new AJAXResultMessage(true,"登录成功!");
 	            
 			} catch (Exception e) {
