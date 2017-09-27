@@ -1,11 +1,12 @@
-Ext.define('Admin.view.notice.noticeCompose', {
+Ext.define('Admin.view.notice.NoticeCompose', {
     extend: 'Ext.form.Panel',
     alias: 'widget.noticeCompose',
     requires: [
         'Ext.button.Button',
         'Ext.form.field.Text',
         'Ext.form.field.File',
-        'Ext.form.field.HtmlEditor'
+        'Ext.form.field.HtmlEditor',
+		'Ext.form.field.Hidden'
     ],
 
     viewModel: {
@@ -30,9 +31,17 @@ Ext.define('Admin.view.notice.noticeCompose', {
     },
 
     items: [
+		{
+		xtype: 'hidden',
+		fieldLabel: 'Id',
+		//allowBlank: false,
+		name:'noticeId',
+		handler:'noticeGridOpenEditWindow'
+		},
         {
             xtype: 'textfield',
-            fieldLabel: '标题：'
+            fieldLabel: '标题：',
+			name:'noticeName'
         },
         {
             xtype: 'htmleditor',
@@ -47,7 +56,9 @@ Ext.define('Admin.view.notice.noticeCompose', {
             flex: 1,
             minHeight: 100,
             labelAlign: 'top',
-            fieldLabel: '正文：'
+            fieldLabel: '正文：',
+			fontFamilies: ["宋体", "隶书", "黑体"],
+			name:'noticeText'
         }
     ],
 
@@ -59,7 +70,7 @@ Ext.define('Admin.view.notice.noticeCompose', {
                 xtype: 'button',
                 ui: 'soft-red',
                 text: '关闭',
-                //handler: 'onComposeDiscardClick'
+                handler: 'noticeGridWindowsClose'
             },
             {
                 xtype: 'button',
@@ -69,7 +80,8 @@ Ext.define('Admin.view.notice.noticeCompose', {
             {
                 xtype: 'button',
                 ui: 'soft-green',
-                text: '发布'
+                text: '发布',
+				handler:'noticeGridTextSubmit'
             }
         ]
     }

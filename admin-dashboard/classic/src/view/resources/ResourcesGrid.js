@@ -26,7 +26,7 @@
 			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
 		{xtype: 'actioncolumn',  text: '操作' ,width:150,tdCls: 'action',  
             items: ['-',{  
-				icon:'resources/images/icons/delete.png',
+				icon:'resources/images/icons/dowanload.png',
                 tooltip: '下载',
               //  handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {   }  
 				},'-',{  

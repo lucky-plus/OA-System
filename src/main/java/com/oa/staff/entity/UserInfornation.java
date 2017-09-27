@@ -2,6 +2,7 @@ package com.oa.staff.entity;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +28,7 @@ public class UserInfornation {
 	private String home;
 	
 	@Id
+	@Column(length=8)
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	public String getUserId() {
 		return userId;

@@ -76,7 +76,7 @@ Ext.define('Admin.view.order.OrderViewController', {
 			success : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 
 				win.close();
-				Ext.getCmp('orderGrid').store.reload();
+				//Ext.getCmp('orderGrid').store.reload();
 			}, 
 			failure : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 

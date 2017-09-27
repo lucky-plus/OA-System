@@ -10,13 +10,14 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oa.staff.entity.UserInfornation;
 
 @Entity
 @Table(name="t_notice")
 public class Notice {
 	
-	private Integer noticeId;
+	private Long noticeId;
 	private String noticeName;
 	private Date noticeTime;
 	private String noticeText;
@@ -24,12 +25,15 @@ public class Notice {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	public Integer getNoticeId() {
+	public Long getNoticeId() {
 		return noticeId;
 	}
+
 	public String getNoticeName() {
 		return noticeName;
 	}
+	
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
 	public Date getNoticeTime() {
 		return noticeTime;
 	}
@@ -42,7 +46,7 @@ public class Notice {
 		return user;
 	}
 	
-	public void setNoticeId(Integer noticeId) {
+	public void setNoticeId(Long noticeId) {
 		this.noticeId = noticeId;
 	}
 	public void setNoticeName(String noticeName) {

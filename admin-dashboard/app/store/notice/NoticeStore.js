@@ -1,21 +1,16 @@
 Ext.define('Admin.store.notice.NoticeStore', {
     extend: 'Ext.data.Store',
     alias: 'store.noticeStore',			  //1.Store取别名（reference）
-    data:{
-		'items':[
-			{ 'noticeId': 1, 'noticeName': '文章标题',  "noticeTime":"2017-7-13",  "noticeAuthor":"Lisa"  },
-			{ 'noticeId': 2, 'noticeName': '文章标题',  "noticeTime":"2017-7-13",  "noticeAuthor":"Lisa"  },
-			{ 'noticeId': 3, 'noticeName': '文章标题',  "noticeTime":"2017-7-13",  "noticeAuthor":"Lisa"  },
-
-
-		]
-	},
+	model: 'Admin.model.notice.NoticeModel',
 	proxy: {
-		type: 'memory',
+		type: 'ajax',
+		url: 'notice/findPage.json',
 		reader: {
-			type: 'json',
-			root: 'items'
-		}
+			type:'json', 
+			rootProperty: 'content',		//结果集名字的属性
+			totalProperty: 'totalElements'	
+		},
+		simpleSortMode: true
 	},
 
 	pageSize: 25,
@@ -23,6 +18,6 @@ Ext.define('Admin.store.notice.NoticeStore', {
 	remoteSort: true,//全局排序
     sorters: {
         direction: 'DESC',
-        property: 'id'
+        property: 'noticeId'
     }
 });
