@@ -1,7 +1,7 @@
 ﻿Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
       extend: 'Ext.grid.Panel',					//2.继承的组件类型
 	//3.重写继承组件的属性：
-    xtype: 'NoticeGrid',
+    xtype: 'noticeGrid',
 	title:'<b>公告列表</b>',
 	bind:'{noticeLists}',
 	id:'noticeGrid',
@@ -15,7 +15,7 @@
 				xtype:'orderWindow'
 				},{
 					title:'公告',
-					items:[Ext.apply({xtype:'noticeCompose'})]
+					items:[Ext.apply({xtype:'noticeText'})]
 				});
 				Ext.create(cfg);
 			}
@@ -30,21 +30,12 @@
 
 				icon:'resources/images/icons/editor.png',
                 tooltip: '编辑',
-				handler:function(){
-					var cfg = Ext.apply({
-					xtype:'orderWindow'
-					},{
-						title:'公告',
-						items:[Ext.apply({xtype:'noticeCompose'})]
-					});
-					Ext.create(cfg);
-				}
-                
-               // handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {    }  
+				handler: ('noticeGridOpenEditWindow')
+				
             },'-', {  
 				icon:'resources/images/icons/delete.png',
                 tooltip: '删除',
-              //  handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {   }  
+                handler: ('noticeGridDeleteDate') 
             }]  }
 
 	],	
@@ -62,7 +53,7 @@
 			},'-', {
 				text: '删除',
 				iconCls:'x-fa fa-trash',
-				handler: 'orderGridDelete'
+				handler: 'noticeGridDeleteDate'
 			},'-',{xtype:'tbtext',
 				text:'标题：'
 			},{
@@ -91,14 +82,4 @@
 		emptyMsg: "No topics to display",
 	})
 	
-});
-
-Ext.define('Admin.model.notcie.NoticeModel', {
-    extend: 'Admin.model.Base',
-    fields: [
-		{name:'noticeId'			,type: 'int'},
-        {name:'noticeName' ,type: 'string'},
-        {name:'noticeTime'	,type: 'date'},
-		{name:'noticeAuthor',type: 'string'}
-    ]
 });

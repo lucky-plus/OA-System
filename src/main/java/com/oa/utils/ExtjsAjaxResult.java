@@ -6,6 +6,7 @@ public class ExtjsAjaxResult {
 
 	public ExtjsAjaxResult() {}
 	public ExtjsAjaxResult(boolean success, String msg) {
+		super();
 		this.success = success;
 		this.msg = msg;
 	}
