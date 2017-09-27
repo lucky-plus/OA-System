@@ -41,4 +41,12 @@ public class AuthorityContrller {
     	return new AJAXResultMessage(false,"用户名不能为空!请重新登录!");
 	}
 	
+	@RequestMapping("/logoutAction")
+	public @ResponseBody AJAXResultMessage logout(HttpSession session, String userName) {
+		if(userName != null && !"".equals(userName.trim())) {
+			session.removeAttribute("userName");
+			return new AJAXResultMessage(true,"注销成功!");
+		}
+    	return new AJAXResultMessage(false,"用户名不能为空!");
+	}
 }

@@ -33,7 +33,6 @@ Ext.define('Admin.view.authentication.AuthenticationController', {
             }
         });
     },
-
     onLoginAsButton: function() {
         this.redirectTo('login', true);
     },

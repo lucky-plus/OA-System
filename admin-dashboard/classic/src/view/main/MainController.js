@@ -157,6 +157,27 @@ Ext.define('Admin.view.main.MainController', {
         }
     },
 
+    onLogoutButton: function() {
+        //注销，退出登录
+        var me = this;
+        Ext.Ajax.request({
+            url: 'logoutAction',
+            method: 'post',
+            params: {
+                userName: loginUser
+            },
+            success: function(response, options) {
+                var json = Ext.util.JSON.decode(response.responseText);
+                if(json.success){
+                    me.redirectTo('login', true);
+                    // window.location.reload();
+                }else{
+                    Ext.Msg.alert('操作失败。请重试', json.msg);
+                }
+            }
+        });
+    },
+
     onSearchRouteChange: function () {
         this.setCurrentView('searchresults');
     },

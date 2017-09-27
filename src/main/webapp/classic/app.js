@@ -99429,8 +99429,9 @@ Ext.define('Admin.view.profile.UserProfileModel', {extend:Ext.app.ViewModel, ali
 url:'~api/usertimeline'}}}});
 Ext.define('Admin.view.main.Main', {extend:Ext.container.Viewport, controller:'main', viewModel:'main', cls:'sencha-dash-viewport', itemId:'mainView', layout:{type:'vbox', align:'stretch'}, listeners:{render:'onMainViewRender'}, items:[{xtype:'toolbar', cls:'sencha-dash-dash-headerbar shadow', height:64, itemId:'headerBar', items:[{xtype:'component', reference:'senchaLogo', cls:'sencha-logo', html:'\x3cdiv class\x3d"main-logo"\x3e\x3cimg src\x3d"resources/images/company-logo.png"\x3eSencha\x3c/div\x3e', 
 width:250}, {margin:'0 0 0 8', ui:'header', iconCls:'x-fa fa-navicon', id:'main-navigation-btn', handler:'onToggleNavigationSize'}, '-\x3e', {xtype:'segmentedbutton', margin:'0 16 0 0', platformConfig:{ie9m:{hidden:true}}, items:[{iconCls:'x-fa fa-desktop', pressed:true}, {iconCls:'x-fa fa-tablet', handler:'onSwitchToModern', tooltip:'Switch to modern toolkit'}]}, {iconCls:'x-fa fa-search', ui:'header', href:'#searchresults', hrefTarget:'_self', tooltip:'See latest search'}, {iconCls:'x-fa fa-envelope', 
-ui:'header', href:'#email', hrefTarget:'_self', tooltip:'Check your email'}, {iconCls:'x-fa fa-question', ui:'header', href:'#faq', hrefTarget:'_self', tooltip:"Help / FAQ's"}, {iconCls:'x-fa fa-th-large', ui:'header', href:'#profile', hrefTarget:'_self', tooltip:'See your profile'}, {xtype:'tbtext', text:loginUser, cls:'top-user-name'}, {xtype:'image', cls:'header-right-profile-image', height:35, width:35, alt:'current user image', src:'resources/images/user-profile/2.png'}]}, {xtype:'maincontainerwrap', 
-id:'main-view-detail-wrap', reference:'mainContainerWrap', flex:1, items:[{xtype:'treelist', reference:'navigationTreeList', itemId:'navigationTreeList', ui:'nav', store:'NavigationTree', width:250, expanderFirst:false, expanderOnly:false, listeners:{selectionchange:'onNavigationTreeSelectionChange'}}, {xtype:'container', flex:1, reference:'mainCardPanel', cls:'sencha-dash-right-main-container', itemId:'contentPanel', layout:{type:'card', anchor:'100%'}}]}]});
+ui:'header', href:'#email', hrefTarget:'_self', tooltip:'Check your email'}, {iconCls:'x-fa fa-question', ui:'header', href:'#faq', hrefTarget:'_self', tooltip:"Help / FAQ's"}, {iconCls:'x-fa fa-th-large', ui:'header', href:'#profile', hrefTarget:'_self', tooltip:'See your profile'}, {xtype:'tbtext', text:loginUser, cls:'top-user-name'}, {xtype:'image', cls:'header-right-profile-image', height:35, width:35, alt:'current user image', src:'resources/images/user-profile/2.png'}, {xtype:'button', reference:'logoutButton', 
+scale:'small', ui:'soft-blue', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'注销', formBind:true, listeners:{click:'onLogoutButton'}}]}, {xtype:'maincontainerwrap', id:'main-view-detail-wrap', reference:'mainContainerWrap', flex:1, items:[{xtype:'treelist', reference:'navigationTreeList', itemId:'navigationTreeList', ui:'nav', store:'NavigationTree', width:250, expanderFirst:false, expanderOnly:false, listeners:{selectionchange:'onNavigationTreeSelectionChange'}}, {xtype:'container', flex:1, 
+reference:'mainCardPanel', cls:'sencha-dash-right-main-container', itemId:'contentPanel', layout:{type:'card', anchor:'100%'}}]}]});
 Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', stores:['NavigationTree'], defaultToken:'dashboard', mainView:'Admin.view.main.Main', onAppUpdate:function() {
   Ext.Msg.confirm('Application Update', 'This application has an update, reload?', function(choice) {
     if (choice === 'yes') {
@@ -99493,9 +99494,9 @@ Ext.define('Admin.view.authentication.LockScreen', {extend:Admin.view.authentica
 height:80, margin:20, width:80, alt:'lockscreen-image', cls:'lockscreen-profile-img auth-profile-img', src:'resources/images/user-profile/2.png'}, {xtype:'box', html:"\x3cdiv class\x3d'user-name-text'\x3e Goff Smith \x3c/div\x3e\x3cdiv class\x3d'user-post-text'\x3e Project manager \x3c/div\x3e"}]}, {xtype:'container', padding:'0 20', layout:{type:'vbox', align:'stretch'}, defaults:{margin:'10 0'}, items:[{xtype:'textfield', labelAlign:'top', cls:'lock-screen-password-textbox', labelSeparator:'', 
 fieldLabel:"It's been a while. please enter your password to resume", emptyText:'Password', inputType:'password', allowBlank:false, triggers:{glyphed:{cls:'trigger-glyph-noop password-trigger'}}}, {xtype:'button', reference:'loginButton', scale:'large', ui:'soft-blue', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Login', formBind:true, listeners:{click:'onLoginButton'}}, {xtype:'component', html:'\x3cdiv style\x3d"text-align:right"\x3e' + '\x3ca href\x3d"#login" class\x3d"link-forgot-password"\x3e' + 
 'or, sign in using other credentials\x3c/a\x3e' + '\x3c/div\x3e'}]}]}]});
-Ext.define('Admin.view.authentication.Login', {extend:Admin.view.authentication.LockingWindow, xtype:'login', title:"Let's Log In", defaultFocus:'authdialog', items:[{xtype:'authdialog', defaultButton:'loginButton', autoComplete:true, bodyPadding:'20 20', cls:'auth-dialog-login', header:false, width:415, layout:{type:'vbox', align:'stretch'}, defaults:{margin:'5 0'}, items:[{xtype:'label', text:'Sign into your account'}, {xtype:'textfield', cls:'auth-textbox', name:'userName', bind:'{userName}', 
-height:55, hideLabel:true, allowBlank:false, emptyText:'user id', triggers:{glyphed:{cls:'trigger-glyph-noop auth-email-trigger'}}}, {xtype:'textfield', cls:'auth-textbox', height:55, hideLabel:true, emptyText:'Password', inputType:'password', name:'password', bind:'{password}', allowBlank:false, triggers:{glyphed:{cls:'trigger-glyph-noop auth-password-trigger'}}}, {xtype:'container', layout:'hbox', items:[{xtype:'checkboxfield', flex:1, cls:'form-panel-font-color rememberMeCheckbox', height:30, 
-bind:'{persist}', boxLabel:'Remember me'}, {xtype:'box', html:'\x3ca href\x3d"#passwordreset" class\x3d"link-forgot-password"\x3e Forgot Password ?\x3c/a\x3e'}]}, {xtype:'button', reference:'loginButton', scale:'large', ui:'soft-green', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Login', formBind:true, listeners:{click:'onLoginButton'}}]}], initComponent:function() {
+Ext.define('Admin.view.authentication.Login', {extend:Admin.view.authentication.LockingWindow, xtype:'login', title:"Let's Log In", defaultFocus:'authdialog', items:[{xtype:'authdialog', defaultButton:'loginButton', autoComplete:true, bodyPadding:'20 20', cls:'auth-dialog-login', header:false, width:415, layout:{type:'vbox', align:'stretch'}, defaults:{margin:'5 0'}, items:[{xtype:'label', text:'请输入用户名和密码：'}, {xtype:'textfield', cls:'auth-textbox', name:'userName', bind:'{userName}', height:55, hideLabel:true, 
+allowBlank:false, emptyText:'请输入用户名', triggers:{glyphed:{cls:'trigger-glyph-noop auth-email-trigger'}}}, {xtype:'textfield', cls:'auth-textbox', height:55, hideLabel:true, emptyText:'请输入密码', inputType:'password', name:'password', bind:'{password}', allowBlank:false, triggers:{glyphed:{cls:'trigger-glyph-noop auth-password-trigger'}}}, {xtype:'container', layout:'hbox', items:[{xtype:'checkboxfield', flex:1, cls:'form-panel-font-color rememberMeCheckbox', height:30, bind:'{persist}', boxLabel:'记住帐号'}, 
+{xtype:'box', html:'\x3ca href\x3d"#passwordreset" class\x3d"link-forgot-password"\x3e 忘记密码？ \x3c/a\x3e'}]}, {xtype:'button', reference:'loginButton', scale:'large', ui:'soft-green', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'登录', formBind:true, listeners:{click:'onLoginButton'}}]}], initComponent:function() {
   this.addCls('user-login-register-container');
   this.callParent(arguments);
 }});
@@ -99762,6 +99763,16 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
       me.setCurrentView('login');
     });
   }
+}, onLogoutButton:function() {
+  var me = this;
+  Ext.Ajax.request({url:'logoutAction', method:'post', params:{userName:loginUser}, success:function(response, options) {
+    var json = Ext.util.JSON.decode(response.responseText);
+    if (json.success) {
+      me.redirectTo('login', true);
+    } else {
+      Ext.Msg.alert('操作失败。请重试', json.msg);
+    }
+  }});
 }, onSearchRouteChange:function() {
   this.setCurrentView('searchresults');
 }, onSwitchToModern:function() {
