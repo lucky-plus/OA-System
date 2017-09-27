@@ -4,6 +4,6 @@ Ext.define('Admin.model.notice.NoticeModel', {
 		{name:'noticeId',type: 'int'},
         {name:'noticeName' ,type: 'string'},
         {name:'noticeTime'	,type: 'date'},
-		{name:'noticeAuthor',type: 'string'}
+		{name:'userName',type: 'string'}
     ]
 });

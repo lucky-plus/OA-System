@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.oa.message.entity.Notice;
+import com.oa.message.entity.dto.NoticeDTO;
 
 
 
@@ -14,6 +15,6 @@ public interface INoticeService {
 	public void delete(Notice entity);
 	public void delete(Long id);
 	public void delete(Long[] ids);
-	public List<Notice> findAll();
-	public Page<Notice> findAll(Pageable pageable);
+	public List<NoticeDTO> findAll();
+	public Page<NoticeDTO> findAll(Pageable pageable);
 }

@@ -1,16 +1,19 @@
 package com.oa.message.service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.oa.message.dao.INoticeDao;
 import com.oa.message.entity.Notice;
+import com.oa.message.entity.dto.NoticeDTO;
 
 
 
@@ -47,13 +50,33 @@ public class NoticeService implements INoticeService{
 		}
 		
 	}
+	
 	@Override
-	public List<Notice> findAll() {
-		return (List<Notice>) noticeDao.findAll();
+	public List<NoticeDTO> findAll() {
+		List<Notice> noticeList = (List<Notice>) noticeDao.findAll();
+		List<NoticeDTO> dtoList = new ArrayList<NoticeDTO>();
+		
+		for(Notice notice : noticeList) {
+			NoticeDTO dto = new NoticeDTO();
+			NoticeDTO.entityToDto(notice, dto);
+			dtoList.add(dto);
+		}
+		return dtoList;
 	}
+	
 	@Override
-	public Page<Notice> findAll(Pageable pageable) {
-		return noticeDao.findAll(pageable);
+	public Page<NoticeDTO> findAll(Pageable pageable) {
+		List<Notice> noticeList = (List<Notice>) noticeDao.findAll();
+		List<NoticeDTO> dtoList = new ArrayList<NoticeDTO>();
+		
+		for(Notice notice : noticeList) {
+			NoticeDTO dto = new NoticeDTO();
+			NoticeDTO.entityToDto(notice, dto);
+			dtoList.add(dto);
+		}
+		
+		PageImpl<NoticeDTO> page = new PageImpl<NoticeDTO>(dtoList, pageable, dtoList.size());
+		return page;
 	}
 
 }

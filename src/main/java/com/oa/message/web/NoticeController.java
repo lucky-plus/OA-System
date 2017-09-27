@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oa.message.entity.Notice;
+import com.oa.message.entity.dto.NoticeDTO;
 import com.oa.message.service.INoticeService;
 import com.oa.utils.ExtjsAjaxResult;
 import com.oa.utils.ExtjsPageable;
@@ -27,13 +28,13 @@ public class NoticeController {
 
 	@Autowired
 	private INoticeService noticeService;
-	public @ResponseBody List<Notice> findAll()
+	public @ResponseBody List<NoticeDTO> findAll()
 	{
 		return noticeService.findAll();
 	}
 	
 	@RequestMapping("/findPage")
-	public @ResponseBody Page<Notice> findAll(ExtjsPageable pageable)
+	public @ResponseBody Page<NoticeDTO> findAll(ExtjsPageable pageable)
 	{
 		return noticeService.findAll(pageable.getPageable());
 	}

@@ -24,7 +24,7 @@
 		},
 		{text: '发布时间'  ,sortable:true ,dataIndex:'noticeTime'  ,width:150
 			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
-		{text: '发布者',dataIndex:'noticeAuthor'    ,width:150},
+		{text: '发布者',dataIndex:'userName'    ,width:150},
 		{xtype: 'actioncolumn',  text: '操作' ,width:100,tdCls: 'action',  
             items: ['-',{  
 
