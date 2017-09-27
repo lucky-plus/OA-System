@@ -6,7 +6,7 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 	//3.重写继承组件的属性：
     xtype: 'roleGrid',
 	title:'<b>角色列表</b>',
-	//bind:'{orderLists}',
+	bind:'{roleLists}',
 	id:'roleGrid',
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	columns: [

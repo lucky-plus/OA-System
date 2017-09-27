@@ -32,6 +32,7 @@ public class AuthorityContrller {
 				
 				//4.将用户放入session域中
 				session.setAttribute("userName", user.getUserName());
+				session.setAttribute("userId", user.getUserId());
 	            return new AJAXResultMessage(true,"登录成功!");
 	            
 			} catch (Exception e) {
@@ -45,8 +46,10 @@ public class AuthorityContrller {
 	public @ResponseBody AJAXResultMessage logout(HttpSession session, String userName) {
 		if(userName != null && !"".equals(userName.trim())) {
 			session.removeAttribute("userName");
+			session.removeAttribute("userId");
 			return new AJAXResultMessage(true,"注销成功!");
 		}
-    	return new AJAXResultMessage(false,"用户名不能为空!");
+    	return new AJAXResultMessage(false,"用户名或Id为空!");
 	}
+	
 }
