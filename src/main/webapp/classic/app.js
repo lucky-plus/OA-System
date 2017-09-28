@@ -99292,57 +99292,7 @@ Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', mod
 Ext.define('Admin.store.notice.NoticeStore', {extend:Ext.data.Store, alias:'store.noticeStore', model:'Admin.model.notice.NoticeModel', proxy:{type:'ajax', url:'notice/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'noticeId'}});
 Ext.define('Admin.store.order.OrderStore', {extend:Ext.data.Store, alias:'store.orderStore', model:'Admin.model.order.OrderModel', proxy:{type:'ajax', url:'order/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
 Ext.define('Admin.store.resources.ResourcesStore', {extend:Ext.data.Store, alias:'store.resourcesStore', data:{'items':[{'resourcesId':1, 'resourcesName':'资料1', 'resourcesTime':'2017-7-13'}, {'resourcesId':2, 'resourcesName':'资料2', 'resourcesTime':'2017-7-13'}, {'resourcesId':3, 'resourcesName':'资料3', 'resourcesTime':'2017-7-13'}]}, proxy:{type:'memory', reader:{type:'json', root:'items'}}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
-
-Ext.define('Admin.store.role.RoleStore', {
-    extend: 'Ext.data.Store',
-<<<<<<< HEAD
-    alias: 'store.roleStore',			  //1.Store取别名（reference）
-    model: 'Admin.model.role.RoleModel',//2.设置model的全路径
-	proxy: {
-		type: 'ajax',
-		url: 'role/findPage.json',	//后台OrderController中的接口url地址
-		reader: {
-			type:'json', 
-			rootProperty: 'content',		//结果集名字的属性
-			totalProperty: 'totalElements'	//一共多少条记录的属性
-		},
-		simpleSortMode: true	//简单排序模式
-	},
-	pageSize: 25,
-	autoLoad: true,
-	remoteSort: true,//全局排序
-    sorters: {
-        direction: 'DESC',
-        property: 'roleId'
-    }
-});
-
-
-
-=======
-    alias: 'store.roleStore',       //1.Store取别名（reference）
-    model: 'Admin.model.role.RoleModel',//2.设置model的全路径
-    proxy: {
-    type: 'ajax',
-    url: 'role/findPage.json',
-    reader: {
-      type:'json', 
-      rootProperty: 'content',    //结果集名字的属性
-      totalProperty: 'totalElements'  //一共多少条记录的属性
-    },
-    simpleSortMode: true
-  },
-
-  pageSize: 25,
-  autoLoad: true,
-  remoteSort: true,//全局排序
-    sorters: {
-        direction: 'DESC',
-        property: 'roleId'
-    }
-});
->>>>>>> branch 'master' of https://github.com/lucky-plus/OA-System.git
-
+Ext.define('Admin.store.role.RoleStore', {extend:Ext.data.Store, alias:'store.roleStore', model:'Admin.model.role.RoleModel', proxy:{type:'ajax', url:'role/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'roleId'}});
 Ext.define('Admin.store.search.Results', {extend:Ext.data.Store, alias:'store.searchresults', model:'Admin.model.search.Result', proxy:{type:'api', url:'~api/search/results'}, autoLoad:'true', sorters:{direction:'ASC', property:'title'}});
 Ext.define('Admin.store.search.Users', {extend:Ext.data.Store, alias:'store.searchusers', model:'Admin.model.search.User', proxy:{type:'api', url:'~api/search/users'}, autoLoad:'true', sorters:{direction:'ASC', property:'fullname'}});
 Ext.define('Admin.view.chart.Bounces', {extend:Ext.chart.CartesianChart, xtype:'chartbounces', animation:!Ext.isIE9m && Ext.os.is.Desktop, height:22, background:'rgba(255, 255, 255, 1)', colors:['rgba(250,222,225, 0.8)'], insetPadding:{top:0, left:0, right:0, bottom:0}, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y2value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'area', xField:'xvalue', yField:['y2value']}], 
@@ -99898,152 +99848,15 @@ Ext.define('Admin.view.main.MainModel', {extend:Ext.app.ViewModel, alias:'viewmo
 Ext.define('Admin.view.notice.notice', {extend:Ext.container.Container, xtype:'notice', controller:'NoticeViewController', viewModel:{type:'noticeViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'noticeGrid'}]});
 Ext.define('Admin.view.notice.NoticeCompose', {extend:Ext.form.Panel, alias:'widget.noticeCompose', viewModel:{type:'noticeCompose'}, controller:'NoticeViewController', cls:'noticeCompose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'noticeId', handler:'noticeGridOpenEditWindow'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'标题：', 
 name:'noticeName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'正文：', fontFamilies:['宋体', '隶书', '黑体'], name:'noticeText'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-red', text:'关闭', handler:'noticeGridWindowsClose'}, {xtype:'button', ui:'gray', text:'存为草稿'}, {xtype:'button', ui:'soft-green', text:'发布', handler:'noticeGridTextSubmit'}]}});
-<<<<<<< HEAD
-Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
-      extend: 'Ext.grid.Panel',					//2.继承的组件类型
-	//3.重写继承组件的属性：
-    xtype: 'noticeGrid',
-	title:'<b>公告列表</b>',
-	bind:'{noticeLists}',
-	id:'noticeGrid',
-	selModel: Ext.create('Ext.selection.CheckboxModel'),
-	columns: [
-		{text: '公告编号'			  ,sortable:true ,dataIndex:'noticeId',hidden:true},
-        {text: '标题' ,dataIndex:'noticeName' ,flex:1 ,
-			listeners:{
-				click:function(){
-				var cfg = Ext.apply({
-				xtype:'orderWindow'
-				},{
-					title:'公告',
-					items:[Ext.apply({xtype:'noticeText'})]
-				});
-				Ext.create(cfg);
-			}
-		}
-		
-		},
-		{text: '发布时间'  ,sortable:true ,dataIndex:'noticeTime'  ,width:150
-			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
-		{text: '发布者',dataIndex:'userName'    ,width:150},
-		{xtype: 'actioncolumn',  text: '操作' ,width:100,tdCls: 'action',  
-            items: ['-',{  
-
-				icon:'resources/images/icons/editor.png',
-                tooltip: '编辑',
-				handler: ('noticeGridOpenEditWindow')
-				
-            },'-', {  
-				icon:'resources/images/icons/delete.png',
-                tooltip: '删除',
-                handler: ('noticeGridDeleteDate') 
-            }]  }
-
-	],	
-
-
-
-
-
-	tbar: Ext.create('Ext.Toolbar', {
-			id: 'xiaotingzi2' ,
-			items:[ {
-				text: '新增',
-				iconCls:'x-fa fa-plus',
-				ui:'soft-blue',
-				handler: 'noticeGridAdd'
-			},'-', {
-				text: '删除',
-				iconCls:'x-fa fa-trash',
-				handler: 'noticeGridDeleteDate'
-			},'-',{xtype:'tbtext',
-				text:'标题：'
-			},{
-				xtype:'textfield',
-				width:300
-			},{xtype:'tbtext',
-				text:'时间：'
-			},{
-				 xtype:'datefield',  
-                    itemId:'beginDate',  
-                    format:'Y-m-d',  
-					
-			
-			},{xtype:'tbtext',
-				text:'至：'
-			},{
-				xtype:'datefield',  
-                    itemId:'endDate',  
-                    format:'Y-m-d',  
-					listeners: {  
-					focus: function(){
-						var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
-						this.setMinValue(cc);
-						}  	
-					}
-			},{
-				text: '查找',
-				handler: 'noticeGridAdd'
-			}
-			]
-	}),
-	
-	
-	
-	bbar: Ext.create('Ext.PagingToolbar', {
-		bind:'{orderLists}',
-		displayInfo: true,
-		displayMsg: '第 {0} - {1}条， 共 {2}条',
-		emptyMsg: "No topics to display",
-	})
-	
-});
-
-Ext.define('Admin.view.notcie.NoticeText', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.noticeText',
-    requires: [
-        'Ext.form.field.Text',
-		'Ext.form.DisplayField'
-    ],
-	controller: 'NoticeViewController',
-    layout: {
-        type:'vbox',
-        align:'stretch'
-    },
-
-    bodyPadding: 10,
-    scrollable: true,
-
-    defaults: {
-        labelWidth: 100,
-        labelSeparator: ''
-    },
-	 items: [
-		{
-		xtype: 'displayfield',
-		value:'12'
-		
-	},{
-		xtype: 'displayfield',
-		name:'noticeText'
-	}
-]
-	
-}
-);
-
-=======
 Ext.define('Admin.view.notice.NoticeGrid', {extend:Ext.grid.Panel, xtype:'noticeGrid', title:'\x3cb\x3e公告列表\x3c/b\x3e', bind:'{noticeLists}', id:'noticeGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1, listeners:{click:function() {
   var cfg = Ext.apply({xtype:'orderWindow'}, {title:'公告', items:[Ext.apply({xtype:'noticeText'})]});
   Ext.create(cfg);
 }}}, {text:'发布时间', sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:'noticeGridOpenEditWindow'}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'noticeGridDeleteDate'}]}], tbar:Ext.create('Ext.Toolbar', {id:'xiaotingzi2', items:[{text:'新增', 
-iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'noticeGridDeleteDate'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', itemId:'beginDate', format:'Y-m-d'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', itemId:'endDate', format:'Y-m-d', listeners:{focus:function(e, eo) {
+iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'noticeGridDeleteDate'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', itemId:'beginDate', format:'Y-m-d'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', itemId:'endDate', format:'Y-m-d', listeners:{focus:function() {
   var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
   this.setMinValue(cc);
 }}}, {text:'查找', handler:'noticeGridAdd'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{orderLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
-Ext.define('Admin.view.notcie.NoticeText', {extend:Ext.form.Panel, alias:'widget.noticeText', controller:'NoticeViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'displayfield', name:'noticeName', style:'font-color:20px'}, {xtype:'displayfield', name:'noticeText'}]});
->>>>>>> branch 'master' of https://github.com/lucky-plus/OA-System.git
+Ext.define('Admin.view.notcie.NoticeText', {extend:Ext.form.Panel, alias:'widget.noticeText', controller:'NoticeViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'displayfield', name:'noticeName'}, {xtype:'displayfield', name:'noticeText'}]});
 Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewController, alias:'controller.NoticeViewController', noticeGridAdd:function(bt) {
   var cfg = Ext.apply({xtype:'orderWindow'}, {title:'新建公告', items:[Ext.apply({xtype:'noticeCompose'})]});
   Ext.create(cfg);
@@ -100195,78 +100008,9 @@ Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewC
   Ext.create(cfg);
 }});
 Ext.define('Admin.view.resources.ResourcesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.resourcesViewModel', stores:{resourcesLists:{type:'resourcesStore', autoLoad:true}}});
-<<<<<<< HEAD
-Ext.define('Admin.view.role.Role', {		//1.修改文件路径
-      extend: 'Ext.container.Container',	//2.继承的组件类型
-	//3.重写继承组件的属性：
-    xtype: 'role',
-
-    controller: 'RoleViewController',			//视图绑定viewController
-    viewModel : {type: 'roleViewModel'},	//视图绑定viewModel
-	
-
-    layout:'fit',
-    margin: '20 20 20 20',
-    items: [{
-		xtype: 'roleGrid'
-	}]
-});
-
-/**
-*订单模块子视图
-*/
-Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
-      extend: 'Ext.grid.Panel',					//2.继承的组件类型
-	//3.重写继承组件的属性：
-    xtype: 'roleGrid',
-	title:'<b>角色列表</b>',
-	bind:'{roleLists}',
-	id:'roleGrid',
-	selModel: Ext.create('Ext.selection.CheckboxModel'),
-	columns: [
-		{text: 'roleId'	,sortable:true ,dataIndex:'roleId',hidden:true},
-        {text: '角色名称' ,sortable:true ,dataIndex:'roleName' ,width:150},
-		{text: '角色等级'  ,sortable:true ,dataIndex:'roleLevel'  ,width:125},
-		{text: '所拥有的权限', sortable:true ,dataIndex:'' ,flex:1}
-	],	
-
-
-	tbar: Ext.create('Ext.Toolbar', {
-			items:[ {
-			text: '添加角色',
-			iconCls:'x-fa fa-plus',
-			ui:'soft-blue',
-			//handler: 'orderGridOnClick'
-			listeners:{
-				click:'roleGridAdd'
-			}
-		},'-', {
-			text: '修改',
-			iconCls:'x-fa fa-edit',
-			handler: 'roleGridEdit'
-		},'-', {
-			text: '删除',
-			iconCls:'x-fa fa-trash',
-			handler: 'roleGridDelete'
-		}]
-	}),
-	
-	
-	
-	bbar: Ext.create('Ext.PagingToolbar', {
-		bind:'{roleLists}',
-		displayInfo: true,
-		displayMsg: '第 {0} - {1}条， 共 {2}条',
-		emptyMsg: "暂无数据",
-	})
-	
-});
-
-=======
 Ext.define('Admin.view.role.Role', {extend:Ext.container.Container, xtype:'role', controller:'RoleViewController', viewModel:{type:'roleViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'roleGrid'}]});
 Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:125}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
 iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
->>>>>>> branch 'master' of https://github.com/lucky-plus/OA-System.git
 Ext.define('Admin.view.role.RoleViewController', {extend:Ext.app.ViewController, alias:'controller.RoleViewController', roleGridAdd:function(bt) {
   var cfg = Ext.apply({xtype:'roleWindow'}, {title:'添加角色', items:[Ext.apply({xtype:'roleForm'})]});
   Ext.create(cfg);
