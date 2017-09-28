@@ -14,14 +14,14 @@ public class RoleDTO {
 	private String roleName;
 	private Integer roleLevel;
 	private String modulesText;
-	private Integer[] modulesId;
+	private Integer[] moduleIds;
 	
 	public static void dtoToEntity(RoleDTO dto, Role entity) {
 		
 		BeanUtils.copyProperties(dto, entity);
 		
 		List<Module> modules = new ArrayList<Module>();
-		for(Integer moduleId : dto.getModulesId()) {
+		for(Integer moduleId : dto.getModuleIds()) {
 			Module module = new Module();
 			module.setModuleId(moduleId);
 			modules.add(module);
@@ -41,7 +41,6 @@ public class RoleDTO {
 		for(Module module : list) {
 			str.append(module.getModelName()+"、");
 		}
-		
 		dto.setModulesText(str.toString());
 		
 	}
@@ -70,11 +69,11 @@ public class RoleDTO {
 	public void setModulesText(String modulesText) {
 		this.modulesText = modulesText;
 	}
-	public Integer[] getModulesId() {
-		return modulesId;
+	public Integer[] getModuleIds() {
+		return moduleIds;
 	}
-	public void setModulesId(Integer[] modulesId) {
-		this.modulesId = modulesId;
+	public void setModuleIds(Integer[] moduleIds) {
+		this.moduleIds = moduleIds;
 	}
 	
 }

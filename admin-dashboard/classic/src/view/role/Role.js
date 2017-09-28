@@ -9,8 +9,8 @@ Ext.define('Admin.view.role.Role', {		//1.修改文件路径
     xtype: 'role',
 
     controller: 'RoleViewController',			//视图绑定viewController
+    
     viewModel : {type: 'roleViewModel'},	//视图绑定viewModel
-	
 
     layout:'fit',
     margin: '20 20 20 20',
