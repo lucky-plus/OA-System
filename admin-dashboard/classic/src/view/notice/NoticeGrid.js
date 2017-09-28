@@ -45,6 +45,7 @@
 
 
 	tbar: Ext.create('Ext.Toolbar', {
+			id: 'xiaotingzi2' ,
 			items:[ {
 				text: '新增',
 				iconCls:'x-fa fa-plus',
@@ -62,13 +63,26 @@
 			},{xtype:'tbtext',
 				text:'时间：'
 			},{
-				xtype:'datefield',
+				 xtype:'datefield',  
+                    itemId:'beginDate',  
+                    format:'Y-m-d',  
+					
+			
 			},{xtype:'tbtext',
 				text:'至：'
 			},{
-				xtype:'datefield',
+				xtype:'datefield',  
+                    itemId:'endDate',  
+                    format:'Y-m-d',  
+					listeners: {  
+					focus: function(e,eo){
+						var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
+						this.setMinValue(cc);
+						}  	
+					}
 			},{
-				text:'查找'
+				text: '查找',
+				handler: 'noticeGridAdd'
 			}
 			]
 	}),
