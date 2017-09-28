@@ -27,7 +27,9 @@ public class NoticeService implements INoticeService{
 	public void setNoticeDao(INoticeDao noticeDao) {
 		this.noticeDao = noticeDao;
 	}
-	public void save(Notice entity) {
+	public void save(NoticeDTO dto) {
+		Notice entity = new Notice();
+		NoticeDTO.dtoToEntity(dto, entity);
 		noticeDao.save(entity);
 	}
 
@@ -38,14 +40,14 @@ public class NoticeService implements INoticeService{
 	}
 
 	@Override
-	public void delete(Long id) {
+	public void delete(Integer id) {
 		noticeDao.delete(id);
 		
 	}
 
 	@Override
-	public void delete(Long[] ids) {
-		for (Long id : ids) {
+	public void delete(Integer[] ids) {
+		for (Integer id : ids) {
 			noticeDao.delete(id);
 		}
 		

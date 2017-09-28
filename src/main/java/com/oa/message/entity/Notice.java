@@ -17,7 +17,7 @@ import com.oa.staff.entity.UserInfornation;
 @Table(name="t_notice")
 public class Notice {
 	
-	private Long noticeId;
+	private Integer noticeId;
 	private String noticeName;
 	private Date noticeTime;
 	private String noticeText;
@@ -25,7 +25,7 @@ public class Notice {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	public Long getNoticeId() {
+	public Integer getNoticeId() {
 		return noticeId;
 	}
 
@@ -46,7 +46,7 @@ public class Notice {
 		return user;
 	}
 	
-	public void setNoticeId(Long noticeId) {
+	public void setNoticeId(Integer noticeId) {
 		this.noticeId = noticeId;
 	}
 	public void setNoticeName(String noticeName) {

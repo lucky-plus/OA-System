@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 import com.oa.message.entity.Notice;
 
 @Component
-public interface INoticeDao extends PagingAndSortingRepository<Notice, Long> {
+public interface INoticeDao extends PagingAndSortingRepository<Notice, Integer> {
 
 }

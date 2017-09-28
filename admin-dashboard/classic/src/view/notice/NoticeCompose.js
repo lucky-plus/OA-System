@@ -38,6 +38,13 @@ Ext.define('Admin.view.notice.NoticeCompose', {
 		name:'noticeId',
 		handler:'noticeGridOpenEditWindow'
 		},
+		{
+		xtype: 'hidden',
+		fieldLabel: 'userId',
+		//allowBlank: false,
+		name:'userId',
+		value: loginUserId
+		},
         {
             xtype: 'textfield',
             fieldLabel: '标题：',

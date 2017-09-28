@@ -36,15 +36,16 @@ public class NoticeController {
 	@RequestMapping("/findPage")
 	public @ResponseBody Page<NoticeDTO> findAll(ExtjsPageable pageable)
 	{
+		pageable.setSort("noticeId");
 		return noticeService.findAll(pageable.getPageable());
 	}
 	
 	@PostMapping("/saveOrUpdate")
-	public @ResponseBody ExtjsAjaxResult saveOrUpdate(Notice notice)
+	public @ResponseBody ExtjsAjaxResult saveOrUpdate(NoticeDTO noticeDTO)
 	{
 		try {
-			notice.setNoticeTime(new Date());
-			noticeService.save(notice);
+			noticeDTO.setNoticeTime(new Date());
+			noticeService.save(noticeDTO);
 			return new ExtjsAjaxResult(true,"success");
 		}catch(Exception e){
 			e.printStackTrace();
@@ -54,7 +55,7 @@ public class NoticeController {
 	}
 	
 	@PostMapping("/delete")
-	public @ResponseBody ExtjsAjaxResult delete(Long[] ids)
+	public @ResponseBody ExtjsAjaxResult delete(Integer[] ids)
 	{
 		try {
 			 noticeService.delete(ids);

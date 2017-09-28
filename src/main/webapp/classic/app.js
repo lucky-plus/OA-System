@@ -99271,7 +99271,7 @@ Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'i
 Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
 Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
 Ext.define('Admin.model.faq.Question', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}]});
-Ext.define('Admin.model.notice.NoticeModel', {extend:Admin.model.Base, fields:[{name:'noticeId', type:'int'}, {name:'noticeName', type:'string'}, {name:'noticeTime', type:'date'}, {name:'userName', type:'string'}]});
+Ext.define('Admin.model.notice.NoticeModel', {extend:Admin.model.Base, fields:[{name:'noticeId', type:'int'}, {name:'noticeName', type:'string'}, {name:'noticeTime', type:'date'}, {name:'userId', type:'string'}]});
 Ext.define('Admin.model.order.OrderModel', {extend:Admin.model.Base, fields:[{name:'id', type:'int'}, {name:'orderNumber', type:'string'}, {name:'createTime', type:'date'}, {name:'level', type:'string'}, {name:'price', type:'float'}]});
 Ext.define('Admin.model.resources.ResourcesModel', {extend:Admin.model.Base, fields:[{name:'resourcesId', type:'int'}, {name:'resourcesName', type:'string'}, {name:'resourcesTime', type:'date'}]});
 Ext.define('Admin.model.role.RoleModel', {extend:Admin.model.Base, fields:[{name:'roleId', type:'int'}, {name:'roleName', type:'string'}, {name:'roleLevel', type:'int'}, {name:'modulesText', type:'string'}]});
@@ -99846,8 +99846,103 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
 }});
 Ext.define('Admin.view.main.MainModel', {extend:Ext.app.ViewModel, alias:'viewmodel.main', data:{currentView:null}});
 Ext.define('Admin.view.notice.notice', {extend:Ext.container.Container, xtype:'notice', controller:'NoticeViewController', viewModel:{type:'noticeViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'noticeGrid'}]});
-Ext.define('Admin.view.notice.NoticeCompose', {extend:Ext.form.Panel, alias:'widget.noticeCompose', viewModel:{type:'noticeCompose'}, controller:'NoticeViewController', cls:'noticeCompose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'noticeId', handler:'noticeGridOpenEditWindow'}, {xtype:'textfield', fieldLabel:'标题：', name:'noticeName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', 
-anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'正文：', fontFamilies:['宋体', '隶书', '黑体'], name:'noticeText'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-red', text:'关闭', handler:'noticeGridWindowsClose'}, {xtype:'button', ui:'gray', text:'存为草稿'}, {xtype:'button', ui:'soft-green', text:'发布', handler:'noticeGridTextSubmit'}]}});
+
+Ext.define('Admin.view.notice.NoticeCompose', {
+    extend: 'Ext.form.Panel',
+    alias: 'widget.noticeCompose',
+    requires: [
+        'Ext.button.Button',
+        'Ext.form.field.Text',
+        'Ext.form.field.File',
+        'Ext.form.field.HtmlEditor',
+		'Ext.form.field.Hidden'
+    ],
+
+    viewModel: {
+        type: 'noticeCompose'
+    },
+
+    controller: 'NoticeViewController',
+
+    cls: 'noticeCompose',
+
+    layout: {
+        type:'vbox',
+        align:'stretch'
+    },
+
+    bodyPadding: 10,
+    scrollable: true,
+
+    defaults: {
+        labelWidth: 60,
+        labelSeparator: ''
+    },
+
+    items: [
+		{
+		xtype: 'hidden',
+		fieldLabel: 'Id',
+		//allowBlank: false,
+		name:'noticeId',
+		handler:'noticeGridOpenEditWindow'
+		},
+		{
+		xtype: 'hidden',
+		fieldLabel: 'userId',
+		//allowBlank: false,
+		name:'userId',
+		value: loginUserId
+		},
+        {
+            xtype: 'textfield',
+            fieldLabel: '标题：',
+			name:'noticeName'
+        },
+        {
+            xtype: 'htmleditor',
+            
+            // Make tips align neatly below buttons.
+            buttonDefaults: {
+                tooltip: {
+                    align: 't-b',
+                    anchor: true
+                }
+            },
+            flex: 1,
+            minHeight: 100,
+            labelAlign: 'top',
+            fieldLabel: '正文：',
+			fontFamilies: ["宋体", "隶书", "黑体"],
+			name:'noticeText'
+        }
+    ],
+
+    bbar: {
+        overflowHandler: 'menu',
+        items: [
+            '->',
+            {
+                xtype: 'button',
+                ui: 'soft-red',
+                text: '关闭',
+                handler: 'noticeGridWindowsClose'
+            },
+            {
+                xtype: 'button',
+                ui: 'gray',
+                text: '存为草稿'
+            },
+            {
+                xtype: 'button',
+                ui: 'soft-green',
+                text: '发布',
+				handler:'noticeGridTextSubmit'
+            }
+        ]
+    }
+});
+
 Ext.define('Admin.view.notice.NoticeGrid', {extend:Ext.grid.Panel, xtype:'noticeGrid', title:'\x3cb\x3e公告列表\x3c/b\x3e', bind:'{noticeLists}', id:'noticeGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1, listeners:{click:function() {
   var cfg = Ext.apply({xtype:'orderWindow'}, {title:'公告', items:[Ext.apply({xtype:'noticeText'})]});
   Ext.create(cfg);
