@@ -66,10 +66,10 @@ public class NoticeService implements INoticeService{
 	
 	@Override
 	public Page<NoticeDTO> findAll(Pageable pageable) {
-		List<Notice> noticeList = (List<Notice>) noticeDao.findAll();
+		Page<Notice> noticePage = noticeDao.findAll(pageable);
 		List<NoticeDTO> dtoList = new ArrayList<NoticeDTO>();
 		
-		for(Notice notice : noticeList) {
+		for(Notice notice : noticePage.getContent()) {
 			NoticeDTO dto = new NoticeDTO();
 			NoticeDTO.entityToDto(notice, dto);
 			dtoList.add(dto);
