@@ -10,7 +10,7 @@ import com.oa.authority.entity.dto.RoleDTO;
 
 
 public interface IRoleService {
-	public void save(Role entity, Integer[] moduleIds);
+	public void save(RoleDTO dto);
 	public void delete(Role entity);
 	public void delete(Integer id);
 	public void delete(Integer[] ids);

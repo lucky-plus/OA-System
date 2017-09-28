@@ -25,9 +25,9 @@ public class RoleController {
 	}
 	
 	@RequestMapping("/saveOrUpdate")
-	public @ResponseBody ExtjsAjaxResult saveOrUpdate(Role role, Integer[] moduleIds) {
+	public @ResponseBody ExtjsAjaxResult saveOrUpdate(RoleDTO roleDTO) {
 		try {
-			roleService.save(role, moduleIds);
+			roleService.save(roleDTO);
 			return new ExtjsAjaxResult(true,"操作成功！");
 		} catch (Exception e) {
 			e.printStackTrace();

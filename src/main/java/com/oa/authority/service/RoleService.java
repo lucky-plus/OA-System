@@ -21,16 +21,15 @@ public class RoleService implements IRoleService {
 	private IRoleDao roleDao;
 	
 	@Override
-	public void save(Role entity, Integer[] moduleIds) {
+	public void save(RoleDTO dto) {
 		List<Module> modules = new ArrayList<Module>();
-		for(Integer moduleId : moduleIds) {
+		for(Integer moduleId : dto.getModuleIds()) {
 			Module module = new Module();
 			module.setModuleId(moduleId);
 			modules.add(module);
 		}
-		if(modules.size() > 0) {
-			entity.setModules(modules);
-		}
+		Role entity = new Role();
+		RoleDTO.dtoToEntity(dto, entity);
 		roleDao.save(entity);
 	}
 
