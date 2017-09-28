@@ -41,7 +41,6 @@ public class RoleDTO {
 		for(Module module : list) {
 			str.append(module.getModelName()+"、");
 		}
-		
 		dto.setModulesText(str.toString());
 		
 	}
