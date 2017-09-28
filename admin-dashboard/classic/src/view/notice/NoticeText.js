@@ -22,7 +22,6 @@ Ext.define('Admin.view.notcie.NoticeText', {
 		{
 		xtype: 'displayfield',
 		name:'noticeName',
-		style:'font-color:20px'
 		
 	},{
 		xtype: 'displayfield',

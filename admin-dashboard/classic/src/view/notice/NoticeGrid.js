@@ -75,7 +75,7 @@
                     itemId:'endDate',  
                     format:'Y-m-d',  
 					listeners: {  
-					focus: function(e,eo){
+					focus: function(){
 						var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
 						this.setMinValue(cc);
 						}  	

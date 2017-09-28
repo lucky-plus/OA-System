@@ -8,8 +8,8 @@ Ext.define('Admin.view.role.Role', {		//1.修改文件路径
 	//3.重写继承组件的属性：
     xtype: 'role',
 
-    //controller: 'RoleViewController',			//视图绑定viewController
-    //viewModel : {type: 'roleViewModel'},	//视图绑定viewModel
+    controller: 'RoleViewController',			//视图绑定viewController
+    viewModel : {type: 'roleViewModel'},	//视图绑定viewModel
 	
 
     layout:'fit',
