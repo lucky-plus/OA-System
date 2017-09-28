@@ -20,6 +20,8 @@ public class NoticeDTO
 	private String userId;//维护关联关系
 	private String userName;
 
+	private Date beginDate;
+	private Date endDate;
 	
 	//前台ajax、form到后台 关联关系维护
 	public static void  dtoToEntity(NoticeDTO dto,Notice entity) {
@@ -51,12 +53,22 @@ public class NoticeDTO
 	}
 	
 	
-	
-	
-	
-	
-	
-	
+	public Date getBeginDate() {
+		return beginDate;
+	}
+
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 	public Integer  getNoticeId() {
 		return noticeId;
 	}

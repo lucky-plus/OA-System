@@ -2,6 +2,7 @@ package com.oa.message.service;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,43 @@ public class NoticeService implements INoticeService{
 			dtoList.add(dto);
 		}
 		
+		PageImpl<NoticeDTO> page = new PageImpl<NoticeDTO>(dtoList, pageable, dtoList.size());
+		return page;
+	}
+	
+	@Override
+	public Page<NoticeDTO> findByCondition(NoticeDTO noticeDTO, Pageable pageable) {
+		String noticeName = noticeDTO.getNoticeName(); 
+		Date beginDate = noticeDTO.getBeginDate();
+		Date endDate = noticeDTO.getEndDate();
+		Page<Notice> noticePage = null;
+		if((noticeName != null && !"".equals(noticeName.trim())) && beginDate != null && endDate != null) {
+			noticePage=  noticeDao.findByCondition(noticeName, beginDate, endDate, pageable);
+		} else if((noticeName == null || "".equals(noticeName.trim())) && beginDate != null && endDate != null) {
+			noticePage =  noticeDao.findByCondition(beginDate, endDate, pageable);
+		} else if((noticeName != null && !"".equals(noticeName.trim())) && beginDate != null && endDate == null) {
+			noticePage =  noticeDao.findByCondition(noticeName, beginDate, pageable);
+		} else if((noticeName != null && !"".equals(noticeName.trim())) && beginDate == null && endDate != null) {
+			noticePage =  noticeDao.findByCondition1(noticeName, endDate, pageable);
+		} else if((noticeName != null && !"".equals(noticeName.trim())) && beginDate == null && endDate == null) {
+			noticePage =  noticeDao.findByCondition(noticeName, pageable);
+		} else if((noticeName == null || "".equals(noticeName.trim())) && beginDate != null && endDate == null) {
+			noticePage =  noticeDao.findByCondition(beginDate, pageable);
+		} else if((noticeName == null || "".equals(noticeName.trim())) && beginDate == null && endDate != null) {
+			noticePage =  noticeDao.findByCondition1(endDate, pageable);
+		} else {
+			noticePage =  noticeDao.findAll(pageable);
+		}
+		
+		//entityToDto
+		List<NoticeDTO> dtoList = new ArrayList<NoticeDTO>();
+		if(noticePage != null) {
+			for(Notice notice : noticePage.getContent()) {
+				NoticeDTO dto = new NoticeDTO();
+				NoticeDTO.entityToDto(notice, dto);
+				dtoList.add(dto);
+			}
+		}
 		PageImpl<NoticeDTO> page = new PageImpl<NoticeDTO>(dtoList, pageable, dtoList.size());
 		return page;
 	}
