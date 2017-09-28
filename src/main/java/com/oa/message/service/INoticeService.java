@@ -11,10 +11,10 @@ import com.oa.message.entity.dto.NoticeDTO;
 
 
 public interface INoticeService {
-	public void save(Notice entity);
+	public void save(NoticeDTO dto);
 	public void delete(Notice entity);
-	public void delete(Long id);
-	public void delete(Long[] ids);
+	public void delete(Integer id);
+	public void delete(Integer[] ids);
 	public List<NoticeDTO> findAll();
 	public Page<NoticeDTO> findAll(Pageable pageable);
 }

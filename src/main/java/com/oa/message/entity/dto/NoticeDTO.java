@@ -4,12 +4,13 @@ import java.util.Date;
 
 import org.springframework.beans.BeanUtils;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oa.message.entity.Notice;
 import com.oa.staff.entity.UserInfornation;
 
 public class NoticeDTO 
 {
-	private Long noticeId;
+	private Integer noticeId;
 	private String noticeName;
 	private Date noticeTime;
 	private String noticeText;
@@ -25,7 +26,7 @@ public class NoticeDTO
 		BeanUtils.copyProperties(dto, entity);
 		String userId = dto.getUserId();
 		
-		if(userId!=null || !userId.trim().equals("")) {
+		if(userId!=null && !"".equals(userId.trim())) {
 			UserInfornation user = new UserInfornation();
 			user.setUserId(userId);//关联关系维护
 			
@@ -56,10 +57,10 @@ public class NoticeDTO
 	
 	
 	
-	public Long getNoticeId() {
+	public Integer  getNoticeId() {
 		return noticeId;
 	}
-	public void setNoticeId(Long noticeId) {
+	public void setNoticeId(Integer  noticeId) {
 		this.noticeId = noticeId;
 	}
 	public String getNoticeName() {
@@ -68,6 +69,8 @@ public class NoticeDTO
 	public void setNoticeName(String noticeName) {
 		this.noticeName = noticeName;
 	}
+	
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
 	public Date getNoticeTime() {
 		return noticeTime;
 	}
