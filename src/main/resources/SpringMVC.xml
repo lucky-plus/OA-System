@@ -20,8 +20,8 @@
     </mvc:annotation-driven>
     
     <!-- 设置主页面
-	<mvc:view-controller path="/" view-name="redirect:/authority/login/"/> -->
-	
+	<mvc:view-controller path="/" view-name="redirect:/authority/login"/> -->
+    
     <!-- 配置视图解析器 
 	作用:在controller中指定页面路径的时候就不用写页面的完整路径名称了,可以直接写页面去掉扩展名的名称
 	-->
@@ -32,13 +32,8 @@
 		<!-- 后缀 -->
 		<property name="suffix" value=".jsp"></property>
 	</bean>
-	<mvc:resources location="/resources/" mapping="/authority/resources/**"/> 
-	<mvc:resources location="/classic/" mapping="/authority/classic/**"/> 
-	<mvc:resources location="/modern/" mapping="/authority/modern/**"/>
-	<mvc:resources location="/" mapping="/authority/*.json"/>
-	
-  	<mvc:resources location="/resources/" mapping="/resources/**"/> 
-	<mvc:resources location="/classic/" mapping="/classic/**"/> 
-	<mvc:resources location="/modern/" mapping="/modern/**"/>
-	<mvc:resources location="/" mapping="*.json"/>
+    
+ 	<!-- 静态资源访问  -->
+  	<mvc:default-servlet-handler/>
+  	
 </beans>

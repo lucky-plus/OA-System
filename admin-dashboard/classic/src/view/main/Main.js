@@ -92,7 +92,7 @@ Ext.define('Admin.view.main.Main', {
                 },
                 {
                     xtype: 'tbtext',
-                    text: 'Goff Smith',
+                    text: loginUser,
                     cls: 'top-user-name'
                 },
                 {
@@ -102,6 +102,19 @@ Ext.define('Admin.view.main.Main', {
                     width: 35,
                     alt:'current user image',
                     src: 'resources/images/user-profile/2.png'
+                },
+                {
+                    xtype: 'button',
+                    reference: 'logoutButton',
+                    scale: 'small',
+                    ui: 'soft-blue',
+                    iconAlign: 'right',
+                    iconCls: 'x-fa fa-angle-right',
+                    text: '注销',
+                    formBind: true,
+                    listeners: {
+                        click: 'onLogoutButton'
+                    }
                 }
             ]
         },

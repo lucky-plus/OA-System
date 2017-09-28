@@ -41,16 +41,14 @@ public class AuthRealm extends AuthorizingRealm {
 //			}
 //		}
 //		
-//		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 //		info.addStringPermissions(permissions);//添加用户的模块（权限）
-//		return info;
-		
-		return null;
+		return info;
 	}
 	
 	//认证   token 代表用户在界面输入的用户名和密码
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		System.out.println("认证");
+//		System.out.println("认证");
 		
 		//1.向下转型
 		UsernamePasswordToken upToken  = (UsernamePasswordToken) token;

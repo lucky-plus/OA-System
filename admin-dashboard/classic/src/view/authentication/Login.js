@@ -34,17 +34,17 @@ Ext.define('Admin.view.authentication.Login', {
             items: [
                 {
                     xtype: 'label',
-                    text: 'Sign into your account'
+                    text: '请输入用户名和密码：'
                 },
                 {
                     xtype: 'textfield',
                     cls: 'auth-textbox',
-                    name: 'userid',
-                    bind: '{userid}',
+                    name: 'userName',
+                    bind: '{userName}',
                     height: 55,
                     hideLabel: true,
                     allowBlank : false,
-                    emptyText: 'user id',
+                    emptyText: '请输入用户名',
                     triggers: {
                         glyphed: {
                             cls: 'trigger-glyph-noop auth-email-trigger'
@@ -56,7 +56,7 @@ Ext.define('Admin.view.authentication.Login', {
                     cls: 'auth-textbox',
                     height: 55,
                     hideLabel: true,
-                    emptyText: 'Password',
+                    emptyText: '请输入密码',
                     inputType: 'password',
                     name: 'password',
                     bind: '{password}',
@@ -77,11 +77,11 @@ Ext.define('Admin.view.authentication.Login', {
                             cls: 'form-panel-font-color rememberMeCheckbox',
                             height: 30,
                             bind: '{persist}',
-                            boxLabel: 'Remember me'
+                            boxLabel: '记住帐号'
                         },
                         {
                             xtype: 'box',
-                            html: '<a href="#passwordreset" class="link-forgot-password"> Forgot Password ?</a>'
+                            html: '<a href="#passwordreset" class="link-forgot-password"> 忘记密码？ </a>'
                         }
                     ]
                 },
@@ -92,18 +92,20 @@ Ext.define('Admin.view.authentication.Login', {
                     ui: 'soft-green',
                     iconAlign: 'right',
                     iconCls: 'x-fa fa-angle-right',
-                    text: 'Login',
+                    text: '登录',
                     formBind: true,
                     listeners: {
                         click: 'onLoginButton'
                     }
-                },
-                {
+                }
+                /*
+                , {
                     xtype: 'box',
                     html: '<div class="outer-div"><div class="seperator">OR</div></div>',
                     margin: '10 0'
-                },
-                {
+                }
+                
+                ,{
                     xtype: 'button',
                     scale: 'large',
                     ui: 'facebook',
@@ -113,8 +115,9 @@ Ext.define('Admin.view.authentication.Login', {
                     listeners: {
                         click: 'onFaceBookLogin'
                     }
-                },
-                {
+                }
+                
+                ,{
                     xtype: 'box',
                     html: '<div class="outer-div"><div class="seperator">OR</div></div>',
                     margin: '10 0'
@@ -129,7 +132,7 @@ Ext.define('Admin.view.authentication.Login', {
                     listeners: {
                         click: 'onNewAccount'
                     }
-                }
+                }*/
             ]
         }
     ],
