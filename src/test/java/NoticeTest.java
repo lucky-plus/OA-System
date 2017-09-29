@@ -42,7 +42,7 @@ public class NoticeTest {
 			noticeDTO.setBeginDate(beginDate);
 			noticeDTO.setEndDate(endDate);
 			
-			Page<NoticeDTO> pages = noticeService.findByCondition(noticeDTO, pageable);
+			Page<NoticeDTO> pages = noticeService.findAll(NoticeDTO.getWhereClause(noticeDTO), pageable);
 			
 			System.out.println("总记录数：" + pages.getTotalElements());
 			

@@ -1,8 +1,16 @@
 package com.oa.message.entity.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oa.message.entity.Notice;
@@ -108,7 +116,34 @@ public class NoticeDTO
 		this.userName = userName;
 	}
 
+	/**
+     * 动态生成where语句
+     * @param searchArticle
+     * @return
+     */
+    @SuppressWarnings("unused")
+	public static Specification<Notice> getWhereClause(NoticeDTO noticeDTO)
+    {
+		return new Specification<Notice>() {
+			public Predicate toPredicate(Root<Notice> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				 //1.声明Predicate集合
+				 List<Predicate> predicate = new ArrayList<>();
+				 //2.根据orderQueryDTO查询条件动态添加Predicate
+				 if(noticeDTO.getNoticeName()!=null) {
+					 predicate.add(cb.like(root.get("noticeName").as(String.class),"%"+ noticeDTO.getNoticeName()+"%"));
+				 }
+				 if(noticeDTO.getBeginDate()!=null && noticeDTO.getEndDate()!=null) {
+					 predicate.add(cb.between(root.get("noticeTime").as(Date.class), noticeDTO.getBeginDate(), noticeDTO.getEndDate()));
+				 } else if(noticeDTO.getBeginDate()!=null && noticeDTO.getEndDate()==null) {
+					 predicate.add(cb.greaterThanOrEqualTo(root.get("noticeTime").as(Date.class), noticeDTO.getBeginDate()));
+				 } else if(noticeDTO.getBeginDate()==null && noticeDTO.getEndDate()!=null) {
+					 predicate.add(cb.lessThanOrEqualTo(root.get("noticeTime").as(Date.class), noticeDTO.getEndDate()));
+				 }
 
-	
-	
+				 //3.根据Predicate集合生成并返回and 连接的 where条件
+	             return cb.and(predicate.toArray(new Predicate[predicate.size()]));
+			
+			}
+		};
+    }
 }
