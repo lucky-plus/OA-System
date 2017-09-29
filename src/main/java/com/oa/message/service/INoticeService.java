@@ -17,4 +17,5 @@ public interface INoticeService {
 	public void delete(Integer[] ids);
 	public List<NoticeDTO> findAll();
 	public Page<NoticeDTO> findAll(Pageable pageable);
+	public Page<NoticeDTO> findByCondition(NoticeDTO dto, Pageable pageable);
 }

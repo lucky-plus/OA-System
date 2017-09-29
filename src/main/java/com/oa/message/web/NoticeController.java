@@ -64,7 +64,12 @@ public class NoticeController {
 			 e.printStackTrace();
 			 return new ExtjsAjaxResult(false,"操作失败！");
 		}
-}
-
+	}
+	
+	@RequestMapping("/findByCondition")
+	public @ResponseBody Page<NoticeDTO> findByCondition(NoticeDTO noticeDTO, ExtjsPageable pageable)
+	{
+		return noticeService.findByCondition(noticeDTO, pageable.getPageable());
+	}
 	
 }
