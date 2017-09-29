@@ -99863,7 +99863,7 @@ Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
 			listeners:{
 				click:function(grid, rowIndex, colIndex){
 				var record = grid.getStore().getAt(rowIndex);
-		   var orderWindow = Ext.widget('orderWindow',{
+				var orderWindow = Ext.widget('orderWindow',{
 				title:'修改公告',
 				items: [{xtype: 'noticeText'}],
 				  
@@ -99912,7 +99912,10 @@ Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
 				text:'标题：'
 			},{
 				xtype:'textfield',
-				width:300
+				width:300,
+				itemsId:'searchText'
+				
+				
 			},{xtype:'tbtext',
 				text:'时间：'
 			},{
@@ -99935,7 +99938,7 @@ Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
 					}
 			},{
 				text: '查找',
-				handler: 'noticeGridAdd'
+				handler:'noticeGridFind'
 			}
 			]
 	}),
@@ -99943,7 +99946,7 @@ Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
 	
 	
 	bbar: Ext.create('Ext.PagingToolbar', {
-		bind:'{orderLists}',
+		bind:'{noticeLists}',
 		displayInfo: true,
 		displayMsg: '第 {0} - {1}条， 共 {2}条',
 		emptyMsg: "No topics to display",
@@ -100006,7 +100009,6 @@ Ext.define('Admin.view.notice.NoticeViewController', {
            orderWindow.down("form").getForm().loadRecord(record);
 	},
    
-   
    noticeGridDeleteOne:function(grid, rowIndex, colIndex){
 	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
 		if (button == "yes") {
@@ -100024,6 +100026,37 @@ Ext.define('Admin.view.notice.NoticeViewController', {
 		}
 	   })
    },
+   
+   
+   noticeGridFind:function(btn){
+	   var grid = btn.up('gridpanel');
+	   var record = grid.getStore();
+	   var searchText=Ext.getCmp('xiaotingzi2').items.getAt(5).getValue();
+	   var beginTime=Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
+	   var endTime=Ext.Date.add(Ext.getCmp('xiaotingzi2').items.getAt(9).getValue(), Ext.Date.DAY,1);
+	   //Ext.getCmp('xiaotingzi2').items.getAt(9).getValue();
+	   Ext.Ajax.request({ 
+			url : 'notice/findByCondition', 
+			params : { 
+                    noticeName:searchText,
+					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),
+					endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'),
+					page:1,
+					start:0,
+					limit:25,
+					sort:'noticeId',
+					dir:'DESC'
+			},
+			success: function(response, options){
+				var tnpdata= Ext.util.JSON.decode(response.responseText) ;
+				grid.getStore().loadData(tnpdata.content,false);
+			}
+			
+	   });
+	  
+
+   },
+   
    
    noticeGridDeleteDate: function(btn) {
 		var grid = btn.up('gridpanel');
