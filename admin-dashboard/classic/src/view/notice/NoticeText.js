@@ -1,6 +1,7 @@
 Ext.define('Admin.view.notcie.NoticeText', {
     extend: 'Ext.form.Panel',
     alias: 'widget.noticeText',
+	id:'noticeText',
     requires: [
         'Ext.form.field.Text',
 		'Ext.form.DisplayField'
