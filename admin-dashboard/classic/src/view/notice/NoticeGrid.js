@@ -10,14 +10,16 @@
 		{text: '公告编号'			  ,sortable:true ,dataIndex:'noticeId',hidden:true},
         {text: '标题' ,dataIndex:'noticeName' ,flex:1 ,
 			listeners:{
-				click:function(){
-				var cfg = Ext.apply({
-				xtype:'orderWindow'
-				},{
-					title:'公告',
-					items:[Ext.apply({xtype:'noticeText'})]
-				});
-				Ext.create(cfg);
+				click:function(grid, rowIndex, colIndex){
+				var record = grid.getStore().getAt(rowIndex);
+				var orderWindow = Ext.widget('orderWindow',{
+				title:'修改公告',
+				items: [{xtype: 'noticeText'}],
+				  
+			}); 
+			orderWindow.down("form").getForm().loadRecord(record);
+		   		//让form加载选中记录
+          
 			}
 		}
 		
@@ -59,7 +61,10 @@
 				text:'标题：'
 			},{
 				xtype:'textfield',
-				width:300
+				width:300,
+				itemsId:'searchText'
+				
+				
 			},{xtype:'tbtext',
 				text:'时间：'
 			},{
@@ -82,7 +87,7 @@
 					}
 			},{
 				text: '查找',
-				handler: 'noticeGridAdd'
+				handler:'noticeGridFind'
 			}
 			]
 	}),
@@ -90,7 +95,7 @@
 	
 	
 	bbar: Ext.create('Ext.PagingToolbar', {
-		bind:'{orderLists}',
+		bind:'{noticeLists}',
 		displayInfo: true,
 		displayMsg: '第 {0} - {1}条， 共 {2}条',
 		emptyMsg: "No topics to display",
