@@ -22,7 +22,7 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 			text: '添加角色',
 			iconCls:'x-fa fa-plus',
 			ui:'soft-blue',
-			//handler: 'orderGridOnClick'
+			//handler: 'roleGridAdd'
 			listeners:{
 				click:'roleGridAdd'
 			}
