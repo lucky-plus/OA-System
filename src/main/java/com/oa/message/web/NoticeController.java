@@ -66,6 +66,19 @@ public class NoticeController {
 		}
 	}
 	
+	@PostMapping("/deleteone")
+	public @ResponseBody ExtjsAjaxResult delete(Integer id)
+	{
+		try {
+			 noticeService.delete(id);
+			 return new ExtjsAjaxResult(true,"操作成功！");
+		} catch (Exception e) {
+			 e.printStackTrace();
+			 return new ExtjsAjaxResult(false,"操作失败！");
+		}
+	}
+	
+	
 	@RequestMapping("/findByCondition")
 	public @ResponseBody Page<NoticeDTO> findByCondition(NoticeDTO noticeDTO, ExtjsPageable pageable)
 	{

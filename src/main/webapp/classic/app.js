@@ -99888,7 +99888,7 @@ Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
             },'-', {  
 				icon:'resources/images/icons/delete.png',
                 tooltip: '删除',
-                handler: ('noticeGridDeleteDate') 
+                handler: ('noticeGridDeleteOne') 
             }]  }
 
 	],	
@@ -99952,56 +99952,123 @@ Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
 });
 
 Ext.define('Admin.view.notcie.NoticeText', {extend:Ext.form.Panel, alias:'widget.noticeText', controller:'NoticeViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'displayfield', name:'noticeName'}, {xtype:'displayfield', name:'noticeText'}]});
-Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewController, alias:'controller.NoticeViewController', noticeGridAdd:function(bt) {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'新建公告', items:[Ext.apply({xtype:'noticeCompose'})]});
-  Ext.create(cfg);
-}, noticeGridTextSubmit:function(btn) {
-  var noticeCompose = btn.up('form').getForm();
-  var win = btn.up('window');
-  noticeCompose.submit({url:'notice/saveOrUpdate', method:'post', success:function(form, action) {
-    Ext.Msg.alert('提示', action.result.msg);
-    win.close();
-    Ext.getCmp('noticeGrid').store.reload();
-  }, failure:function(form, action) {
-    Ext.Msg.alert('提示', action.result.msg);
-  }});
-}, noticeGridOpenEditWindow:function(grid, rowIndex, colIndex) {
-  var record = grid.getStore().getAt(rowIndex);
-  var orderWindow = Ext.widget('orderWindow', {title:'修改公告', items:[{xtype:'noticeCompose'}]});
-  orderWindow.down('form').getForm().loadRecord(record);
-}, noticeGridWatchWindow:function(grid, rowIndex, colIndex) {
-  var record = grid.getStore().getAt(rowIndex);
-  var orderWindow = Ext.widget('orderWindow', {title:'查看公告', items:[{xtype:'noticeText'}]});
-  orderWindow.down('form').getForm().loadRecord(record);
-}, noticeGridDeleteDate:function(btn) {
-  var grid = btn.up('gridpanel');
-  var selModel = grid.getSelectionModel();
-  if (selModel.hasSelection()) {
-    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
-      if (button == 'yes') {
-        var selected = selModel.getSelection();
-        var selectIds = [];
-        Ext.each(selected, function(record) {
-          selectIds.push(record.data.noticeId);
-        });
-        Ext.Ajax.request({url:'notice/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
-          var json = Ext.util.JSON.decode(response.responseText);
-          if (json.success) {
-            Ext.Msg.alert('操作成功', json.msg);
-            grid.getStore().reload();
-          } else {
-            Ext.Msg.alert('操作失败', json.msg);
-          }
-        }});
-      }
-    });
-  }
-}, noticeGridWindowsClose:function(btn) {
-  var win = btn.up('window');
-  if (win) {
-    win.close();
-  }
-}});
+Ext.define('Admin.view.notice.NoticeViewController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.NoticeViewController',
+
+    noticeGridAdd: function(bt) {
+		var cfg = Ext.apply({
+			xtype:'orderWindow'
+		},{
+			title:'新建公告',
+			items:[Ext.apply({xtype:'noticeCompose'})]
+		});
+		Ext.create(cfg);
+    },
+	
+	
+	noticeGridTextSubmit: function(btn) {
+		var noticeCompose = btn.up('form').getForm();
+		var win = btn.up('window');
+		noticeCompose.submit( {  
+			url : 'notice/saveOrUpdate', 
+			method : 'post', 
+			success : function(form, action) { 
+				Ext.Msg.alert("提示",action.result.msg); 
+				win.close();
+				Ext.getCmp('noticeGrid').store.reload();
+			}, 
+			failure : function(form, action) { 
+				Ext.Msg.alert("提示",action.result.msg); 
+				
+			} 
+		}); 
+
+   },
+   
+      noticeGridOpenEditWindow:function(grid, rowIndex, colIndex){
+			var record = grid.getStore().getAt(rowIndex);
+		   var orderWindow = Ext.widget('orderWindow',{
+				title:'修改公告',
+				items: [{xtype: 'noticeCompose'}]
+			});
+		   		//让form加载选中记录
+           orderWindow.down("form").getForm().loadRecord(record);
+	},
+   
+      noticeGridWatchWindow:function(grid, rowIndex, colIndex){
+			var record = grid.getStore().getAt(rowIndex);
+		   var orderWindow = Ext.widget('orderWindow',{
+				title:'查看公告',
+				items: [{xtype: 'noticeText'}]
+			});
+		   		//让form加载选中记录
+           orderWindow.down("form").getForm().loadRecord(record);
+	},
+   
+   
+   noticeGridDeleteOne:function(grid, rowIndex, colIndex){
+	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+		if (button == "yes") {
+	   var record = grid.getStore().getAt(rowIndex);
+	   var noticeId=record.data.noticeId;
+	   Ext.Ajax.request({ 
+			url : 'notice/deleteone', 
+			method : 'post', 
+			params : { 
+					id:noticeId
+			},  
+			
+	   })
+	   grid.getStore().reload();
+		}
+	   })
+   },
+   
+   noticeGridDeleteDate: function(btn) {
+		var grid = btn.up('gridpanel');
+		var selModel = grid.getSelectionModel();
+        if (selModel.hasSelection()) {
+            Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+                if (button == "yes") {
+                    var selected = selModel.getSelection();
+                    var selectIds = []; //要删除的id
+                    Ext.each(selected, function (record) {
+                        selectIds.push(record.data.noticeId);
+                    })
+                  	Ext.Ajax.request({ 
+						url : 'notice/delete', 
+						method : 'post', 
+						params : { 
+							ids:selectIds
+						}, 
+						success: function(response, options) {
+			                var json = Ext.util.JSON.decode(response.responseText);
+				            if(json.success){
+				            	Ext.Msg.alert('操作成功', json.msg);
+				                grid.getStore().reload();
+					        }else{
+					        	Ext.Msg.alert('操作失败', json.msg);
+					        }
+			            }
+					});
+
+                }
+            });
+		}
+},
+
+   
+   
+   
+	noticeGridWindowsClose: function(btn) {
+		var win=btn.up('window');
+		if(win){
+			win.close();
+		}
+   }
+	
+});
 Ext.define('Admin.view.notice.NoticeViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.noticeViewModel', stores:{noticeLists:{type:'noticeStore', autoLoad:true}}});
 Ext.define('Admin.view.order.Order', {extend:Ext.container.Container, xtype:'order', controller:'OrderViewController', viewModel:{type:'orderViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'orderGrid'}]});
 Ext.define('Admin.view.order.OrderForm', {extend:Ext.form.Panel, alias:'widget.orderForm', controller:'OrderViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'id', handler:'orderGridEdit'}, {xtype:'textfield', fieldLabel:'订单编号', name:'orderNumber'}, {xtype:'datefield', format:'Y/m/d H:i:s', fieldLabel:'创建时间', name:'createTime'}, {xtype:'combobox', fieldLabel:'优先级', name:'level', 
