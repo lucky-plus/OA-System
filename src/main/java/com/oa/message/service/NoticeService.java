@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,29 +84,8 @@ public class NoticeService implements INoticeService{
 	}
 	
 	@Override
-	public Page<NoticeDTO> findByCondition(NoticeDTO noticeDTO, Pageable pageable) {
-		String noticeName = noticeDTO.getNoticeName(); 
-		Date beginDate = noticeDTO.getBeginDate();
-		Date endDate = noticeDTO.getEndDate();
-		Page<Notice> noticePage = null;
-		if((noticeName != null && !"".equals(noticeName.trim())) && beginDate != null && endDate != null) {
-			noticePage=  noticeDao.findByCondition(noticeName, beginDate, endDate, pageable);
-		} else if((noticeName == null || "".equals(noticeName.trim())) && beginDate != null && endDate != null) {
-			noticePage =  noticeDao.findByCondition(beginDate, endDate, pageable);
-		} else if((noticeName != null && !"".equals(noticeName.trim())) && beginDate != null && endDate == null) {
-			noticePage =  noticeDao.findByCondition(noticeName, beginDate, pageable);
-		} else if((noticeName != null && !"".equals(noticeName.trim())) && beginDate == null && endDate != null) {
-			noticePage =  noticeDao.findByCondition1(noticeName, endDate, pageable);
-		} else if((noticeName != null && !"".equals(noticeName.trim())) && beginDate == null && endDate == null) {
-			noticePage =  noticeDao.findByCondition(noticeName, pageable);
-		} else if((noticeName == null || "".equals(noticeName.trim())) && beginDate != null && endDate == null) {
-			noticePage =  noticeDao.findByCondition(beginDate, pageable);
-		} else if((noticeName == null || "".equals(noticeName.trim())) && beginDate == null && endDate != null) {
-			noticePage =  noticeDao.findByCondition1(endDate, pageable);
-		} else {
-			noticePage =  noticeDao.findAll(pageable);
-		}
-		
+	public Page<NoticeDTO> findAll(Specification<Notice> spec, Pageable pageable) {
+		Page<Notice> noticePage = noticeDao.findAll(spec, pageable);
 		//entityToDto
 		List<NoticeDTO> dtoList = new ArrayList<NoticeDTO>();
 		if(noticePage != null) {
@@ -118,5 +98,6 @@ public class NoticeService implements INoticeService{
 		PageImpl<NoticeDTO> page = new PageImpl<NoticeDTO>(dtoList, pageable, dtoList.size());
 		return page;
 	}
+	
 
 }

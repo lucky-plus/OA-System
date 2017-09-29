@@ -82,7 +82,7 @@ public class NoticeController {
 	@RequestMapping("/findByCondition")
 	public @ResponseBody Page<NoticeDTO> findByCondition(NoticeDTO noticeDTO, ExtjsPageable pageable)
 	{
-		return noticeService.findByCondition(noticeDTO, pageable.getPageable());
+		return noticeService.findAll(NoticeDTO.getWhereClause(noticeDTO), pageable.getPageable());
 	}
 	
 }
