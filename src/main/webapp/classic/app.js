@@ -100279,6 +100279,7 @@ Ext.define('Admin.view.main.MainModel', {extend:Ext.app.ViewModel, alias:'viewmo
 Ext.define('Admin.view.notice.notice', {extend:Ext.container.Container, xtype:'notice', controller:'NoticeViewController', viewModel:{type:'noticeViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'noticeGrid'}]});
 Ext.define('Admin.view.notice.NoticeCompose', {extend:Ext.form.Panel, alias:'widget.noticeCompose', viewModel:{type:'noticeCompose'}, controller:'NoticeViewController', cls:'noticeCompose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'noticeId', handler:'noticeGridOpenEditWindow'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'标题：', 
 name:'noticeName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'正文：', fontFamilies:['宋体', '隶书', '黑体'], name:'noticeText'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-red', text:'关闭', handler:'noticeGridWindowsClose'}, {xtype:'button', ui:'gray', text:'存为草稿'}, {xtype:'button', ui:'soft-green', text:'发布', handler:'noticeGridTextSubmit'}]}});
+<<<<<<< HEAD
 Ext.define('Admin.view.notice.NoticeGrid', {extend:Ext.grid.Panel, xtype:'noticeGrid', title:'\x3cb\x3e公告列表\x3c/b\x3e', bind:'{noticeLists}', id:'noticeGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1, listeners:{click:function() {
   var cfg = Ext.apply({xtype:'orderWindow'}, {title:'公告', items:[Ext.apply({xtype:'noticeText'})]});
   Ext.create(cfg);
@@ -100338,6 +100339,229 @@ Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewControl
     win.close();
   }
 }});
+=======
+
+Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
+      extend: 'Ext.grid.Panel',					//2.继承的组件类型
+	//3.重写继承组件的属性：
+    xtype: 'noticeGrid',
+	title:'<b>公告列表</b>',
+	bind:'{noticeLists}',
+	id:'noticeGrid',
+	selModel: Ext.create('Ext.selection.CheckboxModel'),
+	columns: [
+		{text: '公告编号'			  ,sortable:true ,dataIndex:'noticeId',hidden:true},
+        {text: '标题' ,dataIndex:'noticeName' ,flex:1 ,
+			listeners:{
+				click:function(grid, rowIndex, colIndex){
+				var record = grid.getStore().getAt(rowIndex);
+		   var orderWindow = Ext.widget('orderWindow',{
+				title:'修改公告',
+				items: [{xtype: 'noticeText'}],
+				  
+			}); 
+			orderWindow.down("form").getForm().loadRecord(record);
+		   		//让form加载选中记录
+          
+			}
+		}
+		
+		},
+		{text: '发布时间'  ,sortable:true ,dataIndex:'noticeTime'  ,width:150
+			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
+		{text: '发布者',dataIndex:'userName'    ,width:150},
+		{xtype: 'actioncolumn',  text: '操作' ,width:100,tdCls: 'action',  
+            items: ['-',{  
+
+				icon:'resources/images/icons/editor.png',
+                tooltip: '编辑',
+				handler: ('noticeGridOpenEditWindow')
+				
+            },'-', {  
+				icon:'resources/images/icons/delete.png',
+                tooltip: '删除',
+                handler: ('noticeGridDeleteOne') 
+            }]  }
+
+	],	
+
+
+
+
+
+	tbar: Ext.create('Ext.Toolbar', {
+			id: 'xiaotingzi2' ,
+			items:[ {
+				text: '新增',
+				iconCls:'x-fa fa-plus',
+				ui:'soft-blue',
+				handler: 'noticeGridAdd'
+			},'-', {
+				text: '删除',
+				iconCls:'x-fa fa-trash',
+				handler: 'noticeGridDeleteDate'
+			},'-',{xtype:'tbtext',
+				text:'标题：'
+			},{
+				xtype:'textfield',
+				width:300
+			},{xtype:'tbtext',
+				text:'时间：'
+			},{
+				 xtype:'datefield',  
+                    itemId:'beginDate',  
+                    format:'Y-m-d',  
+					
+			
+			},{xtype:'tbtext',
+				text:'至：'
+			},{
+				xtype:'datefield',  
+                    itemId:'endDate',  
+                    format:'Y-m-d',  
+					listeners: {  
+					focus: function(){
+						var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
+						this.setMinValue(cc);
+						}  	
+					}
+			},{
+				text: '查找',
+				handler: 'noticeGridAdd'
+			}
+			]
+	}),
+	
+	
+	
+	bbar: Ext.create('Ext.PagingToolbar', {
+		bind:'{orderLists}',
+		displayInfo: true,
+		displayMsg: '第 {0} - {1}条， 共 {2}条',
+		emptyMsg: "No topics to display",
+	})
+	
+});
+
+Ext.define('Admin.view.notcie.NoticeText', {extend:Ext.form.Panel, alias:'widget.noticeText', controller:'NoticeViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'displayfield', name:'noticeName'}, {xtype:'displayfield', name:'noticeText'}]});
+Ext.define('Admin.view.notice.NoticeViewController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.NoticeViewController',
+
+    noticeGridAdd: function(bt) {
+		var cfg = Ext.apply({
+			xtype:'orderWindow'
+		},{
+			title:'新建公告',
+			items:[Ext.apply({xtype:'noticeCompose'})]
+		});
+		Ext.create(cfg);
+    },
+	
+	
+	noticeGridTextSubmit: function(btn) {
+		var noticeCompose = btn.up('form').getForm();
+		var win = btn.up('window');
+		noticeCompose.submit( {  
+			url : 'notice/saveOrUpdate', 
+			method : 'post', 
+			success : function(form, action) { 
+				Ext.Msg.alert("提示",action.result.msg); 
+				win.close();
+				Ext.getCmp('noticeGrid').store.reload();
+			}, 
+			failure : function(form, action) { 
+				Ext.Msg.alert("提示",action.result.msg); 
+				
+			} 
+		}); 
+
+   },
+   
+      noticeGridOpenEditWindow:function(grid, rowIndex, colIndex){
+			var record = grid.getStore().getAt(rowIndex);
+		   var orderWindow = Ext.widget('orderWindow',{
+				title:'修改公告',
+				items: [{xtype: 'noticeCompose'}]
+			});
+		   		//让form加载选中记录
+           orderWindow.down("form").getForm().loadRecord(record);
+	},
+   
+      noticeGridWatchWindow:function(grid, rowIndex, colIndex){
+			var record = grid.getStore().getAt(rowIndex);
+		   var orderWindow = Ext.widget('orderWindow',{
+				title:'查看公告',
+				items: [{xtype: 'noticeText'}]
+			});
+		   		//让form加载选中记录
+           orderWindow.down("form").getForm().loadRecord(record);
+	},
+   
+   
+   noticeGridDeleteOne:function(grid, rowIndex, colIndex){
+	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+		if (button == "yes") {
+	   var record = grid.getStore().getAt(rowIndex);
+	   var noticeId=record.data.noticeId;
+	   Ext.Ajax.request({ 
+			url : 'notice/deleteone', 
+			method : 'post', 
+			params : { 
+					id:noticeId
+			},  
+			
+	   })
+	   grid.getStore().reload();
+		}
+	   })
+   },
+   
+   noticeGridDeleteDate: function(btn) {
+		var grid = btn.up('gridpanel');
+		var selModel = grid.getSelectionModel();
+        if (selModel.hasSelection()) {
+            Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+                if (button == "yes") {
+                    var selected = selModel.getSelection();
+                    var selectIds = []; //要删除的id
+                    Ext.each(selected, function (record) {
+                        selectIds.push(record.data.noticeId);
+                    })
+                  	Ext.Ajax.request({ 
+						url : 'notice/delete', 
+						method : 'post', 
+						params : { 
+							ids:selectIds
+						}, 
+						success: function(response, options) {
+			                var json = Ext.util.JSON.decode(response.responseText);
+				            if(json.success){
+				            	Ext.Msg.alert('操作成功', json.msg);
+				                grid.getStore().reload();
+					        }else{
+					        	Ext.Msg.alert('操作失败', json.msg);
+					        }
+			            }
+					});
+
+                }
+            });
+		}
+},
+
+   
+   
+   
+	noticeGridWindowsClose: function(btn) {
+		var win=btn.up('window');
+		if(win){
+			win.close();
+		}
+   }
+	
+});
+>>>>>>> branch 'master' of https://github.com/lucky-plus/OA-System.git
 Ext.define('Admin.view.notice.NoticeViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.noticeViewModel', stores:{noticeLists:{type:'noticeStore', autoLoad:true}}});
 Ext.define('Admin.view.order.Order', {extend:Ext.container.Container, xtype:'order', controller:'OrderViewController', viewModel:{type:'orderViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'orderGrid'}]});
 Ext.define('Admin.view.order.OrderForm', {extend:Ext.form.Panel, alias:'widget.orderForm', controller:'OrderViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'id', handler:'orderGridEdit'}, {xtype:'textfield', fieldLabel:'订单编号', name:'orderNumber'}, {xtype:'datefield', format:'Y/m/d H:i:s', fieldLabel:'创建时间', name:'createTime'}, {xtype:'combobox', fieldLabel:'优先级', name:'level', 

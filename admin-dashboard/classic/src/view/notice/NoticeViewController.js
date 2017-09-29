@@ -52,6 +52,24 @@ Ext.define('Admin.view.notice.NoticeViewController', {
            orderWindow.down("form").getForm().loadRecord(record);
 	},
    
+   noticeGridDeleteOne:function(grid, rowIndex, colIndex){
+	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+		if (button == "yes") {
+	   var record = grid.getStore().getAt(rowIndex);
+	   var noticeId=record.data.noticeId;
+	   Ext.Ajax.request({ 
+			url : 'notice/deleteone', 
+			method : 'post', 
+			params : { 
+					id:noticeId
+			},  
+			
+	   })
+	   grid.getStore().reload();
+		}
+	   })
+   },
+   
    noticeGridDeleteDate: function(btn) {
 		var grid = btn.up('gridpanel');
 		var selModel = grid.getSelectionModel();

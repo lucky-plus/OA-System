@@ -35,7 +35,7 @@
             },'-', {  
 				icon:'resources/images/icons/delete.png',
                 tooltip: '删除',
-                handler: ('noticeGridDeleteDate') 
+                handler: ('noticeGridDeleteOne') 
             }]  }
 
 	],	
