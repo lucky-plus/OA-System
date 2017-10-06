@@ -7,13 +7,12 @@
 	id:'addressGrid',
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	columns: [
-		{text: '通讯编号',dataIndex:'addressId',hidden:true},
-        {text: '联系人' ,dataIndex:'addressName' ,flex:1 ,},
-		{text: '所属部门'  ,dataIndex:'addressDepartment'  ,width:150},
-		{text: '联系电话'  ,dataIndex:'addressPhone'  ,width:150},
-		{text: '联系邮箱'  ,dataIndex:'addressEmail'  ,width:150},
-		{text: 'QQ'  ,dataIndex:'addressQQ'  ,width:150},
-		
+		{text: '编号',dataIndex:'userId',hidden:true},
+        {text: '联系人' ,dataIndex:'realName' ,flex:1 },
+		{text: '所属部门'  ,dataIndex:'dept'  ,width:150},
+		{text: '联系电话'  ,dataIndex:'mobilePhone'  ,width:150},
+		{text: '联系邮箱'  ,dataIndex:'mail'  ,width:150},
+		{text: 'QQ'  ,dataIndex:'qq_number'  ,width:150},
 
 	],		
 

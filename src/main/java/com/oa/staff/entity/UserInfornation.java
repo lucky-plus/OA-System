@@ -26,6 +26,9 @@ public class UserInfornation {
 	private Date onDutDate;
 	private String wechatNumber;
 	private String home;
+	private String realName;
+	private int qq_number;
+	private String dept;
 	
 	@Id
 	@Column(length=8)
@@ -69,6 +72,15 @@ public class UserInfornation {
 	public String getHome() {
 		return home;
 	}
+	public String getRealName() {
+		return realName;
+	}
+	public int getQq_number() {
+		return qq_number;
+	}
+	public String getDept() {
+		return dept;
+	}
 	
 	public void setUserId(String userId) {
 		this.userId = userId;
@@ -109,5 +121,15 @@ public class UserInfornation {
 	public void setHome(String home) {
 		this.home = home;
 	}
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+	public void setQq_number(int qq_number) {
+		this.qq_number = qq_number;
+	}
+	public void setDept(String dept) {
+		this.dept = dept;
+	}
+	
 	
 }

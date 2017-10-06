@@ -99697,7 +99697,18 @@ Ext.define('Admin.model.PanelSetting', {extend:Admin.model.Base, fields:[{name:'
 Ext.define('Admin.model.PersonalInfo', {extend:Admin.model.Base, fields:[{name:'name'}, {name:'status'}, {name:'icon'}]});
 Ext.define('Admin.model.Subscription', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'subscription'}]});
 Ext.define('Admin.model.YearwiseData', {extend:Admin.model.Base, fields:[{name:'year'}, {name:'data'}]});
-Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:[{name:'addressId', type:'int'}, {name:'addressName', type:'string'}, {name:'addressDepartment', type:'string'}, {name:'addressPhone', type:'int'}, {name:'addressEmail', type:'string'}, {name:'addressQQ', type:'int'}]});
+
+Ext.define('Admin.model.address.AddressModel', {
+    extend: 'Admin.model.Base',
+    fields: [
+		{name:'userId'			,type: 'string'},
+        {name:'realName' ,type: 'string'},
+		{name:'dept' ,type: 'string'},
+        {name:'mobilePhone'	,type: 'string'},
+		{name:'mail'	,type: 'string'},
+		{name:'qq_number'	,type: 'int'}
+    ]
+});
 Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {name:'read'}, {type:'string', name:'title'}, {name:'user_id'}, {type:'string', name:'contents'}, {type:'string', name:'from'}, {name:'has_attachments'}, {name:'attachments'}, {name:'received_on', type:'date'}, {name:'favorite'}]});
 Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
 Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
@@ -99715,8 +99726,31 @@ rowCls:'nav-tree-badge nav-tree-badge-new', viewType:'admindashboard', routeId:'
 viewType:'email', leaf:true}, {text:'Profile', iconCls:'x-fa fa-user', viewType:'profile', leaf:true}, {text:'Search results', iconCls:'x-fa fa-search', viewType:'searchresults', leaf:true}, {text:'FAQ', iconCls:'x-fa fa-question', viewType:'faq', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', viewType:'page404', 
 leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}, {text:'Widgets', iconCls:'x-fa fa-flask', viewType:'widgets', leaf:true}, {text:'Forms', 
 iconCls:'x-fa fa-edit', viewType:'forms', leaf:true}, {text:'Charts', iconCls:'x-fa fa-pie-chart', viewType:'charts', leaf:true}]}});
-Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', data:{'items':[{'addressId':1, 'addressName':'Lisa', 'addressDepartment':'销售部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':2, 'addressName':'Lisa', 'addressDepartment':'网络部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':3, 'addressName':'Lisa', 'addressDepartment':'人事部', 'addressPhone':'13631784344', 
-'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':4, 'addressName':'Lisa', 'addressDepartment':'财务部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}]}, proxy:{type:'memory', reader:{type:'json', root:'items'}}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
+
+Ext.define('Admin.store.address.AddressStore', {
+    extend: 'Ext.data.Store',
+    alias: 'store.addressStore',			  //1.Store取别名（reference）
+	model: 'Admin.model.address.AddressModel',
+	proxy: {
+		type: 'ajax',
+		url: 'staff/findPage.json',	//后台OrderController中的接口url地址
+		reader: {
+			type:'json', 
+			rootProperty: 'content',		//结果集名字的属性
+			totalProperty: 'totalElements'	//一共多少条记录的属性
+		},
+		simpleSortMode: true	//简单排序模式
+	},
+
+	pageSize: 25,
+	autoLoad: true,
+	remoteSort: true,//全局排序
+    sorters: {
+        direction: 'DESC',
+        property: 'userId'
+    }
+});
+
 Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
 Ext.define('Admin.store.email.Inbox', {extend:Ext.data.Store, alias:'store.inbox', model:'Admin.model.email.Email', pageSize:20, autoLoad:true, proxy:{type:'api', url:'~api/email/inbox'}});
 Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', model:'Admin.model.faq.Category', proxy:{type:'api', url:'~api/faq/faq'}});
@@ -99873,9 +99907,65 @@ Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', store
   });
 }});
 Ext.define('Admin.view.address.address', {extend:Ext.container.Container, xtype:'address', controller:'addressViewController', viewModel:{type:'addressViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'addressGrid'}]});
-Ext.define('Admin.view.address.AddressGrid', {extend:Ext.grid.Panel, xtype:'addressGrid', title:'\x3cb\x3e通讯中心\x3c/b\x3e', bind:'{addressLists}', id:'addressGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'通讯编号', dataIndex:'addressId', hidden:true}, {text:'联系人', dataIndex:'addressName', flex:1}, {text:'所属部门', dataIndex:'addressDepartment', width:150}, {text:'联系电话', dataIndex:'addressPhone', width:150}, {text:'联系邮箱', dataIndex:'addressEmail', width:150}, {text:'QQ', dataIndex:'addressQQ', 
-width:150}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200}, {xtype:'tbtext', text:'所属部门：'}, {xtype:'combobox', name:'department', store:Ext.create('Ext.data.Store', {fields:['department', 'name'], data:[{'department':'HIGH', 'name':'财务部'}, {'department':'MEDIUM', 'name':'业务部'}, {'department':'LOW', 'name':'人事部'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {text:'查找'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', 
-displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+
+Ext.define('Admin.view.address.AddressGrid', {		//1.修改文件路径
+      extend: 'Ext.grid.Panel',					//2.继承的组件类型
+	//3.重写继承组件的属性：
+    xtype: 'addressGrid',
+	title:'<b>通讯中心</b>',
+	bind:'{addressLists}',
+	id:'addressGrid',
+	selModel: Ext.create('Ext.selection.CheckboxModel'),
+	columns: [
+		{text: '编号',dataIndex:'userId',hidden:true},
+        {text: '联系人' ,dataIndex:'realName' ,flex:1 },
+		{text: '所属部门'  ,dataIndex:'dept'  ,width:150},
+		{text: '联系电话'  ,dataIndex:'mobilePhone'  ,width:150},
+		{text: '联系邮箱'  ,dataIndex:'mail'  ,width:150},
+		{text: 'QQ'  ,dataIndex:'qq_number'  ,width:150},
+
+	],		
+
+	tbar: Ext.create('Ext.Toolbar', {
+			items:[{xtype:'tbtext',
+				text:'姓名：'
+			},{
+				xtype:'textfield',
+				width:200
+			},{xtype:'tbtext',
+				text:'所属部门：'
+			},{
+			xtype: 'combobox',
+			name:'department',
+			store:  Ext.create('Ext.data.Store', {
+				fields: ['department', 'name'],
+				data : [
+					{"department":"HIGH", 	"name":"财务部"},
+					{"department":"MEDIUM",  "name":"业务部"},
+					{"department":"LOW", 	"name":"人事部"}
+					]
+				}),
+				queryMode: 	  'local',
+				displayField: 'name',
+				valueField:   'value'
+			
+			},{
+				text:'查找'
+			}]
+	}),
+	
+	
+	
+	
+	bbar: Ext.create('Ext.PagingToolbar', {
+		bind:'{addressLists}',
+		displayInfo: true,
+		displayMsg: '第 {0} - {1}条， 共 {2}条',
+		emptyMsg: "No topics to display",
+	})
+	
+});
+
 Ext.define('Admin.view.address.AddressViewController', {extend:Ext.app.ViewController, alias:'controller.addressViewController', noticeGridAdd:function(bt) {
   var cfg = Ext.apply({xtype:'orderWindow'}, {title:'上传资料'});
   Ext.create(cfg);
@@ -100279,15 +100369,107 @@ Ext.define('Admin.view.main.MainModel', {extend:Ext.app.ViewModel, alias:'viewmo
 Ext.define('Admin.view.notice.notice', {extend:Ext.container.Container, xtype:'notice', controller:'NoticeViewController', viewModel:{type:'noticeViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'noticeGrid'}]});
 Ext.define('Admin.view.notice.NoticeCompose', {extend:Ext.form.Panel, alias:'widget.noticeCompose', viewModel:{type:'noticeCompose'}, controller:'NoticeViewController', cls:'noticeCompose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'noticeId', handler:'noticeGridOpenEditWindow'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'标题：', 
 name:'noticeName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'正文：', fontFamilies:['宋体', '隶书', '黑体'], name:'noticeText'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-red', text:'关闭', handler:'noticeGridWindowsClose'}, {xtype:'button', ui:'gray', text:'存为草稿'}, {xtype:'button', ui:'soft-green', text:'发布', handler:'noticeGridTextSubmit'}]}});
-Ext.define('Admin.view.notice.NoticeGrid', {extend:Ext.grid.Panel, xtype:'noticeGrid', title:'\x3cb\x3e公告列表\x3c/b\x3e', bind:'{noticeLists}', id:'noticeGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1, listeners:{click:function(grid, rowIndex, colIndex) {
-  var record = grid.getStore().getAt(rowIndex);
-  var orderWindow = Ext.widget('orderWindow', {title:'修改公告', items:[{xtype:'noticeText'}]});
-  orderWindow.down('form').getForm().loadRecord(record);
-}}}, {text:'发布时间', sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:'noticeGridOpenEditWindow'}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'noticeGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {id:'xiaotingzi2', items:[{text:'新增', 
-iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'noticeGridDeleteDate'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300, itemsId:'searchText'}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', itemId:'beginDate', format:'Y-m-d'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', itemId:'endDate', format:'Y-m-d', listeners:{focus:function() {
-  var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
-  this.setMinValue(cc);
-}}}, {text:'查找', handler:'noticeGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{noticeLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+
+Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
+      extend: 'Ext.grid.Panel',					//2.继承的组件类型
+	//3.重写继承组件的属性：
+    xtype: 'noticeGrid',
+	title:'<b>公告列表</b>',
+	bind:'{noticeLists}',
+	id:'noticeGrid',
+	listeners:{
+		cellclick:function(grid,td, cellIndex, record, tr, rowIndex){
+			  var orderWindow = Ext.widget('orderWindow',{
+				title:'查看公告',
+				html: grid.getStore().getAt(rowIndex).data.noticeName,
+			});
+		}
+	},
+	selModel: Ext.create('Ext.selection.CheckboxModel'),
+	columns: [
+		{text: '公告编号'			  ,sortable:true ,dataIndex:'noticeId',hidden:true},
+             {text: '标题' ,dataIndex:'noticeName' ,flex:1 
+
+
+		},
+		{text: '发布时间'  ,sortable:true ,dataIndex:'noticeTime'  ,width:150
+			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
+		{text: '发布者',dataIndex:'userName'    ,width:150},
+		{xtype: 'actioncolumn',  text: '操作' ,width:100,tdCls: 'action',  
+            items: ['-',{  
+
+				icon:'resources/images/icons/editor.png',
+                tooltip: '编辑',
+				handler: ('noticeGridOpenEditWindow')
+				
+            },'-', {  
+				icon:'resources/images/icons/delete.png',
+                tooltip: '删除',
+                handler: ('noticeGridDeleteOne') 
+            }]  }
+
+	],	
+
+
+
+
+
+	tbar: Ext.create('Ext.Toolbar', {
+			id: 'xiaotingzi2' ,
+			items:[ {
+				text: '新增',
+				iconCls:'x-fa fa-plus',
+				ui:'soft-blue',
+				handler: 'noticeGridAdd'
+			},'-', {
+				text: '删除',
+				iconCls:'x-fa fa-trash',
+				handler: 'noticeGridDeleteDate'
+			},'-',{xtype:'tbtext',
+				text:'标题：'
+			},{
+				xtype:'textfield',
+				width:300,
+				itemsId:'searchText'
+				
+				
+			},{xtype:'tbtext',
+				text:'时间：'
+			},{
+				 xtype:'datefield',  
+                    itemId:'beginDate',    
+					format: 'Y/m/d',
+			
+			},{xtype:'tbtext',
+				text:'至：'
+			},{
+				xtype:'datefield',  
+                    itemId:'endDate',  
+                    format: 'Y/m/d', 
+					listeners: {  
+					focus: function(){
+						var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
+						this.setMinValue(cc);
+						}  	
+					}
+			},{
+				text: '查找',
+				handler:'noticeGridFind'
+			}
+			]
+	}),
+	
+	
+	
+	bbar: Ext.create('Ext.PagingToolbar', {
+		bind:'{noticeLists}',
+		displayInfo: true,
+		displayMsg: '第 {0} - {1}条， 共 {2}条',
+		emptyMsg: "No topics to display",
+	})
+	
+});
+
 Ext.define('Admin.view.notcie.NoticeText', {extend:Ext.form.Panel, alias:'widget.noticeText', id:'noticeText', controller:'NoticeViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'displayfield', name:'noticeName'}, {xtype:'displayfield', name:'noticeText'}]});
 Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewController, alias:'controller.NoticeViewController', noticeGridAdd:function(bt) {
   var cfg = Ext.apply({xtype:'orderWindow'}, {title:'新建公告', items:[Ext.apply({xtype:'noticeCompose'})]});
@@ -100325,7 +100507,11 @@ Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewControl
   var searchText = Ext.getCmp('xiaotingzi2').items.getAt(5).getValue();
   var beginTime = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
   var endTime = Ext.Date.add(Ext.getCmp('xiaotingzi2').items.getAt(9).getValue(), Ext.Date.DAY, 1);
-  Ext.Ajax.request({url:'notice/findByCondition', params:{noticeName:searchText, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:25, sort:'noticeId', dir:'DESC'}, success:function(response, options) {
+  Ext.Ajax.request({url:'notice/findByCondition', 
+	  params:{noticeName:searchText, 
+	  beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), 
+	  endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'),
+	  page:1, start:0, limit:25, sort:'noticeId', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     grid.getStore().loadData(tnpdata.content, false);
   }});

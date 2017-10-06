@@ -5,24 +5,21 @@
 	title:'<b>公告列表</b>',
 	bind:'{noticeLists}',
 	id:'noticeGrid',
+	listeners:{
+		cellclick:function(grid,td, cellIndex, record, tr, rowIndex){
+			//var record = this.getStore().getAt(rowIndex); 
+			  var orderWindow = Ext.widget('orderWindow',{
+				title:'查看公告',
+				html: grid.getStore().getAt(rowIndex).data.noticeName
+			});
+		}
+	},
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	columns: [
 		{text: '公告编号'			  ,sortable:true ,dataIndex:'noticeId',hidden:true},
-        {text: '标题' ,dataIndex:'noticeName' ,flex:1 ,
-			listeners:{
-				click:function(grid, rowIndex, colIndex){
-				var record = grid.getStore().getAt(rowIndex);
-				var orderWindow = Ext.widget('orderWindow',{
-				title:'修改公告',
-				items: [{xtype: 'noticeText'}],
-				  
-			}); 
-			orderWindow.down("form").getForm().loadRecord(record);
-		   		//让form加载选中记录
-          
-			}
-		}
-		
+             {text: '标题' ,dataIndex:'noticeName' ,flex:1 
+
+
 		},
 		{text: '发布时间'  ,sortable:true ,dataIndex:'noticeTime'  ,width:150
 			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
