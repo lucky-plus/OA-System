@@ -99931,18 +99931,22 @@ Ext.define('Admin.view.address.AddressGrid', {		//1.修改文件路径
 				text:'姓名：'
 			},{
 				xtype:'textfield',
-				width:200
+				width:200,
+				reference: 'addressGridSearchText'
 			},{xtype:'tbtext',
 				text:'所属部门：'
 			},{
 			xtype: 'combobox',
-			name:'department',
+			name:'dept',
+			reference: 'addressGridSearchField',
 			store:  Ext.create('Ext.data.Store', {
-				fields: ['department', 'name'],
+				fields: ['value', 'name'],
 				data : [
-					{"department":"HIGH", 	"name":"财务部"},
-					{"department":"MEDIUM",  "name":"业务部"},
-					{"department":"LOW", 	"name":"人事部"}
+					{"value":"", "name":"全部"},
+					{"value":"财务部", "name":"财务部"},
+					{"value":"市场部", "name":"市场部"},
+					{"value":"人事部", "name":"人事部"}
+					
 					]
 				}),
 				queryMode: 	  'local',
@@ -99950,7 +99954,10 @@ Ext.define('Admin.view.address.AddressGrid', {		//1.修改文件路径
 				valueField:   'value'
 			
 			},{
-				text:'查找'
+				text:'查找',
+				listeners: {
+					click: 'addressGridSearch'//快捷查询按钮
+				}
 			}]
 	}),
 	
@@ -99966,10 +99973,34 @@ Ext.define('Admin.view.address.AddressGrid', {		//1.修改文件路径
 	
 });
 
-Ext.define('Admin.view.address.AddressViewController', {extend:Ext.app.ViewController, alias:'controller.addressViewController', noticeGridAdd:function(bt) {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'上传资料'});
-  Ext.create(cfg);
-}});
+Ext.define('Admin.view.address.AddressViewController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.addressViewController',
+
+    addressGridSearch: function(bt) {
+		var searchField = this.lookupReference('addressGridSearchField').getValue();
+		alert(searchField);
+		var searchText = this.lookupReference('addressGridSearchText').getValue();
+		Ext.Ajax.request({ 
+			url : 'staff/findByPage', 
+			params : { 
+                    realName:searchText,
+					dept:searchField,
+					page:1,
+					start:0,
+					limit:25,
+					sort:'userId',
+					dir:'DESC'
+			},
+			success: function(response, options){
+				var tnpdata= Ext.util.JSON.decode(response.responseText) ;
+				Ext.getCmp('addressGrid').getStore().loadData(tnpdata.content,false);
+			}
+			
+	   });
+	}
+});
+
 Ext.define('Admin.view.address.AddressViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.addressViewModel', stores:{addressLists:{type:'addressStore', autoLoad:true}}});
 Ext.define('Admin.view.authentication.AuthenticationController', {extend:Ext.app.ViewController, alias:'controller.authentication', onFaceBookLogin:function() {
   this.redirectTo('dashboard', true);

@@ -1,10 +1,13 @@
 package com.oa.staff.web;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 
 import com.oa.staff.entity.UserInfornation;
 import com.oa.staff.service.IStaffService;
@@ -33,4 +36,8 @@ public class StaffController {
 		return staffService.findAll(pageable.getPageable());
 	}
 	
+	@RequestMapping("/findByPage")
+	public @ResponseBody Page<UserInfornation> findAll(UserInfornation  condetion ,ExtjsPageable pageable){
+		return staffService.findAll(UserInfornation.getWhereClause(condetion), pageable.getPageable());
+	}
 }

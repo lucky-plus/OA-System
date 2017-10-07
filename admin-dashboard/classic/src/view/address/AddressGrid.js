@@ -21,18 +21,22 @@
 				text:'姓名：'
 			},{
 				xtype:'textfield',
-				width:200
+				width:200,
+				reference: 'addressGridSearchText'
 			},{xtype:'tbtext',
 				text:'所属部门：'
 			},{
 			xtype: 'combobox',
-			name:'department',
+			name:'dept',
+			reference: 'addressGridSearchField',
 			store:  Ext.create('Ext.data.Store', {
-				fields: ['department', 'name'],
+				fields: ['value', 'name'],
 				data : [
-					{"department":"HIGH", 	"name":"财务部"},
-					{"department":"MEDIUM",  "name":"业务部"},
-					{"department":"LOW", 	"name":"人事部"}
+					{"value":"", "name":"全部"},
+					{"value":"财务部", "name":"财务部"},
+					{"value":"市场部", "name":"市场部"},
+					{"value":"人事部", "name":"人事部"}
+					
 					]
 				}),
 				queryMode: 	  'local',
@@ -40,7 +44,10 @@
 				valueField:   'value'
 			
 			},{
-				text:'查找'
+				text:'查找',
+				listeners: {
+					click: 'addressGridSearch'//快捷查询按钮
+				}
 			}]
 	}),
 	
