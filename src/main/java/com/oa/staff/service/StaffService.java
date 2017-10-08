@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
 
 import com.oa.staff.dao.IStaffDao;
 import com.oa.staff.entity.UserInfornation;
@@ -18,6 +21,10 @@ public class StaffService implements IStaffService {
 
 	@Autowired
 	private IStaffDao staffDao;
+	
+	public void setStaffDao(IStaffDao staffDao) {
+		this.staffDao = staffDao;
+	}
 	
 	@Override
 	public UserInfornation findByUserName(String userName) {
@@ -36,6 +43,17 @@ public class StaffService implements IStaffService {
 		}
 		Page<UserRoleDTO> userRolePage = new PageImpl<UserRoleDTO>(dtoList, pageable, userPage.getTotalElements());
 		return userRolePage;
+	}
+	
+	public Page<UserInfornation> findAll(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return staffDao.findAll(pageable);
+	}
+
+	@Override
+	public Page<UserInfornation> findAll(Specification<UserInfornation> spec, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return staffDao.findAll(spec,pageable);
 	}
 
 }

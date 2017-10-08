@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.oa.staff.entity.dto.UserRoleDTO;
 import com.oa.staff.service.IStaffService;
 import com.oa.utils.ExtjsPageable;
+import com.oa.staff.entity.UserInfornation;
+import com.oa.staff.service.IStaffService;
+import com.oa.utils.ExtjsPageable;
 
 
 @Controller
@@ -23,4 +26,15 @@ public class StaffController {
 		return staffService.findUserRole(roleLevel, pageable.getPageable());
 	}
 	
+	@RequestMapping("/findPage")
+	public @ResponseBody Page<UserInfornation> findAll(ExtjsPageable pageable)
+	{
+		pageable.setSort("userId");
+		return staffService.findAll(pageable.getPageable());
+	}
+	
+	@RequestMapping("/findByPage")
+	public @ResponseBody Page<UserInfornation> findAll(UserInfornation  condetion ,ExtjsPageable pageable){
+		return staffService.findAll(UserInfornation.getWhereClause(condetion), pageable.getPageable());
+	}
 }
