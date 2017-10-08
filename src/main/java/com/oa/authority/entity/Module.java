@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,7 +41,7 @@ public class Module {
 	public String getCreatBy() {
 		return creatBy;
 	}
-	@ManyToMany(mappedBy="modules")
+	@ManyToMany(mappedBy="modules",fetch=FetchType.EAGER)
 	@Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
 	public List<Role> getRoles() {
 		return roles;

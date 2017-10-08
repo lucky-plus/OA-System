@@ -99717,6 +99717,34 @@ leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500
 iconCls:'x-fa fa-edit', viewType:'forms', leaf:true}, {text:'Charts', iconCls:'x-fa fa-pie-chart', viewType:'charts', leaf:true}]}});
 Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', data:{'items':[{'addressId':1, 'addressName':'Lisa', 'addressDepartment':'销售部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':2, 'addressName':'Lisa', 'addressDepartment':'网络部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':3, 'addressName':'Lisa', 'addressDepartment':'人事部', 'addressPhone':'13631784344', 
 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':4, 'addressName':'Lisa', 'addressDepartment':'财务部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}]}, proxy:{type:'memory', reader:{type:'json', root:'items'}}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
+
+Ext.define('Admin.store.authority.AuthorityStore', {
+    extend: 'Ext.data.Store',
+    alias: 'store.authorityStore',       //1.Store取别名（reference）
+    model: 'Admin.model.authority.AuthorityModel',//2.设置model的全路径
+  	proxy: {
+		type: 'ajax',
+		url: 'staff/findUserRole.json',
+		params : { 
+			roleLevel: loginUserRoleLevel
+		}, 
+		reader: {
+			type:'json', 
+			rootProperty: 'content',		//结果集名字的属性
+			totalProperty: 'totalElements'	//一共多少条记录的属性
+		},
+		simpleSortMode: true
+	},
+
+	pageSize: 10,
+	autoLoad: true,
+	remoteSort: true,//全局排序
+    sorters: {
+        direction: 'DESC',
+        property: 'roleId'
+    }
+});
+
 Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
 Ext.define('Admin.store.email.Inbox', {extend:Ext.data.Store, alias:'store.inbox', model:'Admin.model.email.Email', pageSize:20, autoLoad:true, proxy:{type:'api', url:'~api/email/inbox'}});
 Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', model:'Admin.model.faq.Category', proxy:{type:'api', url:'~api/faq/faq'}});
@@ -99944,9 +99972,42 @@ isValid:function() {
   return me.checked || me.disabled;
 }}, {xtype:'button', scale:'large', ui:'soft-blue', formBind:true, reference:'submitButton', bind:false, margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Signup', listeners:{click:'onSignupClick'}}, {xtype:'box', html:'\x3cdiv class\x3d"outer-div"\x3e\x3cdiv class\x3d"seperator"\x3eOR\x3c/div\x3e\x3c/div\x3e'}, {xtype:'button', scale:'large', ui:'facebook', margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-facebook', text:'Login with Facebook', listeners:{click:'onFaceBookLogin'}}, 
 {xtype:'component', html:'\x3cdiv style\x3d"text-align:right"\x3e' + '\x3ca href\x3d"#login" class\x3d"link-forgot-password"\x3e' + 'Back to Log In\x3c/a\x3e' + '\x3c/div\x3e'}]}]});
-Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xtype:'authority', layout:'fit', margin:'20 20 20 20', items:[{}]});
-Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:125}, {text:'所拥有的权限', sortable:true, dataIndex:'', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
-iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xtype:'authority', layout:'fit', margin:'20 20 20 20', items:[{xtype:'authorityGrid'}]});
+
+Ext.define('Admin.view.authority.AuthorityGrid', {		//1.修改文件路径
+      extend: 'Ext.grid.Panel',					//2.继承的组件类型
+	//3.重写继承组件的属性：
+    xtype: 'authorityGrid',
+	title:'<b>角色列表</b>',
+	bind:'{userRoleLists}',
+	id:'authorityGrid',
+	selModel: Ext.create('Ext.selection.CheckboxModel'),
+	columns: [
+		{text: 'userId'	,sortable:true ,dataIndex:'userId',hidden:true},
+		{text: 'roleId'	,sortable:true ,dataIndex:'roleId',hidden:true},
+        {text: '用户名称' ,sortable:true ,dataIndex:'userName' ,width:150},
+		{text: '角色名称'  ,sortable:true ,dataIndex:'roleName'  ,width:150},
+		{text: '所拥有的权限', sortable:true ,dataIndex:'modulesText' ,flex:1}
+	],	
+
+
+	tbar: Ext.create('Ext.Toolbar', {
+			items:[ {
+			text: '修改权限',
+			iconCls:'x-fa fa-edit',
+			handler: 'roleGridEdit'
+		}]
+	}),
+	
+	bbar: Ext.create('Ext.PagingToolbar', {
+		//bind:'{orderLists}',
+		displayInfo: true,
+		displayMsg: '第 {0} - {1}条， 共 {2}条',
+		emptyMsg: "暂无数据",
+	})
+	
+});
+
 Ext.define('Admin.view.authority.AuthorityViewController', {extend:Ext.app.ViewController, alias:'controller.AuthorityViewController', roleGridAdd:function(bt) {
   var cfg = Ext.apply({xtype:'authorityWindow'}, {title:'添加角色', items:[Ext.apply({xtype:'roleForm'})]});
   Ext.create(cfg);
@@ -99999,7 +100060,7 @@ Ext.define('Admin.view.authority.AuthorityViewController', {extend:Ext.app.ViewC
     win.close();
   }
 }});
-Ext.define('Admin.view.authority.AuthorityViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.authorityViewModel', stores:{orderLists:{type:'orderStore', autoLoad:true}}});
+Ext.define('Admin.view.authority.AuthorityViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.authorityViewModel', stores:{userRoleLists:{type:'authorityStore', autoLoad:true}}});
 Ext.define('Admin.view.charts.Charts', {extend:Ext.container.Container, xtype:'charts', viewModel:{type:'charts'}, layout:'responsivecolumn', defaults:{defaults:{animation:!Ext.isIE9m && Ext.os.is.Desktop}}, items:[{xtype:'chartsareapanel', userCls:'big-50 small-100'}, {xtype:'chartspie3dpanel', userCls:'big-50 small-100'}, {xtype:'chartspolarpanel', userCls:'big-50 small-100'}, {xtype:'chartsstackedpanel', userCls:'big-50 small-100'}, {xtype:'chartsbarpanel', userCls:'big-50 small-100'}, {xtype:'chartsgaugepanel', 
 userCls:'big-50 small-100'}]});
 Ext.define('Admin.view.dashboard.Dashboard', {extend:Ext.container.Container, xtype:'admindashboard', controller:'dashboard', viewModel:{type:'dashboard'}, layout:'responsivecolumn', listeners:{hide:'onHideView'}, items:[{xtype:'network', userCls:'big-60 small-100'}, {xtype:'hddusage', userCls:'big-20 small-50'}, {xtype:'earnings', userCls:'big-20 small-50'}, {xtype:'sales', userCls:'big-20 small-50'}, {xtype:'topmovies', userCls:'big-20 small-50'}, {xtype:'weather', cls:'weather-panel shadow', userCls:'big-40 small-100'}, 
@@ -100488,7 +100549,7 @@ Ext.define('Admin.view.role.RoleViewController', {extend:Ext.app.ViewController,
   var selModel = grid.getSelectionModel();
   if (selModel.hasSelection()) {
     var record = selModel.getSelection()[0];
-    var orderWindow = Ext.widget('orderWindow', {title:'修改订单', items:[{xtype:'orderForm'}]});
+    var orderWindow = Ext.widget('roleGridWindow', {title:'修改订单', items:[{xtype:'roleGridForm'}]});
     orderWindow.down('form').getForm().loadRecord(record);
   } else {
     Ext.Msg.alert('提示', '请选择一行数据进行编辑!');
@@ -100502,7 +100563,7 @@ Ext.define('Admin.view.role.RoleViewController', {extend:Ext.app.ViewController,
         var selected = selModel.getSelection();
         var selectIds = [];
         Ext.each(selected, function(record) {
-          selectIds.push(record.data.id);
+          selectIds.push(record.data.roleId);
         });
         Ext.Ajax.request({url:'role/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
           var json = Ext.util.JSON.decode(response.responseText);

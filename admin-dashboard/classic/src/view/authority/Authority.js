@@ -15,6 +15,6 @@ Ext.define('Admin.view.authority.Authority', {		//1.修改文件路径
     layout:'fit',
     margin: '20 20 20 20',
     items: [{
-		// xtype: 'authorityGrid'
+		xtype: 'authorityGrid'
 	}]
 });

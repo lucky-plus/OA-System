@@ -4,10 +4,15 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.oa.authority.entity.Role;
 
 @Entity
 @Table(name="t_user")
@@ -26,6 +31,8 @@ public class UserInfornation {
 	private Date onDutDate;
 	private String wechatNumber;
 	private String home;
+	
+	private Role role;
 	
 	@Id
 	@Column(length=8)
@@ -69,7 +76,15 @@ public class UserInfornation {
 	public String getHome() {
 		return home;
 	}
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="roleId")
+	public Role getRole() {
+		return role;
+	}
 	
+	public void setRole(Role role) {
+		this.role = role;
+	}
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
