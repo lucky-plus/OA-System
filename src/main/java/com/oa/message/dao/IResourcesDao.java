@@ -1,15 +1,12 @@
 package com.oa.message.dao;
 
-
-
-
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Component;
 
-import com.oa.message.entity.Notice;
+import com.oa.message.entity.Resources;
 
 @Component
-public interface INoticeDao extends PagingAndSortingRepository<Notice, Integer>, JpaSpecificationExecutor<Notice> {
-	
+public interface IResourcesDao extends PagingAndSortingRepository<Resources, Integer>, JpaSpecificationExecutor<Resources> {
+
 }

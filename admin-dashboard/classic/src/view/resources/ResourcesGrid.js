@@ -7,10 +7,11 @@
 	id:'resourcesGrid',
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	columns: [
-		{text: '资料编号',dataIndex:'resourcesId',hidden:true},
-        {text: '资料名称' ,dataIndex:'resourcesName' ,flex:1},
-		{text: '发布时间'  ,sortable:true ,dataIndex:'resourcesTime'  ,width:150
+		{text: '资料编号',dataIndex:'resId',hidden:true},
+        {text: '资料名称' ,dataIndex:'resName' ,flex:1},
+		{text: '发布时间'  ,sortable:true ,dataIndex:'resDate'  ,width:150
 			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
+		{text: '发布者',dataIndex:'userName'    ,width:150},
 		{xtype: 'actioncolumn',  text: '操作' ,width:150,tdCls: 'action',  
             items: ['-',{  
 				icon:'resources/images/icons/dowanload.png',
@@ -34,8 +35,9 @@
             },'-', {  
 				icon:'resources/images/icons/delete.png',
                 tooltip: '删除',
-              //  handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {   }  
+                handler: 'resourcesGridDeleteOne'
             }]  }
+			
 
 	],		
 
@@ -60,7 +62,7 @@
 		},'-', {
 			text: '批量删除',
 			iconCls:'x-fa fa-trash',
-			//handler: 'orderGridDelete'
+			handler: 'resourcesGridDeleteDate'
 		},'-',{xtype:'tbtext',
 				text:'标题：'
 			},{
