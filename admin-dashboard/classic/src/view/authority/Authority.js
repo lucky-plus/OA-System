@@ -8,8 +8,8 @@ Ext.define('Admin.view.authority.Authority', {		//1.修改文件路径
 	//3.重写继承组件的属性：
     xtype: 'authority',
 
-    //controller: 'RoleViewController',			//视图绑定viewController
-    //viewModel : {type: 'roleViewModel'},	//视图绑定viewModel
+    controller: 'AuthorityViewController',			//视图绑定viewController
+    viewModel : {type: 'authorityViewModel'},	//视图绑定viewModel
 	
 
     layout:'fit',

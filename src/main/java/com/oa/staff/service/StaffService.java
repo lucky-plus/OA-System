@@ -56,4 +56,9 @@ public class StaffService implements IStaffService {
 		return staffDao.findAll(spec,pageable);
 	}
 
+	@Override
+	public void userRoleUpdate(String userId, Integer roleId) {
+		staffDao.userRoleUpdate(userId, roleId);
+	}
+
 }

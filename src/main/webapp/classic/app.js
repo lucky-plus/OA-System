@@ -64962,6 +64962,109 @@ Ext.define('Ext.form.field.Radio', {extend:Ext.form.field.Checkbox, alias:['widg
 }, getManager:function() {
   return Ext.form.RadioManager;
 }});
+Ext.define('Ext.form.RadioGroup', {extend:Ext.form.CheckboxGroup, xtype:'radiogroup', isRadioGroup:true, allowBlank:true, blankText:'You must select one item in this group', defaultType:'radiofield', local:false, simpleValue:false, defaultBindProperty:'value', groupCls:Ext.baseCSSPrefix + 'form-radio-group', ariaRole:'radiogroup', initRenderData:function() {
+  var me = this, data, ariaAttr;
+  data = me.callParent();
+  ariaAttr = data.ariaAttributes;
+  if (ariaAttr) {
+    ariaAttr['aria-required'] = !me.allowBlank;
+    ariaAttr['aria-invalid'] = false;
+  }
+  return data;
+}, lookupComponent:function(config) {
+  var result = this.callParent([config]);
+  if (this.local) {
+    result.formId = this.getId();
+  }
+  return result;
+}, getBoxes:function(query, root) {
+  return (root || this).query('[isRadio]' + (query || ''));
+}, checkChange:function() {
+  var me = this, value, key;
+  value = me.getValue();
+  key = typeof value === 'object' && Ext.Object.getKeys(value)[0];
+  if (me.simpleValue || key && !Ext.isArray(value[key])) {
+    me.callParent(arguments);
+  }
+}, isEqual:function(value1, value2) {
+  if (this.simpleValue) {
+    return value1 === value2;
+  }
+  return this.callParent([value1, value2]);
+}, getValue:function() {
+  var me = this, items = me.items.items, i, item, ret;
+  if (me.simpleValue) {
+    for (i = items.length; i-- > 0;) {
+      item = items[i];
+      if (item.checked) {
+        ret = item.inputValue;
+        break;
+      }
+    }
+  } else {
+    ret = me.callParent();
+  }
+  return ret;
+}, setValue:function(value) {
+  var items = this.items, cbValue, cmp, formId, radios, i, len, name;
+  Ext.suspendLayouts();
+  if (this.simpleValue) {
+    for (i = 0, len = items.length; i < len; ++i) {
+      cmp = items.items[i];
+      if (cmp.inputValue === value) {
+        cmp.setValue(true);
+        break;
+      }
+    }
+  } else {
+    if (Ext.isObject(value)) {
+      cmp = items.first();
+      formId = cmp ? cmp.getFormId() : null;
+      for (name in value) {
+        cbValue = value[name];
+        radios = Ext.form.RadioManager.getWithValue(name, cbValue, formId).items;
+        len = radios.length;
+        for (i = 0; i < len; ++i) {
+          radios[i].setValue(true);
+        }
+      }
+    }
+  }
+  Ext.resumeLayouts(true);
+  return this;
+}, markInvalid:function(errors) {
+  var ariaDom = this.ariaEl.dom;
+  this.callParent([errors]);
+  if (ariaDom) {
+    ariaDom.setAttribute('aria-invalid', true);
+  }
+}, clearInvalid:function() {
+  var ariaDom = this.ariaEl.dom;
+  this.callParent();
+  if (ariaDom) {
+    ariaDom.setAttribute('aria-invalid', false);
+  }
+}}, function() {
+  if (Ext.isGecko) {
+    this.override({onFocusEnter:function(e) {
+      var target = e.toComponent, radios, i, len;
+      if (target.isRadio) {
+        radios = target.getManager().getByName(target.name, target.getFormId()).items;
+        for (i = 0, len = radios.length; i < len; i++) {
+          radios[i].disableTabbing();
+        }
+      }
+    }, onFocusLeave:function(e) {
+      var target = e.fromComponent, radios, i, len;
+      if (target.isRadio) {
+        radios = target.getManager().getByName(target.name, target.getFormId()).items;
+        for (i = 0, len = radios.length; i < len; i++) {
+          radios[i].enableTabbing();
+        }
+      }
+    }});
+  }
+});
 Ext.define('Ext.form.field.Picker', {extend:Ext.form.field.Text, alias:'widget.pickerfield', alternateClassName:'Ext.form.Picker', config:{triggers:{picker:{handler:'onTriggerClick', scope:'this', focusOnMousedown:true}}}, renderConfig:{editable:true}, keyMap:{scope:'this', DOWN:'onDownArrow', ESC:'onEsc'}, keyMapTarget:'inputEl', isPickerField:true, matchFieldWidth:true, pickerAlign:'tl-bl?', openCls:Ext.baseCSSPrefix + 'pickerfield-open', isExpanded:false, applyTriggers:function(triggers) {
   var me = this, picker = triggers.picker;
   if (!picker.cls) {
@@ -99698,7 +99801,7 @@ Ext.define('Admin.model.PersonalInfo', {extend:Admin.model.Base, fields:[{name:'
 Ext.define('Admin.model.Subscription', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'subscription'}]});
 Ext.define('Admin.model.YearwiseData', {extend:Admin.model.Base, fields:[{name:'year'}, {name:'data'}]});
 Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'realName', type:'string'}, {name:'dept', type:'string'}, {name:'mobilePhone', type:'string'}, {name:'mail', type:'string'}, {name:'qq_number', type:'int'}]});
-Ext.define('Admin.model.authority.AuthorityModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'int'}, {name:'roleId', type:'int'}, {name:'userName', type:'string'}, {name:'roleName', type:'string'}, {name:'modulesText', type:'string'}]});
+Ext.define('Admin.model.authority.AuthorityModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'roleId', type:'int'}, {name:'userName', type:'string'}, {name:'roleName', type:'string'}, {name:'modulesText', type:'string'}]});
 Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {name:'read'}, {type:'string', name:'title'}, {name:'user_id'}, {type:'string', name:'contents'}, {type:'string', name:'from'}, {name:'has_attachments'}, {name:'attachments'}, {name:'received_on', type:'date'}, {name:'favorite'}]});
 Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
 Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
@@ -99717,7 +99820,7 @@ viewType:'email', leaf:true}, {text:'Profile', iconCls:'x-fa fa-user', viewType:
 leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}, {text:'Widgets', iconCls:'x-fa fa-flask', viewType:'widgets', leaf:true}, {text:'Forms', 
 iconCls:'x-fa fa-edit', viewType:'forms', leaf:true}, {text:'Charts', iconCls:'x-fa fa-pie-chart', viewType:'charts', leaf:true}]}});
 Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
-Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json', params:{roleLevel:loginUserRoleLevel}, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:10, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
+Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json?roleLevel\x3d' + loginUserRoleLevel, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:10, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
 Ext.define('Admin.store.email.Inbox', {extend:Ext.data.Store, alias:'store.inbox', model:'Admin.model.email.Email', pageSize:20, autoLoad:true, proxy:{type:'api', url:'~api/email/inbox'}});
 Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', model:'Admin.model.faq.Category', proxy:{type:'api', url:'~api/faq/faq'}});
@@ -99950,56 +100053,47 @@ isValid:function() {
   return me.checked || me.disabled;
 }}, {xtype:'button', scale:'large', ui:'soft-blue', formBind:true, reference:'submitButton', bind:false, margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Signup', listeners:{click:'onSignupClick'}}, {xtype:'box', html:'\x3cdiv class\x3d"outer-div"\x3e\x3cdiv class\x3d"seperator"\x3eOR\x3c/div\x3e\x3c/div\x3e'}, {xtype:'button', scale:'large', ui:'facebook', margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-facebook', text:'Login with Facebook', listeners:{click:'onFaceBookLogin'}}, 
 {xtype:'component', html:'\x3cdiv style\x3d"text-align:right"\x3e' + '\x3ca href\x3d"#login" class\x3d"link-forgot-password"\x3e' + 'Back to Log In\x3c/a\x3e' + '\x3c/div\x3e'}]}]});
-Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xtype:'authority', layout:'fit', margin:'20 20 20 20', items:[{xtype:'authorityGrid'}]});
+Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xtype:'authority', controller:'AuthorityViewController', viewModel:{type:'authorityViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'authorityGrid'}]});
 Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{userRoleLists}', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'userId', sortable:true, dataIndex:'userId', hidden:true}, {text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'用户名称', sortable:true, dataIndex:'userName', width:150}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'所拥有的权限', 
-sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'修改权限', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}]}), bbar:Ext.create('Ext.PagingToolbar', {displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
-Ext.define('Admin.view.authority.AuthorityViewController', {extend:Ext.app.ViewController, alias:'controller.AuthorityViewController', roleGridAdd:function(bt) {
-  var cfg = Ext.apply({xtype:'authorityWindow'}, {title:'添加角色', items:[Ext.apply({xtype:'roleForm'})]});
-  Ext.create(cfg);
-}, roleGridEdit:function(btn) {
+sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'修改权限', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{userRoleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.authority.AuthorityGridForm', {extend:Ext.form.Panel, alias:'widget.authorityGridForm', controller:'AuthorityViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'用户名称', name:'userName'}, {xtype:'radiogroup', fieldLabel:'角色名称', columns:3, vertical:true, items:[{boxLabel:'r1', name:'roleId', inputValue:'1'}, 
+{boxLabel:'r2', name:'roleId', inputValue:'2'}, {boxLabel:'r3', name:'roleId', inputValue:'3'}, {boxLabel:'r4', name:'roleId', inputValue:'4'}]}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'authorityGridFormSubmit'}, {xtype:'button', text:'取消', handler:'authorityGridWindowClose'}]}});
+Ext.define('Admin.view.authority.AuthorityGridWindow', {extend:Ext.window.Window, alias:'widget.authorityGridWindow', autoShow:true, modal:true, layout:'fit', afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.6), Math.floor(height * 0.6));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
+Ext.define('Admin.view.authority.AuthorityViewController', {extend:Ext.app.ViewController, alias:'controller.AuthorityViewController', roleGridEdit:function(btn) {
   var grid = btn.up('gridpanel');
   var selModel = grid.getSelectionModel();
   if (selModel.hasSelection()) {
     var record = selModel.getSelection()[0];
-    var orderWindow = Ext.widget('orderWindow', {title:'修改订单', items:[{xtype:'orderForm'}]});
+    var orderWindow = Ext.widget('authorityGridWindow', {title:'修改权限', items:[{xtype:'authorityGridForm'}]});
     orderWindow.down('form').getForm().loadRecord(record);
   } else {
     Ext.Msg.alert('提示', '请选择一行数据进行编辑!');
   }
-}, roleGridDelete:function(btn) {
-  var grid = btn.up('gridpanel');
-  var selModel = grid.getSelectionModel();
-  if (selModel.hasSelection()) {
-    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
-      if (button == 'yes') {
-        var selected = selModel.getSelection();
-        var selectIds = [];
-        Ext.each(selected, function(record) {
-          selectIds.push(record.data.id);
-        });
-        Ext.Ajax.request({url:'order/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
-          var json = Ext.util.JSON.decode(response.responseText);
-          if (json.success) {
-            Ext.Msg.alert('操作成功', json.msg);
-            grid.getStore().reload();
-          } else {
-            Ext.Msg.alert('操作失败', json.msg);
-          }
-        }});
-      }
-    });
-  }
-}, orderGridFromSubmit:function(btn) {
+}, authorityGridFormSubmit:function(btn) {
   var orderForm = btn.up('form').getForm();
   var win = btn.up('window');
-  orderForm.submit({url:'order/saveOrUpdate', method:'post', success:function(form, action) {
+  orderForm.submit({url:'staff/userRoleUpdate', method:'post', success:function(form, action) {
     Ext.Msg.alert('提示', action.result.msg);
     win.close();
-    Ext.getCmp('orderGrid').store.reload();
+    Ext.getCmp('authorityGrid').store.reload();
   }, failure:function(form, action) {
     Ext.Msg.alert('提示', action.result.msg);
   }});
-}, orderGridWindowsClose:function(btn) {
+}, authorityGridWindowClose:function(btn) {
   var win = btn.up('window');
   if (win) {
     win.close();

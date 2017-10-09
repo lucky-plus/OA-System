@@ -69,9 +69,11 @@ CREATE TABLE `t_module` (
   `parentId` varchar(255) DEFAULT NULL,
   `parentName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`moduleId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 /*Data for the table `t_module` */
+
+insert  into `t_module`(`moduleId`,`creatBy`,`modelName`,`parentId`,`parentName`) values (1,NULL,'1',NULL,NULL),(2,NULL,'1-1','1',NULL),(3,NULL,'1-2','1',NULL),(4,NULL,'2',NULL,NULL),(5,NULL,'2-1','2',NULL),(6,NULL,'2-2','2',NULL),(7,NULL,'2-3','2',NULL),(8,NULL,'3',NULL,NULL),(9,NULL,'3-1','3',NULL),(10,NULL,'3-2','3',NULL);
 
 /*Table structure for table `t_module_t_role` */
 
@@ -145,7 +147,7 @@ CREATE TABLE `t_role` (
 
 /*Data for the table `t_role` */
 
-insert  into `t_role`(`roleId`,`roleLevel`,`roleName`) values (1,1,'r1'),(3,2,'r2'),(4,2,'r3'),(5,4,'r4');
+insert  into `t_role`(`roleId`,`roleLevel`,`roleName`) values (1,1,'r1'),(2,2,'r2'),(3,2,'r3'),(4,4,'r4');
 
 /*Table structure for table `t_role_module` */
 
@@ -160,7 +162,7 @@ CREATE TABLE `t_role_module` (
 
 /*Data for the table `t_role_module` */
 
-insert  into `t_role_module`(`roleId`,`moduleId`) values (1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(3,9),(3,8),(3,6),(3,5),(3,4),(3,3),(3,1),(4,1),(4,2),(4,4),(4,8),(4,9),(5,5),(5,4),(5,2),(5,1);
+insert  into `t_role_module`(`roleId`,`moduleId`) values (1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(2,9),(2,8),(2,6),(2,5),(2,4),(2,3),(2,1),(3,1),(3,2),(3,4),(3,8),(3,9),(4,5),(4,4),(4,2),(4,1);
 
 /*Table structure for table `t_user` */
 
@@ -190,7 +192,7 @@ CREATE TABLE `t_user` (
 
 /*Data for the table `t_user` */
 
-insert  into `t_user`(`userId`,`birthday`,`dept`,`home`,`idNumber`,`idType`,`mail`,`mobilePhone`,`nativePlace`,`onDutDate`,`password`,`qq_number`,`realName`,`sex`,`userName`,`wechatNumber`,`roleId`) values ('4',NULL,'财务部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'xgd',NULL,'xgd',NULL,NULL),('3',NULL,'财务部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'zzf',NULL,'zzf',NULL,1),('2',NULL,'财务部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'fzt',NULL,'fzt',NULL,1),('1',NULL,'人事部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'zjk',NULL,'zjk',NULL,1);
+insert  into `t_user`(`userId`,`birthday`,`dept`,`home`,`idNumber`,`idType`,`mail`,`mobilePhone`,`nativePlace`,`onDutDate`,`password`,`qq_number`,`realName`,`sex`,`userName`,`wechatNumber`,`roleId`) values ('4',NULL,'财务部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'xgd',NULL,'xgd',NULL,NULL),('3',NULL,'财务部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'zzf',NULL,'zzf',NULL,1),('2',NULL,'财务部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'fzt',NULL,'fzt',NULL,1),('1',NULL,'人事部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'zjk',NULL,'zjk',NULL,1),('5',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,'test1',NULL,2),('6',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,'test2',NULL,2),('7',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,'test3',NULL,3),('8',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,'test4',NULL,4);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

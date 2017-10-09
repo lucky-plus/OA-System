@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oa.staff.entity.dto.UserRoleDTO;
 import com.oa.staff.service.IStaffService;
+import com.oa.utils.ExtjsAjaxResult;
 import com.oa.utils.ExtjsPageable;
 import com.oa.staff.entity.UserInfornation;
 import com.oa.staff.service.IStaffService;
@@ -24,6 +25,17 @@ public class StaffController {
 	@RequestMapping("/findUserRole")
 	public @ResponseBody Page<UserRoleDTO> findUserRole(Integer roleLevel, ExtjsPageable pageable) {
 		return staffService.findUserRole(roleLevel, pageable.getPageable());
+	}
+	
+	@RequestMapping("/userRoleUpdate")
+	public @ResponseBody ExtjsAjaxResult userRoleUpdate(String userId, Integer roleId) {
+		try {
+			staffService.userRoleUpdate(userId, roleId);
+			return new ExtjsAjaxResult(true,"操作成功！");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ExtjsAjaxResult(false,"操作失败！");
+		}
 	}
 	
 	@RequestMapping("/findPage")

@@ -68,4 +68,11 @@ public class StaffTest {
 		}
 	}
 
+	@Test
+	public void updateUserRole() {
+		String userId = "9";
+		Integer roleId = 4;
+		staffService.userRoleUpdate(userId, roleId);
+	}
+	
 }
