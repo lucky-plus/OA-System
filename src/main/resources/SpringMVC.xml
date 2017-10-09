@@ -36,4 +36,14 @@
  	<!-- 静态资源访问  -->
   	<mvc:default-servlet-handler/>
   	
+  	
+  	<mvc:interceptors>
+	    <mvc:interceptor>
+		    <mvc:mapping path="/resources/upload" />
+			    <bean class="com.oa.utils.FileUploadInterceptor">
+			        <property name="maxSize" value="10485760" />
+			    </bean>
+	    </mvc:interceptor>
+	</mvc:interceptors>
+  	
 </beans>

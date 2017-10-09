@@ -35,20 +35,22 @@ Ext.define('Admin.view.resources.ResourcesForm', {
 		//allowBlank: false,
 		name:'resId',
 		//handler:'orderGridEdit'
-	},{
+	},{xtype:'hidden', 
+		fieldLabel:'userId', 
+		name:'userId', 
+		value:loginUserId}
+	,{
 		xtype:'textfield',
-		fieldLabel: '文件名称',
+		fieldLabel: '文件名称(限制50M以内)',
 		//allowBlank: false,
 		name:'resName',
 		//handler:'orderGridEdit'
 	},{
-		xtype: 'textfield',  
-    	    	        inputType: 'file',//文件类型   
-    	    	        fieldLabel: '文件名',    	     
-    	    	        name : 'uploadFileFieldPath', 
-    	    	        id : 'uploadFileFieldPath',  
-    	    	        allowBlank:false,
-    	    	        blankText: '浏览'
+		xtype: 'fileuploadfield',  
+		
+		fieldLabel: '文件名',   
+		
+
 
 	}],
 
