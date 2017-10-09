@@ -183,12 +183,14 @@ CREATE TABLE `t_user` (
   `sex` varchar(255) DEFAULT NULL,
   `userName` varchar(255) DEFAULT NULL,
   `wechatNumber` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`userId`)
+  `roleId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`userId`),
+  KEY `FKdtmq1o1js2ws833kimlsskw15` (`roleId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /*Data for the table `t_user` */
 
-insert  into `t_user`(`userId`,`birthday`,`dept`,`home`,`idNumber`,`idType`,`mail`,`mobilePhone`,`nativePlace`,`onDutDate`,`password`,`qq_number`,`realName`,`sex`,`userName`,`wechatNumber`) values ('1',NULL,'财务部',NULL,NULL,NULL,'934789892@qq.com','13631781026','广东东莞',NULL,'123',934789892,'方振庭','男','fzt',NULL),('2','2017-10-07 21:57:10','市场部','','','','934789892@qq.com','13631781026','广东东莞','2017-10-10 21:57:17','123',934789892,'123','男','1',NULL),('3',NULL,'财务部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,934789892,'456','男','2',NULL),('4',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,NULL,NULL,'zjk',NULL);
+insert  into `t_user`(`userId`,`birthday`,`dept`,`home`,`idNumber`,`idType`,`mail`,`mobilePhone`,`nativePlace`,`onDutDate`,`password`,`qq_number`,`realName`,`sex`,`userName`,`wechatNumber`,`roleId`) values ('4',NULL,'财务部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'xgd',NULL,'xgd',NULL,NULL),('3',NULL,'财务部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'zzf',NULL,'zzf',NULL,1),('2',NULL,'财务部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'fzt',NULL,'fzt',NULL,1),('1',NULL,'人事部',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'123',0,'zjk',NULL,'zjk',NULL,1);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
