@@ -1,71 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-xsi:schemaLocation="
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="
 http://xmlns.jcp.org/xml/ns/javaee
-http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"  
-id="WebApp_ID" version="3.1">
+http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	id="WebApp_ID" version="3.1">
 
-  <display-name>springmvc</display-name>
-  
-  
-  <!-- 加载spring配置文件 -->
-  <listener>
-   	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-  </listener>
-  <context-param>
-   	<param-name>contextConfigLocation</param-name>
-   	<param-value>classpath*:ApplicationContext*.xml</param-value>
-  </context-param>
-   
-  <!-- springmvc前端控制器 -->
-  <servlet>
-  	<servlet-name>springMvc</servlet-name>
-  	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-  	<init-param>
-  		<param-name>contextConfigLocation</param-name>
-  		<param-value>classpath:SpringMVC.xml</param-value>
-  	</init-param>
-  	<!-- 在tomcat启动的时候就加载这个servlet -->
-  	<load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-	 <servlet-name>springMvc</servlet-name>
-	 <!-- 	
-  		*.action    代表拦截后缀名为.action结尾的
-  		/ 			拦截所有但是不包括.jsp
-  		/* 			拦截所有包括.jsp			
-  	 -->
-	 <url-pattern>/</url-pattern>
-  </servlet-mapping>
-  
-  <!-- Shiro核心控制器 -->
-  <filter>		
-	<filter-name>shiroFilter</filter-name>
-	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class> 
-	<init-param>
-		<param-name>targetFilterLifecycle</param-name>
+	<display-name>springmvc</display-name>
+	<context-param>
+		<description>Vaadin production mode</description>
+		<param-name>productionMode</param-name>
 		<param-value>true</param-value>
-	</init-param>
-  </filter>
-  <filter-mapping>
+	</context-param>
+
+
+	<!-- 加载spring配置文件 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:ApplicationContext*.xml</param-value>
+	</context-param>
+
+	<!-- springmvc前端控制器 -->
+	<servlet>
+		<servlet-name>springMvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:SpringMVC.xml</param-value>
+		</init-param>
+		<!-- 在tomcat启动的时候就加载这个servlet -->
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springMvc</servlet-name>
+		<!-- *.action 代表拦截后缀名为.action结尾的 / 拦截所有但是不包括.jsp /* 拦截所有包括.jsp -->
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>UIFilter</filter-name>
+		<filter-class>org.activiti.explorer.filter.ExplorerFilter</filter-class>
+	</filter>
+
+	<filter>
+		<filter-name>JSONPFilter</filter-name>
+		<filter-class>org.activiti.explorer.servlet.JsonpCallbackFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>UIFilter</filter-name>
+		<url-pattern>/ui/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>JSONPFilter</filter-name>
+		<url-pattern>/service/*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>Vaadin Application Servlet</servlet-name>
+		<servlet-class>org.activiti.explorer.servlet.ExplorerApplicationServlet</servlet-class>
+		<init-param>
+			<param-name>widgetset</param-name>
+			<param-value>org.activiti.explorer.CustomWidgetset</param-value>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Vaadin Application Servlet</servlet-name>
+		<url-pattern>/ui/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>Vaadin Application Servlet</servlet-name>
+		<url-pattern>/VAADIN/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- Session timeout on one day -->
+	<session-config>
+		<session-timeout>480</session-timeout>
+	</session-config>
+
+	<!-- Shiro核心控制器 -->
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
 		<filter-name>shiroFilter</filter-name>
 		<url-pattern>/</url-pattern>
-  </filter-mapping>
-  
-  <!-- 配置Post请求乱码 -->
-  <filter>
-    <filter-name>characterEncoding</filter-name>
-    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-    <init-param>
-  	  <param-name>encoding</param-name>
-  	  <param-value>UTF-8</param-value>
-    </init-param>
-  </filter>
+	</filter-mapping>
 
-  <filter-mapping>
-    <filter-name>characterEncoding</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  
+	<!-- 配置Post请求乱码 -->
+	<filter>
+		<filter-name>characterEncoding</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>characterEncoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 </web-app>

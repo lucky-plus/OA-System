@@ -24,6 +24,8 @@
 	
 	<context:component-scan base-package="com.oa.*.web"/>
 	
+	<context:component-scan base-package="org.activiti.explorer.conf"/>
+	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 	<property name="maxUploadSize" value="102400"></property>
 	<property name="maxUploadSizePerFile" value="2048"></property>
