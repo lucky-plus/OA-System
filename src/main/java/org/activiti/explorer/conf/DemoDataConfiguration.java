@@ -233,7 +233,8 @@ public class DemoDataConfiguration {
         for (int i=0; i<50; i++) {
           
           if (random.nextBoolean()) {
-            runtimeService.startProcessInstanceByKey("fixSystemFailure");
+//        	  测试旧的时间事件用例，过时 可删除
+//           runtimeService.startProcessInstanceByKey("fixSystemFailure");
           }
           
           if (random.nextBoolean()) {

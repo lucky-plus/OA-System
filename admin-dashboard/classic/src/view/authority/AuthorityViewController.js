@@ -26,12 +26,12 @@ Ext.define('Admin.view.authority.AuthorityViewController', {
 		orderForm.submit( { 
 			//waitTitle : '请稍后...', 
 			//waitMsg : '正在保存订单信息,请稍后...', 
-			url : 'staff/staffRoleUpdate', 
+			url : 'staff/userRoleUpdate', 
 			method : 'post', 
 			success : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 
 				win.close();
-				Ext.getCmp('orderGrid').store.reload();
+				Ext.getCmp('authorityGrid').store.reload();
 			}, 
 			failure : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 

@@ -16,7 +16,7 @@ Ext.define('Admin.view.authority.AuthorityGridForm', {
     ],
     //viewModel: {type: 'emailcompose'},
     //cls: 'email-compose',
-	controller: 'roleViewController',
+	controller: 'AuthorityViewController',
     layout: {
         type:'vbox',
         align:'stretch'
@@ -31,7 +31,7 @@ Ext.define('Admin.view.authority.AuthorityGridForm', {
     },
     items: [{
 		xtype: 'hidden',
-		fieldLabel: 'Id',
+		fieldLabel: 'userId',
 		//allowBlank: false,
 		name:'userId'
 	},{
@@ -40,7 +40,7 @@ Ext.define('Admin.view.authority.AuthorityGridForm', {
 		name:'userName'
 	},
 	{
-		xtype: 'checkboxgroup',
+		xtype: 'radiogroup',
 		fieldLabel: '角色名称',
 		columns: 3,
 		vertical: true,
