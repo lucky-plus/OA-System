@@ -150,6 +150,40 @@ Ext.define('Admin.view.main.MainController', {
         var me = this;
         if (loginUser != "null" || id == "login") {
             me.setCurrentView(id);
+            
+            //动态加载菜单
+            var rootTree = Ext.data.StoreManager.lookup('NavigationTree');
+            rootTree.on(
+              "load",function(){
+                // Ext.Msg.alert('警告', 'aaaaaa!');
+                this.getRoot().appendChild(
+                  {
+                      text: '用户管理',
+                      iconCls: 'x-fa fa-leanpub',
+                      expanded: false,
+                      selectable: false,
+                      //routeId: 'pages-parent',
+                      id: 'roleManage',
+                      children: [
+                          {
+                              text: '角色管理',
+                              iconCls: 'x-fa fa-file-o',
+                              viewType: 'role',
+                              leaf: true
+                          },
+                          {
+                              text: '权限设置',
+                              iconCls: 'x-fa  fa-arrow-circle-o-down',
+                              viewType: 'authority',
+                              leaf: true
+                          }
+                      ]
+                    }
+                );
+              }
+            );
+            rootTree.reload();
+
         } else {
             Ext.Msg.alert('警告', '非法登录系统!', function() {
                 me.setCurrentView('login');

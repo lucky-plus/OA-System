@@ -46,7 +46,7 @@ Ext.define('Admin.view.role.RoleGridForm', {
 	{
 		xtype: 'checkboxgroup',
 		fieldLabel: '用户权限',
-		columns: 3,
+		columns: 4,
 		vertical: true,
 		items: [
 			{ boxLabel: '1',   name: 'moduleIds', inputValue: '1' },

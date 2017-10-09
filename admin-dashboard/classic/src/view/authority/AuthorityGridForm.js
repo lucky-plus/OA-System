@@ -42,7 +42,7 @@ Ext.define('Admin.view.authority.AuthorityGridForm', {
 	{
 		xtype: 'radiogroup',
 		fieldLabel: '角色名称',
-		columns: 3,
+		columns: 5,
 		vertical: true,
 		items: [
 			{ boxLabel: 'r1',   name: 'roleId', inputValue: '1' },

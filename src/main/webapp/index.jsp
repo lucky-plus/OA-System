@@ -11,6 +11,7 @@
 			var loginUser = '<%=session.getAttribute("userName")%>';
 			var loginUserId = '<%=session.getAttribute("userId")%>';
 			var loginUserRoleLevel = '<%=session.getAttribute("roleLevel")%>';
+			var loginUserModules = '<%=session.getAttribute("userModules")%>';
 	</script>
 
     <script type="text/javascript">

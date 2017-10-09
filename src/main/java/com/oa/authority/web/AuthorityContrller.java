@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.oa.authority.entity.Module;
 import com.oa.staff.entity.UserInfornation;
 import com.oa.utils.AJAXResultMessage;
 
@@ -34,6 +35,7 @@ public class AuthorityContrller {
 				session.setAttribute("userName", user.getUserName());
 				session.setAttribute("userId", user.getUserId());
 				session.setAttribute("roleLevel", user.getRole().getRoleLevel());
+				session.setAttribute("userModules", user.getRole().getModules());
 	            return new AJAXResultMessage(true,"登录成功!");
 	            
 			} catch (Exception e) {

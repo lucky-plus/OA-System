@@ -44,6 +44,11 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 		displayInfo: true,
 		displayMsg: '第 {0} - {1}条， 共 {2}条',
 		emptyMsg: "暂无数据",
-	})
+	}),
+
+	on: function(){
+	    Ext.Msg.alert("test");
+	    Ext.getCmp('deleteButton').hide();
+	}
 	
 });
