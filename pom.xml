@@ -30,6 +30,7 @@
 
 		<junit.version>4.12</junit.version>
 	</properties>
+
   <repositories>
     <repository>
       <id>vaadin-addons</id>
