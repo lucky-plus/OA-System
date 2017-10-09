@@ -27,7 +27,7 @@ Ext.define('Admin.view.authority.AuthorityGrid', {		//1.修改文件路径
 	}),
 	
 	bbar: Ext.create('Ext.PagingToolbar', {
-		//bind:'{orderLists}',
+		bind:'{userRoleLists}',
 		displayInfo: true,
 		displayMsg: '第 {0} - {1}条， 共 {2}条',
 		emptyMsg: "暂无数据",
