@@ -10,6 +10,7 @@
     <script type="text/javascript">
 			var loginUser = '<%=session.getAttribute("userName")%>';
 			var loginUserId = '<%=session.getAttribute("userId")%>';
+			var loginUserRoleLevel = '<%=session.getAttribute("roleLevel")%>';
 	</script>
 
     <script type="text/javascript">

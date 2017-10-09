@@ -6,10 +6,14 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import com.oa.authority.entity.Role;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -37,7 +41,9 @@ public class UserInfornation {
 	private String realName;
 	private int qq_number;
 	private String dept;
-	
+
+	private Role role;
+
 	@Id
 	@Column(length=8)
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -89,7 +95,15 @@ public class UserInfornation {
 	public String getDept() {
 		return dept;
 	}
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="roleId")
+	public Role getRole() {
+		return role;
+	}
 	
+	public void setRole(Role role) {
+		this.role = role;
+	}
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}

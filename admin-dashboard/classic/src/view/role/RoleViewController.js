@@ -19,9 +19,9 @@ Ext.define('Admin.view.role.RoleViewController', {
         if (selModel.hasSelection()) {//判断是否选中记录
            var record = selModel.getSelection()[0];//获取选中的第一条记录
            //创建修改window和form
-		   var orderWindow = Ext.widget('orderWindow',{
+		   var orderWindow = Ext.widget('roleGridWindow',{
 				title:'修改订单',
-				items: [{xtype: 'orderForm'}]
+				items: [{xtype: 'roleGridForm'}]
 			});
 		   		//让form加载选中记录
            orderWindow.down("form").getForm().loadRecord(record);
@@ -40,7 +40,7 @@ Ext.define('Admin.view.role.RoleViewController', {
                     var selected = selModel.getSelection();
                     var selectIds = []; //要删除的id
                     Ext.each(selected, function (record) {
-                        selectIds.push(record.data.id);
+                        selectIds.push(record.data.roleId);
                     })
                   	Ext.Ajax.request({ 
 						url : 'role/delete', 

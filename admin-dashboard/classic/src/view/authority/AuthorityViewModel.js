@@ -6,8 +6,8 @@ Ext.define('Admin.view.authority.AuthorityViewModel', {
     extend: 'Ext.app.ViewModel',
     alias: 'viewmodel.authorityViewModel',
 	stores: {
-        orderLists: {
-            type: 'orderStore',//Store reference ==Store的属性 alias: 'store.orderStore',		
+        userRoleLists: {
+            type: 'authorityStore',//Store reference ==Store的属性 alias: 'store.orderStore',		
             autoLoad: true //Auto load
         }
     }
