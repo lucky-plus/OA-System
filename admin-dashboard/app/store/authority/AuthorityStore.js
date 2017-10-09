@@ -4,10 +4,7 @@ Ext.define('Admin.store.authority.AuthorityStore', {
     model: 'Admin.model.authority.AuthorityModel',//2.设置model的全路径
   	proxy: {
 		type: 'ajax',
-		url: 'staff/findUserRole.json',
-		params : { 
-			roleLevel: loginUserRoleLevel
-		}, 
+		url: 'staff/findUserRole.json?roleLevel='+loginUserRoleLevel,
 		reader: {
 			type:'json', 
 			rootProperty: 'content',		//结果集名字的属性
