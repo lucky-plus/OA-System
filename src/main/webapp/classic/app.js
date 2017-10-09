@@ -64182,6 +64182,270 @@ Ext.define('Ext.form.FieldContainer', {extend:Ext.container.Container, mixins:{l
   }
   return me.callParent();
 }}});
+Ext.define('Ext.layout.container.CheckboxGroup', {extend:Ext.layout.container.Container, alias:['layout.checkboxgroup'], autoFlex:true, type:'checkboxgroup', createsInnerCt:true, childEls:['innerCt'], renderTpl:'\x3ctable id\x3d"{ownerId}-innerCt" data-ref\x3d"innerCt" class\x3d"' + Ext.baseCSSPrefix + 'table-plain" cellpadding\x3d"0"' + 'role\x3d"presentation" style\x3d"{tableStyle}"\x3e' + '\x3ctbody role\x3d"presentation"\x3e' + '\x3ctr role\x3d"presentation"\x3e' + '\x3ctpl for\x3d"columns"\x3e' + 
+'\x3ctd class\x3d"{parent.colCls}" valign\x3d"top" style\x3d"{style}" role\x3d"presentation"\x3e' + '{% this.renderColumn(out,parent,xindex-1) %}' + '\x3c/td\x3e' + '\x3c/tpl\x3e' + '\x3c/tr\x3e' + '\x3c/tbody\x3e' + '\x3c/table\x3e', lastOwnerItemsGeneration:null, initLayout:function() {
+  var me = this, owner = me.owner;
+  me.columnsArray = Ext.isArray(owner.columns);
+  me.autoColumns = !owner.columns || owner.columns === 'auto';
+  if (!me.autoColumns) {
+    me.vertical = owner.vertical || (owner.columns === 1 || owner.columns.length === 1);
+  }
+  me.callParent();
+}, beginLayout:function(ownerContext) {
+  var me = this, columns, numCols, i, width, cwidth, totalFlex = 0, flexedCols = 0, autoFlex = me.autoFlex, innerCtStyle = me.innerCt.dom.style;
+  me.callParent(arguments);
+  columns = me.rowNodes[0].children;
+  ownerContext.innerCtContext = ownerContext.getEl('innerCt', me);
+  if (!ownerContext.widthModel.shrinkWrap) {
+    numCols = columns.length;
+    if (me.columnsArray) {
+      for (i = 0; i < numCols; i++) {
+        width = me.owner.columns[i];
+        if (width < 1) {
+          totalFlex += width;
+          flexedCols++;
+        }
+      }
+      for (i = 0; i < numCols; i++) {
+        width = me.owner.columns[i];
+        if (width < 1) {
+          cwidth = width / totalFlex * 100 + '%';
+        } else {
+          cwidth = width + 'px';
+        }
+        columns[i].style.width = cwidth;
+      }
+    } else {
+      for (i = 0; i < numCols; i++) {
+        cwidth = autoFlex ? 1 / numCols * 100 + '%' : '';
+        columns[i].style.width = cwidth;
+        flexedCols++;
+      }
+    }
+    if (!flexedCols) {
+      innerCtStyle.tableLayout = 'fixed';
+      innerCtStyle.width = '';
+    } else {
+      if (flexedCols < numCols) {
+        innerCtStyle.tableLayout = 'fixed';
+        innerCtStyle.width = '100%';
+      } else {
+        innerCtStyle.tableLayout = 'auto';
+        if (autoFlex) {
+          innerCtStyle.width = '100%';
+        } else {
+          innerCtStyle.width = '';
+        }
+      }
+    }
+  } else {
+    innerCtStyle.tableLayout = 'auto';
+    innerCtStyle.width = '';
+  }
+}, cacheElements:function() {
+  var me = this;
+  me.callParent();
+  me.rowNodes = me.innerCt.query('tr', true);
+  me.tBodyNode = me.rowNodes[0].parentNode;
+}, calculate:function(ownerContext) {
+  var me = this, targetContext, widthShrinkWrap, heightShrinkWrap, shrinkWrap, table, targetPadding;
+  if (!ownerContext.getDomProp('containerChildrenSizeDone')) {
+    me.done = false;
+  } else {
+    targetContext = ownerContext.innerCtContext;
+    widthShrinkWrap = ownerContext.widthModel.shrinkWrap;
+    heightShrinkWrap = ownerContext.heightModel.shrinkWrap;
+    shrinkWrap = heightShrinkWrap || widthShrinkWrap;
+    table = targetContext.el.dom;
+    targetPadding = shrinkWrap && targetContext.getPaddingInfo();
+    if (widthShrinkWrap) {
+      ownerContext.setContentWidth(table.offsetWidth + targetPadding.width, true);
+    }
+    if (heightShrinkWrap) {
+      ownerContext.setContentHeight(table.offsetHeight + targetPadding.height, true);
+    }
+  }
+}, doRenderColumn:function(out, renderData, columnIndex) {
+  var me = renderData.$layout, owner = me.owner, columnCount = renderData.columnCount, items = owner.items.items, itemCount = items.length, item, itemIndex, rowCount, increment, tree;
+  if (owner.vertical) {
+    rowCount = Math.ceil(itemCount / columnCount);
+    itemIndex = columnIndex * rowCount;
+    itemCount = Math.min(itemCount, itemIndex + rowCount);
+    increment = 1;
+  } else {
+    itemIndex = columnIndex;
+    increment = columnCount;
+  }
+  for (; itemIndex < itemCount; itemIndex += increment) {
+    item = items[itemIndex];
+    me.configureItem(item);
+    tree = item.getRenderTree();
+    Ext.DomHelper.generateMarkup(tree, out);
+  }
+}, getColumnCount:function() {
+  var me = this, owner = me.owner, ownerColumns = owner.columns;
+  if (me.columnsArray) {
+    return ownerColumns.length;
+  }
+  if (Ext.isNumber(ownerColumns)) {
+    return ownerColumns;
+  }
+  return owner.items.length;
+}, getItemSizePolicy:function(item) {
+  return this.autoSizePolicy;
+}, getRenderData:function() {
+  var me = this, data = me.callParent(), owner = me.owner, i, columns = me.getColumnCount(), width, column, cwidth, autoFlex = me.autoFlex, totalFlex = 0, flexedCols = 0;
+  if (me.columnsArray) {
+    for (i = 0; i < columns; i++) {
+      width = me.owner.columns[i];
+      if (width < 1) {
+        totalFlex += width;
+        flexedCols++;
+      }
+    }
+  }
+  data.colCls = owner.groupCls;
+  data.columnCount = columns;
+  data.columns = [];
+  for (i = 0; i < columns; i++) {
+    column = data.columns[i] = {};
+    if (me.columnsArray) {
+      width = me.owner.columns[i];
+      if (width < 1) {
+        cwidth = width / totalFlex * 100 + '%';
+      } else {
+        cwidth = width + 'px';
+      }
+      column.style = 'width:' + cwidth;
+    } else {
+      column.style = 'width:' + 1 / columns * 100 + '%';
+      flexedCols++;
+    }
+  }
+  data.tableStyle = !flexedCols ? 'table-layout:fixed;' : flexedCols < columns ? 'table-layout:fixed;width:100%' : autoFlex ? 'table-layout:auto;width:100%' : 'table-layout:auto;';
+  return data;
+}, isValidParent:Ext.returnTrue, setupRenderTpl:function(renderTpl) {
+  this.callParent(arguments);
+  renderTpl.renderColumn = this.doRenderColumn;
+}, renderChildren:function() {
+  var me = this, generation = me.owner.items.generation;
+  if (me.lastOwnerItemsGeneration !== generation) {
+    me.lastOwnerItemsGeneration = generation;
+    me.renderItems(me.getLayoutItems());
+  }
+}, renderItems:function(items) {
+  var me = this, itemCount = items.length, item, rowCount, columnCount, rowIndex, columnIndex, i;
+  if (itemCount) {
+    Ext.suspendLayouts();
+    if (me.autoColumns) {
+      columnCount = itemCount;
+      rowCount = 1;
+    } else {
+      columnCount = me.columnsArray ? me.owner.columns.length : me.owner.columns;
+      rowCount = Math.ceil(itemCount / columnCount);
+    }
+    for (i = 0; i < itemCount; i++) {
+      item = items[i];
+      rowIndex = me.getRenderRowIndex(i, rowCount, columnCount);
+      columnIndex = me.getRenderColumnIndex(i, rowCount, columnCount);
+      if (!item.rendered) {
+        me.renderItem(item, rowIndex, columnIndex);
+      } else {
+        if (!me.isItemAtPosition(item, rowIndex, columnIndex)) {
+          me.moveItem(item, rowIndex, columnIndex);
+        }
+      }
+    }
+    me.pruneRows(rowCount, columnCount);
+    Ext.resumeLayouts(true);
+  }
+}, isItemAtPosition:function(item, rowIndex, columnIndex) {
+  return item.el.dom === this.getItemNodeAt(rowIndex, columnIndex);
+}, getRenderColumnIndex:function(itemIndex, rowCount, columnCount) {
+  if (this.vertical) {
+    return Math.floor(itemIndex / rowCount);
+  } else {
+    return itemIndex % columnCount;
+  }
+}, getRenderRowIndex:function(itemIndex, rowCount, columnCount) {
+  if (this.vertical) {
+    return itemIndex % rowCount;
+  } else {
+    return Math.floor(itemIndex / columnCount);
+  }
+}, getItemNodeAt:function(rowIndex, columnIndex) {
+  var column = this.getColumnNodeAt(rowIndex, columnIndex);
+  return this.vertical ? column.children[rowIndex] : column.children[0];
+}, getRowNodeAt:function(rowIndex) {
+  var me = this, row;
+  rowIndex = me.vertical ? 0 : rowIndex;
+  row = me.rowNodes[rowIndex];
+  if (!row) {
+    row = me.rowNodes[rowIndex] = document.createElement('tr');
+    row.role = 'presentation';
+    me.tBodyNode.appendChild(row);
+  }
+  return row;
+}, getColumnNodeAt:function(rowIndex, columnIndex, row) {
+  var column;
+  row = row || this.getRowNodeAt(rowIndex);
+  column = row.children[columnIndex];
+  if (!column) {
+    column = Ext.fly(row).appendChild({tag:'td', cls:this.owner.groupCls, vAlign:'top', role:'presentation'}, true);
+  }
+  return column;
+}, pruneRows:function(rowCount, columnCount) {
+  var me = this, rows = me.tBodyNode.children, columns, row, column, i, j;
+  rowCount = me.vertical ? 1 : rowCount;
+  while (rows.length > rowCount) {
+    row = rows[rows.length - 1];
+    while (row.children.length) {
+      Ext.get(row.children[0]).destroy();
+    }
+    row.parentNode.removeChild(row);
+  }
+  for (i = rowCount - 1; i >= 0; i--) {
+    row = rows[i];
+    columns = row.children;
+    while (columns.length > columnCount) {
+      column = columns[columns.length - 1];
+      Ext.get(column).destroy();
+    }
+    if (i > 0) {
+      for (j = columns.length - 1; j >= 0; j--) {
+        column = columns[j];
+        if (column.children.length === 0) {
+          Ext.get(column).destroy();
+        } else {
+          break;
+        }
+      }
+    }
+  }
+}, renderItem:function(item, rowIndex, columnIndex) {
+  var me = this, column, itemIndex;
+  me.configureItem(item);
+  itemIndex = me.vertical ? rowIndex : 0;
+  column = Ext.get(me.getColumnNodeAt(rowIndex, columnIndex));
+  item.render(column, itemIndex);
+}, moveItem:function(item, rowIndex, columnIndex) {
+  var me = this, column, itemIndex, targetNode;
+  itemIndex = me.vertical ? rowIndex : 0;
+  column = me.getColumnNodeAt(rowIndex, columnIndex);
+  targetNode = column.children[itemIndex];
+  column.insertBefore(item.el.dom, targetNode || null);
+}, destroy:function() {
+  if (this.owner.rendered) {
+    var target = this.getRenderTarget(), cells, i, len;
+    if (target) {
+      cells = target.query('.' + this.owner.groupCls, false);
+      for (i = 0, len = cells.length; i < len; i++) {
+        cells[i].destroy();
+      }
+    }
+  }
+  this.callParent();
+}});
 Ext.define('Ext.form.CheckboxManager', {extend:Ext.util.MixedCollection, singleton:true, getByName:function(name, formId) {
   return this.filterBy(function(item) {
     return item.name === name && item.getFormId() === formId;
@@ -64388,6 +64652,173 @@ Ext.define('Ext.theme.triton.form.field.Checkbox', {override:'Ext.form.field.Che
     this.getFocusClsEl().syncRepaint();
   }
 }});
+Ext.define('Ext.form.CheckboxGroup', {extend:Ext.form.FieldContainer, xtype:'checkboxgroup', isCheckboxGroup:true, mixins:{field:Ext.form.field.Field}, columns:'auto', vertical:false, allowBlank:true, blankText:'You must select at least one item in this group', defaultType:'checkboxfield', defaultBindProperty:'value', groupCls:Ext.baseCSSPrefix + 'form-check-group', extraFieldBodyCls:Ext.baseCSSPrefix + 'form-checkboxgroup-body', layout:'checkboxgroup', componentCls:Ext.baseCSSPrefix + 'form-checkboxgroup', 
+ariaRole:'group', ariaEl:'containerEl', skipLabelForAttribute:true, ariaRenderAttributes:{'aria-invalid':false}, initComponent:function() {
+  var me = this;
+  me.name = me.name || me.id;
+  me.callParent();
+  me.initField();
+}, initRenderData:function() {
+  var me = this, data, ariaAttr, boxes, i, len, ids;
+  data = me.callParent();
+  data.inputId = me.id + '-' + me.ariaEl;
+  ariaAttr = data.ariaAttributes;
+  if (ariaAttr) {
+    if (!ariaAttr['aria-labelledby']) {
+      ariaAttr['aria-labelledby'] = me.id + '-labelTextEl';
+    }
+  }
+  return data;
+}, initValue:function() {
+  var me = this, valueCfg = me.value;
+  me.originalValue = me.lastValue = valueCfg || me.getValue();
+  if (valueCfg) {
+    me.setValue(valueCfg);
+  }
+}, onAdd:function(field) {
+  var me = this, items, len, i;
+  if (field.isCheckbox) {
+    if (field.name == null) {
+      field.name = me.name;
+    }
+    me.mon(field, 'change', me.checkChange, me);
+  } else {
+    if (field.isContainer) {
+      items = field.items.items;
+      for (i = 0, len = items.length; i < len; i++) {
+        me.onAdd(items[i]);
+      }
+    }
+  }
+  me.callParent(arguments);
+}, onRemove:function(item) {
+  var me = this, items, len, i;
+  if (item.isCheckbox) {
+    me.mun(item, 'change', me.checkChange, me);
+  } else {
+    if (item.isContainer) {
+      items = item.items.items;
+      for (i = 0, len = items.length; i < len; i++) {
+        me.onRemove(items[i]);
+      }
+    }
+  }
+  me.callParent(arguments);
+}, isEqual:function(value1, value2) {
+  var toQueryString = Ext.Object.toQueryString;
+  return toQueryString(value1) === toQueryString(value2);
+}, getErrors:function() {
+  var errors = [];
+  if (!this.allowBlank && Ext.isEmpty(this.getChecked())) {
+    errors.push(this.blankText);
+  }
+  return errors;
+}, getBoxes:function(query) {
+  return this.query('[isCheckbox]' + (query || ''));
+}, eachBox:function(fn, scope) {
+  Ext.Array.forEach(this.getBoxes(), fn, scope || this);
+}, getChecked:function() {
+  return this.getBoxes('[checked]');
+}, isDirty:function() {
+  var boxes = this.getBoxes(), b, bLen = boxes.length;
+  for (b = 0; b < bLen; b++) {
+    if (boxes[b].isDirty()) {
+      return true;
+    }
+  }
+}, setReadOnly:function(readOnly) {
+  var boxes = this.getBoxes(), b, bLen = boxes.length;
+  for (b = 0; b < bLen; b++) {
+    boxes[b].setReadOnly(readOnly);
+  }
+  this.readOnly = readOnly;
+}, reset:function() {
+  var me = this, hadError = me.hasActiveError(), preventMark = me.preventMark;
+  me.preventMark = true;
+  me.batchChanges(function() {
+    var boxes = me.getBoxes(), b, bLen = boxes.length;
+    for (b = 0; b < bLen; b++) {
+      boxes[b].reset();
+    }
+  });
+  me.preventMark = preventMark;
+  me.unsetActiveError();
+  if (hadError) {
+    me.updateLayout();
+  }
+}, resetOriginalValue:function() {
+  var me = this, boxes = me.getBoxes(), b, bLen = boxes.length;
+  for (b = 0; b < bLen; b++) {
+    boxes[b].resetOriginalValue();
+  }
+  me.originalValue = me.getValue();
+  me.checkDirty();
+}, setValue:function(value) {
+  var me = this, boxes = me.getBoxes(), b, bLen = boxes.length, box, name, cbValue;
+  me.batchChanges(function() {
+    Ext.suspendLayouts();
+    for (b = 0; b < bLen; b++) {
+      box = boxes[b];
+      name = box.getName();
+      cbValue = false;
+      if (value) {
+        if (Ext.isArray(value[name])) {
+          cbValue = Ext.Array.contains(value[name], box.inputValue);
+        } else {
+          cbValue = value[name];
+        }
+      }
+      box.setValue(cbValue);
+    }
+    Ext.resumeLayouts(true);
+  });
+  return me;
+}, getValue:function() {
+  var values = {}, boxes = this.getBoxes(), b, bLen = boxes.length, box, name, inputValue, bucket;
+  for (b = 0; b < bLen; b++) {
+    box = boxes[b];
+    name = box.getName();
+    inputValue = box.inputValue;
+    if (box.getValue()) {
+      if (values.hasOwnProperty(name)) {
+        bucket = values[name];
+        if (!Ext.isArray(bucket)) {
+          bucket = values[name] = [bucket];
+        }
+        bucket.push(inputValue);
+      } else {
+        values[name] = inputValue;
+      }
+    }
+  }
+  return values;
+}, getSubmitData:function() {
+  return null;
+}, getModelData:function() {
+  return null;
+}, validate:function() {
+  var me = this, errors, isValid, wasValid;
+  if (me.disabled) {
+    isValid = true;
+  } else {
+    errors = me.getErrors();
+    isValid = Ext.isEmpty(errors);
+    wasValid = me.wasValid;
+    if (isValid) {
+      me.unsetActiveError();
+    } else {
+      me.setActiveError(errors);
+    }
+  }
+  if (isValid !== wasValid) {
+    me.wasValid = isValid;
+    me.fireEvent('validitychange', me, isValid);
+    me.updateLayout();
+  }
+  return isValid;
+}}, function() {
+  this.borrow(Ext.form.field.Base, ['markInvalid', 'clearInvalid', 'setError']);
+});
 Ext.define('Ext.form.Label', {extend:Ext.Component, alias:'widget.label', autoEl:'label', maskOnDisable:false, getElConfig:function() {
   var me = this;
   me.html = me.text ? Ext.util.Format.htmlEncode(me.text) : me.html || '';
@@ -99266,7 +99697,18 @@ Ext.define('Admin.model.PanelSetting', {extend:Admin.model.Base, fields:[{name:'
 Ext.define('Admin.model.PersonalInfo', {extend:Admin.model.Base, fields:[{name:'name'}, {name:'status'}, {name:'icon'}]});
 Ext.define('Admin.model.Subscription', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'subscription'}]});
 Ext.define('Admin.model.YearwiseData', {extend:Admin.model.Base, fields:[{name:'year'}, {name:'data'}]});
-Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:[{name:'addressId', type:'int'}, {name:'addressName', type:'string'}, {name:'addressDepartment', type:'string'}, {name:'addressPhone', type:'int'}, {name:'addressEmail', type:'string'}, {name:'addressQQ', type:'int'}]});
+
+Ext.define('Admin.model.address.AddressModel', {
+    extend: 'Admin.model.Base',
+    fields: [
+		{name:'userId'			,type: 'string'},
+        {name:'realName' ,type: 'string'},
+		{name:'dept' ,type: 'string'},
+        {name:'mobilePhone'	,type: 'string'},
+		{name:'mail'	,type: 'string'},
+		{name:'qq_number'	,type: 'int'}
+    ]
+});
 Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {name:'read'}, {type:'string', name:'title'}, {name:'user_id'}, {type:'string', name:'contents'}, {type:'string', name:'from'}, {name:'has_attachments'}, {name:'attachments'}, {name:'received_on', type:'date'}, {name:'favorite'}]});
 Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
 Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
@@ -99284,15 +99726,38 @@ rowCls:'nav-tree-badge nav-tree-badge-new', viewType:'admindashboard', routeId:'
 viewType:'email', leaf:true}, {text:'Profile', iconCls:'x-fa fa-user', viewType:'profile', leaf:true}, {text:'Search results', iconCls:'x-fa fa-search', viewType:'searchresults', leaf:true}, {text:'FAQ', iconCls:'x-fa fa-question', viewType:'faq', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', viewType:'page404', 
 leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}, {text:'Widgets', iconCls:'x-fa fa-flask', viewType:'widgets', leaf:true}, {text:'Forms', 
 iconCls:'x-fa fa-edit', viewType:'forms', leaf:true}, {text:'Charts', iconCls:'x-fa fa-pie-chart', viewType:'charts', leaf:true}]}});
-Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', data:{'items':[{'addressId':1, 'addressName':'Lisa', 'addressDepartment':'销售部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':2, 'addressName':'Lisa', 'addressDepartment':'网络部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':3, 'addressName':'Lisa', 'addressDepartment':'人事部', 'addressPhone':'13631784344', 
-'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}, {'addressId':4, 'addressName':'Lisa', 'addressDepartment':'财务部', 'addressPhone':'13631784344', 'addressEmail':'123456@qq.com', 'addressQQ':'9634789895'}]}, proxy:{type:'memory', reader:{type:'json', root:'items'}}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
+
+Ext.define('Admin.store.address.AddressStore', {
+    extend: 'Ext.data.Store',
+    alias: 'store.addressStore',			  //1.Store取别名（reference）
+	model: 'Admin.model.address.AddressModel',
+	proxy: {
+		type: 'ajax',
+		url: 'staff/findPage.json',	//后台OrderController中的接口url地址
+		reader: {
+			type:'json', 
+			rootProperty: 'content',		//结果集名字的属性
+			totalProperty: 'totalElements'	//一共多少条记录的属性
+		},
+		simpleSortMode: true	//简单排序模式
+	},
+
+	pageSize: 25,
+	autoLoad: true,
+	remoteSort: true,//全局排序
+    sorters: {
+        direction: 'DESC',
+        property: 'userId'
+    }
+});
+
 Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
 Ext.define('Admin.store.email.Inbox', {extend:Ext.data.Store, alias:'store.inbox', model:'Admin.model.email.Email', pageSize:20, autoLoad:true, proxy:{type:'api', url:'~api/email/inbox'}});
 Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', model:'Admin.model.faq.Category', proxy:{type:'api', url:'~api/faq/faq'}});
 Ext.define('Admin.store.notice.NoticeStore', {extend:Ext.data.Store, alias:'store.noticeStore', model:'Admin.model.notice.NoticeModel', proxy:{type:'ajax', url:'notice/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'noticeId'}});
 Ext.define('Admin.store.order.OrderStore', {extend:Ext.data.Store, alias:'store.orderStore', model:'Admin.model.order.OrderModel', proxy:{type:'ajax', url:'order/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
 Ext.define('Admin.store.resources.ResourcesStore', {extend:Ext.data.Store, alias:'store.resourcesStore', data:{'items':[{'resourcesId':1, 'resourcesName':'资料1', 'resourcesTime':'2017-7-13'}, {'resourcesId':2, 'resourcesName':'资料2', 'resourcesTime':'2017-7-13'}, {'resourcesId':3, 'resourcesName':'资料3', 'resourcesTime':'2017-7-13'}]}, proxy:{type:'memory', reader:{type:'json', root:'items'}}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
-Ext.define('Admin.store.role.RoleStore', {extend:Ext.data.Store, alias:'store.roleStore', model:'Admin.model.role.RoleModel', proxy:{type:'ajax', url:'role/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
+Ext.define('Admin.store.role.RoleStore', {extend:Ext.data.Store, alias:'store.roleStore', model:'Admin.model.role.RoleModel', proxy:{type:'ajax', url:'role/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'roleId'}});
 Ext.define('Admin.store.search.Results', {extend:Ext.data.Store, alias:'store.searchresults', model:'Admin.model.search.Result', proxy:{type:'api', url:'~api/search/results'}, autoLoad:'true', sorters:{direction:'ASC', property:'title'}});
 Ext.define('Admin.store.search.Users', {extend:Ext.data.Store, alias:'store.searchusers', model:'Admin.model.search.User', proxy:{type:'api', url:'~api/search/users'}, autoLoad:'true', sorters:{direction:'ASC', property:'fullname'}});
 Ext.define('Admin.view.chart.Bounces', {extend:Ext.chart.CartesianChart, xtype:'chartbounces', animation:!Ext.isIE9m && Ext.os.is.Desktop, height:22, background:'rgba(255, 255, 255, 1)', colors:['rgba(250,222,225, 0.8)'], insetPadding:{top:0, left:0, right:0, bottom:0}, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y2value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'area', xField:'xvalue', yField:['y2value']}], 
@@ -99434,7 +99899,7 @@ width:250}, {margin:'0 0 0 8', ui:'header', iconCls:'x-fa fa-navicon', id:'main-
 ui:'header', href:'#email', hrefTarget:'_self', tooltip:'Check your email'}, {iconCls:'x-fa fa-question', ui:'header', href:'#faq', hrefTarget:'_self', tooltip:"Help / FAQ's"}, {iconCls:'x-fa fa-th-large', ui:'header', href:'#profile', hrefTarget:'_self', tooltip:'See your profile'}, {xtype:'tbtext', text:loginUser, cls:'top-user-name'}, {xtype:'image', cls:'header-right-profile-image', height:35, width:35, alt:'current user image', src:'resources/images/user-profile/2.png'}, {xtype:'button', reference:'logoutButton', 
 scale:'small', ui:'soft-blue', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'注销', formBind:true, listeners:{click:'onLogoutButton'}}]}, {xtype:'maincontainerwrap', id:'main-view-detail-wrap', reference:'mainContainerWrap', flex:1, items:[{xtype:'treelist', reference:'navigationTreeList', itemId:'navigationTreeList', ui:'nav', store:'NavigationTree', width:250, expanderFirst:false, expanderOnly:false, listeners:{selectionchange:'onNavigationTreeSelectionChange'}}, {xtype:'container', flex:1, 
 reference:'mainCardPanel', cls:'sencha-dash-right-main-container', itemId:'contentPanel', layout:{type:'card', anchor:'100%'}}]}]});
-Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', stores:['NavigationTree'], defaultToken:'dashboard', mainView:'Admin.view.main.Main', onAppUpdate:function() {
+Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', stores:['NavigationTree'], defaultToken:'login', mainView:'Admin.view.main.Main', onAppUpdate:function() {
   Ext.Msg.confirm('Application Update', 'This application has an update, reload?', function(choice) {
     if (choice === 'yes') {
       window.location.reload();
@@ -99442,13 +99907,100 @@ Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', store
   });
 }});
 Ext.define('Admin.view.address.address', {extend:Ext.container.Container, xtype:'address', controller:'addressViewController', viewModel:{type:'addressViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'addressGrid'}]});
-Ext.define('Admin.view.address.AddressGrid', {extend:Ext.grid.Panel, xtype:'addressGrid', title:'\x3cb\x3e通讯中心\x3c/b\x3e', bind:'{addressLists}', id:'addressGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'通讯编号', dataIndex:'addressId', hidden:true}, {text:'联系人', dataIndex:'addressName', flex:1}, {text:'所属部门', dataIndex:'addressDepartment', width:150}, {text:'联系电话', dataIndex:'addressPhone', width:150}, {text:'联系邮箱', dataIndex:'addressEmail', width:150}, {text:'QQ', dataIndex:'addressQQ', 
-width:150}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200}, {xtype:'tbtext', text:'所属部门：'}, {xtype:'combobox', name:'department', store:Ext.create('Ext.data.Store', {fields:['department', 'name'], data:[{'department':'HIGH', 'name':'财务部'}, {'department':'MEDIUM', 'name':'业务部'}, {'department':'LOW', 'name':'人事部'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {text:'查找'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', 
-displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
-Ext.define('Admin.view.address.AddressViewController', {extend:Ext.app.ViewController, alias:'controller.addressViewController', noticeGridAdd:function(bt) {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'上传资料'});
-  Ext.create(cfg);
-}});
+
+Ext.define('Admin.view.address.AddressGrid', {		//1.修改文件路径
+      extend: 'Ext.grid.Panel',					//2.继承的组件类型
+	//3.重写继承组件的属性：
+    xtype: 'addressGrid',
+	title:'<b>通讯中心</b>',
+	bind:'{addressLists}',
+	id:'addressGrid',
+	selModel: Ext.create('Ext.selection.CheckboxModel'),
+	columns: [
+		{text: '编号',dataIndex:'userId',hidden:true},
+        {text: '联系人' ,dataIndex:'realName' ,flex:1 },
+		{text: '所属部门'  ,dataIndex:'dept'  ,width:150},
+		{text: '联系电话'  ,dataIndex:'mobilePhone'  ,width:150},
+		{text: '联系邮箱'  ,dataIndex:'mail'  ,width:150},
+		{text: 'QQ'  ,dataIndex:'qq_number'  ,width:150},
+
+	],		
+
+	tbar: Ext.create('Ext.Toolbar', {
+			items:[{xtype:'tbtext',
+				text:'姓名：'
+			},{
+				xtype:'textfield',
+				width:200,
+				reference: 'addressGridSearchText'
+			},{xtype:'tbtext',
+				text:'所属部门：'
+			},{
+			xtype: 'combobox',
+			name:'dept',
+			reference: 'addressGridSearchField',
+			store:  Ext.create('Ext.data.Store', {
+				fields: ['value', 'name'],
+				data : [
+					{"value":"", "name":"全部"},
+					{"value":"财务部", "name":"财务部"},
+					{"value":"市场部", "name":"市场部"},
+					{"value":"人事部", "name":"人事部"}
+					
+					]
+				}),
+				queryMode: 	  'local',
+				displayField: 'name',
+				valueField:   'value'
+			
+			},{
+				text:'查找',
+				listeners: {
+					click: 'addressGridSearch'//快捷查询按钮
+				}
+			}]
+	}),
+	
+	
+	
+	
+	bbar: Ext.create('Ext.PagingToolbar', {
+		bind:'{addressLists}',
+		displayInfo: true,
+		displayMsg: '第 {0} - {1}条， 共 {2}条',
+		emptyMsg: "No topics to display",
+	})
+	
+});
+
+Ext.define('Admin.view.address.AddressViewController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.addressViewController',
+
+    addressGridSearch: function(bt) {
+		var searchField = this.lookupReference('addressGridSearchField').getValue();
+		alert(searchField);
+		var searchText = this.lookupReference('addressGridSearchText').getValue();
+		Ext.Ajax.request({ 
+			url : 'staff/findByPage', 
+			params : { 
+                    realName:searchText,
+					dept:searchField,
+					page:1,
+					start:0,
+					limit:25,
+					sort:'userId',
+					dir:'DESC'
+			},
+			success: function(response, options){
+				var tnpdata= Ext.util.JSON.decode(response.responseText) ;
+				Ext.getCmp('addressGrid').getStore().loadData(tnpdata.content,false);
+			}
+			
+	   });
+	}
+});
+
 Ext.define('Admin.view.address.AddressViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.addressViewModel', stores:{addressLists:{type:'addressStore', autoLoad:true}}});
 Ext.define('Admin.view.authentication.AuthenticationController', {extend:Ext.app.ViewController, alias:'controller.authentication', onFaceBookLogin:function() {
   this.redirectTo('dashboard', true);
@@ -99513,7 +100065,7 @@ isValid:function() {
   return me.checked || me.disabled;
 }}, {xtype:'button', scale:'large', ui:'soft-blue', formBind:true, reference:'submitButton', bind:false, margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Signup', listeners:{click:'onSignupClick'}}, {xtype:'box', html:'\x3cdiv class\x3d"outer-div"\x3e\x3cdiv class\x3d"seperator"\x3eOR\x3c/div\x3e\x3c/div\x3e'}, {xtype:'button', scale:'large', ui:'facebook', margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-facebook', text:'Login with Facebook', listeners:{click:'onFaceBookLogin'}}, 
 {xtype:'component', html:'\x3cdiv style\x3d"text-align:right"\x3e' + '\x3ca href\x3d"#login" class\x3d"link-forgot-password"\x3e' + 'Back to Log In\x3c/a\x3e' + '\x3c/div\x3e'}]}]});
-Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xtype:'authority', layout:'fit', margin:'20 20 20 20', items:[{xtype:'authorityGrid'}]});
+Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xtype:'authority', layout:'fit', margin:'20 20 20 20', items:[{}]});
 Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:125}, {text:'所拥有的权限', sortable:true, dataIndex:'', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
 iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
 Ext.define('Admin.view.authority.AuthorityViewController', {extend:Ext.app.ViewController, alias:'controller.AuthorityViewController', roleGridAdd:function(bt) {
@@ -99846,109 +100398,110 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
 }});
 Ext.define('Admin.view.main.MainModel', {extend:Ext.app.ViewModel, alias:'viewmodel.main', data:{currentView:null}});
 Ext.define('Admin.view.notice.notice', {extend:Ext.container.Container, xtype:'notice', controller:'NoticeViewController', viewModel:{type:'noticeViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'noticeGrid'}]});
+Ext.define('Admin.view.notice.NoticeCompose', {extend:Ext.form.Panel, alias:'widget.noticeCompose', viewModel:{type:'noticeCompose'}, controller:'NoticeViewController', cls:'noticeCompose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'noticeId', handler:'noticeGridOpenEditWindow'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'标题：', 
+name:'noticeName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'正文：', fontFamilies:['宋体', '隶书', '黑体'], name:'noticeText'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-red', text:'关闭', handler:'noticeGridWindowsClose'}, {xtype:'button', ui:'gray', text:'存为草稿'}, {xtype:'button', ui:'soft-green', text:'发布', handler:'noticeGridTextSubmit'}]}});
 
-Ext.define('Admin.view.notice.NoticeCompose', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.noticeCompose',
-    requires: [
-        'Ext.button.Button',
-        'Ext.form.field.Text',
-        'Ext.form.field.File',
-        'Ext.form.field.HtmlEditor',
-		'Ext.form.field.Hidden'
-    ],
+Ext.define('Admin.view.notice.NoticeGrid', {		//1.修改文件路径
+      extend: 'Ext.grid.Panel',					//2.继承的组件类型
+	//3.重写继承组件的属性：
+    xtype: 'noticeGrid',
+	title:'<b>公告列表</b>',
+	bind:'{noticeLists}',
+	id:'noticeGrid',
+	listeners:{
+		cellclick:function(grid,td, cellIndex, record, tr, rowIndex){
+			  var orderWindow = Ext.widget('orderWindow',{
+				title:'查看公告',
+				html: grid.getStore().getAt(rowIndex).data.noticeName,
+			});
+		}
+	},
+	selModel: Ext.create('Ext.selection.CheckboxModel'),
+	columns: [
+		{text: '公告编号'			  ,sortable:true ,dataIndex:'noticeId',hidden:true},
+             {text: '标题' ,dataIndex:'noticeName' ,flex:1 
 
-    viewModel: {
-        type: 'noticeCompose'
-    },
 
-    controller: 'NoticeViewController',
-
-    cls: 'noticeCompose',
-
-    layout: {
-        type:'vbox',
-        align:'stretch'
-    },
-
-    bodyPadding: 10,
-    scrollable: true,
-
-    defaults: {
-        labelWidth: 60,
-        labelSeparator: ''
-    },
-
-    items: [
-		{
-		xtype: 'hidden',
-		fieldLabel: 'Id',
-		//allowBlank: false,
-		name:'noticeId',
-		handler:'noticeGridOpenEditWindow'
 		},
-		{
-		xtype: 'hidden',
-		fieldLabel: 'userId',
-		//allowBlank: false,
-		name:'userId',
-		value: loginUserId
-		},
-        {
-            xtype: 'textfield',
-            fieldLabel: '标题：',
-			name:'noticeName'
-        },
-        {
-            xtype: 'htmleditor',
-            
-            // Make tips align neatly below buttons.
-            buttonDefaults: {
-                tooltip: {
-                    align: 't-b',
-                    anchor: true
-                }
-            },
-            flex: 1,
-            minHeight: 100,
-            labelAlign: 'top',
-            fieldLabel: '正文：',
-			fontFamilies: ["宋体", "隶书", "黑体"],
-			name:'noticeText'
-        }
-    ],
+		{text: '发布时间'  ,sortable:true ,dataIndex:'noticeTime'  ,width:150
+			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
+		{text: '发布者',dataIndex:'userName'    ,width:150},
+		{xtype: 'actioncolumn',  text: '操作' ,width:100,tdCls: 'action',  
+            items: ['-',{  
 
-    bbar: {
-        overflowHandler: 'menu',
-        items: [
-            '->',
-            {
-                xtype: 'button',
-                ui: 'soft-red',
-                text: '关闭',
-                handler: 'noticeGridWindowsClose'
-            },
-            {
-                xtype: 'button',
-                ui: 'gray',
-                text: '存为草稿'
-            },
-            {
-                xtype: 'button',
-                ui: 'soft-green',
-                text: '发布',
-				handler:'noticeGridTextSubmit'
-            }
-        ]
-    }
+				icon:'resources/images/icons/editor.png',
+                tooltip: '编辑',
+				handler: ('noticeGridOpenEditWindow')
+				
+            },'-', {  
+				icon:'resources/images/icons/delete.png',
+                tooltip: '删除',
+                handler: ('noticeGridDeleteOne') 
+            }]  }
+
+	],	
+
+
+
+
+
+	tbar: Ext.create('Ext.Toolbar', {
+			id: 'xiaotingzi2' ,
+			items:[ {
+				text: '新增',
+				iconCls:'x-fa fa-plus',
+				ui:'soft-blue',
+				handler: 'noticeGridAdd'
+			},'-', {
+				text: '删除',
+				iconCls:'x-fa fa-trash',
+				handler: 'noticeGridDeleteDate'
+			},'-',{xtype:'tbtext',
+				text:'标题：'
+			},{
+				xtype:'textfield',
+				width:300,
+				itemsId:'searchText'
+				
+				
+			},{xtype:'tbtext',
+				text:'时间：'
+			},{
+				 xtype:'datefield',  
+                    itemId:'beginDate',    
+					format: 'Y/m/d',
+			
+			},{xtype:'tbtext',
+				text:'至：'
+			},{
+				xtype:'datefield',  
+                    itemId:'endDate',  
+                    format: 'Y/m/d', 
+					listeners: {  
+					focus: function(){
+						var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
+						this.setMinValue(cc);
+						}  	
+					}
+			},{
+				text: '查找',
+				handler:'noticeGridFind'
+			}
+			]
+	}),
+	
+	
+	
+	bbar: Ext.create('Ext.PagingToolbar', {
+		bind:'{noticeLists}',
+		displayInfo: true,
+		displayMsg: '第 {0} - {1}条， 共 {2}条',
+		emptyMsg: "No topics to display",
+	})
+	
 });
 
-Ext.define('Admin.view.notice.NoticeGrid', {extend:Ext.grid.Panel, xtype:'noticeGrid', title:'\x3cb\x3e公告列表\x3c/b\x3e', bind:'{noticeLists}', id:'noticeGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1, listeners:{click:function() {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'公告', items:[Ext.apply({xtype:'noticeText'})]});
-  Ext.create(cfg);
-}}}, {text:'发布时间', sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:'noticeGridOpenEditWindow'}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'noticeGridDeleteDate'}]}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'新增', iconCls:'x-fa fa-plus', 
-ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'noticeGridDeleteDate'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield'}, {text:'查找'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{orderLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
-Ext.define('Admin.view.notcie.NoticeText', {extend:Ext.form.Panel, alias:'widget.noticeText', controller:'NoticeViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'displayfield', name:'noticeName', style:'font-color:20px'}, {xtype:'displayfield', name:'noticeText'}]});
+Ext.define('Admin.view.notcie.NoticeText', {extend:Ext.form.Panel, alias:'widget.noticeText', id:'noticeText', controller:'NoticeViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'displayfield', name:'noticeName'}, {xtype:'displayfield', name:'noticeText'}]});
 Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewController, alias:'controller.NoticeViewController', noticeGridAdd:function(bt) {
   var cfg = Ext.apply({xtype:'orderWindow'}, {title:'新建公告', items:[Ext.apply({xtype:'noticeCompose'})]});
   Ext.create(cfg);
@@ -99970,6 +100523,29 @@ Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewControl
   var record = grid.getStore().getAt(rowIndex);
   var orderWindow = Ext.widget('orderWindow', {title:'查看公告', items:[{xtype:'noticeText'}]});
   orderWindow.down('form').getForm().loadRecord(record);
+}, noticeGridDeleteOne:function(grid, rowIndex, colIndex) {
+  Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+    if (button == 'yes') {
+      var record = grid.getStore().getAt(rowIndex);
+      var noticeId = record.data.noticeId;
+      Ext.Ajax.request({url:'notice/deleteone', method:'post', params:{id:noticeId}});
+      grid.getStore().reload();
+    }
+  });
+}, noticeGridFind:function(btn) {
+  var grid = btn.up('gridpanel');
+  var record = grid.getStore();
+  var searchText = Ext.getCmp('xiaotingzi2').items.getAt(5).getValue();
+  var beginTime = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
+  var endTime = Ext.Date.add(Ext.getCmp('xiaotingzi2').items.getAt(9).getValue(), Ext.Date.DAY, 1);
+  Ext.Ajax.request({url:'notice/findByCondition', 
+	  params:{noticeName:searchText, 
+	  beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), 
+	  endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'),
+	  page:1, start:0, limit:25, sort:'noticeId', dir:'DESC'}, success:function(response, options) {
+    var tnpdata = Ext.util.JSON.decode(response.responseText);
+    grid.getStore().loadData(tnpdata.content, false);
+  }});
 }, noticeGridDeleteDate:function(btn) {
   var grid = btn.up('gridpanel');
   var selModel = grid.getSelectionModel();
@@ -100087,24 +100663,210 @@ items:[{title:'What are the payment methods you accept?', iconCls:'x-fa fa-caret
 Ext.define('Admin.view.profile.ShareUpdate', {extend:Ext.panel.Panel, xtype:'profileshare', bodyPadding:10, layout:'fit', cls:'share-panel', items:[{xtype:'textareafield', emptyText:"What's on your mind?"}], bbar:{defaults:{margin:'0 10 5 0'}, items:[{ui:'header', iconCls:'x-fa fa-video-camera'}, {ui:'header', iconCls:'x-fa fa-camera'}, {ui:'header', iconCls:'x-fa fa-file'}, '-\x3e', {text:'Share', ui:'soft-blue'}]}});
 Ext.define('Admin.view.profile.UserProfile', {extend:Admin.view.profile.UserProfileBase, xtype:'profile', cls:'userProfile-container', layout:'responsivecolumn', items:[{xtype:'profileshare', userCls:'big-100 small-100 shadow'}, {xtype:'profilesocial', userCls:'big-50 small-100 shadow'}, {xtype:'profiledescription', userCls:'big-50 small-100 shadow'}, {xtype:'profilenotifications', userCls:'big-50 small-100 shadow'}, {xtype:'profiletimeline', userCls:'big-50 small-100 shadow'}]});
 Ext.define('Admin.view.resources.resources', {extend:Ext.container.Container, xtype:'resources', controller:'resourcesViewController', viewModel:{type:'resourcesViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'resourcesGrid'}]});
-Ext.define('Admin.view.resources.ResourcesGrid', {extend:Ext.grid.Panel, xtype:'resourcesGrid', title:'\x3cb\x3e资料中心\x3c/b\x3e', bind:'{resourcesLists}', id:'resourcesGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'资料编号', dataIndex:'resourcesId', hidden:true}, {text:'资料名称', dataIndex:'resourcesName', flex:1, listeners:{click:function() {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'资料'});
-  Ext.create(cfg);
-}}}, {text:'发布时间', sortable:true, dataIndex:'resourcesTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {xtype:'actioncolumn', text:'操作', width:150, tdCls:'action', items:['-', {icon:'resources/images/icons/dowanload.png', tooltip:'下载'}, '-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:function() {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'公告', items:[Ext.apply({xtype:'noticeCompose'})]});
-  Ext.create(cfg);
-}}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除'}]}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'上传', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'批量下载', iconCls:'x-fa fa-arrow-circle-o-down'}, '-', {text:'批量删除', iconCls:'x-fa fa-trash'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield'}, {text:'查找'}]}), bbar:Ext.create('Ext.PagingToolbar', 
-{bind:'{resourcesLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
-Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewController, alias:'controller.resourcesViewController', noticeGridAdd:function(bt) {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'上传资料'});
-  Ext.create(cfg);
-}});
+
+Ext.define('Admin.view.resources.ResourcesGrid', {		//1.修改文件路径
+      extend: 'Ext.grid.Panel',					//2.继承的组件类型
+	//3.重写继承组件的属性：
+    xtype: 'resourcesGrid',
+	title:'<b>资料中心</b>',
+	bind:'{resourcesLists}',
+	id:'resourcesGrid',
+	selModel: Ext.create('Ext.selection.CheckboxModel'),
+	columns: [
+		{text: '资料编号',dataIndex:'resourcesId',hidden:true},
+        {text: '资料名称' ,dataIndex:'resourcesName' ,flex:1},
+		{text: '发布时间'  ,sortable:true ,dataIndex:'resourcesTime'  ,width:150
+			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
+		{xtype: 'actioncolumn',  text: '操作' ,width:150,tdCls: 'action',  
+            items: ['-',{  
+				icon:'resources/images/icons/dowanload.png',
+                tooltip: '下载',
+              //  handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {   }  
+				},'-',{  
+
+				icon:'resources/images/icons/editor.png',
+                tooltip: '编辑',
+				handler:function(){
+					var cfg = Ext.apply({
+					xtype:'orderWindow'
+					},{
+						title:'公告',
+						items:[Ext.apply({xtype:'resourcesForm'})]
+					});
+					Ext.create(cfg);
+				}
+                
+               // handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {    }  
+            },'-', {  
+				icon:'resources/images/icons/delete.png',
+                tooltip: '删除',
+              //  handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {   }  
+            }]  }
+
+	],		
+
+	tbar: Ext.create('Ext.Toolbar', {
+			items:[ {
+			text: '上传',
+			iconCls:'x-fa fa-plus',
+			ui:'soft-blue',
+			handler:function(){
+					var cfg = Ext.apply({
+					xtype:'orderWindow'
+					},{
+						title:'资料上传',
+						items:[Ext.apply({xtype:'resourcesForm'})]
+					});
+					Ext.create(cfg);
+				}
+		},'-', {
+			text: '批量下载',
+			iconCls:'x-fa fa-arrow-circle-o-down',
+			//handler: 'orderGridDelete'
+		},'-', {
+			text: '批量删除',
+			iconCls:'x-fa fa-trash',
+			//handler: 'orderGridDelete'
+		},'-',{xtype:'tbtext',
+				text:'标题：'
+			},{
+				xtype:'textfield',
+				width:300
+			},{xtype:'tbtext',
+				text:'时间：'
+			},{
+				xtype:'datefield',
+			},{xtype:'tbtext',
+				text:'至：'
+			},{
+				xtype:'datefield',
+			},{
+				text:'查找'
+			}]
+	}),
+	
+	
+	
+	
+	bbar: Ext.create('Ext.PagingToolbar', {
+		bind:'{resourcesLists}',
+		displayInfo: true,
+		displayMsg: '第 {0} - {1}条， 共 {2}条',
+		emptyMsg: "No topics to display",
+	})
+	
+});
+
+Ext.define('Admin.view.resources.ResourcesForm', {
+    extend: 'Ext.form.Panel',
+    alias: 'widget.resourcesForm',
+    requires: [
+        'Ext.button.Button',
+        'Ext.form.field.Text',
+        'Ext.form.field.File',
+        'Ext.form.field.HtmlEditor',
+		'Ext.form.field.TextArea',
+		'Ext.form.field.Time',
+		'Ext.form.field.ComboBox',
+		'Ext.form.field.Date',
+		'Ext.form.field.Radio',
+		'Ext.form.field.Hidden'
+    ],
+	
+    //viewModel: {type: 'emailcompose'},
+    //cls: 'email-compose',
+	controller: 'resourcesViewController',
+    layout: {
+        type:'vbox',
+        align:'stretch'
+    },
+
+    bodyPadding: 10,
+    scrollable: true,
+
+    defaults: {
+        labelWidth: 100,
+        labelSeparator: ''
+    },
+    items: [{
+		xtype: 'hidden',
+		fieldLabel: 'Id',
+		//allowBlank: false,
+		name:'resId',
+		//handler:'orderGridEdit'
+	},{
+		xtype:'textfield',
+		fieldLabel: '文件名称',
+		//allowBlank: false,
+		name:'resName',
+		//handler:'orderGridEdit'
+	},{
+		xtype: 'textfield',  
+    	    	        inputType: 'file',//文件类型   
+    	    	        fieldLabel: '文件名',    	     
+    	    	        name : 'uploadFileFieldPath', 
+    	    	        id : 'uploadFileFieldPath',  
+    	    	        allowBlank:false,
+    	    	        blankText: '浏览'
+
+	}],
+
+    bbar: {
+        overflowHandler: 'menu',
+        items: ['->',{
+			xtype: 'button',
+			ui:'soft-blue',
+			//ui: 'soft-red',
+			text: '上传',
+			handler: 'fileUpload'
+		},{
+			xtype: 'button',
+			//ui: 'gray',
+			text: '取消',
+			handler: 'orderGridWindowsClose'
+		}]
+    }
+});
+
+
+Ext.define('Admin.view.resources.ResourcesViewController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.resourcesViewController',
+
+    fileUpload: function(btn) {
+	var resourcesForm = btn.up('form').getForm();
+	resourcesForm.submit({  
+			url : 'resources/upload', 
+			method : 'post', 
+			//enctype="multipart/form-dat",
+	   })
+    },
+	
+});
 Ext.define('Admin.view.resources.ResourcesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.resourcesViewModel', stores:{resourcesLists:{type:'resourcesStore', autoLoad:true}}});
-Ext.define('Admin.view.role.Role', {extend:Ext.container.Container, xtype:'role', layout:'fit', margin:'20 20 20 20', items:[{xtype:'roleGrid'}]});
-Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:125}, {text:'所拥有的权限', sortable:true, dataIndex:'', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
-iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
-Ext.define('Admin.view.role.RoleViewController', {extend:Ext.app.ViewController, alias:'controller.RoleViewController', roleGridAdd:function(bt) {
-  var cfg = Ext.apply({xtype:'roleWindow'}, {title:'添加角色', items:[Ext.apply({xtype:'roleForm'})]});
+Ext.define('Admin.view.role.Role', {extend:Ext.container.Container, xtype:'role', controller:'roleViewController', viewModel:{type:'roleViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'roleGrid'}]});
+Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:125}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
+iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.role.RoleGridForm', {extend:Ext.form.Panel, alias:'widget.roleGridForm', controller:'roleViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'roleId'}, {xtype:'textfield', fieldLabel:'角色名称', name:'roleName'}, {xtype:'textfield', fieldLabel:'角色等级', name:'roleLevel'}, {xtype:'checkboxgroup', fieldLabel:'用户权限', columns:3, vertical:true, items:[{boxLabel:'1', 
+name:'moduleIds', inputValue:'1'}, {boxLabel:'1-1', name:'moduleIds', inputValue:'2'}, {boxLabel:'1-2', name:'moduleIds', inputValue:'3'}, {boxLabel:'2', name:'moduleIds', inputValue:'4'}, {boxLabel:'2-1', name:'moduleIds', inputValue:'5'}, {boxLabel:'2-2', name:'moduleIds', inputValue:'6'}, {boxLabel:'2-3', name:'moduleIds', inputValue:'7'}, {boxLabel:'3', name:'moduleIds', inputValue:'8'}, {boxLabel:'3-1', name:'moduleIds', inputValue:'9'}, {boxLabel:'3-2', name:'moduleIds', inputValue:'10'}]}], 
+bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'roleGridFormSubmit'}, {xtype:'button', text:'取消', handler:'roleGridWindowClose'}]}});
+Ext.define('Admin.view.role.RoleGridWindow', {extend:Ext.window.Window, alias:'widget.roleGridWindow', autoShow:true, modal:true, layout:'fit', afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.6), Math.floor(height * 0.6));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
+Ext.define('Admin.view.role.RoleViewController', {extend:Ext.app.ViewController, alias:'controller.roleViewController', roleGridAdd:function(bt) {
+  var cfg = Ext.apply({xtype:'roleGridWindow'}, {title:'添加角色', items:[Ext.apply({xtype:'roleGridForm'})]});
   Ext.create(cfg);
 }, roleGridEdit:function(btn) {
   var grid = btn.up('gridpanel');
@@ -100127,7 +100889,7 @@ Ext.define('Admin.view.role.RoleViewController', {extend:Ext.app.ViewController,
         Ext.each(selected, function(record) {
           selectIds.push(record.data.id);
         });
-        Ext.Ajax.request({url:'order/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
+        Ext.Ajax.request({url:'role/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
           var json = Ext.util.JSON.decode(response.responseText);
           if (json.success) {
             Ext.Msg.alert('操作成功', json.msg);
@@ -100139,17 +100901,17 @@ Ext.define('Admin.view.role.RoleViewController', {extend:Ext.app.ViewController,
       }
     });
   }
-}, orderGridFromSubmit:function(btn) {
+}, roleGridFormSubmit:function(btn) {
   var orderForm = btn.up('form').getForm();
   var win = btn.up('window');
-  orderForm.submit({url:'order/saveOrUpdate', method:'post', success:function(form, action) {
+  orderForm.submit({url:'role/saveOrUpdate', method:'post', success:function(form, action) {
     Ext.Msg.alert('提示', action.result.msg);
     win.close();
-    Ext.getCmp('orderGrid').store.reload();
+    Ext.getCmp('roleGrid').store.reload();
   }, failure:function(form, action) {
     Ext.Msg.alert('提示', action.result.msg);
   }});
-}, orderGridWindowsClose:function(btn) {
+}, roleGridWindowClose:function(btn) {
   var win = btn.up('window');
   if (win) {
     win.close();

@@ -3,6 +3,7 @@ package com.oa.authority.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -25,13 +26,25 @@ public class RoleController {
 	}
 	
 	@RequestMapping("/saveOrUpdate")
-	public @ResponseBody ExtjsAjaxResult saveOrUpdate(Role role, Integer[] moduleIds) {
+	public @ResponseBody ExtjsAjaxResult saveOrUpdate(RoleDTO roleDTO) {
 		try {
-			roleService.save(role, moduleIds);
+			roleService.save(roleDTO);
 			return new ExtjsAjaxResult(true,"操作成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ExtjsAjaxResult(false,"操作失败！");
+		}
+	}
+	
+	@PostMapping("/delete")
+	public @ResponseBody ExtjsAjaxResult delete(Integer[] ids)
+	{
+		try {
+			roleService.delete(ids);
+			 return new ExtjsAjaxResult(true,"操作成功！");
+		} catch (Exception e) {
+			 e.printStackTrace();
+			 return new ExtjsAjaxResult(false,"操作失败！");
 		}
 	}
 	

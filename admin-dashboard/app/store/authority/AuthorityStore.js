@@ -1,10 +1,13 @@
-Ext.define('Admin.store.role.RoleStore', {
+Ext.define('Admin.store.authority.AuthorityStore', {
     extend: 'Ext.data.Store',
-    alias: 'store.roleStore',       //1.Store取别名（reference）
-    model: 'Admin.model.role.RoleModel',//2.设置model的全路径
+    alias: 'store.authorityStore',       //1.Store取别名（reference）
+    model: 'Admin.model.authority.AuthorityModel',//2.设置model的全路径
   	proxy: {
 		type: 'ajax',
-		url: 'role/findPage.json',
+		url: 'staff/findUserRole.json',
+		params : { 
+			roleLevel: loginUserRoleLevel
+		}, 
 		reader: {
 			type:'json', 
 			rootProperty: 'content',		//结果集名字的属性
@@ -13,27 +16,27 @@ Ext.define('Admin.store.role.RoleStore', {
 		simpleSortMode: true
 	},
 
-	pageSize: 25,
+	pageSize: 10,
 	autoLoad: true,
 	remoteSort: true,//全局排序
     sorters: {
         direction: 'DESC',
-        property: 'roleId'
+        property: 'userId'
     }
 });
 
 //假数据测试
-// Ext.define('Admin.store.role.RoleStore', {
+// Ext.define('Admin.store.authority.AuthorityStore', {
 //     extend: 'Ext.data.Store',
-//     alias: 'store.roleStore',       //1.Store取别名（reference）
-//     model: 'Admin.model.role.RoleModel',//2.设置model的全路径
+//     alias: 'store.authorityStore',       //1.Store取别名（reference）
+//     model: 'Admin.model.authority.AuthorityModel',//2.设置model的全路径
 //   proxy: {
 //     //type: 'ajax',
 //     type: 'memory',
 //     //url: 'role/findPage.json',  //后台OrderController中的接口url地址
 //     data:{
 //     'items':[
-//     { 'roleId': 1, 'roleName': 'Lisa',  "roleLevel":"1",  "modulesText":"555-111-1224"  }
+//     { 'userId': 1 ,  'roleId' : 2 , 'userName': 'zjk', 'roleName': 'r1', "modulesText":"555-111-1224"  }
 //     ]},
 //     reader: {
 //       type:'json', 
@@ -45,9 +48,9 @@ Ext.define('Admin.store.role.RoleStore', {
 //   },
 //   pageSize: 25,
 //   autoLoad: true,
-//   remoteSort: true,//全局排序
+// 	remoteSort: true,//全局排序
 //     sorters: {
 //         direction: 'DESC',
-//         property: 'id'
+//         property: 'userId'
 //     }
 // });

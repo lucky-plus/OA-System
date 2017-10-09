@@ -7,13 +7,12 @@
 	id:'addressGrid',
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	columns: [
-		{text: '通讯编号',dataIndex:'addressId',hidden:true},
-        {text: '联系人' ,dataIndex:'addressName' ,flex:1 ,},
-		{text: '所属部门'  ,dataIndex:'addressDepartment'  ,width:150},
-		{text: '联系电话'  ,dataIndex:'addressPhone'  ,width:150},
-		{text: '联系邮箱'  ,dataIndex:'addressEmail'  ,width:150},
-		{text: 'QQ'  ,dataIndex:'addressQQ'  ,width:150},
-		
+		{text: '编号',dataIndex:'userId',hidden:true},
+        {text: '联系人' ,dataIndex:'realName' ,flex:1 },
+		{text: '所属部门'  ,dataIndex:'dept'  ,width:150},
+		{text: '联系电话'  ,dataIndex:'mobilePhone'  ,width:150},
+		{text: '联系邮箱'  ,dataIndex:'mail'  ,width:150},
+		{text: 'QQ'  ,dataIndex:'qq_number'  ,width:150},
 
 	],		
 
@@ -22,18 +21,22 @@
 				text:'姓名：'
 			},{
 				xtype:'textfield',
-				width:200
+				width:200,
+				reference: 'addressGridSearchText'
 			},{xtype:'tbtext',
 				text:'所属部门：'
 			},{
 			xtype: 'combobox',
-			name:'department',
+			name:'dept',
+			reference: 'addressGridSearchField',
 			store:  Ext.create('Ext.data.Store', {
-				fields: ['department', 'name'],
+				fields: ['value', 'name'],
 				data : [
-					{"department":"HIGH", 	"name":"财务部"},
-					{"department":"MEDIUM",  "name":"业务部"},
-					{"department":"LOW", 	"name":"人事部"}
+					{"value":"", "name":"全部"},
+					{"value":"财务部", "name":"财务部"},
+					{"value":"市场部", "name":"市场部"},
+					{"value":"人事部", "name":"人事部"}
+					
 					]
 				}),
 				queryMode: 	  'local',
@@ -41,7 +44,10 @@
 				valueField:   'value'
 			
 			},{
-				text:'查找'
+				text:'查找',
+				listeners: {
+					click: 'addressGridSearch'//快捷查询按钮
+				}
 			}]
 	}),
 	

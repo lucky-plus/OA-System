@@ -13,7 +13,7 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 		{text: 'roleId'	,sortable:true ,dataIndex:'roleId',hidden:true},
         {text: '角色名称' ,sortable:true ,dataIndex:'roleName' ,width:150},
 		{text: '角色等级'  ,sortable:true ,dataIndex:'roleLevel'  ,width:125},
-		{text: '所拥有的权限', sortable:true ,dataIndex:'' ,flex:1}
+		{text: '所拥有的权限', sortable:true ,dataIndex:'modulesText' ,flex:1}
 	],	
 
 
@@ -22,7 +22,7 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 			text: '添加角色',
 			iconCls:'x-fa fa-plus',
 			ui:'soft-blue',
-			//handler: 'orderGridOnClick'
+			//handler: 'roleGridAdd'
 			listeners:{
 				click:'roleGridAdd'
 			}
@@ -40,7 +40,7 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 	
 	
 	bbar: Ext.create('Ext.PagingToolbar', {
-		//bind:'{orderLists}',
+		bind:'{roleLists}',
 		displayInfo: true,
 		displayMsg: '第 {0} - {1}条， 共 {2}条',
 		emptyMsg: "暂无数据",

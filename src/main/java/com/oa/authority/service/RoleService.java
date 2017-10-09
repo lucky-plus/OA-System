@@ -21,16 +21,19 @@ public class RoleService implements IRoleService {
 	private IRoleDao roleDao;
 	
 	@Override
-	public void save(Role entity, Integer[] moduleIds) {
+	public void save(RoleDTO dto) {
 		List<Module> modules = new ArrayList<Module>();
-		for(Integer moduleId : moduleIds) {
-			Module module = new Module();
-			module.setModuleId(moduleId);
-			modules.add(module);
+		
+		if(dto.getModuleIds() != null) {
+			for(Integer moduleId : dto.getModuleIds()) {
+				Module module = new Module();
+				module.setModuleId(moduleId);
+				modules.add(module);
+			}
 		}
-		if(modules.size() > 0) {
-			entity.setModules(modules);
-		}
+		
+		Role entity = new Role();
+		RoleDTO.dtoToEntity(dto, entity);
 		roleDao.save(entity);
 	}
 
@@ -76,7 +79,7 @@ public class RoleService implements IRoleService {
 			dtoList.add(dto);
 		}
 		
-		PageImpl<RoleDTO> page = new PageImpl<RoleDTO>(dtoList, pageable, dtoList.size());
+		PageImpl<RoleDTO> page = new PageImpl<RoleDTO>(dtoList, pageable, rolePage.getTotalElements());
 		return page;
 	}
 

@@ -5,22 +5,21 @@
 	title:'<b>公告列表</b>',
 	bind:'{noticeLists}',
 	id:'noticeGrid',
+	listeners:{
+		cellclick:function(grid,td, cellIndex, record, tr, rowIndex){
+			//var record = this.getStore().getAt(rowIndex); 
+			  var orderWindow = Ext.widget('orderWindow',{
+				title:'查看公告',
+				html: grid.getStore().getAt(rowIndex).data.noticeName
+			});
+		}
+	},
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	columns: [
 		{text: '公告编号'			  ,sortable:true ,dataIndex:'noticeId',hidden:true},
-        {text: '标题' ,dataIndex:'noticeName' ,flex:1 ,
-			listeners:{
-				click:function(){
-				var cfg = Ext.apply({
-				xtype:'orderWindow'
-				},{
-					title:'公告',
-					items:[Ext.apply({xtype:'noticeText'})]
-				});
-				Ext.create(cfg);
-			}
-		}
-		
+             {text: '标题' ,dataIndex:'noticeName' ,flex:1 
+
+
 		},
 		{text: '发布时间'  ,sortable:true ,dataIndex:'noticeTime'  ,width:150
 			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
@@ -35,7 +34,7 @@
             },'-', {  
 				icon:'resources/images/icons/delete.png',
                 tooltip: '删除',
-                handler: ('noticeGridDeleteDate') 
+                handler: ('noticeGridDeleteOne') 
             }]  }
 
 	],	
@@ -45,6 +44,7 @@
 
 
 	tbar: Ext.create('Ext.Toolbar', {
+			id: 'xiaotingzi2' ,
 			items:[ {
 				text: '新增',
 				iconCls:'x-fa fa-plus',
@@ -58,17 +58,33 @@
 				text:'标题：'
 			},{
 				xtype:'textfield',
-				width:300
+				width:300,
+				itemsId:'searchText'
+				
+				
 			},{xtype:'tbtext',
 				text:'时间：'
 			},{
-				xtype:'datefield',
+				 xtype:'datefield',  
+                    itemId:'beginDate',  
+                    format:'Y-m-d',  
+					
+			
 			},{xtype:'tbtext',
 				text:'至：'
 			},{
-				xtype:'datefield',
+				xtype:'datefield',  
+                    itemId:'endDate',  
+                    format:'Y-m-d',  
+					listeners: {  
+					focus: function(){
+						var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
+						this.setMinValue(cc);
+						}  	
+					}
 			},{
-				text:'查找'
+				text: '查找',
+				handler:'noticeGridFind'
 			}
 			]
 	}),
@@ -76,7 +92,7 @@
 	
 	
 	bbar: Ext.create('Ext.PagingToolbar', {
-		bind:'{orderLists}',
+		bind:'{noticeLists}',
 		displayInfo: true,
 		displayMsg: '第 {0} - {1}条， 共 {2}条',
 		emptyMsg: "No topics to display",

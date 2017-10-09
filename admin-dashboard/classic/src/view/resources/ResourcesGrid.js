@@ -8,20 +8,7 @@
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	columns: [
 		{text: '资料编号',dataIndex:'resourcesId',hidden:true},
-        {text: '资料名称' ,dataIndex:'resourcesName' ,flex:1 ,
-			listeners:{
-				click:function(){
-				var cfg = Ext.apply({
-				xtype:'orderWindow'
-				},{
-					title:'资料',
-					//items:[Ext.apply({xtype:'orderForm'})]
-				});
-				Ext.create(cfg);
-		}
-	}
-		
-		},
+        {text: '资料名称' ,dataIndex:'resourcesName' ,flex:1},
 		{text: '发布时间'  ,sortable:true ,dataIndex:'resourcesTime'  ,width:150
 			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
 		{xtype: 'actioncolumn',  text: '操作' ,width:150,tdCls: 'action',  
@@ -38,7 +25,7 @@
 					xtype:'orderWindow'
 					},{
 						title:'公告',
-						items:[Ext.apply({xtype:'noticeCompose'})]
+						items:[Ext.apply({xtype:'resourcesForm'})]
 					});
 					Ext.create(cfg);
 				}
@@ -57,7 +44,15 @@
 			text: '上传',
 			iconCls:'x-fa fa-plus',
 			ui:'soft-blue',
-			handler: 'noticeGridAdd'
+			handler:function(){
+					var cfg = Ext.apply({
+					xtype:'orderWindow'
+					},{
+						title:'资料上传',
+						items:[Ext.apply({xtype:'resourcesForm'})]
+					});
+					Ext.create(cfg);
+				}
 		},'-', {
 			text: '批量下载',
 			iconCls:'x-fa fa-arrow-circle-o-down',

@@ -52,6 +52,55 @@ Ext.define('Admin.view.notice.NoticeViewController', {
            orderWindow.down("form").getForm().loadRecord(record);
 	},
    
+   noticeGridDeleteOne:function(grid, rowIndex, colIndex){
+	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+		if (button == "yes") {
+	   var record = grid.getStore().getAt(rowIndex);
+	   var noticeId=record.data.noticeId;
+	   Ext.Ajax.request({ 
+			url : 'notice/deleteone', 
+			method : 'post', 
+			params : { 
+					id:noticeId
+			},  
+			
+	   });
+	   grid.getStore().reload();
+		}
+	   })
+   },
+   
+   
+   noticeGridFind:function(btn){
+	   var grid = btn.up('gridpanel');
+	   var record = grid.getStore();
+	   var searchText=Ext.getCmp('xiaotingzi2').items.getAt(5).getValue();
+	   var beginTime=Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
+	   var endTime=Ext.Date.add(Ext.getCmp('xiaotingzi2').items.getAt(9).getValue(), Ext.Date.DAY,1);
+	   //Ext.getCmp('xiaotingzi2').items.getAt(9).getValue();
+	   Ext.Ajax.request({ 
+			url : 'notice/findByCondition', 
+			params : { 
+                    noticeName:searchText,
+					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),
+					endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'),
+					page:1,
+					start:0,
+					limit:25,
+					sort:'noticeId',
+					dir:'DESC'
+			},
+			success: function(response, options){
+				var tnpdata= Ext.util.JSON.decode(response.responseText) ;
+				grid.getStore().loadData(tnpdata.content,false);
+			}
+			
+	   });
+	  
+
+   },
+   
+   
    noticeGridDeleteDate: function(btn) {
 		var grid = btn.up('gridpanel');
 		var selModel = grid.getSelectionModel();

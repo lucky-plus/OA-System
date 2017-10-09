@@ -1,13 +1,25 @@
 package com.oa.staff.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import com.oa.authority.entity.Role;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.springframework.data.jpa.domain.Specification;
 
 @Entity
 @Table(name="t_user")
@@ -26,7 +38,12 @@ public class UserInfornation {
 	private Date onDutDate;
 	private String wechatNumber;
 	private String home;
-	
+	private String realName;
+	private int qq_number;
+	private String dept;
+
+	private Role role;
+
 	@Id
 	@Column(length=8)
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -69,7 +86,24 @@ public class UserInfornation {
 	public String getHome() {
 		return home;
 	}
+	public String getRealName() {
+		return realName;
+	}
+	public int getQq_number() {
+		return qq_number;
+	}
+	public String getDept() {
+		return dept;
+	}
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="roleId")
+	public Role getRole() {
+		return role;
+	}
 	
+	public void setRole(Role role) {
+		this.role = role;
+	}
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
@@ -109,5 +143,35 @@ public class UserInfornation {
 	public void setHome(String home) {
 		this.home = home;
 	}
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+	public void setQq_number(int qq_number) {
+		this.qq_number = qq_number;
+	}
+	public void setDept(String dept) {
+		this.dept = dept;
+	}
+	
+	
+	public static Specification<UserInfornation> getWhereClause(UserInfornation userInfornation){
+		return new Specification<UserInfornation>() {
+			@Override
+			public Predicate toPredicate(Root<UserInfornation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				List<Predicate> predicate =  new ArrayList<Predicate>();
+				if(userInfornation.getRealName()!=null) {
+					Predicate p1 = cb.like(root.get("realName").as(String.class) , "%"+userInfornation.getRealName()+"%");
+					predicate.add(p1);
+				}
+				if(userInfornation.getDept()!=null && userInfornation.getDept().trim().length()>0) {
+					Predicate p2 = cb.like(root.get("dept").as(String.class) , "%"+userInfornation.getDept()+"%");
+					predicate.add(p2);
+				}
+				 return cb.and(predicate.toArray(new Predicate[predicate.size()]));
+			}
+		};	
+	}
+	
+	
 	
 }

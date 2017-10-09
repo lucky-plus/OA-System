@@ -1,6 +1,7 @@
 Ext.define('Admin.view.notcie.NoticeText', {
     extend: 'Ext.form.Panel',
     alias: 'widget.noticeText',
+	id:'noticeText',
     requires: [
         'Ext.form.field.Text',
 		'Ext.form.DisplayField'
@@ -22,7 +23,6 @@ Ext.define('Admin.view.notcie.NoticeText', {
 		{
 		xtype: 'displayfield',
 		name:'noticeName',
-		style:'font-color:20px'
 		
 	},{
 		xtype: 'displayfield',

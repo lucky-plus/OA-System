@@ -1,14 +1,14 @@
 Ext.define('Admin.view.role.RoleViewController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.RoleViewController',
+    alias: 'controller.roleViewController',
 
     roleGridAdd: function(bt) {
 		//alert("Add Wiondws");
 		var cfg = Ext.apply({
-			xtype:'roleWindow'
+			xtype:'roleGridWindow'
 		},{
 			title:'添加角色',
-			items:[Ext.apply({xtype:'roleForm'})]
+			items:[Ext.apply({xtype:'roleGridForm'})]
 		});
 		Ext.create(cfg);
     },
@@ -19,9 +19,9 @@ Ext.define('Admin.view.role.RoleViewController', {
         if (selModel.hasSelection()) {//判断是否选中记录
            var record = selModel.getSelection()[0];//获取选中的第一条记录
            //创建修改window和form
-		   var orderWindow = Ext.widget('orderWindow',{
+		   var orderWindow = Ext.widget('roleGridWindow',{
 				title:'修改订单',
-				items: [{xtype: 'orderForm'}]
+				items: [{xtype: 'roleGridForm'}]
 			});
 		   		//让form加载选中记录
            orderWindow.down("form").getForm().loadRecord(record);
@@ -40,10 +40,10 @@ Ext.define('Admin.view.role.RoleViewController', {
                     var selected = selModel.getSelection();
                     var selectIds = []; //要删除的id
                     Ext.each(selected, function (record) {
-                        selectIds.push(record.data.id);
+                        selectIds.push(record.data.roleId);
                     })
                   	Ext.Ajax.request({ 
-						url : 'order/delete', 
+						url : 'role/delete', 
 						method : 'post', 
 						params : { 
 							ids:selectIds
@@ -65,18 +65,18 @@ Ext.define('Admin.view.role.RoleViewController', {
 
    },
    
-	orderGridFromSubmit: function(btn) {
+	roleGridFormSubmit: function(btn) {
 		var orderForm = btn.up('form').getForm();
 		var win = btn.up('window');
 		orderForm.submit( { 
 			//waitTitle : '请稍后...', 
 			//waitMsg : '正在保存订单信息,请稍后...', 
-			url : 'order/saveOrUpdate', 
+			url : 'role/saveOrUpdate', 
 			method : 'post', 
 			success : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 
 				win.close();
-				Ext.getCmp('orderGrid').store.reload();
+				Ext.getCmp('roleGrid').store.reload();
 			}, 
 			failure : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 
@@ -86,7 +86,7 @@ Ext.define('Admin.view.role.RoleViewController', {
 
    },
    
-	orderGridWindowsClose: function(btn) {
+	roleGridWindowClose: function(btn) {
 		var win=btn.up('window');
 		if(win){
 			win.close();
