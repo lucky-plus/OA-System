@@ -64,7 +64,7 @@ Ext.define('Admin.view.notice.NoticeViewController', {
 					id:noticeId
 			},  
 			
-	   })
+	   });
 	   grid.getStore().reload();
 		}
 	   })

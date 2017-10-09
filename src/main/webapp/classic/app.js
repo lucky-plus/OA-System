@@ -100663,18 +100663,186 @@ items:[{title:'What are the payment methods you accept?', iconCls:'x-fa fa-caret
 Ext.define('Admin.view.profile.ShareUpdate', {extend:Ext.panel.Panel, xtype:'profileshare', bodyPadding:10, layout:'fit', cls:'share-panel', items:[{xtype:'textareafield', emptyText:"What's on your mind?"}], bbar:{defaults:{margin:'0 10 5 0'}, items:[{ui:'header', iconCls:'x-fa fa-video-camera'}, {ui:'header', iconCls:'x-fa fa-camera'}, {ui:'header', iconCls:'x-fa fa-file'}, '-\x3e', {text:'Share', ui:'soft-blue'}]}});
 Ext.define('Admin.view.profile.UserProfile', {extend:Admin.view.profile.UserProfileBase, xtype:'profile', cls:'userProfile-container', layout:'responsivecolumn', items:[{xtype:'profileshare', userCls:'big-100 small-100 shadow'}, {xtype:'profilesocial', userCls:'big-50 small-100 shadow'}, {xtype:'profiledescription', userCls:'big-50 small-100 shadow'}, {xtype:'profilenotifications', userCls:'big-50 small-100 shadow'}, {xtype:'profiletimeline', userCls:'big-50 small-100 shadow'}]});
 Ext.define('Admin.view.resources.resources', {extend:Ext.container.Container, xtype:'resources', controller:'resourcesViewController', viewModel:{type:'resourcesViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'resourcesGrid'}]});
-Ext.define('Admin.view.resources.ResourcesGrid', {extend:Ext.grid.Panel, xtype:'resourcesGrid', title:'\x3cb\x3e资料中心\x3c/b\x3e', bind:'{resourcesLists}', id:'resourcesGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'资料编号', dataIndex:'resourcesId', hidden:true}, {text:'资料名称', dataIndex:'resourcesName', flex:1, listeners:{click:function() {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'资料'});
-  Ext.create(cfg);
-}}}, {text:'发布时间', sortable:true, dataIndex:'resourcesTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {xtype:'actioncolumn', text:'操作', width:150, tdCls:'action', items:['-', {icon:'resources/images/icons/dowanload.png', tooltip:'下载'}, '-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:function() {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'公告', items:[Ext.apply({xtype:'noticeCompose'})]});
-  Ext.create(cfg);
-}}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除'}]}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'上传', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'批量下载', iconCls:'x-fa fa-arrow-circle-o-down'}, '-', {text:'批量删除', iconCls:'x-fa fa-trash'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield'}, {text:'查找'}]}), bbar:Ext.create('Ext.PagingToolbar', 
-{bind:'{resourcesLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
-Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewController, alias:'controller.resourcesViewController', noticeGridAdd:function(bt) {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'上传资料'});
-  Ext.create(cfg);
-}});
+
+Ext.define('Admin.view.resources.ResourcesGrid', {		//1.修改文件路径
+      extend: 'Ext.grid.Panel',					//2.继承的组件类型
+	//3.重写继承组件的属性：
+    xtype: 'resourcesGrid',
+	title:'<b>资料中心</b>',
+	bind:'{resourcesLists}',
+	id:'resourcesGrid',
+	selModel: Ext.create('Ext.selection.CheckboxModel'),
+	columns: [
+		{text: '资料编号',dataIndex:'resourcesId',hidden:true},
+        {text: '资料名称' ,dataIndex:'resourcesName' ,flex:1},
+		{text: '发布时间'  ,sortable:true ,dataIndex:'resourcesTime'  ,width:150
+			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
+		{xtype: 'actioncolumn',  text: '操作' ,width:150,tdCls: 'action',  
+            items: ['-',{  
+				icon:'resources/images/icons/dowanload.png',
+                tooltip: '下载',
+              //  handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {   }  
+				},'-',{  
+
+				icon:'resources/images/icons/editor.png',
+                tooltip: '编辑',
+				handler:function(){
+					var cfg = Ext.apply({
+					xtype:'orderWindow'
+					},{
+						title:'公告',
+						items:[Ext.apply({xtype:'resourcesForm'})]
+					});
+					Ext.create(cfg);
+				}
+                
+               // handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {    }  
+            },'-', {  
+				icon:'resources/images/icons/delete.png',
+                tooltip: '删除',
+              //  handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {   }  
+            }]  }
+
+	],		
+
+	tbar: Ext.create('Ext.Toolbar', {
+			items:[ {
+			text: '上传',
+			iconCls:'x-fa fa-plus',
+			ui:'soft-blue',
+			handler:function(){
+					var cfg = Ext.apply({
+					xtype:'orderWindow'
+					},{
+						title:'资料上传',
+						items:[Ext.apply({xtype:'resourcesForm'})]
+					});
+					Ext.create(cfg);
+				}
+		},'-', {
+			text: '批量下载',
+			iconCls:'x-fa fa-arrow-circle-o-down',
+			//handler: 'orderGridDelete'
+		},'-', {
+			text: '批量删除',
+			iconCls:'x-fa fa-trash',
+			//handler: 'orderGridDelete'
+		},'-',{xtype:'tbtext',
+				text:'标题：'
+			},{
+				xtype:'textfield',
+				width:300
+			},{xtype:'tbtext',
+				text:'时间：'
+			},{
+				xtype:'datefield',
+			},{xtype:'tbtext',
+				text:'至：'
+			},{
+				xtype:'datefield',
+			},{
+				text:'查找'
+			}]
+	}),
+	
+	
+	
+	
+	bbar: Ext.create('Ext.PagingToolbar', {
+		bind:'{resourcesLists}',
+		displayInfo: true,
+		displayMsg: '第 {0} - {1}条， 共 {2}条',
+		emptyMsg: "No topics to display",
+	})
+	
+});
+
+Ext.define('Admin.view.resources.ResourcesForm', {
+    extend: 'Ext.form.Panel',
+    alias: 'widget.resourcesForm',
+    requires: [
+        'Ext.button.Button',
+        'Ext.form.field.Text',
+        'Ext.form.field.File',
+        'Ext.form.field.HtmlEditor',
+		'Ext.form.field.TextArea',
+		'Ext.form.field.Time',
+		'Ext.form.field.ComboBox',
+		'Ext.form.field.Date',
+		'Ext.form.field.Radio',
+		'Ext.form.field.Hidden'
+    ],
+	
+    //viewModel: {type: 'emailcompose'},
+    //cls: 'email-compose',
+	controller: 'resourcesViewController',
+    layout: {
+        type:'vbox',
+        align:'stretch'
+    },
+
+    bodyPadding: 10,
+    scrollable: true,
+
+    defaults: {
+        labelWidth: 100,
+        labelSeparator: ''
+    },
+    items: [{
+		xtype: 'hidden',
+		fieldLabel: 'Id',
+		//allowBlank: false,
+		name:'resId',
+		//handler:'orderGridEdit'
+	},{
+		xtype:'textfield',
+		fieldLabel: '文件名称',
+		//allowBlank: false,
+		name:'resName',
+		//handler:'orderGridEdit'
+	},{
+		xtype: 'textfield',  
+    	    	        inputType: 'file',//文件类型   
+    	    	        fieldLabel: '文件名',    	     
+    	    	        name : 'uploadFileFieldPath', 
+    	    	        id : 'uploadFileFieldPath',  
+    	    	        allowBlank:false,
+    	    	        blankText: '浏览'
+
+	}],
+
+    bbar: {
+        overflowHandler: 'menu',
+        items: ['->',{
+			xtype: 'button',
+			ui:'soft-blue',
+			//ui: 'soft-red',
+			text: '上传',
+			handler: 'fileUpload'
+		},{
+			xtype: 'button',
+			//ui: 'gray',
+			text: '取消',
+			handler: 'orderGridWindowsClose'
+		}]
+    }
+});
+
+
+Ext.define('Admin.view.resources.ResourcesViewController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.resourcesViewController',
+
+    fileUpload: function(btn) {
+	var resourcesForm = btn.up('form').getForm();
+	resourcesForm.submit({  
+			url : 'resources/upload', 
+			method : 'post', 
+			//enctype="multipart/form-dat",
+	   })
+    },
+	
+});
 Ext.define('Admin.view.resources.ResourcesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.resourcesViewModel', stores:{resourcesLists:{type:'resourcesStore', autoLoad:true}}});
 Ext.define('Admin.view.role.Role', {extend:Ext.container.Container, xtype:'role', controller:'roleViewController', viewModel:{type:'roleViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'roleGrid'}]});
 Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:125}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
