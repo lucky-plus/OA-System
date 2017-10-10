@@ -99814,9 +99814,8 @@ Ext.define('Admin.model.search.Attachment', {extend:Admin.model.Base, fields:[{t
 Ext.define('Admin.model.search.Result', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'title'}, {type:'string', name:'thumbnail'}, {type:'string', name:'url'}, {type:'string', name:'content'}], hasMany:{name:'attachments', model:'search.Attachment'}});
 Ext.define('Admin.model.search.User', {extend:Admin.model.Base, fields:[{type:'int', name:'identifier'}, {type:'string', name:'fullname'}, {type:'string', name:'email'}, {name:'subscription'}, {type:'date', name:'joinDate'}, {type:'boolean', name:'isActive'}, {name:'profile_pic'}]});
 Ext.define('Admin.proxy.API', {extend:Ext.data.proxy.Ajax, alias:'proxy.api', reader:{type:'json', rootProperty:'data'}});
-Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'信息中心', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'公告中心', iconCls:'x-fa fa-file-o', viewType:'notice', leaf:true}, {text:'资源下载', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'resources', leaf:true}, {text:'通讯录', iconCls:'x-fa fa-book ', viewType:'address', leaf:true}]}, {text:'Dashboard', iconCls:'x-fa fa-desktop', 
-rowCls:'nav-tree-badge nav-tree-badge-new', viewType:'admindashboard', routeId:'dashboard', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', 
-leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}]}});
+Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'Dashboard', iconCls:'x-fa fa-desktop', rowCls:'nav-tree-badge nav-tree-badge-new', viewType:'admindashboard', routeId:'dashboard', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', 
+viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}]}});
 Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json?roleLevel\x3d' + loginUserRoleLevel, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:10, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
@@ -100345,11 +100344,23 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
   var me = this;
   if (loginUser != 'null' || id == 'login') {
     me.setCurrentView(id);
-    var rootTree = Ext.data.StoreManager.lookup('NavigationTree');
-    rootTree.on('load', function() {
-      this.getRoot().appendChild({text:'用户管理', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, id:'roleManage', children:[{text:'角色管理', iconCls:'x-fa fa-file-o', viewType:'role', leaf:true}, {text:'权限设置', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'authority', leaf:true}]});
-    });
-    rootTree.reload();
+    if (loadFlag == 0) {
+      var rootTree = Ext.data.StoreManager.lookup('NavigationTree');
+      rootTree.on('load', function() {
+        this.getRoot().appendChild({text:'信息中心', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'公告中心', iconCls:'x-fa fa-file-o', viewType:'notice', leaf:true}, {text:'资源下载', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'resources', leaf:true}, {text:'通讯录', iconCls:'x-fa fa-book ', viewType:'address', leaf:true}]}, {text:'Profile', iconCls:'x-fa fa-user', viewType:'profile', leaf:true});
+      });
+      var modules = eval(loginUserModules);
+      for (var i = 0; i < modules.length; i++) {
+        var module = modules[i];
+        if (module.modelName == '用户管理') {
+          rootTree.on('load', function() {
+            this.getRoot().appendChild({text:'用户管理', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, id:'roleManage', children:[{text:'角色管理', iconCls:'x-fa fa-file-o', viewType:'role', leaf:true}, {text:'权限设置', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'authority', leaf:true}]});
+          });
+        }
+      }
+      rootTree.reload();
+      loadFlag = 1;
+    }
   } else {
     Ext.Msg.alert('警告', '非法登录系统!', function() {
       me.setCurrentView('login');
@@ -100361,6 +100372,7 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
     var json = Ext.util.JSON.decode(response.responseText);
     if (json.success) {
       me.redirectTo('login', true);
+      window.location.reload();
     } else {
       Ext.Msg.alert('操作失败。请重试', json.msg);
     }
@@ -100609,9 +100621,15 @@ Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewC
 Ext.define('Admin.view.resources.ResourcesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.resourcesViewModel', stores:{resourcesLists:{type:'resourcesStore', autoLoad:true}}});
 Ext.define('Admin.view.role.Role', {extend:Ext.container.Container, xtype:'role', controller:'roleViewController', viewModel:{type:'roleViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'roleGrid'}]});
 Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:125}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
-iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'}), on:function() {
-  Ext.Msg.alert('test');
+iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', id:'deleteButton', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'}), on:function() {
   Ext.getCmp('deleteButton').hide();
+  var modules = eval(loginUserModules);
+  for (var i = 0; i < modules.length; i++) {
+    var module = modules[i];
+    if (module.modelName == '1') {
+      Ext.getCmp('deleteButton').show();
+    }
+  }
 }});
 Ext.define('Admin.view.role.RoleGridForm', {extend:Ext.form.Panel, alias:'widget.roleGridForm', controller:'roleViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'roleId'}, {xtype:'textfield', fieldLabel:'角色名称', name:'roleName'}, {xtype:'textfield', fieldLabel:'角色等级', name:'roleLevel'}, {xtype:'checkboxgroup', fieldLabel:'用户权限', columns:4, vertical:true, items:[{boxLabel:'1', 
 name:'moduleIds', inputValue:'1'}, {boxLabel:'1-1', name:'moduleIds', inputValue:'2'}, {boxLabel:'1-2', name:'moduleIds', inputValue:'3'}, {boxLabel:'2', name:'moduleIds', inputValue:'4'}, {boxLabel:'2-1', name:'moduleIds', inputValue:'5'}, {boxLabel:'2-2', name:'moduleIds', inputValue:'6'}, {boxLabel:'2-3', name:'moduleIds', inputValue:'7'}, {boxLabel:'3', name:'moduleIds', inputValue:'8'}, {boxLabel:'3-1', name:'moduleIds', inputValue:'9'}, {boxLabel:'3-2', name:'moduleIds', inputValue:'10'}]}], 

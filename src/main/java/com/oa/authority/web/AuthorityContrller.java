@@ -14,6 +14,9 @@ import com.oa.authority.entity.Module;
 import com.oa.staff.entity.UserInfornation;
 import com.oa.utils.AJAXResultMessage;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 @Controller
 public class AuthorityContrller {
 
@@ -35,7 +38,15 @@ public class AuthorityContrller {
 				session.setAttribute("userName", user.getUserName());
 				session.setAttribute("userId", user.getUserId());
 				session.setAttribute("roleLevel", user.getRole().getRoleLevel());
-				session.setAttribute("userModules", user.getRole().getModules());
+				
+				JSONArray json = new JSONArray();
+	            for(Module m : user.getRole().getModules()){
+	                JSONObject jo = new JSONObject();
+	                jo.put("moduleId", m.getModuleId());
+	                jo.put("modelName", m.getModelName());
+	                json.add(jo);
+	            }
+				session.setAttribute("userModules", json.toString());
 	            return new AJAXResultMessage(true,"登录成功!");
 	            
 			} catch (Exception e) {

@@ -145,44 +145,100 @@ Ext.define('Admin.view.main.MainController', {
         }
     },
 
+
     onRouteChange: function(id) {
         //登录校验:没有登录无法访问其他模块.
         var me = this;
         if (loginUser != "null" || id == "login") {
             me.setCurrentView(id);
-            
+
+          if(loadFlag == 0) {
             //动态加载菜单
             var rootTree = Ext.data.StoreManager.lookup('NavigationTree');
+            
             rootTree.on(
               "load",function(){
                 // Ext.Msg.alert('警告', 'aaaaaa!');
                 this.getRoot().appendChild(
                   {
-                      text: '用户管理',
-                      iconCls: 'x-fa fa-leanpub',
-                      expanded: false,
-                      selectable: false,
-                      //routeId: 'pages-parent',
-                      id: 'roleManage',
-                      children: [
-                          {
-                              text: '角色管理',
-                              iconCls: 'x-fa fa-file-o',
-                              viewType: 'role',
-                              leaf: true
-                          },
-                          {
-                              text: '权限设置',
-                              iconCls: 'x-fa  fa-arrow-circle-o-down',
-                              viewType: 'authority',
-                              leaf: true
-                          }
+                    text: '信息中心',
+                    iconCls: 'x-fa fa-leanpub',
+                    expanded: false,
+                    selectable: false,
+                    //routeId: 'pages-parent',
+                    //id: 'pages-parent',
+
+                    children: [
+                        {
+                            text: '公告中心',
+                            iconCls: 'x-fa fa-file-o',
+                            viewType: 'notice',
+                            leaf: true
+                        },
+                        {
+                            text: '资源下载',
+                            iconCls: 'x-fa  fa-arrow-circle-o-down',
+                            viewType: 'resources',
+                            leaf: true
+                        },
+                        {
+                            text: '通讯录',
+                            iconCls: 'x-fa fa-book ',
+                            viewType: 'address',
+                            leaf: true
+                        }
                       ]
-                    }
+                  },
+                  {
+                        text: 'Profile',
+                        iconCls: 'x-fa fa-user',
+                        viewType: 'profile',
+                        leaf: true
+                  }
                 );
               }
             );
-            rootTree.reload();
+
+            var modules = eval(loginUserModules);
+            for(var i = 0; i < modules.length; i++) {
+              var module = modules[i];
+              if(module.modelName == "用户管理") {
+                rootTree.on(
+                    "load",function(){
+                      // Ext.Msg.alert('警告', 'aaaaaa!');
+                      this.getRoot().appendChild(
+                        {
+                            text: '用户管理',
+                            iconCls: 'x-fa fa-leanpub',
+                            expanded: false,
+                            selectable: false,
+                            //routeId: 'pages-parent',
+                            id: 'roleManage',
+                            children: [
+                                {
+                                    text: '角色管理',
+                                    iconCls: 'x-fa fa-file-o',
+                                    viewType: 'role',
+                                    leaf: true
+                                },
+                                {
+                                    text: '权限设置',
+                                    iconCls: 'x-fa  fa-arrow-circle-o-down',
+                                    viewType: 'authority',
+                                    leaf: true
+                                }
+                            ]
+                          }
+                      );
+                    }
+                  );
+              }
+            }
+
+              rootTree.reload();
+              loadFlag = 1;
+            }
+
 
         } else {
             Ext.Msg.alert('警告', '非法登录系统!', function() {
@@ -204,7 +260,7 @@ Ext.define('Admin.view.main.MainController', {
                 var json = Ext.util.JSON.decode(response.responseText);
                 if(json.success){
                     me.redirectTo('login', true);
-                    // window.location.reload();
+                    window.location.reload();
                 }else{
                     Ext.Msg.alert('操作失败。请重试', json.msg);
                 }
