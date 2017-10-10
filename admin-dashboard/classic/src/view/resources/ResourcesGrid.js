@@ -16,7 +16,7 @@
             items: ['-',{  
 				icon:'resources/images/icons/dowanload.png',
                 tooltip: '下载',
-              //  handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {   }  
+                handler: 'resourcesGridDownloadOne'  
 				},'-',{  
 
 				icon:'resources/images/icons/editor.png',
@@ -58,11 +58,11 @@
 		},'-', {
 			text: '批量下载',
 			iconCls:'x-fa fa-arrow-circle-o-down',
-			//handler: 'orderGridDelete'
+			handler: 'resourcesGridDownloadMany'
 		},'-', {
 			text: '批量删除',
 			iconCls:'x-fa fa-trash',
-			handler: 'resourcesGridDeleteDate'
+			handler: 'resourcesGridDelete'
 		},'-',{xtype:'tbtext',
 				text:'标题：'
 			},{

@@ -47,8 +47,8 @@ Ext.define('Admin.view.resources.ResourcesForm', {
 		//handler:'orderGridEdit'
 	},{
 		xtype: 'fileuploadfield',  
-		
 		fieldLabel: '文件名',   
+		
 		
 
 

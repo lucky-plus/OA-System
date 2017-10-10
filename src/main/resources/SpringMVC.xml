@@ -41,7 +41,7 @@
 	    <mvc:interceptor>
 		    <mvc:mapping path="/resources/upload" />
 			    <bean class="com.oa.utils.FileUploadInterceptor">
-			        <property name="maxSize" value="10485760" />
+			        <property name="maxSize" value="52428800" />
 			    </bean>
 	    </mvc:interceptor>
 	</mvc:interceptors>

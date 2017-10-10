@@ -15,6 +15,7 @@ public interface IResourcesService {
 	public void delete(Resources entity);
 	public void delete(Integer id);
 	public void delete(Integer[] ids);
+	public Resources findOne(Integer id);
 	public List<ResourcesDTO> findAll();
 	public Page<ResourcesDTO> findAll(Pageable pageable);
 }
