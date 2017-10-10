@@ -1,7 +1,7 @@
 Ext.define('Admin.view.authority.AuthorityGridForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.authorityGridForm',
-	//id:'orderGridForm',//Ext.getCmp('orderGridForm');
+	id:'authorityGridForm',//Ext.getCmp('authorityGridForm');
     requires: [
         'Ext.button.Button',
         'Ext.form.field.Text',
@@ -41,15 +41,48 @@ Ext.define('Admin.view.authority.AuthorityGridForm', {
 	},
 	{
 		xtype: 'radiogroup',
+    	id: 'radiogroupOperation',
 		fieldLabel: '角色名称',
 		columns: 5,
 		vertical: true,
-		items: [
-			{ boxLabel: 'r1',   name: 'roleId', inputValue: '1' },
-			{ boxLabel: 'r2', name: 'roleId', inputValue: '2' },
-			{ boxLabel: 'r3', name: 'roleId', inputValue: '3' },
-			{ boxLabel: 'r4',   name: 'roleId', inputValue: '4' }
-		]
+		// items: [
+		// 	{ boxLabel: 'r1',   name: 'roleId', inputValue: '1' },
+		// 	{ boxLabel: 'r2', name: 'roleId', inputValue: '2' },
+		// 	{ boxLabel: 'r3', name: 'roleId', inputValue: '3' },
+		// 	{ boxLabel: 'r4',   name: 'roleId', inputValue: '4' }
+		// ]
+		listeners: {
+	      render: function () {
+	        //通过extjs的ajax获取
+	        Ext.Ajax.request({
+	            url: 'role/findAll.json',
+	            // 这里async 必须设置成false 否则页面加载时，无法将动态创建的checkBoxGroup添加到容器中
+	            async : false,
+	            success: function (response) {
+	                var data = eval("(" + response.responseText + ")");
+	                var len = data.length;//obj.data.length; "Table"这里的Table指的是后台返回 类似于data
+	                if (data == null || len == 0) {
+	                    return;
+	                }
+
+	                var radiogroup = Ext.getCmp("radiogroupOperation");
+	                for (var i = 0; i < len; i++) {
+	                    var radiobox = new Ext.form.Radio(
+	                      {
+	                          boxLabel: data[i].roleName,
+	                          name: 'roleId',
+	                          inputValue: data[i].roleId,
+	                          checked: false
+	                      });
+	                    radiogroup.items.add(radiobox);
+	                }
+	                //重新调整版面布局
+	                // var form = Ext.getCmp('authorityGridForm');
+                 	// form.reload();
+	            }
+	        });
+	      }
+	    }
 	}
 	],
     bbar: {

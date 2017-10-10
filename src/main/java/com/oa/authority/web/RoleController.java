@@ -1,5 +1,7 @@
 package com.oa.authority.web;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,11 @@ public class RoleController {
 	@RequestMapping("/findPage")
 	public @ResponseBody Page<RoleDTO> findAll(ExtjsPageable pageable) {
 		return roleService.findAll(pageable.getPageable());
+	}
+	
+	@RequestMapping("/findAll")
+	public @ResponseBody List<RoleDTO> findAll() {
+		return roleService.findAll();
 	}
 	
 	@RequestMapping("/saveOrUpdate")

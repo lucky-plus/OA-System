@@ -100053,8 +100053,20 @@ isValid:function() {
 Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xtype:'authority', controller:'AuthorityViewController', viewModel:{type:'authorityViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'authorityGrid'}]});
 Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e权限设置\x3c/b\x3e', bind:'{userRoleLists}', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'userId', sortable:true, dataIndex:'userId', hidden:true}, {text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'用户名称', sortable:true, dataIndex:'userName', width:150}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'所拥有的权限', 
 sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'修改权限', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{userRoleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
-Ext.define('Admin.view.authority.AuthorityGridForm', {extend:Ext.form.Panel, alias:'widget.authorityGridForm', controller:'AuthorityViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'用户名称', name:'userName'}, {xtype:'radiogroup', fieldLabel:'角色名称', columns:5, vertical:true, items:[{boxLabel:'r1', name:'roleId', inputValue:'1'}, 
-{boxLabel:'r2', name:'roleId', inputValue:'2'}, {boxLabel:'r3', name:'roleId', inputValue:'3'}, {boxLabel:'r4', name:'roleId', inputValue:'4'}]}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'authorityGridFormSubmit'}, {xtype:'button', text:'取消', handler:'authorityGridWindowClose'}]}});
+Ext.define('Admin.view.authority.AuthorityGridForm', {extend:Ext.form.Panel, alias:'widget.authorityGridForm', id:'authorityGridForm', controller:'AuthorityViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'用户名称', name:'userName'}, {xtype:'radiogroup', id:'radiogroupOperation', fieldLabel:'角色名称', columns:5, vertical:true, listeners:{render:function() {
+  Ext.Ajax.request({url:'role/findAll.json', async:false, success:function(response) {
+    var data = eval('(' + response.responseText + ')');
+    var len = data.length;
+    if (data == null || len == 0) {
+      return;
+    }
+    var radiogroup = Ext.getCmp('radiogroupOperation');
+    for (var i = 0; i < len; i++) {
+      var radiobox = new Ext.form.Radio({boxLabel:data[i].roleName, name:'roleId', inputValue:data[i].roleId, checked:false});
+      radiogroup.items.add(radiobox);
+    }
+  }});
+}}}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'authorityGridFormSubmit'}, {xtype:'button', text:'取消', handler:'authorityGridWindowClose'}]}});
 Ext.define('Admin.view.authority.AuthorityGridWindow', {extend:Ext.window.Window, alias:'widget.authorityGridWindow', autoShow:true, modal:true, layout:'fit', afterRender:function() {
   var me = this;
   me.callParent(arguments);
@@ -100634,9 +100646,21 @@ iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {
     }
   }
 }});
-Ext.define('Admin.view.role.RoleGridForm', {extend:Ext.form.Panel, alias:'widget.roleGridForm', controller:'roleViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'roleId'}, {xtype:'textfield', fieldLabel:'角色名称', name:'roleName'}, {xtype:'textfield', fieldLabel:'角色等级', name:'roleLevel'}, {xtype:'checkboxgroup', fieldLabel:'用户权限', columns:4, vertical:true, items:[{boxLabel:'1', 
-name:'moduleIds', inputValue:'1'}, {boxLabel:'1-1', name:'moduleIds', inputValue:'2'}, {boxLabel:'1-2', name:'moduleIds', inputValue:'3'}, {boxLabel:'2', name:'moduleIds', inputValue:'4'}, {boxLabel:'2-1', name:'moduleIds', inputValue:'5'}, {boxLabel:'2-2', name:'moduleIds', inputValue:'6'}, {boxLabel:'2-3', name:'moduleIds', inputValue:'7'}, {boxLabel:'3', name:'moduleIds', inputValue:'8'}, {boxLabel:'3-1', name:'moduleIds', inputValue:'9'}, {boxLabel:'3-2', name:'moduleIds', inputValue:'10'}]}], 
-bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'roleGridFormSubmit'}, {xtype:'button', text:'取消', handler:'roleGridWindowClose'}]}});
+Ext.define('Admin.view.role.RoleGridForm', {extend:Ext.form.Panel, alias:'widget.roleGridForm', id:'roleGridForm', controller:'roleViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'roleId'}, {xtype:'textfield', fieldLabel:'角色名称', name:'roleName'}, {xtype:'textfield', fieldLabel:'角色等级', name:'roleLevel'}, {xtype:'checkboxgroup', id:'checkboxgroupOperation', fieldLabel:'用户权限', 
+columns:4, vertical:true, listeners:{render:function() {
+  Ext.Ajax.request({url:'module/findAll.json', async:false, success:function(response) {
+    var data = eval('(' + response.responseText + ')');
+    var len = data.length;
+    if (data == null || len == 0) {
+      return;
+    }
+    var checkboxgroup = Ext.getCmp('checkboxgroupOperation');
+    for (var i = 0; i < len; i++) {
+      var checkbox = new Ext.form.Checkbox({boxLabel:data[i].modelName, name:'moduleIds', inputValue:data[i].moduleId, checked:false});
+      checkboxgroup.items.add(checkbox);
+    }
+  }});
+}}}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'roleGridFormSubmit'}, {xtype:'button', text:'取消', handler:'roleGridWindowClose'}]}});
 Ext.define('Admin.view.role.RoleGridWindow', {extend:Ext.window.Window, alias:'widget.roleGridWindow', autoShow:true, modal:true, layout:'fit', afterRender:function() {
   var me = this;
   me.callParent(arguments);
