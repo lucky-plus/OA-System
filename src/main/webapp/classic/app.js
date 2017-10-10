@@ -100051,7 +100051,7 @@ isValid:function() {
 }}, {xtype:'button', scale:'large', ui:'soft-blue', formBind:true, reference:'submitButton', bind:false, margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Signup', listeners:{click:'onSignupClick'}}, {xtype:'box', html:'\x3cdiv class\x3d"outer-div"\x3e\x3cdiv class\x3d"seperator"\x3eOR\x3c/div\x3e\x3c/div\x3e'}, {xtype:'button', scale:'large', ui:'facebook', margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-facebook', text:'Login with Facebook', listeners:{click:'onFaceBookLogin'}}, 
 {xtype:'component', html:'\x3cdiv style\x3d"text-align:right"\x3e' + '\x3ca href\x3d"#login" class\x3d"link-forgot-password"\x3e' + 'Back to Log In\x3c/a\x3e' + '\x3c/div\x3e'}]}]});
 Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xtype:'authority', controller:'AuthorityViewController', viewModel:{type:'authorityViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'authorityGrid'}]});
-Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{userRoleLists}', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'userId', sortable:true, dataIndex:'userId', hidden:true}, {text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'用户名称', sortable:true, dataIndex:'userName', width:150}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'所拥有的权限', 
+Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e权限设置\x3c/b\x3e', bind:'{userRoleLists}', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'userId', sortable:true, dataIndex:'userId', hidden:true}, {text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'用户名称', sortable:true, dataIndex:'userName', width:150}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'所拥有的权限', 
 sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'修改权限', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{userRoleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
 Ext.define('Admin.view.authority.AuthorityGridForm', {extend:Ext.form.Panel, alias:'widget.authorityGridForm', controller:'AuthorityViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'用户名称', name:'userName'}, {xtype:'radiogroup', fieldLabel:'角色名称', columns:5, vertical:true, items:[{boxLabel:'r1', name:'roleId', inputValue:'1'}, 
 {boxLabel:'r2', name:'roleId', inputValue:'2'}, {boxLabel:'r3', name:'roleId', inputValue:'3'}, {boxLabel:'r4', name:'roleId', inputValue:'4'}]}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'authorityGridFormSubmit'}, {xtype:'button', text:'取消', handler:'authorityGridWindowClose'}]}});
@@ -100347,7 +100347,10 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
     if (loadFlag == 0) {
       var rootTree = Ext.data.StoreManager.lookup('NavigationTree');
       rootTree.on('load', function() {
-        this.getRoot().appendChild({text:'信息中心', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'公告中心', iconCls:'x-fa fa-file-o', viewType:'notice', leaf:true}, {text:'资源下载', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'resources', leaf:true}, {text:'通讯录', iconCls:'x-fa fa-book ', viewType:'address', leaf:true}]}, {text:'Profile', iconCls:'x-fa fa-user', viewType:'profile', leaf:true});
+        this.getRoot().appendChild({text:'个人中心', iconCls:'x-fa fa-user', viewType:'profile', leaf:true});
+      });
+      rootTree.on('load', function() {
+        this.getRoot().appendChild({text:'信息中心', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'公告中心', iconCls:'x-fa fa-file-o', viewType:'notice', leaf:true}, {text:'资源下载', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'resources', leaf:true}, {text:'通讯录', iconCls:'x-fa fa-book ', viewType:'address', leaf:true}]});
       });
       var modules = eval(loginUserModules);
       for (var i = 0; i < modules.length; i++) {
@@ -100626,7 +100629,7 @@ iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {
   var modules = eval(loginUserModules);
   for (var i = 0; i < modules.length; i++) {
     var module = modules[i];
-    if (module.modelName == '1') {
+    if (module.modelName == '角色列表--删除') {
       Ext.getCmp('deleteButton').show();
     }
   }

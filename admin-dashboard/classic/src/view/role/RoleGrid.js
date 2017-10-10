@@ -53,7 +53,7 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
       var modules = eval(loginUserModules);
       for(var i = 0; i < modules.length; i++) {
         var module = modules[i];
-        if(module.modelName == "1") {
+        if(module.modelName == "角色列表--删除") {
           Ext.getCmp('deleteButton').show();
         }
       }

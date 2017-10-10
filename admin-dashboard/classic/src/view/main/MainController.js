@@ -161,6 +161,19 @@ Ext.define('Admin.view.main.MainController', {
                 // Ext.Msg.alert('警告', 'aaaaaa!');
                 this.getRoot().appendChild(
                   {
+                      text: '个人中心',
+                      iconCls: 'x-fa fa-user',
+                      viewType: 'profile',
+                      leaf: true
+                  }
+                );
+              }
+            );
+            rootTree.on(
+              "load",function(){
+                // Ext.Msg.alert('警告', 'aaaaaa!');
+                this.getRoot().appendChild(
+                  {
                     text: '信息中心',
                     iconCls: 'x-fa fa-leanpub',
                     expanded: false,
@@ -188,12 +201,6 @@ Ext.define('Admin.view.main.MainController', {
                             leaf: true
                         }
                       ]
-                  },
-                  {
-                        text: 'Profile',
-                        iconCls: 'x-fa fa-user',
-                        viewType: 'profile',
-                        leaf: true
                   }
                 );
               }
