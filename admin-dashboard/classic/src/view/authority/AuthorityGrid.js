@@ -5,7 +5,7 @@ Ext.define('Admin.view.authority.AuthorityGrid', {		//1.修改文件路径
       extend: 'Ext.grid.Panel',					//2.继承的组件类型
 	//3.重写继承组件的属性：
     xtype: 'authorityGrid',
-	title:'<b>角色列表</b>',
+	title:'<b>权限设置</b>',
 	bind:'{userRoleLists}',
 	id:'authorityGrid',
 	selModel: Ext.create('Ext.selection.CheckboxModel'),

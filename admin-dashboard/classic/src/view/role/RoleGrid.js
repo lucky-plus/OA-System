@@ -32,6 +32,7 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 			handler: 'roleGridEdit'
 		},'-', {
 			text: '删除',
+			id: 'deleteButton',
 			iconCls:'x-fa fa-trash',
 			handler: 'roleGridDelete'
 		}]
@@ -45,5 +46,17 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 		displayMsg: '第 {0} - {1}条， 共 {2}条',
 		emptyMsg: "暂无数据",
 	})
+
+	,on: function(){
+      Ext.getCmp('deleteButton').hide();
+      // Ext.Msg.alert("modules",loginUserModules);
+      var modules = eval(loginUserModules);
+      for(var i = 0; i < modules.length; i++) {
+        var module = modules[i];
+        if(module.modelName == "角色列表--删除") {
+          Ext.getCmp('deleteButton').show();
+        }
+      }
+  	}
 	
 });

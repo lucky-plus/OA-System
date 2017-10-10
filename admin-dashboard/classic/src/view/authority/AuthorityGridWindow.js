@@ -27,7 +27,7 @@ Ext.define('Admin.view.authority.AuthorityGridWindow', {
         var width = Ext.Element.getViewportWidth(),
             height = Ext.Element.getViewportHeight();
 		//根据window内容设置宽高百分比
-        this.setSize(Math.floor(width * 0.6), Math.floor(height * 0.6));
+        this.setSize(Math.floor(width * 0.3), Math.floor(height * 0.3));
         this.setXY([ Math.floor(width * 0.05), Math.floor(height * 0.05) ]);
     }
 });
