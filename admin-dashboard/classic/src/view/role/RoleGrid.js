@@ -11,8 +11,8 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	columns: [
 		{text: 'roleId'	,sortable:true ,dataIndex:'roleId',hidden:true},
-        {text: '角色名称' ,sortable:true ,dataIndex:'roleName' ,width:150},
-		{text: '角色等级'  ,sortable:true ,dataIndex:'roleLevel'  ,width:125},
+        {text: '角色名称' ,sortable:true ,dataIndex:'roleName' ,width:130},
+		{text: '角色等级'  ,sortable:true ,dataIndex:'roleLevel'  ,width:80},
 		{text: '所拥有的权限', sortable:true ,dataIndex:'modulesText' ,flex:1}
 	],	
 
@@ -20,6 +20,7 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 	tbar: Ext.create('Ext.Toolbar', {
 			items:[ {
 			text: '添加角色',
+			id: 'addButton',
 			iconCls:'x-fa fa-plus',
 			ui:'soft-blue',
 			//handler: 'roleGridAdd'
@@ -28,6 +29,7 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 			}
 		},'-', {
 			text: '修改',
+			id: 'updateButton',
 			iconCls:'x-fa fa-edit',
 			handler: 'roleGridEdit'
 		},'-', {
@@ -48,12 +50,16 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 	})
 
 	,on: function(){
+      Ext.getCmp('addButton').hide();
+      Ext.getCmp('updateButton').hide();
       Ext.getCmp('deleteButton').hide();
       // Ext.Msg.alert("modules",loginUserModules);
       var modules = eval(loginUserModules);
       for(var i = 0; i < modules.length; i++) {
         var module = modules[i];
-        if(module.modelName == "角色列表--删除") {
+        if(module.modelName == "角色--添加修改删除") {
+          Ext.getCmp('addButton').show();
+          Ext.getCmp('updateButton').show();
           Ext.getCmp('deleteButton').show();
         }
       }

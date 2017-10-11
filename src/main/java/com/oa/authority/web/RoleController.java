@@ -27,9 +27,9 @@ public class RoleController {
 		return roleService.findAll(pageable.getPageable());
 	}
 	
-	@RequestMapping("/findAll")
-	public @ResponseBody List<RoleDTO> findAll() {
-		return roleService.findAll();
+	@RequestMapping("/findRoleByLevel")
+	public @ResponseBody List<RoleDTO> findRoleByLevel(Integer roleLevel) {
+		return roleService.findRoleByLevel(roleLevel);
 	}
 	
 	@RequestMapping("/saveOrUpdate")

@@ -55,8 +55,8 @@ public class RoleService implements IRoleService {
 	}
 
 	@Override
-	public List<RoleDTO> findAll() {
-		List<Role> roleList = (List<Role>) roleDao.findAll();
+	public List<RoleDTO> findRoleByLevel(Integer roleLevel) {
+		List<Role> roleList = (List<Role>) roleDao.findRoleByLevel(roleLevel);
 		List<RoleDTO> dtoList = new ArrayList<RoleDTO>();
 		
 		for(Role entity: roleList) {

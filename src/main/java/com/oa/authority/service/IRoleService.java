@@ -14,7 +14,7 @@ public interface IRoleService {
 	public void delete(Role entity);
 	public void delete(Integer id);
 	public void delete(Integer[] ids);
-	public List<RoleDTO> findAll();
+	public List<RoleDTO> findRoleByLevel(Integer roleLevel);
 	public Page<RoleDTO> findAll(Pageable pageable);
 
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.oa.authority.entity.dto.ModuleDTO;
+import com.oa.authority.entity.Module;
 import com.oa.authority.service.IModuleService;
 
 @Controller
@@ -18,7 +18,7 @@ public class ModuleController {
 	private IModuleService moduleService;
 
 	@RequestMapping("/findAll")
-	public @ResponseBody List<ModuleDTO> findAll() {
+	public @ResponseBody List<Module> findAll() {
 		return moduleService.findAll();
 	}
 	

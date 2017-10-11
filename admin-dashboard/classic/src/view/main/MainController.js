@@ -158,7 +158,6 @@ Ext.define('Admin.view.main.MainController', {
             
             rootTree.on(
               "load",function(){
-                // Ext.Msg.alert('警告', 'aaaaaa!');
                 this.getRoot().appendChild(
                   {
                       text: '个人中心',
@@ -171,7 +170,6 @@ Ext.define('Admin.view.main.MainController', {
             );
             rootTree.on(
               "load",function(){
-                // Ext.Msg.alert('警告', 'aaaaaa!');
                 this.getRoot().appendChild(
                   {
                     text: '信息中心',
@@ -249,7 +247,9 @@ Ext.define('Admin.view.main.MainController', {
 
         } else {
             Ext.Msg.alert('警告', '非法登录系统!', function() {
-                me.setCurrentView('login');
+                // me.setCurrentView('login');
+                me.redirectTo('login', true);
+                window.location.reload();
             });
         }
     },

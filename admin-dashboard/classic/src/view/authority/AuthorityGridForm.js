@@ -37,7 +37,8 @@ Ext.define('Admin.view.authority.AuthorityGridForm', {
 	},{
 		xtype: 'textfield',
 		fieldLabel: '用户名称',
-		name:'userName'
+		name:'userName',
+    	readOnly:true
 	},
 	{
 		xtype: 'radiogroup',
@@ -55,7 +56,7 @@ Ext.define('Admin.view.authority.AuthorityGridForm', {
 	      render: function () {
 	        //通过extjs的ajax获取
 	        Ext.Ajax.request({
-	            url: 'role/findAll.json',
+	            url: 'role/findRoleByLevel.json?roleLevel='+loginUserRoleLevel,
 	            // 这里async 必须设置成false 否则页面加载时，无法将动态创建的checkBoxGroup添加到容器中
 	            async : false,
 	            success: function (response) {
