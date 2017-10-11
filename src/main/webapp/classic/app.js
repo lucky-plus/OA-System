@@ -100575,64 +100575,292 @@ items:[{title:'What are the payment methods you accept?', iconCls:'x-fa fa-caret
 Ext.define('Admin.view.profile.ShareUpdate', {extend:Ext.panel.Panel, xtype:'profileshare', bodyPadding:10, layout:'fit', cls:'share-panel', items:[{xtype:'textareafield', emptyText:"What's on your mind?"}], bbar:{defaults:{margin:'0 10 5 0'}, items:[{ui:'header', iconCls:'x-fa fa-video-camera'}, {ui:'header', iconCls:'x-fa fa-camera'}, {ui:'header', iconCls:'x-fa fa-file'}, '-\x3e', {text:'Share', ui:'soft-blue'}]}});
 Ext.define('Admin.view.profile.UserProfile', {extend:Admin.view.profile.UserProfileBase, xtype:'profile', cls:'userProfile-container', layout:'responsivecolumn', items:[{xtype:'profileshare', userCls:'big-100 small-100 shadow'}, {xtype:'profilesocial', userCls:'big-50 small-100 shadow'}, {xtype:'profiledescription', userCls:'big-50 small-100 shadow'}, {xtype:'profilenotifications', userCls:'big-50 small-100 shadow'}, {xtype:'profiletimeline', userCls:'big-50 small-100 shadow'}]});
 Ext.define('Admin.view.resources.resources', {extend:Ext.container.Container, xtype:'resources', controller:'resourcesViewController', viewModel:{type:'resourcesViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'resourcesGrid'}]});
-Ext.define('Admin.view.resources.ResourcesForm', {extend:Ext.form.Panel, alias:'widget.resourcesForm', controller:'resourcesViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'resId'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'文件名称(限制50M以内)', name:'resName'}, {xtype:'fileuploadfield', fieldLabel:'文件名'}], bbar:{overflowHandler:'menu', 
-items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'上传', handler:'fileUpload'}, {xtype:'button', text:'取消', handler:'orderGridWindowsClose'}]}});
-Ext.define('Admin.view.resources.ResourcesGrid', {extend:Ext.grid.Panel, xtype:'resourcesGrid', title:'\x3cb\x3e资料中心\x3c/b\x3e', bind:'{resourcesLists}', id:'resourcesGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'资料编号', dataIndex:'resId', hidden:true}, {text:'资料名称', dataIndex:'resName', flex:1}, {text:'发布时间', sortable:true, dataIndex:'resDate', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', 
-text:'操作', width:150, tdCls:'action', items:['-', {icon:'resources/images/icons/dowanload.png', tooltip:'下载'}, '-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:function() {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'公告', items:[Ext.apply({xtype:'resourcesForm'})]});
-  Ext.create(cfg);
-}}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'resourcesGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'上传', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:function() {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'资料上传', items:[Ext.apply({xtype:'resourcesForm'})]});
-  Ext.create(cfg);
-}}, '-', {text:'批量下载', iconCls:'x-fa fa-arrow-circle-o-down'}, '-', {text:'批量删除', iconCls:'x-fa fa-trash', handler:'resourcesGridDeleteDate'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield'}, {text:'查找'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{resourcesLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
-Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewController, alias:'controller.resourcesViewController', fileUpload:function(btn) {
-  var resourcesForm = btn.up('form').getForm();
-  var win = btn.up('window');
-  resourcesForm.submit({url:'resources/upload', method:'post', enctype:'multipart/form-dat', success:function(form, action) {
-    Ext.Msg.alert('提示', action.result.msg);
-    win.close();
-    Ext.getCmp('resourcesGrid').store.reload();
-  }, failure:function(form, action) {
-    Ext.Msg.alert('提示', action.result.msg);
-  }});
-}, resourcesGridDeleteOne:function(grid, rowIndex, colIndex) {
-  Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
-    if (button == 'yes') {
-      var record = grid.getStore().getAt(rowIndex);
-      var resId = record.data.resId;
-      Ext.Ajax.request({url:'resources/deleteone', method:'post', params:{id:resId}});
-      grid.getStore().reload();
+
+Ext.define('Admin.view.resources.ResourcesForm', {
+    extend: 'Ext.form.Panel',
+    alias: 'widget.resourcesForm',
+    requires: [
+        'Ext.button.Button',
+        'Ext.form.field.Text',
+        'Ext.form.field.File',
+        'Ext.form.field.HtmlEditor',
+		'Ext.form.field.TextArea',
+		'Ext.form.field.Time',
+		'Ext.form.field.ComboBox',
+		'Ext.form.field.Date',
+		'Ext.form.field.Radio',
+		'Ext.form.field.Hidden'
+    ],
+	
+    //viewModel: {type: 'emailcompose'},
+    //cls: 'email-compose',
+	controller: 'resourcesViewController',
+    layout: {
+        type:'vbox',
+        align:'stretch'
+    },
+
+    bodyPadding: 10,
+    scrollable: true,
+
+    defaults: {
+        labelWidth: 100,
+        labelSeparator: ''
+    },
+    items: [{
+		xtype: 'hidden',
+		fieldLabel: 'Id',
+		//allowBlank: false,
+		name:'resId',
+		//handler:'orderGridEdit'
+	},{xtype:'hidden', 
+		fieldLabel:'userId', 
+		name:'userId', 
+		value:loginUserId}
+	,{
+		xtype:'textfield',
+		fieldLabel: '文件名称(限制50M以内)',
+		name:'resName',
+	},{
+		xtype: 'fileuploadfield',  
+		fieldLabel: '文件名'
+		
+
+
+	}],
+
+    bbar: {
+        overflowHandler: 'menu',
+        items: ['->',{
+			xtype: 'button',
+			ui:'soft-blue',
+			//ui: 'soft-red',
+			text: '上传',
+			handler: 'fileUpload'
+		},{
+			xtype: 'button',
+			//ui: 'gray',
+			text: '取消',
+			handler: 'orderGridWindowsClose'
+		}]
     }
-  });
-}, orderGridWindowsClose:function(btn) {
-  var win = btn.up('window');
-  if (win) {
-    win.close();
-  }
-}, resourcesGridDeleteDate:function(btn) {
-  var grid = btn.up('gridpanel');
-  var selModel = grid.getSelectionModel();
-  if (selModel.hasSelection()) {
-    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
-      if (button == 'yes') {
-        var selected = selModel.getSelection();
-        var selectIds = [];
-        Ext.each(selected, function(record) {
-          selectIds.push(record.data.resId);
-        });
-        Ext.Ajax.request({url:'resources/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
-          var json = Ext.util.JSON.decode(response.responseText);
-          if (json.success) {
-            Ext.Msg.alert('操作成功', json.msg);
-            grid.getStore().reload();
-          } else {
-            Ext.Msg.alert('操作失败', json.msg);
-          }
-        }});
-      }
-    });
-  }
-}});
+});
+
+Ext.define('Admin.view.resources.ResourcesGrid', {		//1.修改文件路径
+      extend: 'Ext.grid.Panel',					//2.继承的组件类型
+	//3.重写继承组件的属性：
+    xtype: 'resourcesGrid',
+	title:'<b>资料中心</b>',
+	bind:'{resourcesLists}',
+	id:'resourcesGrid',
+	selModel: Ext.create('Ext.selection.CheckboxModel'),
+	columns: [
+		{text: '资料编号',dataIndex:'resId',hidden:true},
+        {text: '资料名称' ,dataIndex:'resName' ,flex:1},
+		{text: '发布时间'  ,sortable:true ,dataIndex:'resDate'  ,width:150
+			,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
+		{text: '发布者',dataIndex:'userName'    ,width:150},
+		{xtype: 'actioncolumn',  text: '操作' ,width:150,tdCls: 'action',  
+            items: ['-',{  
+				icon:'resources/images/icons/dowanload.png',
+                tooltip: '下载',
+                handler: 'resourcesGridDownloadOne'  
+				},'-',{  
+
+				icon:'resources/images/icons/editor.png',
+                tooltip: '编辑',
+				handler:function(){
+					var cfg = Ext.apply({
+					xtype:'orderWindow'
+					},{
+						title:'公告',
+						items:[Ext.apply({xtype:'resourcesForm'})]
+					});
+					Ext.create(cfg);
+				}
+                
+               // handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {    }  
+            },'-', {  
+				icon:'resources/images/icons/delete.png',
+                tooltip: '删除',
+                handler: 'resourcesGridDeleteOne'
+            }]  }
+			
+
+	],		
+
+	tbar: Ext.create('Ext.Toolbar', {
+			items:[ {
+			text: '上传',
+			iconCls:'x-fa fa-plus',
+			ui:'soft-blue',
+			handler:function(){
+					var cfg = Ext.apply({
+					xtype:'orderWindow'
+					},{
+						title:'资料上传',
+						items:[Ext.apply({xtype:'resourcesForm'})]
+					});
+					Ext.create(cfg);
+				}
+		},'-', {
+			text: '批量下载',
+			iconCls:'x-fa fa-arrow-circle-o-down',
+			handler: 'resourcesGridDownloadMany'
+		},'-', {
+			text: '批量删除',
+			iconCls:'x-fa fa-trash',
+			handler: 'resourcesGridDelete'
+		},'-',{xtype:'tbtext',
+				text:'标题：'
+			},{
+				xtype:'textfield',
+				width:300
+			},{xtype:'tbtext',
+				text:'时间：'
+			},{
+				xtype:'datefield',
+			},{xtype:'tbtext',
+				text:'至：'
+			},{
+				xtype:'datefield',
+			},{
+				text:'查找'
+			}]
+	}),
+	
+	
+	
+	
+	bbar: Ext.create('Ext.PagingToolbar', {
+		bind:'{resourcesLists}',
+		displayInfo: true,
+		displayMsg: '第 {0} - {1}条， 共 {2}条',
+		emptyMsg: "No topics to display",
+	})
+	
+});
+Ext.define('Admin.view.resources.ResourcesViewController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.resourcesViewController',
+
+    fileUpload: function(btn) {
+	var resourcesForm = btn.up('form').getForm();
+	var win = btn.up('window');
+	resourcesForm.submit({  
+			url : 'resources/upload', 
+			method : 'post', 
+			enctype:'multipart/form-dat',
+			success : function(form, action) { 
+				Ext.Msg.alert("提示",action.result.msg); 
+				win.close();
+				Ext.getCmp('resourcesGrid').store.reload();
+			}, 
+			failure : function(form, action) { 
+				Ext.Msg.alert("提示",action.result.msg); 
+				
+			}
+	   })
+    },
+	
+	resourcesGridDownloadOne:function(grid, rowIndex, colIndex){
+	   Ext.Msg.confirm("提示", "确定要下载吗？", function (button) {
+		if (button == "yes") {
+		   var record = grid.getStore().getAt(rowIndex);
+		   var resId=record.data.resId;
+		   var file="resources/downloadone/"+resId;
+		   location.href=file;
+		}
+	   });
+	   },
+	
+	
+	resourcesGridDownloadMany:function(btn){
+	   Ext.Msg.confirm("提示", "确定要下载吗？", function (button) {
+		if (button == "yes") {
+		var grid = btn.up('gridpanel');
+		var selModel = grid.getSelectionModel();
+        if (selModel.hasSelection()) {
+			var selected = selModel.getSelection();
+            var selectIds = []; 
+            Ext.each(selected, function (record) {
+				selectIds.push(record.data.resId);
+            });
+			//alert(selectIds.length);
+			for(var i=0;i<selectIds.length;i++){
+				var file="resources/downloadone/"+selectIds[i];
+				Ext
+				//alert(file);
+				//window.open(file);				
+			}
+		}
+	   }
+	   })
+	},
+	
+	
+	
+	
+	
+	resourcesGridDeleteOne:function(grid, rowIndex, colIndex){
+	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+		if (button == "yes") {
+	   var record = grid.getStore().getAt(rowIndex);
+	   var resId=record.data.resId;
+	   Ext.Ajax.request({ 
+			url : 'resources/deleteone', 
+			method : 'post', 
+			params : { 
+					id:resId
+			}
+			
+	   });
+	   grid.getStore().reload();
+		}
+	   })
+   },
+   
+   orderGridWindowsClose:function(btn) {
+		var win = btn.up('window');
+		if (win) {
+			win.close();
+		}
+	},
+   
+      resourcesGridDelete: function(btn) {
+		var grid = btn.up('gridpanel');
+		var selModel = grid.getSelectionModel();
+        if (selModel.hasSelection()) {
+            Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+                if (button == "yes") {
+                    var selected = selModel.getSelection();
+                    var selectIds = []; //要删除的id
+                    Ext.each(selected, function (record) {
+                        selectIds.push(record.data.resId);
+                    });
+                  	Ext.Ajax.request({ 
+						url : 'resources/delete', 
+						method : 'post', 
+						params : { 
+							ids:selectIds
+						}, 
+						success: function(response, options) {
+			                var json = Ext.util.JSON.decode(response.responseText);
+				            if(json.success){
+				            	Ext.Msg.alert('操作成功', json.msg);
+				                grid.getStore().reload();
+					        }else{
+					        	Ext.Msg.alert('操作失败', json.msg);
+					        }
+			            }
+					});
+
+                }
+            });
+		}
+	}
+	
+});
 Ext.define('Admin.view.resources.ResourcesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.resourcesViewModel', stores:{resourcesLists:{type:'resourcesStore', autoLoad:true}}});
 Ext.define('Admin.view.role.Role', {extend:Ext.container.Container, xtype:'role', controller:'roleViewController', viewModel:{type:'roleViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'roleGrid'}]});
 Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:130}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:80}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 

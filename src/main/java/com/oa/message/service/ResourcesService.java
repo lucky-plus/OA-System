@@ -78,6 +78,11 @@ public class ResourcesService implements IResourcesService {
 		PageImpl<ResourcesDTO> page = new PageImpl<ResourcesDTO>(dtoList, pageable, list.getTotalElements());
 		return page;
 	}
+	@Override
+	public Resources findOne(Integer id) {
+		return resourcesDao.findOne(id);
+		
+	}
 
 
 }

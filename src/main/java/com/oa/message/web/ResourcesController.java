@@ -10,9 +10,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -63,6 +69,10 @@ public class ResourcesController {
 	public @ResponseBody ExtjsAjaxResult delete(Integer[] ids)
 	{
 		try {
+			for (Integer id : ids) {
+			File file = new File(resourcesService.findOne(id).getResIdentify());
+			file.delete();
+			}
 			resourcesService.delete(ids);
 			 return new ExtjsAjaxResult(true,"操作成功！");
 		} catch (Exception e) {
@@ -75,8 +85,10 @@ public class ResourcesController {
 	public @ResponseBody ExtjsAjaxResult delete(Integer id)
 	{
 		try {
+			
+			File file = new File(resourcesService.findOne(id).getResIdentify());
+			file.delete();
 			resourcesService.delete(id);
-			//File file = new File("D:/git/OA-System/src/main/webapp/fileDir",resourcesService.);
 			 return new ExtjsAjaxResult(true,"操作成功！");
 		} catch (Exception e) {
 			 e.printStackTrace();
@@ -108,14 +120,17 @@ public class ResourcesController {
                 {
                 	String filePath=request.getSession().getServletContext().getRealPath("/fileDir");
                     String fileName=file.getOriginalFilename();
+                    File targetFile = new File(filePath,fileName);
                     //上传
-                    file.transferTo(new File(filePath,fileName));
+                    file.transferTo(targetFile); 
+                    resourcesDTO.setResIdentify(targetFile.getAbsolutePath());
                 }
                  
             }
            
         }
         resourcesDTO.setResDate(new Date());
+       
 		resourcesService.save(resourcesDTO);
 		return  new ExtjsAjaxResult(true,"success");
 		}
@@ -126,6 +141,18 @@ public class ResourcesController {
         
     }
 	
+	
+	@RequestMapping("/downloadone/{pathId}")
+    public ResponseEntity<byte[]> download(@PathVariable Integer pathId)throws IOException {
+       //下载文件路径
+       File file = new File(resourcesService.findOne(pathId).getResIdentify());
+       String FileName = new String(file.getName().getBytes("utf-8"),"ISO-8859-1");
+       HttpHeaders headers = new HttpHeaders();  
+       headers.setContentDispositionFormData("attachment", FileName); 
+       //application/octet-stream ： 二进制流数据（最常见的文件下载）。
+       headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+       return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),headers, HttpStatus.CREATED);  
+    }
 	
 
 }

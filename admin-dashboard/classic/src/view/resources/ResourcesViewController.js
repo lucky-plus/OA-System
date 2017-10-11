@@ -21,6 +21,44 @@ Ext.define('Admin.view.resources.ResourcesViewController', {
 	   })
     },
 	
+	resourcesGridDownloadOne:function(grid, rowIndex, colIndex){
+	   Ext.Msg.confirm("提示", "确定要下载吗？", function (button) {
+		if (button == "yes") {
+		   var record = grid.getStore().getAt(rowIndex);
+		   var resId=record.data.resId;
+		   var file="resources/downloadone/"+resId;
+		   location.href=file;
+		}
+	   });
+	   },
+	
+	
+	resourcesGridDownloadMany:function(btn){
+	   Ext.Msg.confirm("提示", "确定要下载吗？", function (button) {
+		if (button == "yes") {
+		var grid = btn.up('gridpanel');
+		var selModel = grid.getSelectionModel();
+        if (selModel.hasSelection()) {
+			var selected = selModel.getSelection();
+            var selectIds = []; 
+            Ext.each(selected, function (record) {
+				selectIds.push(record.data.resId);
+            });
+			//alert(selectIds.length);
+			for(var i=0;i<selectIds.length;i++){
+				var file="resources/downloadone/"+selectIds[i];
+				Ext
+				//alert(file);
+				//window.open(file);				
+			}
+		}
+	   }
+	   })
+	},
+	
+	
+	
+	
 	
 	resourcesGridDeleteOne:function(grid, rowIndex, colIndex){
 	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
@@ -32,7 +70,7 @@ Ext.define('Admin.view.resources.ResourcesViewController', {
 			method : 'post', 
 			params : { 
 					id:resId
-			},  
+			}
 			
 	   });
 	   grid.getStore().reload();
@@ -47,7 +85,7 @@ Ext.define('Admin.view.resources.ResourcesViewController', {
 		}
 	},
    
-      resourcesGridDeleteDate: function(btn) {
+      resourcesGridDelete: function(btn) {
 		var grid = btn.up('gridpanel');
 		var selModel = grid.getSelectionModel();
         if (selModel.hasSelection()) {
@@ -57,7 +95,7 @@ Ext.define('Admin.view.resources.ResourcesViewController', {
                     var selectIds = []; //要删除的id
                     Ext.each(selected, function (record) {
                         selectIds.push(record.data.resId);
-                    })
+                    });
                   	Ext.Ajax.request({ 
 						url : 'resources/delete', 
 						method : 'post', 
