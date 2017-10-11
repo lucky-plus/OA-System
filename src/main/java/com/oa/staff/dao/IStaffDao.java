@@ -17,7 +17,7 @@ public interface IStaffDao extends PagingAndSortingRepository<UserInfornation, S
 
 	public UserInfornation findByUserName(String userName);
 	
-	@Query("from UserInfornation u where u.role.roleLevel > ?1")
+	@Query("from UserInfornation u where u.role.roleLevel < ?1")
 	public Page<UserInfornation> findUserRole(Integer roleLevel, Pageable pageable);
 
 	@Modifying

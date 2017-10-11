@@ -100054,7 +100054,7 @@ Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xt
 Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e权限设置\x3c/b\x3e', bind:'{userRoleLists}', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'userId', sortable:true, dataIndex:'userId', hidden:true}, {text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'用户名称', sortable:true, dataIndex:'userName', width:150}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'所拥有的权限', 
 sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'修改权限', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{userRoleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
 Ext.define('Admin.view.authority.AuthorityGridForm', {extend:Ext.form.Panel, alias:'widget.authorityGridForm', id:'authorityGridForm', controller:'AuthorityViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'用户名称', name:'userName'}, {xtype:'radiogroup', id:'radiogroupOperation', fieldLabel:'角色名称', columns:5, vertical:true, listeners:{render:function() {
-  Ext.Ajax.request({url:'role/findAll.json', async:false, success:function(response) {
+  Ext.Ajax.request({url:'role/findRoleByLevel.json?roleLevel\x3d' + loginUserRoleLevel, async:false, success:function(response) {
     var data = eval('(' + response.responseText + ')');
     var len = data.length;
     if (data == null || len == 0) {
@@ -100635,13 +100635,17 @@ Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewC
 }});
 Ext.define('Admin.view.resources.ResourcesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.resourcesViewModel', stores:{resourcesLists:{type:'resourcesStore', autoLoad:true}}});
 Ext.define('Admin.view.role.Role', {extend:Ext.container.Container, xtype:'role', controller:'roleViewController', viewModel:{type:'roleViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'roleGrid'}]});
-Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:125}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
-iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', id:'deleteButton', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'}), on:function() {
+Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:130}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:80}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
+id:'addButton', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', id:'updateButton', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', id:'deleteButton', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'}), on:function() {
+  Ext.getCmp('addButton').hide();
+  Ext.getCmp('updateButton').hide();
   Ext.getCmp('deleteButton').hide();
   var modules = eval(loginUserModules);
   for (var i = 0; i < modules.length; i++) {
     var module = modules[i];
-    if (module.modelName == '角色列表--删除') {
+    if (module.modelName == '角色--添加修改删除') {
+      Ext.getCmp('addButton').show();
+      Ext.getCmp('updateButton').show();
       Ext.getCmp('deleteButton').show();
     }
   }
