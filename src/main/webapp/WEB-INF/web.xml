@@ -84,7 +84,8 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 
 	<!-- Session timeout on one day -->
 	<session-config>
-		<session-timeout>480</session-timeout>
+		<!-- minutes -->
+		<session-timeout>30</session-timeout>
 	</session-config>
 
 	<!-- Shiro核心控制器 -->
@@ -98,7 +99,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	</filter>
 	<filter-mapping>
 		<filter-name>shiroFilter</filter-name>
-		<url-pattern>/</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
 	<!-- 配置Post请求乱码 -->

@@ -61,6 +61,7 @@ public class AuthorityContrller {
 		if(userName != null && !"".equals(userName.trim())) {
 			session.removeAttribute("userName");
 			session.removeAttribute("userId");
+			session.removeAttribute("roleLevel");
 			return new AJAXResultMessage(true,"注销成功!");
 		}
     	return new AJAXResultMessage(false,"用户名或Id为空!");

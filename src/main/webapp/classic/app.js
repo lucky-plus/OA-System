@@ -100379,7 +100379,8 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
     }
   } else {
     Ext.Msg.alert('警告', '非法登录系统!', function() {
-      me.setCurrentView('login');
+      me.redirectTo('login', true);
+      window.location.reload();
     });
   }
 }, onLogoutButton:function() {
@@ -100563,7 +100564,6 @@ Ext.define('Admin.view.order.OrderWindow', {extend:Ext.window.Window, alias:'wid
 }});
 Ext.define('Admin.view.pages.BlankPage', {extend:Ext.container.Container, xtype:'pageblank', anchor:'100% -1', layout:{type:'vbox', pack:'center', align:'center'}, items:[{xtype:'box', cls:'blank-page-container', html:"\x3cdiv class\x3d'fa-outer-class'\x3e\x3cspan class\x3d'x-fa fa-clock-o'\x3e\x3c/span\x3e\x3c/div\x3e\x3ch1\x3eComing Soon!\x3c/h1\x3e\x3cspan class\x3d'blank-page-text'\x3eStay tuned for updates\x3c/span\x3e"}]});
 Ext.define('Admin.view.pages.ErrorBase', {extend:Ext.window.Window, controller:'authentication', autoShow:true, cls:'error-page-container', closable:false, title:'Sencha', titleAlign:'center', maximized:true, modal:true, layout:{type:'vbox', align:'center', pack:'center'}});
-Ext.define('Admin.view.pages.Error404Window', {extend:Admin.view.pages.ErrorBase, xtype:'page404', items:[{xtype:'container', width:400, cls:'error-page-inner-container', layout:{type:'vbox', align:'center', pack:'center'}, items:[{xtype:'label', cls:'error-page-top-text', text:'404'}, {xtype:'label', cls:'error-page-desc', html:'\x3cdiv\x3eSeems you\'ve hit a wall!\x3c/div\x3e\x3cdiv\x3eTry going back to our \x3ca href\x3d"#dashboard"\x3e Home page \x3c/a\x3e\x3c/div\x3e'}, {xtype:'tbspacer', flex:1}]}]});
 Ext.define('Admin.view.pages.Error500Window', {extend:Admin.view.pages.ErrorBase, xtype:'page500', items:[{xtype:'container', width:600, cls:'error-page-inner-container', layout:{type:'vbox', align:'center', pack:'center'}, items:[{xtype:'label', cls:'error-page-top-text', text:'500'}, {xtype:'label', cls:'error-page-desc', html:'\x3cdiv\x3eSomething went wrong and server could not process your request.\x3c/div\x3e' + '\x3cdiv\x3eTry going back to our \x3ca href\x3d"#dashboard"\x3e Home page \x3c/a\x3e\x3c/div\x3e'}, 
 {xtype:'tbspacer', flex:1}]}]});
 Ext.define('Admin.view.pages.FAQ', {extend:Ext.container.Container, xtype:'faq', layout:{type:'hbox', align:'stretch'}, padding:10, items:[{xtype:'panel', cls:'faq-left-sidebar shadow', margin:10, header:false, ui:'light', responsiveConfig:{'width \x3c 1000':{width:0, visible:false}, 'width \x3e\x3d 1000 \x26\x26 width \x3c 1600':{width:230, visible:true}, 'width \x3e\x3d 1600':{width:300, visible:true}}, items:[{xtype:'panel', title:'Useful Tips', ui:'light', cls:'shadow pages-faq-container', iconCls:'x-fa fa-lightbulb-o', 
