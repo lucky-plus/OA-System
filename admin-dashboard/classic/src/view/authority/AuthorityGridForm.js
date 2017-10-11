@@ -37,7 +37,8 @@ Ext.define('Admin.view.authority.AuthorityGridForm', {
 	},{
 		xtype: 'textfield',
 		fieldLabel: '用户名称',
-		name:'userName'
+		name:'userName',
+    	readOnly:true
 	},
 	{
 		xtype: 'radiogroup',
