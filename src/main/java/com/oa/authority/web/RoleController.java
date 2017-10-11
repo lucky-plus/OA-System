@@ -44,7 +44,7 @@ public class RoleController {
 	}
 	
 	@PostMapping("/delete")
-	public @ResponseBody ExtjsAjaxResult delete(Integer[] ids)
+	public @ResponseBody ExtjsAjaxResult deleteAuthority(Integer[] ids)
 	{
 		try {
 			roleService.delete(ids);
