@@ -17,22 +17,7 @@
 				icon:'resources/images/icons/dowanload.png',
                 tooltip: '下载',
                 handler: 'resourcesGridDownloadOne'  
-				},'-',{  
-
-				icon:'resources/images/icons/editor.png',
-                tooltip: '编辑',
-				handler:function(){
-					var cfg = Ext.apply({
-					xtype:'orderWindow'
-					},{
-						title:'公告',
-						items:[Ext.apply({xtype:'resourcesForm'})]
-					});
-					Ext.create(cfg);
-				}
-                
-               // handler: function (grid, rowIndex, colIndex, node, e, record, rowEl) {    }  
-            },'-', {  
+				},'-', {  
 				icon:'resources/images/icons/delete.png',
                 tooltip: '删除',
                 handler: 'resourcesGridDeleteOne'
@@ -42,44 +27,64 @@
 	],		
 
 	tbar: Ext.create('Ext.Toolbar', {
-			items:[ {
-			text: '上传',
-			iconCls:'x-fa fa-plus',
-			ui:'soft-blue',
-			handler:function(){
-					var cfg = Ext.apply({
-					xtype:'orderWindow'
-					},{
-						title:'资料上传',
-						items:[Ext.apply({xtype:'resourcesForm'})]
-					});
-					Ext.create(cfg);
+			id:'resources2',
+			items:[ 
+			{
+				text: '上传',
+				iconCls:'x-fa fa-plus',
+				ui:'soft-blue',
+				handler:function(){
+						var cfg = Ext.apply({
+							xtype:'orderWindow'
+						},
+						{
+							title:'资料上传',
+							items:[Ext.apply({xtype:'resourcesForm'})]
+						});
+						Ext.create(cfg);
 				}
-		},'-', {
-			text: '批量下载',
-			iconCls:'x-fa fa-arrow-circle-o-down',
-			handler: 'resourcesGridDownloadMany'
-		},'-', {
-			text: '批量删除',
-			iconCls:'x-fa fa-trash',
-			handler: 'resourcesGridDelete'
-		},'-',{xtype:'tbtext',
+			},'-', 
+			{
+				text: '批量下载',
+				iconCls:'x-fa fa-arrow-circle-o-down',
+				handler: 'resourcesGridDownloadMany'
+			},'-', 
+			{
+				text: '批量删除',
+				iconCls:'x-fa fa-trash',
+				handler: 'resourcesGridDelete'
+			},'-',
+			{		
+				xtype:'tbtext',
 				text:'标题：'
 			},{
 				xtype:'textfield',
 				width:300
-			},{xtype:'tbtext',
+			},{
+				xtype:'tbtext',
 				text:'时间：'
 			},{
 				xtype:'datefield',
-			},{xtype:'tbtext',
+				format:'Y-m-d',  
+				value:'1972-01-01',
+			},{
+				xtype:'tbtext',
 				text:'至：'
 			},{
 				xtype:'datefield',
+				format:'Y-m-d',  
+				value:new Date(),
+				listeners: {  
+					focus: function(){
+						var cc = Ext.getCmp('resources2').items.getAt(9).getValue();
+						this.setMinValue(cc);
+					}  	
+				},
 			},{
-				text:'查找'
+				text:'查找',
+				handler:'resourcesGridFind'
 			}]
-	}),
+		}),
 	
 	
 	

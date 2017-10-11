@@ -30,6 +30,7 @@ public class ExtjsPageable
 		}else {
 			pageable = new PageRequest(page-1, limit);
 		}
+		System.out.println(page);
 		return pageable;
 	}
 }

@@ -47,15 +47,53 @@ Ext.define('Admin.view.resources.ResourcesViewController', {
 			//alert(selectIds.length);
 			for(var i=0;i<selectIds.length;i++){
 				var file="resources/downloadone/"+selectIds[i];
-				Ext
-				//alert(file);
-				//window.open(file);				
+				var elemIF = document.createElement('iframe');   
+				elemIF.src = file;   
+				elemIF.style.display = "none";   
+				document.body.appendChild(elemIF); 
+				
+				
 			}
 		}
 	   }
 	   })
 	},
 	
+	
+	resourcesGridFind:function(btn){
+	   var grid = btn.up('gridpanel');
+	   var record = grid.getStore();
+	   var searchText=Ext.getCmp('resources2').items.getAt(7).getValue();
+	   var beginTime=null;
+	   var endTime=null;
+	   beginTime=Ext.getCmp('resources2').items.getAt(9).getValue();
+	   if(beginTime&&beginTime.length!=0){
+		endTime=Ext.Date.add(Ext.getCmp('resources2').items.getAt(11).getValue(), Ext.Date.DAY,1);
+	   }
+	   else{
+		   endTime=Ext.getCmp('resources2').items.getAt(11).getValue();
+	   }
+	   Ext.Ajax.request({ 
+			url : 'resources/findByCondition', 
+			params : { 
+                    resName:searchText,
+					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),
+					endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'),
+					page:1,
+					start:0,
+					limit:25,
+					sort:'resId',
+					dir:'DESC'
+			},
+			success: function(response, options){
+				var tnpdata= Ext.util.JSON.decode(response.responseText) ;
+				grid.getStore().loadData(tnpdata.content,false);
+			}
+			
+	   });
+	  
+
+   },
 	
 	
 	

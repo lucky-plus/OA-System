@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.oa.message.entity.Resources;
 import com.oa.message.entity.dto.ResourcesDTO;
@@ -18,4 +19,5 @@ public interface IResourcesService {
 	public Resources findOne(Integer id);
 	public List<ResourcesDTO> findAll();
 	public Page<ResourcesDTO> findAll(Pageable pageable);
+	public Page<ResourcesDTO> findAll(Specification<Resources> spec, Pageable pageable);
 }

@@ -81,11 +81,6 @@ Ext.define('Admin.view.notice.NoticeCompose', {
             },
             {
                 xtype: 'button',
-                ui: 'gray',
-                text: '存为草稿'
-            },
-            {
-                xtype: 'button',
                 ui: 'soft-green',
                 text: '发布',
 				handler:'noticeGridTextSubmit'
