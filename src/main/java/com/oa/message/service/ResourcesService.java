@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.oa.message.dao.IResourcesDao;
 import com.oa.message.entity.Resources;
-
 import com.oa.message.entity.dto.ResourcesDTO;
 
 @Service
@@ -84,5 +84,21 @@ public class ResourcesService implements IResourcesService {
 		
 	}
 
+	
+	@Override
+	public Page<ResourcesDTO> findAll(Specification<Resources> spec, Pageable pageable) {
+		Page<Resources> resourcesPage = resourcesDao.findAll(spec, pageable);
+		//entityToDto
+		List<ResourcesDTO> dtoList = new ArrayList<ResourcesDTO>();
+		if(resourcesPage != null) {
+			for(Resources resources : resourcesPage.getContent()) {
+				ResourcesDTO dto = new ResourcesDTO();
+				ResourcesDTO.entityToDto(resources, dto);
+				dtoList.add(dto);
+			}
+		}
+		PageImpl<ResourcesDTO> page = new PageImpl<ResourcesDTO>(dtoList, pageable, dtoList.size());
+		return page;
+	}
 
 }

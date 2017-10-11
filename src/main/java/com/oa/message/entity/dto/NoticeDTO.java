@@ -132,13 +132,19 @@ public class NoticeDTO
 				 if(noticeDTO.getNoticeName()!=null) {
 					 predicate.add(cb.like(root.get("noticeName").as(String.class),"%"+ noticeDTO.getNoticeName()+"%"));
 				 }
-				 if(noticeDTO.getBeginDate()!=null && noticeDTO.getEndDate()!=null) {
-					 predicate.add(cb.between(root.get("noticeTime").as(Date.class), noticeDTO.getBeginDate(), noticeDTO.getEndDate()));
-				 } else if(noticeDTO.getBeginDate()!=null && noticeDTO.getEndDate()==null) {
+				 if(noticeDTO.getBeginDate()!=null && !"".equals(noticeDTO.getBeginDate().toString())) {
 					 predicate.add(cb.greaterThanOrEqualTo(root.get("noticeTime").as(Date.class), noticeDTO.getBeginDate()));
-				 } else if(noticeDTO.getBeginDate()==null && noticeDTO.getEndDate()!=null) {
+				 }
+				 if(noticeDTO.getEndDate()!=null && !"".equals(noticeDTO.getEndDate().toString())){
 					 predicate.add(cb.lessThanOrEqualTo(root.get("noticeTime").as(Date.class), noticeDTO.getEndDate()));
 				 }
+//				 if(noticeDTO.getBeginDate()!=null && "".equals(noticeDTO.getBeginDate()) && noticeDTO.getEndDate()!=null && "".equals(noticeDTO.getEndDate())) {
+//					 predicate.add(cb.between(root.get("noticeTime").as(Date.class), noticeDTO.getBeginDate(), noticeDTO.getEndDate()));
+//				 } else if(noticeDTO.getBeginDate()!=null && noticeDTO.getEndDate()==null) {
+//					 predicate.add(cb.greaterThanOrEqualTo(root.get("noticeTime").as(Date.class), noticeDTO.getBeginDate()));
+//				 } else if(noticeDTO.getBeginDate()==null && noticeDTO.getEndDate()!=null) {
+//					 predicate.add(cb.lessThanOrEqualTo(root.get("noticeTime").as(Date.class), noticeDTO.getEndDate()));
+//				 }
 
 				 //3.根据Predicate集合生成并返回and 连接的 where条件
 	             return cb.and(predicate.toArray(new Predicate[predicate.size()]));

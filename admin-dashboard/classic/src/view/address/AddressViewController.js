@@ -4,7 +4,6 @@ Ext.define('Admin.view.address.AddressViewController', {
 
     addressGridSearch: function(bt) {
 		var searchField = this.lookupReference('addressGridSearchField').getValue();
-		alert(searchField);
 		var searchText = this.lookupReference('addressGridSearchText').getValue();
 		Ext.Ajax.request({ 
 			url : 'staff/findByPage', 

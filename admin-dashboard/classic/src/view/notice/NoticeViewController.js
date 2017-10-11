@@ -75,9 +75,15 @@ Ext.define('Admin.view.notice.NoticeViewController', {
 	   var grid = btn.up('gridpanel');
 	   var record = grid.getStore();
 	   var searchText=Ext.getCmp('xiaotingzi2').items.getAt(5).getValue();
-	   var beginTime=Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
-	   var endTime=Ext.Date.add(Ext.getCmp('xiaotingzi2').items.getAt(9).getValue(), Ext.Date.DAY,1);
-	   //Ext.getCmp('xiaotingzi2').items.getAt(9).getValue();
+	   var beginTime=null;
+	   var endTime=null;
+	   beginTime=Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
+	   if(beginTime&&beginTime.length!=0){
+		endTime=Ext.Date.add(Ext.getCmp('xiaotingzi2').items.getAt(9).getValue(), Ext.Date.DAY,1);
+	   }
+	   else{
+		   endTime=Ext.getCmp('xiaotingzi2').items.getAt(9).getValue();
+	   }
 	   Ext.Ajax.request({ 
 			url : 'notice/findByCondition', 
 			params : { 

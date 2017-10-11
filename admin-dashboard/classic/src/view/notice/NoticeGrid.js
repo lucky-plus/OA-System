@@ -10,7 +10,7 @@
 			//var record = this.getStore().getAt(rowIndex); 
 			  var orderWindow = Ext.widget('orderWindow',{
 				title:'查看公告',
-				html: grid.getStore().getAt(rowIndex).data.noticeName
+				html:'<h1 align="center">'+grid.getStore().getAt(rowIndex).data.noticeName+'</h1>'+'<p>'+grid.getStore().getAt(rowIndex).data.noticeText+'</p>'
 			});
 		}
 	},
@@ -68,6 +68,7 @@
 				 xtype:'datefield',  
                     itemId:'beginDate',  
                     format:'Y-m-d',  
+					value:'1972-01-01'
 					
 			
 			},{xtype:'tbtext',
@@ -76,6 +77,7 @@
 				xtype:'datefield',  
                     itemId:'endDate',  
                     format:'Y-m-d',  
+					value:new Date(),
 					listeners: {  
 					focus: function(){
 						var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();

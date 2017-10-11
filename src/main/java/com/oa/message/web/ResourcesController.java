@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-
 import com.oa.message.entity.dto.ResourcesDTO;
 import com.oa.message.service.IResourcesService;
 import com.oa.utils.ExtjsAjaxResult;
@@ -153,6 +152,12 @@ public class ResourcesController {
        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),headers, HttpStatus.CREATED);  
     }
+    
+    @RequestMapping("/findByCondition")
+	public @ResponseBody Page<ResourcesDTO> findByCondition(ResourcesDTO resourcesDTO, ExtjsPageable pageable)
+	{
+		return resourcesService.findAll(ResourcesDTO.getWhereClause(resourcesDTO), pageable.getPageable());
+	}
 	
 
 }
