@@ -22,7 +22,7 @@ public class Module {
 	private String modelName;
 	private String parentName;
 	private String creatBy;
-	private List<Role> roles = new ArrayList<Role>();
+//	private List<Role> roles = new ArrayList<Role>();
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -41,17 +41,17 @@ public class Module {
 	public String getCreatBy() {
 		return creatBy;
 	}
-	@ManyToMany(mappedBy="modules",fetch=FetchType.EAGER)
-	@Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-	public List<Role> getRoles() {
-		return roles;
-	}
-
+//	@ManyToMany(mappedBy="modules",fetch=FetchType.EAGER)
+//	@Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+//	public List<Role> getRoles() {
+//		return roles;
+//	}
+//
+//	public void setRoles(List<Role> roles) {
+//		this.roles = roles;
+//	}
 	public void setModuleId(Integer moduleId) {
 		this.moduleId = moduleId;
-	}
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
 	}
 	public void setCreatBy(String creatBy) {
 		this.creatBy = creatBy;

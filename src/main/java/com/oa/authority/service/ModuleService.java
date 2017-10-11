@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.oa.authority.dao.IModuleDao;
 import com.oa.authority.entity.Module;
-import com.oa.authority.entity.dto.ModuleDTO;
 import com.oa.authority.entity.dto.RoleDTO;
 
 @Service
@@ -43,28 +42,28 @@ public class ModuleService implements IModuleService {
 	}
 
 	@Override
-	public List<ModuleDTO> findAll() {
-		List<Module> moduleList = (List<Module>)moduleDao.findAll();
-		List<ModuleDTO> dtoList = new ArrayList<ModuleDTO>();
-		for(Module entity : moduleList) {
-			ModuleDTO dto = new ModuleDTO();
-			ModuleDTO.entityToDto(dto, entity);
-			dtoList.add(dto);
-		}
-		return dtoList;
+	public List<Module> findAll() {
+//		List<Module> moduleList = (List<Module>)moduleDao.findAll();
+//		List<ModuleDTO> dtoList = new ArrayList<ModuleDTO>();
+//		for(Module entity : moduleList) {
+//			ModuleDTO dto = new ModuleDTO();
+//			ModuleDTO.entityToDto(dto, entity);
+//			dtoList.add(dto);
+//		}
+		return (List<Module>) moduleDao.findAll();
 	}
 
 	@Override
-	public Page<ModuleDTO> findAll(Pageable pageable) {
-		Page<Module> modulePage = moduleDao.findAll(pageable);
-		List<ModuleDTO> dtoList = new ArrayList<ModuleDTO>();
-		for(Module entity : modulePage) {
-			ModuleDTO dto = new ModuleDTO();
-			ModuleDTO.entityToDto(dto, entity);
-			dtoList.add(dto);
-		}
-		PageImpl<ModuleDTO> page = new PageImpl<ModuleDTO>(dtoList, pageable, modulePage.getTotalElements());
-		return page;
+	public Page<Module> findAll(Pageable pageable) {
+//		Page<Module> modulePage = 
+//		List<ModuleDTO> dtoList = new ArrayList<ModuleDTO>();
+//		for(Module entity : modulePage) {
+//			ModuleDTO dto = new ModuleDTO();
+//			ModuleDTO.entityToDto(dto, entity);
+//			dtoList.add(dto);
+//		}
+//		PageImpl<ModuleDTO> page = new PageImpl<ModuleDTO>(dtoList, pageable, modulePage.getTotalElements());
+		return moduleDao.findAll(pageable);
 	}
 	
 	
