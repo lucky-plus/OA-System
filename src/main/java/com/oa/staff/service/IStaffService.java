@@ -4,16 +4,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import com.oa.message.entity.Notice;
-import com.oa.message.entity.dto.NoticeDTO;
+
 import com.oa.staff.entity.UserInfornation;
+import com.oa.staff.entity.dto.UserPostDTO;
 import com.oa.staff.entity.dto.UserRoleDTO;
 
 public interface IStaffService {
 
+	//CRUD
+	public void save(UserPostDTO dto);
+	public void delete(UserInfornation entity);
+	public void delete(String id);
+	public void delete(String[] ids);
 	public UserInfornation findByUserName(String userName);
-	public Page<UserInfornation> findAll(Pageable pageable);
-	public Page<UserInfornation> findAll(Specification<UserInfornation> spec, Pageable pageable);
+	public Page<UserPostDTO> findAll(Pageable pageable);
+	public Page<UserPostDTO> findAll(Specification<UserInfornation> spec, Pageable pageable);
 	
 	public Page<UserRoleDTO> findUserRole(Integer roleLevel, Pageable pageable); 
 	

@@ -9,10 +9,11 @@
 	columns: [
 		{text: '编号',dataIndex:'userId',hidden:true},
         {text: '联系人' ,dataIndex:'realName' ,flex:1 },
-		{text: '所属部门'  ,dataIndex:'dept'  ,width:150},
-		{text: '联系电话'  ,dataIndex:'mobilePhone'  ,width:150},
-		{text: '联系邮箱'  ,dataIndex:'mail'  ,width:150},
-		{text: 'QQ'  ,dataIndex:'qq_number'  ,width:150},
+		{text: '所属部门'  ,dataIndex:'deptName'  ,width:188},
+		{text: '职位'  ,dataIndex:'postName'  ,width:188},
+		{text: '联系电话'  ,dataIndex:'mobilePhone'  ,width:188},
+		{text: '联系邮箱'  ,dataIndex:'mail'  ,width:188},
+		{text: 'QQ'  ,dataIndex:'qq_number'  ,width:188},
 
 	],		
 
@@ -24,10 +25,10 @@
 				width:200,
 				reference: 'addressGridSearchText'
 			},{xtype:'tbtext',
-				text:'所属部门：'
+				text:'所属部门'
 			},{
 			xtype: 'combobox',
-			name:'dept',
+			name:'deptName',
 			reference: 'addressGridSearchField',
 			store:  Ext.create('Ext.data.Store', {
 				fields: ['value', 'name'],

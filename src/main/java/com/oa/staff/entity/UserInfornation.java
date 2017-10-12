@@ -11,9 +11,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oa.authority.entity.Role;
+import com.oa.personnel.entity.Post;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -40,8 +45,8 @@ public class UserInfornation {
 	private String home;
 	private String realName;
 	private int qq_number;
-	private String dept;
-
+	
+	private Post post;
 	private Role role;
 
 	@Id
@@ -71,12 +76,14 @@ public class UserInfornation {
 	public String getIdNumber() {
 		return idNumber;
 	}
+	@JsonFormat(pattern = "yyyy-MM-dd",timezone="GMT+8")
 	public Date getBirthday() {
 		return birthday;
 	}
 	public String getNativePlace() {
 		return nativePlace;
 	}
+	@JsonFormat(pattern = "yyyy-MM-dd",timezone="GMT+8")
 	public Date getOnDutDate() {
 		return onDutDate;
 	}
@@ -92,15 +99,20 @@ public class UserInfornation {
 	public int getQq_number() {
 		return qq_number;
 	}
-	public String getDept() {
-		return dept;
-	}
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="roleId")
 	public Role getRole() {
 		return role;
 	}
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="postId")
+	public Post getPost() {
+		return post;
+	}
 	
+	public void setPost(Post post) {
+		this.post = post;
+	}
 	public void setRole(Role role) {
 		this.role = role;
 	}
@@ -149,28 +161,9 @@ public class UserInfornation {
 	public void setQq_number(int qq_number) {
 		this.qq_number = qq_number;
 	}
-	public void setDept(String dept) {
-		this.dept = dept;
-	}
 	
 	
-	public static Specification<UserInfornation> getWhereClause(UserInfornation userInfornation){
-		return new Specification<UserInfornation>() {
-			@Override
-			public Predicate toPredicate(Root<UserInfornation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				List<Predicate> predicate =  new ArrayList<Predicate>();
-				if(userInfornation.getRealName()!=null) {
-					Predicate p1 = cb.like(root.get("realName").as(String.class) , "%"+userInfornation.getRealName()+"%");
-					predicate.add(p1);
-				}
-				if(userInfornation.getDept()!=null && userInfornation.getDept().trim().length()>0) {
-					Predicate p2 = cb.like(root.get("dept").as(String.class) , "%"+userInfornation.getDept()+"%");
-					predicate.add(p2);
-				}
-				 return cb.and(predicate.toArray(new Predicate[predicate.size()]));
-			}
-		};	
-	}
+	
 	
 	
 	
