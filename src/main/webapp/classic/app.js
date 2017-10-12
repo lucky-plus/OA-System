@@ -99806,6 +99806,7 @@ Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'i
 Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
 Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
 Ext.define('Admin.model.faq.Question', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}]});
+Ext.define('Admin.model.log.LogModel', {extend:Admin.model.Base, fields:[{name:'createDate', type:'date'}, {name:'operation', type:'string'}, {name:'userName', type:'string'}, {name:'content', type:'string'}]});
 Ext.define('Admin.model.notice.NoticeModel', {extend:Admin.model.Base, fields:[{name:'noticeId', type:'int'}, {name:'noticeName', type:'string'}, {name:'noticeTime', type:'date'}, {name:'userId', type:'string'}]});
 Ext.define('Admin.model.order.OrderModel', {extend:Admin.model.Base, fields:[{name:'id', type:'int'}, {name:'orderNumber', type:'string'}, {name:'createTime', type:'date'}, {name:'level', type:'string'}, {name:'price', type:'float'}]});
 Ext.define('Admin.model.resources.ResourcesModel', {extend:Admin.model.Base, fields:[{name:'resId', type:'int'}, {name:'resName', type:'string'}, {name:'resTime', type:'date'}, {name:'resIdentify', type:'string'}, {name:'userId', type:'string'}]});
@@ -99821,6 +99822,7 @@ Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias
 Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
 Ext.define('Admin.store.email.Inbox', {extend:Ext.data.Store, alias:'store.inbox', model:'Admin.model.email.Email', pageSize:20, autoLoad:true, proxy:{type:'api', url:'~api/email/inbox'}});
 Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', model:'Admin.model.faq.Category', proxy:{type:'api', url:'~api/faq/faq'}});
+Ext.define('Admin.store.log.LogStore', {extend:Ext.data.Store, alias:'store.logStore', model:'Admin.model.log.LogModel', proxy:{type:'ajax', url:'log/findAll.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
 Ext.define('Admin.store.notice.NoticeStore', {extend:Ext.data.Store, alias:'store.noticeStore', model:'Admin.model.notice.NoticeModel', proxy:{type:'ajax', url:'notice/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'noticeId'}});
 Ext.define('Admin.store.order.OrderStore', {extend:Ext.data.Store, alias:'store.orderStore', model:'Admin.model.order.OrderModel', proxy:{type:'ajax', url:'order/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
 Ext.define('Admin.store.resources.ResourcesStore', {extend:Ext.data.Store, alias:'store.resourcesStore', proxy:{type:'ajax', url:'resources/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'resId'}});
@@ -100283,6 +100285,10 @@ Ext.define('Admin.view.forms.WizardFormController', {extend:Ext.app.ViewControll
 Ext.define('Admin.view.forms.WizardOne', {extend:Ext.panel.Panel, alias:'widget.formswizardone', cls:'wizardone shadow', plugins:{responsive:true}, responsiveConfig:{'width \x3e\x3d 1000':{layout:{type:'box', align:'stretch', vertical:false}}, 'width \x3c 1000':{layout:{type:'box', align:'stretch', vertical:true}}}, items:[{xtype:'specialoffer', plugins:{responsive:true}, height:338, responsiveConfig:{'width \x3c 1000':{flex:null}, 'width \x3e\x3d 1000':{flex:1}}}, {xtype:'wizardform', cls:'wizardone', 
 colorScheme:'blue', flex:1}]});
 Ext.define('Admin.view.forms.Wizards', {extend:Ext.container.Container, xtype:'forms', cls:'wizards', defaultFocus:'wizardform', layout:'responsivecolumn', items:[{xtype:'formswizardone', userCls:'big-100'}, {xtype:'wizardform', cls:'wizardtwo shadow', colorScheme:'soft-purple', userCls:'big-50 small-100'}, {xtype:'wizardform', cls:'wizardthree shadow', colorScheme:'soft-green', userCls:'big-50 small-100'}]});
+Ext.define('Admin.view.log.Log', {extend:Ext.container.Container, xtype:'log', viewModel:{type:'logViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'logGrid'}]});
+Ext.define('Admin.view.log.LogGrid', {extend:Ext.grid.Panel, xtype:'logGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{logLists}', id:'logGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'操作时间', sortable:true, dataIndex:'createDate', width:150}, {text:'操作类型', sortable:true, dataIndex:'operation', width:80}, {text:'操作人', sortable:true, dataIndex:'userName', flex:80}, {text:'具体操作', sortable:true, dataIndex:'content', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
+iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.log.LogViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.logViewModel', stores:{logLists:{type:'logStore', autoLoad:true}}});
 Ext.define('Admin.view.main.MainContainerWrap', {extend:Ext.container.Container, xtype:'maincontainerwrap', scrollable:'y', layout:{type:'hbox', align:'stretchmax', animate:true, animatePolicy:{x:true, width:true}}, beforeLayout:function() {
   var me = this, height = Ext.Element.getViewportHeight() - 64, navTree = me.getComponent('navigationTreeList');
   me.minHeight = height;
@@ -100370,6 +100376,14 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
         if (module.modelName == '用户管理') {
           rootTree.on('load', function() {
             this.getRoot().appendChild({text:'用户管理', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, id:'roleManage', children:[{text:'角色管理', iconCls:'x-fa fa-file-o', viewType:'role', leaf:true}, {text:'权限设置', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'authority', leaf:true}]});
+          });
+        }
+      }
+      for (var i = 0; i < modules.length; i++) {
+        var module = modules[i];
+        if (module.modelName == '日志中心') {
+          rootTree.on('load', function() {
+            this.getRoot().appendChild({text:'日志中心', iconCls:'x-fa fa-user', viewType:'log', leaf:true});
           });
         }
       }
@@ -100688,17 +100702,17 @@ Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewC
 Ext.define('Admin.view.resources.ResourcesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.resourcesViewModel', stores:{resourcesLists:{type:'resourcesStore', autoLoad:true}}});
 Ext.define('Admin.view.role.Role', {extend:Ext.container.Container, xtype:'role', controller:'roleViewController', viewModel:{type:'roleViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'roleGrid'}]});
 Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:130}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:80}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
-id:'addButton', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', id:'updateButton', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', id:'deleteButton', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'}), on:function() {
-  Ext.getCmp('addButton').hide();
-  Ext.getCmp('updateButton').hide();
-  Ext.getCmp('deleteButton').hide();
+id:'roleAddButton', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', id:'roleUpdateButton', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', id:'roleDeleteButton', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'}), on:function() {
+  Ext.getCmp('roleAddButton').hide();
+  Ext.getCmp('roleUpdateButton').hide();
+  Ext.getCmp('roleDeleteButton').hide();
   var modules = eval(loginUserModules);
   for (var i = 0; i < modules.length; i++) {
     var module = modules[i];
     if (module.modelName == '角色--添加修改删除') {
-      Ext.getCmp('addButton').show();
-      Ext.getCmp('updateButton').show();
-      Ext.getCmp('deleteButton').show();
+      Ext.getCmp('roleAddButton').show();
+      Ext.getCmp('roleUpdateButton').show();
+      Ext.getCmp('roleDeleteButton').show();
     }
   }
 }});

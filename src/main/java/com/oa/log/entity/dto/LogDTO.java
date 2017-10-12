@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.BeanUtils;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oa.log.entity.Log;
 
 public class LogDTO {
@@ -25,6 +26,7 @@ public class LogDTO {
 	public void setLogId(Integer logId) {
 		this.logId = logId;
 	}
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
 	public Date getCreateDate() {
 		return createDate;
 	}

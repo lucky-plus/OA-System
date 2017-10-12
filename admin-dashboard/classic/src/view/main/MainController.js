@@ -240,6 +240,24 @@ Ext.define('Admin.view.main.MainController', {
               }
             }
 
+            for(var i = 0; i < modules.length; i++) {
+              var module = modules[i];
+              if(module.modelName == "日志中心") {
+                rootTree.on(
+                    "load",function(){
+                      this.getRoot().appendChild(
+                        {
+                            text: '日志中心',
+                            iconCls: 'x-fa fa-user',
+                            viewType: 'log',
+                             leaf: true
+                        }
+                      );
+                    }
+                );
+              }
+            }
+
               rootTree.reload();
               loadFlag = 1;
             }

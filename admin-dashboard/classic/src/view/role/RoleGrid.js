@@ -20,7 +20,7 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 	tbar: Ext.create('Ext.Toolbar', {
 			items:[ {
 			text: '添加角色',
-			id: 'addButton',
+			id: 'roleAddButton',
 			iconCls:'x-fa fa-plus',
 			ui:'soft-blue',
 			//handler: 'roleGridAdd'
@@ -29,12 +29,12 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 			}
 		},'-', {
 			text: '修改',
-			id: 'updateButton',
+			id: 'roleUpdateButton',
 			iconCls:'x-fa fa-edit',
 			handler: 'roleGridEdit'
 		},'-', {
 			text: '删除',
-			id: 'deleteButton',
+			id: 'roleDeleteButton',
 			iconCls:'x-fa fa-trash',
 			handler: 'roleGridDelete'
 		}]
@@ -50,17 +50,17 @@ Ext.define('Admin.view.role.RoleGrid', {		//1.修改文件路径
 	})
 
 	,on: function(){
-      Ext.getCmp('addButton').hide();
-      Ext.getCmp('updateButton').hide();
-      Ext.getCmp('deleteButton').hide();
+      Ext.getCmp('roleAddButton').hide();
+      Ext.getCmp('roleUpdateButton').hide();
+      Ext.getCmp('roleDeleteButton').hide();
       // Ext.Msg.alert("modules",loginUserModules);
       var modules = eval(loginUserModules);
       for(var i = 0; i < modules.length; i++) {
         var module = modules[i];
         if(module.modelName == "角色--添加修改删除") {
-          Ext.getCmp('addButton').show();
-          Ext.getCmp('updateButton').show();
-          Ext.getCmp('deleteButton').show();
+          Ext.getCmp('roleAddButton').show();
+          Ext.getCmp('roleUpdateButton').show();
+          Ext.getCmp('roleDeleteButton').show();
         }
       }
   	}
