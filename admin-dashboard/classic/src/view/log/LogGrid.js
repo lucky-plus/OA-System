@@ -10,31 +10,56 @@ Ext.define('Admin.view.log.LogGrid', {		//1.修改文件路径
 	id:'logGrid',
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	columns: [
-		{text: '操作时间' ,sortable:true ,dataIndex:'createDate' ,width:150},
+		{text: '操作时间' ,sortable:true ,dataIndex:'createDate' ,width:150,
+		 renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
 		{text: '操作类型'  ,sortable:true ,dataIndex:'operation'  ,width:80},
-		{text: '操作人', sortable:true ,dataIndex:'userName' ,flex:80},
+		{text: '操作人', sortable:true ,dataIndex:'userName' ,width:80},
 		{text: '具体操作', sortable:true ,dataIndex:'content' ,flex:1}
 	],	
 
 
 	tbar: Ext.create('Ext.Toolbar', {
-			items:[ {
-			text: '添加角色',
-			iconCls:'x-fa fa-plus',
-			ui:'soft-blue',
-			//handler: 'roleGridAdd'
-			listeners:{
-				click:'roleGridAdd'
-			}
-		},'-', {
-			text: '修改',
-			iconCls:'x-fa fa-edit',
-			handler: 'roleGridEdit'
-		},'-', {
-			text: '删除',
-			iconCls:'x-fa fa-trash',
-			handler: 'roleGridDelete'
-		}]
+			id: 'logCondition',
+			items:[ {xtype:'tbtext',
+				text:'操作人：'
+			},{
+				xtype:'textfield',
+				width:100,
+				itemsId:'userName'
+				
+			},{xtype:'tbtext',
+				text:'操作类型：'
+			},{
+				xtype:'textfield',
+				width:100,
+				itemsId:'operation'
+				
+			},{xtype:'tbtext',
+				text:'时间：'
+			},{
+				 xtype:'datefield',  
+                    itemId:'beginDate',  
+                    format:'Y-m-d',  
+					value:'1972-01-01'
+					
+			
+			},{xtype:'tbtext',
+				text:'至：'
+			},{
+				xtype:'datefield',  
+                    itemId:'endDate',  
+                    format:'Y-m-d',  
+					value:new Date(),
+					listeners: {  
+					focus: function(){
+						var cc = Ext.getCmp('logCondition').items.getAt(7).getValue();
+						this.setMinValue(cc);
+						}  	
+					}
+			},{
+				text: '查找',
+				handler:'logGridFind'
+			}]
 	}),
 	
 	

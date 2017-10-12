@@ -41,6 +41,33 @@ Ext.define('Admin.view.authority.AuthorityViewController', {
 
    },
    
+   authorityGridFind: function(btn){
+	   var grid = btn.up('gridpanel');
+	   var record = grid.getStore();
+	   var userName=Ext.getCmp('authorityCondition').items.getAt(3).getValue();
+	   var roleName=Ext.getCmp('authorityCondition').items.getAt(5).getValue();
+	   
+	   Ext.Ajax.request({ 
+			url : 'staff/findUserRoleByCondition.json', 
+			params : {
+					roleLevel:loginUserRoleLevel,
+                    userName:userName,
+                    roleName:roleName,
+					page:1,
+					start:0,
+					limit:25,
+					sort:'userId',
+					dir:'DESC'
+			},
+			success: function(response, options){
+				var tnpdata= Ext.util.JSON.decode(response.responseText) ;
+				grid.getStore().loadData(tnpdata.content,false);
+			}
+			
+	   });
+
+   },
+
 	authorityGridWindowClose: function(btn) {
 		var win=btn.up('window');
 		if(win){

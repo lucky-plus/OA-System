@@ -27,6 +27,11 @@ public class StaffController {
 		return staffService.findUserRole(roleLevel, pageable.getPageable());
 	}
 	
+	@RequestMapping("/findUserRoleByCondition")
+	public @ResponseBody Page<UserRoleDTO> findUserRoleByCondition(UserRoleDTO userRoleDTO, ExtjsPageable pageable) {
+		return staffService.findUserRoleByCondition(UserRoleDTO.getWhereClause(userRoleDTO), pageable.getPageable());
+	}
+	
 	@RequestMapping("/userRoleUpdate")
 	public @ResponseBody ExtjsAjaxResult userRoleUpdate(String userId, Integer roleId) {
 		try {

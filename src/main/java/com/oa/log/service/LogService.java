@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.oa.log.dao.ILogDao;
@@ -27,6 +28,19 @@ public class LogService implements ILogService {
 	@Override
 	public Page<LogDTO> findAll(Pageable pageable) {
 		Page<Log> logPage = logDao.findAll(pageable);
+		List<LogDTO> dtoList = new ArrayList<LogDTO>();
+		for(Log entity : logPage.getContent()) {
+			LogDTO dto = new LogDTO();
+			LogDTO.entityToDto(entity, dto);
+			dtoList.add(dto);
+		}
+		PageImpl<LogDTO> page = new PageImpl<LogDTO>(dtoList, pageable, logPage.getTotalElements());
+		return page;
+	}
+
+	@Override
+	public Page<LogDTO> findAll(Specification<Log> spec, Pageable pageable) {
+		Page<Log> logPage = logDao.findAll(spec, pageable);
 		List<LogDTO> dtoList = new ArrayList<LogDTO>();
 		for(Log entity : logPage.getContent()) {
 			LogDTO dto = new LogDTO();

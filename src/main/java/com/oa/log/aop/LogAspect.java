@@ -82,6 +82,18 @@ public class LogAspect {
 			//拼接content并保存log
 			appendContent2(className, content, joinPoint, operation, log);
 			
+		} else if(methodName.contains("userRoleUpdate")) {
+			
+			//记录操作类型
+			String operation = "修改";
+			log.setOperation(operation);
+			
+			Object[] params = joinPoint.getArgs();
+			
+			content.append("修改了用户Id:"+params[0].toString()+"的权限,修改后的角色Id:"+params[1].toString());
+			
+			log.setContent(content.toString());
+			logService.save(log);
 		}
 		
 	}

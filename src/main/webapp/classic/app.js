@@ -100053,7 +100053,8 @@ isValid:function() {
 {xtype:'component', html:'\x3cdiv style\x3d"text-align:right"\x3e' + '\x3ca href\x3d"#login" class\x3d"link-forgot-password"\x3e' + 'Back to Log In\x3c/a\x3e' + '\x3c/div\x3e'}]}]});
 Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xtype:'authority', controller:'AuthorityViewController', viewModel:{type:'authorityViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'authorityGrid'}]});
 Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e权限设置\x3c/b\x3e', bind:'{userRoleLists}', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'userId', sortable:true, dataIndex:'userId', hidden:true}, {text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'用户名称', sortable:true, dataIndex:'userName', width:150}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'所拥有的权限', 
-sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'修改权限', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{userRoleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {id:'authorityCondition', items:[{text:'修改权限', iconCls:'x-fa fa-edit', ui:'soft-blue', handler:'roleGridEdit'}, '-', {xtype:'tbtext', text:'用户名称：'}, {xtype:'textfield', width:100, itemsId:'userName'}, {xtype:'tbtext', text:'角色名称：'}, {xtype:'textfield', width:100, itemsId:'roleName'}, {text:'查找', handler:'authorityGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{userRoleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', 
+emptyMsg:'暂无数据'})});
 Ext.define('Admin.view.authority.AuthorityGridForm', {extend:Ext.form.Panel, alias:'widget.authorityGridForm', id:'authorityGridForm', controller:'AuthorityViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'用户名称', name:'userName', readOnly:true}, {xtype:'radiogroup', id:'radiogroupOperation', fieldLabel:'角色名称', columns:5, vertical:true, 
 listeners:{render:function() {
   Ext.Ajax.request({url:'role/findRoleByLevel.json?roleLevel\x3d' + loginUserRoleLevel, async:false, success:function(response) {
@@ -100103,6 +100104,15 @@ Ext.define('Admin.view.authority.AuthorityViewController', {extend:Ext.app.ViewC
     Ext.getCmp('authorityGrid').store.reload();
   }, failure:function(form, action) {
     Ext.Msg.alert('提示', action.result.msg);
+  }});
+}, authorityGridFind:function(btn) {
+  var grid = btn.up('gridpanel');
+  var record = grid.getStore();
+  var userName = Ext.getCmp('authorityCondition').items.getAt(3).getValue();
+  var roleName = Ext.getCmp('authorityCondition').items.getAt(5).getValue();
+  Ext.Ajax.request({url:'staff/findUserRoleByCondition.json', params:{roleLevel:loginUserRoleLevel, userName:userName, roleName:roleName, page:1, start:0, limit:25, sort:'userId', dir:'DESC'}, success:function(response, options) {
+    var tnpdata = Ext.util.JSON.decode(response.responseText);
+    grid.getStore().loadData(tnpdata.content, false);
   }});
 }, authorityGridWindowClose:function(btn) {
   var win = btn.up('window');
@@ -100285,9 +100295,30 @@ Ext.define('Admin.view.forms.WizardFormController', {extend:Ext.app.ViewControll
 Ext.define('Admin.view.forms.WizardOne', {extend:Ext.panel.Panel, alias:'widget.formswizardone', cls:'wizardone shadow', plugins:{responsive:true}, responsiveConfig:{'width \x3e\x3d 1000':{layout:{type:'box', align:'stretch', vertical:false}}, 'width \x3c 1000':{layout:{type:'box', align:'stretch', vertical:true}}}, items:[{xtype:'specialoffer', plugins:{responsive:true}, height:338, responsiveConfig:{'width \x3c 1000':{flex:null}, 'width \x3e\x3d 1000':{flex:1}}}, {xtype:'wizardform', cls:'wizardone', 
 colorScheme:'blue', flex:1}]});
 Ext.define('Admin.view.forms.Wizards', {extend:Ext.container.Container, xtype:'forms', cls:'wizards', defaultFocus:'wizardform', layout:'responsivecolumn', items:[{xtype:'formswizardone', userCls:'big-100'}, {xtype:'wizardform', cls:'wizardtwo shadow', colorScheme:'soft-purple', userCls:'big-50 small-100'}, {xtype:'wizardform', cls:'wizardthree shadow', colorScheme:'soft-green', userCls:'big-50 small-100'}]});
-Ext.define('Admin.view.log.Log', {extend:Ext.container.Container, xtype:'log', viewModel:{type:'logViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'logGrid'}]});
-Ext.define('Admin.view.log.LogGrid', {extend:Ext.grid.Panel, xtype:'logGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{logLists}', id:'logGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'操作时间', sortable:true, dataIndex:'createDate', width:150}, {text:'操作类型', sortable:true, dataIndex:'operation', width:80}, {text:'操作人', sortable:true, dataIndex:'userName', flex:80}, {text:'具体操作', sortable:true, dataIndex:'content', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
-iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.log.Log', {extend:Ext.container.Container, xtype:'log', controller:'logViewController', viewModel:{type:'logViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'logGrid'}]});
+Ext.define('Admin.view.log.LogGrid', {extend:Ext.grid.Panel, xtype:'logGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{logLists}', id:'logGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'操作时间', sortable:true, dataIndex:'createDate', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'操作类型', sortable:true, dataIndex:'operation', width:80}, {text:'操作人', sortable:true, dataIndex:'userName', width:80}, {text:'具体操作', sortable:true, dataIndex:'content', flex:1}], 
+tbar:Ext.create('Ext.Toolbar', {id:'logCondition', items:[{xtype:'tbtext', text:'操作人：'}, {xtype:'textfield', width:100, itemsId:'userName'}, {xtype:'tbtext', text:'操作类型：'}, {xtype:'textfield', width:100, itemsId:'operation'}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', itemId:'beginDate', format:'Y-m-d', value:'1972-01-01'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
+  var cc = Ext.getCmp('logCondition').items.getAt(7).getValue();
+  this.setMinValue(cc);
+}}}, {text:'查找', handler:'logGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.log.LogViewController', {extend:Ext.app.ViewController, alias:'controller.logViewController', logGridFind:function(btn) {
+  var grid = btn.up('gridpanel');
+  var record = grid.getStore();
+  var userName = Ext.getCmp('logCondition').items.getAt(1).getValue();
+  var operation = Ext.getCmp('logCondition').items.getAt(3).getValue();
+  var beginTime = null;
+  var endTime = null;
+  beginTime = Ext.getCmp('logCondition').items.getAt(5).getValue();
+  if (beginTime && beginTime.length != 0) {
+    endTime = Ext.Date.add(Ext.getCmp('logCondition').items.getAt(7).getValue(), Ext.Date.DAY, 1);
+  } else {
+    endTime = Ext.getCmp('logCondition').items.getAt(7).getValue();
+  }
+  Ext.Ajax.request({url:'log/findByCondition.json', params:{userName:userName, operation:operation, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:25, sort:'createDate', dir:'DESC'}, success:function(response, options) {
+    var tnpdata = Ext.util.JSON.decode(response.responseText);
+    grid.getStore().loadData(tnpdata.content, false);
+  }});
+}});
 Ext.define('Admin.view.log.LogViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.logViewModel', stores:{logLists:{type:'logStore', autoLoad:true}}});
 Ext.define('Admin.view.main.MainContainerWrap', {extend:Ext.container.Container, xtype:'maincontainerwrap', scrollable:'y', layout:{type:'hbox', align:'stretchmax', animate:true, animatePolicy:{x:true, width:true}}, beforeLayout:function() {
   var me = this, height = Ext.Element.getViewportHeight() - 64, navTree = me.getComponent('navigationTreeList');

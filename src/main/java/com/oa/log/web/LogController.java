@@ -24,4 +24,9 @@ public class LogController {
 		return logService.findAll(pageable.getPageable());
 	}
 	
+	@RequestMapping("/findByCondition")
+	public @ResponseBody Page<LogDTO> findByCondition(LogDTO logDTO, ExtjsPageable pageable) {
+		return logService.findAll(LogDTO.getWhereClause(logDTO), pageable.getPageable());
+	}
+	
 }

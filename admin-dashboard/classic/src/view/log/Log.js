@@ -8,10 +8,9 @@ Ext.define('Admin.view.log.Log', {		//1.修改文件路径
 	//3.重写继承组件的属性：
     xtype: 'log',
 
-    //controller: 'LogViewController',			//视图绑定viewController
+    controller: 'logViewController',			//视图绑定viewController
     viewModel : {type: 'logViewModel'},	//视图绑定viewModel
-	
-
+    
     layout:'fit',
     margin: '20 20 20 20',
     items: [{

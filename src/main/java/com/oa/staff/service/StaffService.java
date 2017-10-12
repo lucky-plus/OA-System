@@ -44,6 +44,21 @@ public class StaffService implements IStaffService {
 		Page<UserRoleDTO> userRolePage = new PageImpl<UserRoleDTO>(dtoList, pageable, userPage.getTotalElements());
 		return userRolePage;
 	}
+
+	@Override
+	public Page<UserRoleDTO> findUserRoleByCondition(Specification<UserInfornation> spec, Pageable pageable) {
+		Page<UserInfornation> userPage =  staffDao.findAll(spec,pageable);
+		List<UserRoleDTO> dtoList = new ArrayList<UserRoleDTO>();
+		for(UserInfornation user : userPage.getContent()) {
+			UserRoleDTO dto = new UserRoleDTO();
+			UserRoleDTO.userToUserRole(dto, user);
+			UserRoleDTO.roleToUserRole(dto, user.getRole());
+			dtoList.add(dto);
+		}
+		Page<UserRoleDTO> userRolePage = new PageImpl<UserRoleDTO>(dtoList, pageable, userPage.getTotalElements());
+		return userRolePage;
+	}
+	
 	
 	public Page<UserInfornation> findAll(Pageable pageable) {
 		// TODO Auto-generated method stub
@@ -60,5 +75,6 @@ public class StaffService implements IStaffService {
 	public void userRoleUpdate(String userId, Integer roleId) {
 		staffDao.userRoleUpdate(userId, roleId);
 	}
+
 
 }

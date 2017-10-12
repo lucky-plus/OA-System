@@ -16,6 +16,7 @@ public interface IStaffService {
 	public Page<UserInfornation> findAll(Specification<UserInfornation> spec, Pageable pageable);
 	
 	public Page<UserRoleDTO> findUserRole(Integer roleLevel, Pageable pageable); 
+	public Page<UserRoleDTO> findUserRoleByCondition(Specification<UserInfornation> spec, Pageable pageable); 
 	
 	//修改用户权限
 	public void userRoleUpdate(String userId, Integer roleId);
