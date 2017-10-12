@@ -24,6 +24,8 @@ import com.oa.log.entity.Log;
 import com.oa.log.service.ILogService;
 import com.oa.message.entity.dto.NoticeDTO;
 import com.oa.message.entity.dto.ResourcesDTO;
+import com.oa.personnel.entity.Department;
+import com.oa.personnel.entity.dto.PostDTO;
 import com.oa.staff.entity.UserInfornation;
 
 @Component
@@ -137,6 +139,24 @@ public class LogAspect {
 			log.setContent(content.toString());
 			logService.save(log);
 			
+		} else if(param.contains("Department")) {
+			Object[] params = joinPoint.getArgs();
+			Department dept = (Department) params[0];
+			operation = "添加";
+			log.setOperation(operation);
+			content.append(operation+"了部门："+dept.getDeptName());
+			log.setContent(content.toString());
+			logService.save(log);
+			
+		} else if(param.contains("PostDTO")) {
+			Object[] params = joinPoint.getArgs();
+			PostDTO post = (PostDTO) params[0];
+			operation = "添加";
+			log.setOperation(operation);
+			content.append(operation+"了职务："+post.getPostName());
+			log.setContent(content.toString());
+			logService.save(log);
+			
 		}
 		
 	}
@@ -144,11 +164,15 @@ public class LogAspect {
 	public void appendContent2(String className, StringBuffer content, JoinPoint joinPoint, String operation, Log log) {
 		
 		if(className.contains("Role")) {
-			content.append(operation+"了角色,角色ID为:");
+			content.append(operation+"了角色,所删角色ID为:");
 		} else if(className.contains("Notice")) {
-			content.append(operation+"了公共,公共ID为:");
+			content.append(operation+"了公共,所删公共ID为:");
 		} else if(className.contains("Resources")) {
-			content.append(operation+"了资料,资料ID为:");
+			content.append(operation+"了资料,所删资料ID为:");
+		} else if(className.contains("Dept")) {
+			content.append(operation+"了部门,所删部门ID为:");
+		} else if(className.contains("Post")) {
+			content.append(operation+"了职务,所删职务ID为:");
 		}
 
 		Object[] params = joinPoint.getArgs();
