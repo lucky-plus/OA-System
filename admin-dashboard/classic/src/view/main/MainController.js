@@ -203,7 +203,41 @@ Ext.define('Admin.view.main.MainController', {
                 );
               }
             );
+			rootTree.on(
+              "load",function(){
+                this.getRoot().appendChild(
+                  {
+                    text: '人事管理',
+                    iconCls: 'x-fa fa-bar-chart',
+                    expanded: false,
+                    selectable: false,
+                    //routeId: 'pages-parent',
+                    //id: 'pages-parent',
 
+                    children: [
+                        {
+                            text: '员工管理',
+                            iconCls: 'x-fa fa-address-book',
+                            viewType: 'staff',
+                            leaf: true
+                        },
+                        {
+                            text: '部门管理',
+                            iconCls: 'x-fa  fa-group',
+                            viewType: 'department',
+                            leaf: true
+                        },
+                        {
+                            text: '人事记录',
+                            iconCls: 'x-fa  fa-pencil ',
+                            viewType: 'recoreds',
+                            leaf: true
+                        }
+                      ]
+                  }
+                );
+              }
+            );
             var modules = eval(loginUserModules);
             for(var i = 0; i < modules.length; i++) {
               var module = modules[i];

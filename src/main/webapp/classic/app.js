@@ -100370,6 +100370,9 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
       rootTree.on('load', function() {
         this.getRoot().appendChild({text:'信息中心', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'公告中心', iconCls:'x-fa fa-file-o', viewType:'notice', leaf:true}, {text:'资源下载', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'resources', leaf:true}, {text:'通讯录', iconCls:'x-fa fa-book ', viewType:'address', leaf:true}]});
       });
+      rootTree.on('load', function() {
+        this.getRoot().appendChild({text:'人事管理', iconCls:'x-fa fa-bar-chart', expanded:false, selectable:false, children:[{text:'员工管理', iconCls:'x-fa fa-address-book', viewType:'staff', leaf:true}, {text:'部门管理', iconCls:'x-fa  fa-group', viewType:'department', leaf:true}, {text:'人事记录', iconCls:'x-fa  fa-pencil ', viewType:'recoreds', leaf:true}]});
+      });
       var modules = eval(loginUserModules);
       for (var i = 0; i < modules.length; i++) {
         var module = modules[i];
