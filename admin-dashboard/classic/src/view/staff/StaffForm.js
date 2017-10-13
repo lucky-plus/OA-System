@@ -47,40 +47,59 @@ Ext.define('Admin.view.staff.StaffForm', {
 		value:new Date()
 	},{
 		xtype: 'combobox',
-    	id: 'postChoice',
-		fieldLabel: '职位',
-		columns: 5,
-		vertical: true,
-		listeners: {
-	      render: function () {
-	        //通过extjs的ajax获取
-	        Ext.Ajax.request({
-	            url: 'post/findAll',
-	            // 这里async 必须设置成false 否则页面加载时，无法将动态创建的checkBoxGroup添加到容器中
-	            async : false,
-	            success: function (response) {
-	                var data = eval("(" + response.responseText + ")");
-	                var len = data.length;//obj.data.length; "Table"这里的Table指的是后台返回 类似于data
-	                if (data == null || len == 0) {
-	                    return;
-	                }
-
-	                var radiogroup = Ext.getCmp("radiogroupOperation");
-	                for (var i = 0; i < len; i++) {
-	                    var radiobox = new Ext.form.Radio(
-	                      {
-	                          boxLabel: data[i].roleName,
-	                          name: 'roleId',
-	                          inputValue: data[i].roleId,
-	                          checked: false
-	                      });
-	                    radiogroup.items.add(radiobox);
-	                }
-	            }
-	        });
-	      }
-	    }
-	},{
+		id: 'deptComBoBox',
+		name:'deptId',
+		fieldLabel: '部门',
+		store : 
+		new Ext.data.Store( {
+			proxy : new Ext.data.HttpProxy( {
+						url : 'dept/findDepts'//提交到某action的某方法
+				  }),
+			reader : {type:'json'},//需要显示的数据实体字段
+			autoLoad : true
+			}),
+		queryMode: 	  'local',
+		displayField: 'deptName',
+		valueField:   'deptId',
+		listeners: {// select监听函数
+            select: function(){  				
+				var dept = Ext.getCmp('deptComBoBox');
+                // Ext.getCmp('postComBoBox').reset();
+				// Ext.Msg.alert("",dept.getValue());
+				// Ext.Ajax.request({
+					// url : "post/findPostsByDeptId",
+					// params : {
+						// deptId : dept.getValue()
+					// },
+					// success: function(){
+						
+					// }
+				// });
+				 //Ext.getCmp('postComBoBox').getStore().removeAll();
+				
+				Ext.getCmp('postComBoBox').getStore().load({params:{deptId : dept.getValue()}});
+				
+				// Ext.getCmp('postComBoBox').reset();
+				}    
+			}
+		},{
+			xtype: 'combobox',
+			id: 'postComBoBox',
+			queryMode: 'remote',
+			name:'postId',
+			async : false,
+			fieldLabel: '职位',
+			store : new Ext.data.Store( {
+					proxy : new Ext.data.HttpProxy( {
+								url : 'post/findPostsByDeptId',//提交到某action的某方法
+						  }),
+					reader : {type:'json'},//需要显示的数据实体字段
+					autoLoad : true
+				}),
+			queryMode: 	  'local',
+			displayField: 'postName',
+			valueField:   'postId'
+		},{
 		xtype: 'textfield',
 		fieldLabel: '联系电话',
 		name:'mobilePhone'

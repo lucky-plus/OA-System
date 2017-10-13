@@ -84,7 +84,7 @@ Ext.define('Admin.view.staff.StaffViewController', {
 			success : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 
 				win.close();
-				//Ext.getCmp('staffGrid').store.reload();
+				Ext.getCmp('staffGrid').store.reload();
 			}, 
 			failure : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 
@@ -96,7 +96,7 @@ Ext.define('Admin.view.staff.StaffViewController', {
    
    
    staffGridSearch: function(bt) {
-		var searchField = this.lookupReference('staffGridSearchField').getValue();
+		var searchField = this.lookupReference('staffGridSearchField').getRawValue();
 		var searchText = this.lookupReference('staffGridSearchText').getValue();
 		Ext.Ajax.request({ 
 			url : 'staff/findByPage', 
