@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.oa.staff.entity.dto.UserPostDTO;
+import com.oa.staff.entity.dto.PostUserDTO;
 import com.oa.staff.entity.dto.UserRoleDTO;
 import com.oa.staff.service.IStaffService;
 import com.oa.utils.ExtjsAjaxResult;
@@ -49,19 +49,19 @@ public class StaffController {
 	}
 	
 	@RequestMapping("/findPage")
-	public @ResponseBody Page<UserPostDTO> findAll(ExtjsPageable pageable)
+	public @ResponseBody Page<PostUserDTO> findAll(ExtjsPageable pageable)
 	{
 		pageable.setSort("userId");
 		return staffService.findAll(pageable.getPageable());
 	}
 	
 	@RequestMapping("/findByPage")
-	public @ResponseBody Page<UserPostDTO> findAll(UserPostDTO  userPostDTO ,ExtjsPageable pageable){
-		return staffService.findAll(UserPostDTO.getWhereClause(userPostDTO), pageable.getPageable());
+	public @ResponseBody Page<PostUserDTO> findAll(PostUserDTO  userPostDTO ,ExtjsPageable pageable){
+		return staffService.findAll(PostUserDTO.getWhereClause(userPostDTO), pageable.getPageable());
 	}
 	
 	@PostMapping("/saveOrUpdate")
-	public @ResponseBody ExtjsAjaxResult saveOrUpdate(UserPostDTO  userPostDTO)
+	public @ResponseBody ExtjsAjaxResult saveOrUpdate(PostUserDTO  userPostDTO)
 	{
 		try {
 

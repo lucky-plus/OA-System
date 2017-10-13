@@ -43,7 +43,43 @@ Ext.define('Admin.view.staff.StaffForm', {
 		xtype: 'datefield',
 		format: 'Y/m/d H:i:s',
 		fieldLabel: '入职时间',
-		name:'onDutDate'
+		name:'onDutDate',
+		value:new Date()
+	},{
+		xtype: 'combobox',
+    	id: 'postChoice',
+		fieldLabel: '职位',
+		columns: 5,
+		vertical: true,
+		listeners: {
+	      render: function () {
+	        //通过extjs的ajax获取
+	        Ext.Ajax.request({
+	            url: 'post/findAll',
+	            // 这里async 必须设置成false 否则页面加载时，无法将动态创建的checkBoxGroup添加到容器中
+	            async : false,
+	            success: function (response) {
+	                var data = eval("(" + response.responseText + ")");
+	                var len = data.length;//obj.data.length; "Table"这里的Table指的是后台返回 类似于data
+	                if (data == null || len == 0) {
+	                    return;
+	                }
+
+	                var radiogroup = Ext.getCmp("radiogroupOperation");
+	                for (var i = 0; i < len; i++) {
+	                    var radiobox = new Ext.form.Radio(
+	                      {
+	                          boxLabel: data[i].roleName,
+	                          name: 'roleId',
+	                          inputValue: data[i].roleId,
+	                          checked: false
+	                      });
+	                    radiogroup.items.add(radiobox);
+	                }
+	            }
+	        });
+	      }
+	    }
 	},{
 		xtype: 'textfield',
 		fieldLabel: '联系电话',

@@ -27,7 +27,7 @@ import com.oa.message.entity.dto.ResourcesDTO;
 import com.oa.personnel.entity.Department;
 import com.oa.personnel.entity.dto.PostDTO;
 import com.oa.staff.entity.UserInfornation;
-import com.oa.staff.entity.dto.UserPostDTO;
+import com.oa.staff.entity.dto.PostUserDTO;
 
 @Component
 @Aspect
@@ -160,7 +160,7 @@ public class LogAspect {
 			
 		} else if(param.contains("UserPostDTO")) {
 			Object[] params = joinPoint.getArgs();
-			UserPostDTO user = (UserPostDTO) params[0];
+			PostUserDTO user = (PostUserDTO) params[0];
 			if(user.getUserId() != null) {
 				operation = "修改";
 				log.setOperation(operation);

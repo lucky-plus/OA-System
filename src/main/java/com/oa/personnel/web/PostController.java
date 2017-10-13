@@ -1,5 +1,7 @@
 package com.oa.personnel.web;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -50,6 +52,11 @@ public class PostController {
 	@RequestMapping("/findByCondition")
 	public @ResponseBody Page<PostDTO> findByCondition(PostDTO postDTO, ExtjsPageable pageable) {
 		return postService.findAll(PostDTO.getWhereClause(postDTO), pageable.getPageable());
+	}
+	
+	@RequestMapping("/findPostsByDeptId")
+	public @ResponseBody List<PostDTO> findPostsByDeptId(Integer deptId) {
+		return postService.findPostsByDeptId(deptId);
 	}
 	
 }

@@ -1,5 +1,7 @@
 package com.oa.personnel.web;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -49,6 +51,11 @@ public class DeptController {
 	@RequestMapping("/findByCondition")
 	public @ResponseBody Page<Department> findAll(String deptName, ExtjsPageable pageable) {
 		return deptService.findAll(deptName, pageable.getPageable());
+	}
+	
+	@RequestMapping("/findDepts")
+	public @ResponseBody List<Department> findDepts() {
+		return deptService.findAll();
 	}
 	
 }

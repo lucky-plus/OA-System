@@ -83,4 +83,17 @@ public class PostService implements IPostService {
 		return dtoPage;
 	}
 
+	@Override
+	public List<PostDTO> findPostsByDeptId(Integer deptId) {
+		List<Post> postList = postDao.findPostsByDeptId(deptId);
+		List<PostDTO> dtoList = new ArrayList<PostDTO>();
+		
+		for(Post entity : postList) {
+			PostDTO dto = new PostDTO();
+			PostDTO.entityToDto(entity, dto);
+			dtoList.add(dto);
+		}
+		return dtoList;
+	}
+
 }

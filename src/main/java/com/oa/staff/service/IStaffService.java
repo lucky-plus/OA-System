@@ -6,19 +6,19 @@ import org.springframework.data.jpa.domain.Specification;
 
 
 import com.oa.staff.entity.UserInfornation;
-import com.oa.staff.entity.dto.UserPostDTO;
+import com.oa.staff.entity.dto.PostUserDTO;
 import com.oa.staff.entity.dto.UserRoleDTO;
 
 public interface IStaffService {
 
 	//CRUD
-	public void save(UserPostDTO dto);
+	public void save(PostUserDTO dto);
 	public void delete(UserInfornation entity);
 	public void delete(String id);
 	public void delete(String[] ids);
 	public UserInfornation findByUserName(String userName);
-	public Page<UserPostDTO> findAll(Pageable pageable);
-	public Page<UserPostDTO> findAll(Specification<UserInfornation> spec, Pageable pageable);
+	public Page<PostUserDTO> findAll(Pageable pageable);
+	public Page<PostUserDTO> findAll(Specification<UserInfornation> spec, Pageable pageable);
 	
 	public Page<UserRoleDTO> findUserRole(Integer roleLevel, Pageable pageable); 
 	public Page<UserRoleDTO> findUserRoleByCondition(Specification<UserInfornation> spec, Pageable pageable); 

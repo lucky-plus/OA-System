@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.oa.staff.dao.IStaffDao;
 import com.oa.staff.entity.UserInfornation;
-import com.oa.staff.entity.dto.UserPostDTO;
+import com.oa.staff.entity.dto.PostUserDTO;
 import com.oa.staff.entity.dto.UserRoleDTO;
 
 @Service
@@ -61,32 +61,32 @@ public class StaffService implements IStaffService {
 	
 
 	//通讯录、员工管理
-	public Page<UserPostDTO> findAll(Pageable pageable) {
+	public Page<PostUserDTO> findAll(Pageable pageable) {
 
 		Page<UserInfornation>list=staffDao.findAll(pageable);
-		List<UserPostDTO> dtoList=new ArrayList<UserPostDTO>();
+		List<PostUserDTO> dtoList=new ArrayList<PostUserDTO>();
 		for(UserInfornation user : list.getContent()) {
-			UserPostDTO dto = new UserPostDTO();
-			UserPostDTO.entityToDto(user, dto);
+			PostUserDTO dto = new PostUserDTO();
+			PostUserDTO.entityToDto(user, dto);
 			dtoList.add(dto);
 		}
-		PageImpl<UserPostDTO> page = new PageImpl<UserPostDTO>(dtoList, pageable, list.getTotalElements());
+		PageImpl<PostUserDTO> page = new PageImpl<PostUserDTO>(dtoList, pageable, list.getTotalElements());
 		return page;
 	}
 
 	@Override
-	public Page<UserPostDTO> findAll(Specification<UserInfornation> spec, Pageable pageable) {
+	public Page<PostUserDTO> findAll(Specification<UserInfornation> spec, Pageable pageable) {
 		// TODO Auto-generated method stub
 		Page<UserInfornation> userPage=staffDao.findAll(spec,pageable);
-		List<UserPostDTO> dtoList = new ArrayList<UserPostDTO>();
+		List<PostUserDTO> dtoList = new ArrayList<PostUserDTO>();
 		if(userPage != null) {
 			for(UserInfornation user : userPage.getContent()) {
-				UserPostDTO dto = new UserPostDTO();
-				UserPostDTO.entityToDto(user, dto);
+				PostUserDTO dto = new PostUserDTO();
+				PostUserDTO.entityToDto(user, dto);
 				dtoList.add(dto);
 			}
 		}
-		PageImpl<UserPostDTO> page = new PageImpl<UserPostDTO>(dtoList, pageable, dtoList.size());
+		PageImpl<PostUserDTO> page = new PageImpl<PostUserDTO>(dtoList, pageable, dtoList.size());
 		return page;
 	}
 
@@ -97,9 +97,9 @@ public class StaffService implements IStaffService {
 
 
 	@Override
-	public void save(UserPostDTO dto) {
+	public void save(PostUserDTO dto) {
 		UserInfornation entity=new UserInfornation();
-		UserPostDTO.dtoToEntity(dto, entity);
+		PostUserDTO.dtoToEntity(dto, entity);
 		staffDao.save(entity);
 		
 	}

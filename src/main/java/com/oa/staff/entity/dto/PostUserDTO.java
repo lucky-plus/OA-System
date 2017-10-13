@@ -17,7 +17,7 @@ import com.oa.personnel.entity.Department;
 import com.oa.personnel.entity.Post;
 import com.oa.staff.entity.UserInfornation;
 
-public class UserPostDTO {
+public class PostUserDTO {
 	private String userId;
 	private String userName;
 	private String password;
@@ -50,23 +50,21 @@ public class UserPostDTO {
 	
 	
 	
-	public static void  dtoToEntity(UserPostDTO dto,UserInfornation entity) {
+	public static void  dtoToEntity(PostUserDTO dto,UserInfornation entity) {
 		BeanUtils.copyProperties(dto, entity);
 		Integer postId = dto.getPostId();
 		
-//		if(postId!=null) {
-//			Post post = new Post();
-//			post.setPostId(postId);;//关联关系维护
-//			
-//			entity.setPost(post);;
-//		}
-		
-		
+		if(postId!=null) {
+			Post post = new Post();
+			post.setPostId(postId);;//关联关系维护
+			
+			entity.setPost(post);;
+		}
 		
 	}
 	
 	//后台反回针对View封装DTO
-	public static void  entityToDto(UserInfornation entity , UserPostDTO dto) {
+	public static void  entityToDto(UserInfornation entity , PostUserDTO dto) {
 		BeanUtils.copyProperties(entity, dto);
 		
 		Post post = entity.getPost();
@@ -197,7 +195,7 @@ public class UserPostDTO {
 		this.deptName = deptName;
 	}
 
-	public static Specification<UserInfornation> getWhereClause(UserPostDTO userPostDTO){
+	public static Specification<UserInfornation> getWhereClause(PostUserDTO userPostDTO){
 		return new Specification<UserInfornation>() {
 			@Override
 			public Predicate toPredicate(Root<UserInfornation> root, CriteriaQuery<?> query, CriteriaBuilder cb) {

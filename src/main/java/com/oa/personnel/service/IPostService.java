@@ -18,4 +18,6 @@ public interface IPostService {
 	public Page<PostDTO> findAll(Pageable pageable);
 	public Page<PostDTO> findAll(Specification<Post> spec, Pageable pageable);
 	
+	public List<PostDTO> findPostsByDeptId(Integer deptId);
+	
 }
