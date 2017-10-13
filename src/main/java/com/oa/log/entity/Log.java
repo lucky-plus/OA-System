@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oa.staff.entity.UserInfornation;
@@ -42,8 +44,8 @@ public class Log {
 	public String getContent() {
 		return content;
 	}
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="userId")
+	@ManyToOne
+	//@JoinColumn(name="userId")
 	public UserInfornation getUser() {
 		return user;
 	}

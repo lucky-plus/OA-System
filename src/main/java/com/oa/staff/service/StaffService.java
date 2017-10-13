@@ -44,11 +44,25 @@ public class StaffService implements IStaffService {
 		Page<UserRoleDTO> userRolePage = new PageImpl<UserRoleDTO>(dtoList, pageable, userPage.getTotalElements());
 		return userRolePage;
 	}
+
+	@Override
+	public Page<UserRoleDTO> findUserRoleByCondition(Specification<UserInfornation> spec, Pageable pageable) {
+		Page<UserInfornation> userPage =  staffDao.findAll(spec,pageable);
+		List<UserRoleDTO> dtoList = new ArrayList<UserRoleDTO>();
+		for(UserInfornation user : userPage.getContent()) {
+			UserRoleDTO dto = new UserRoleDTO();
+			UserRoleDTO.userToUserRole(dto, user);
+			UserRoleDTO.roleToUserRole(dto, user.getRole());
+			dtoList.add(dto);
+		}
+		Page<UserRoleDTO> userRolePage = new PageImpl<UserRoleDTO>(dtoList, pageable, userPage.getTotalElements());
+		return userRolePage;
+	}
 	
-	
-	//////通讯录、员工管理
+
+	//通讯录、员工管理
 	public Page<UserPostDTO> findAll(Pageable pageable) {
-		// TODO Auto-generated method stub
+
 		Page<UserInfornation>list=staffDao.findAll(pageable);
 		List<UserPostDTO> dtoList=new ArrayList<UserPostDTO>();
 		for(UserInfornation user : list.getContent()) {
@@ -81,6 +95,7 @@ public class StaffService implements IStaffService {
 		staffDao.userRoleUpdate(userId, roleId);
 	}
 
+
 	@Override
 	public void save(UserPostDTO dto) {
 		UserInfornation entity=new UserInfornation();
@@ -104,5 +119,6 @@ public class StaffService implements IStaffService {
 			staffDao.delete(id);
 		}
 	}
+
 
 }

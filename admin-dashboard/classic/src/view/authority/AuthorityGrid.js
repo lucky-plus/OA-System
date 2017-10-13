@@ -19,11 +19,30 @@ Ext.define('Admin.view.authority.AuthorityGrid', {		//1.修改文件路径
 
 
 	tbar: Ext.create('Ext.Toolbar', {
+			id: 'authorityCondition',
 			items:[ {
-			text: '修改权限',
-			iconCls:'x-fa fa-edit',
-			handler: 'roleGridEdit'
-		}]
+				text: '修改权限',
+				iconCls:'x-fa fa-edit',
+				ui:'soft-blue',
+				handler: 'roleGridEdit'
+			},'-',{xtype:'tbtext',
+				text:'用户名称：'
+			},{
+				xtype:'textfield',
+				width:100,
+				itemsId:'userName'
+				
+			},{xtype:'tbtext',
+				text:'角色名称：'
+			},{
+				xtype:'textfield',
+				width:100,
+				itemsId:'roleName'
+				
+			},{
+				text: '查找',
+				handler:'authorityGridFind'
+			}]
 	}),
 	
 	bbar: Ext.create('Ext.PagingToolbar', {
