@@ -31,6 +31,7 @@
 			items:[ 
 			{
 				text: '上传',
+				id: 'resourceUploadButton',
 				iconCls:'x-fa fa-plus',
 				ui:'soft-blue',
 				handler:function(){
@@ -51,6 +52,7 @@
 			},'-', 
 			{
 				text: '批量删除',
+				id: 'resourceDeleteButton',
 				iconCls:'x-fa fa-trash',
 				handler: 'resourcesGridDelete'
 			},'-',
@@ -94,6 +96,20 @@
 		displayInfo: true,
 		displayMsg: '第 {0} - {1}条， 共 {2}条',
 		emptyMsg: "No topics to display",
-	})
+	}),
+
+	on: function(){
+      Ext.getCmp('resourceUploadButton').hide();
+      Ext.getCmp('resourceDeleteButton').hide();
+      // Ext.Msg.alert("modules",loginUserModules);
+      var modules = eval(loginUserModules);
+      for(var i = 0; i < modules.length; i++) {
+        var module = modules[i];
+        if(module.modelName == "资源--上传删除") {
+          Ext.getCmp('resourceUploadButton').show();
+          Ext.getCmp('resourceDeleteButton').show();
+        }
+      }
+  	}
 	
 });
