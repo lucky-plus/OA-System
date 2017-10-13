@@ -27,6 +27,7 @@ import com.oa.message.entity.dto.ResourcesDTO;
 import com.oa.personnel.entity.Department;
 import com.oa.personnel.entity.dto.PostDTO;
 import com.oa.staff.entity.UserInfornation;
+import com.oa.staff.entity.dto.UserPostDTO;
 
 @Component
 @Aspect
@@ -157,6 +158,20 @@ public class LogAspect {
 			log.setContent(content.toString());
 			logService.save(log);
 			
+		} else if(param.contains("UserPostDTO")) {
+			Object[] params = joinPoint.getArgs();
+			UserPostDTO user = (UserPostDTO) params[0];
+			if(user.getUserId() != null) {
+				operation = "修改";
+				log.setOperation(operation);
+			} else {
+				operation = "添加";
+				log.setOperation(operation);
+			}
+			content.append(operation+"了用户："+user.getUserName());
+			log.setContent(content.toString());
+			logService.save(log);
+			
 		}
 		
 	}
@@ -173,6 +188,8 @@ public class LogAspect {
 			content.append(operation+"了部门,所删部门ID为:");
 		} else if(className.contains("Post")) {
 			content.append(operation+"了职务,所删职务ID为:");
+		} else if(className.contains("User")) {
+			content.append(operation+"了用户,所删用户ID为:");
 		}
 
 		Object[] params = joinPoint.getArgs();
