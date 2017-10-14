@@ -41,14 +41,14 @@ Ext.define('Admin.store.NavigationTree', {
             //     ]
             // },
               
-            {
-                text: 'Dashboard',
-                iconCls: 'x-fa fa-desktop',
-                rowCls: 'nav-tree-badge nav-tree-badge-new',
-                viewType: 'admindashboard',
-                routeId: 'dashboard', // routeId defaults to viewType
-                leaf: true
-            },
+            // {
+            //     text: 'Dashboard',
+            //     iconCls: 'x-fa fa-desktop',
+            //     rowCls: 'nav-tree-badge nav-tree-badge-new',
+            //     viewType: 'admindashboard',
+            //     routeId: 'dashboard', // routeId defaults to viewType
+            //     leaf: true
+            // },
             // {
             //     text: '订单管理模块',
             //     iconCls: 'x-fa fa-balance-scale',
@@ -155,6 +155,12 @@ Ext.define('Admin.store.NavigationTree', {
                         leaf: true
                     }
                 ]
+            },
+            {
+                text: '个人中心',
+                iconCls: 'x-fa fa-user',
+                viewType: 'profile',
+                leaf: true
             }
             // ,
             // {
