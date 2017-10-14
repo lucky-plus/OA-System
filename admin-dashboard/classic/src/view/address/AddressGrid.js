@@ -28,21 +28,19 @@
 				text:'所属部门'
 			},{
 			xtype: 'combobox',
-			name:'deptName',
+			name:'deptId',
 			reference: 'addressGridSearchField',
-			store:  Ext.create('Ext.data.Store', {
-				fields: ['value', 'name'],
-				data : [
-					{"value":"", "name":"全部"},
-					{"value":"财务部", "name":"财务部"},
-					{"value":"市场部", "name":"市场部"},
-					{"value":"人事部", "name":"人事部"}
-					
-					]
+			store : 
+			new Ext.data.Store( {
+				proxy : new Ext.data.HttpProxy( {
+							url : 'dept/findDepts'//提交到某action的某方法
+					  }),
+				reader : {type:'json'},//需要显示的数据实体字段
+				autoLoad : true
 				}),
-				queryMode: 	  'local',
-				displayField: 'name',
-				valueField:   'value'
+			queryMode: 	  'local',
+			displayField: 'deptName',
+			valueField:   'deptId'
 			
 			},{
 				text:'查找',

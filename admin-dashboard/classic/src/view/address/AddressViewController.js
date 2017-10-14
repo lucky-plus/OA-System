@@ -3,13 +3,13 @@ Ext.define('Admin.view.address.AddressViewController', {
     alias: 'controller.addressViewController',
 
     addressGridSearch: function(bt) {
-		var searchField = this.lookupReference('addressGridSearchField').getValue();
+		var searchField = this.lookupReference('addressGridSearchField').getRawValue();
 		var searchText = this.lookupReference('addressGridSearchText').getValue();
 		Ext.Ajax.request({ 
 			url : 'staff/findByPage', 
 			params : { 
                     realName:searchText,
-					dept:searchField,
+					deptName:searchField,
 					page:1,
 					start:0,
 					limit:25,

@@ -70,16 +70,18 @@
          xtype:'datefield',  
                     itemId:'beginDate',  
                     format:'Y-m-d',  
-          value:'1972-01-01'
+          value:'1972-01-01',
+		  editable:false
           
       
       },{xtype:'tbtext',
         text:'至：'
       },{
-        xtype:'datefield',  
-                    itemId:'endDate',  
-                    format:'Y-m-d',  
+          xtype:'datefield',  
+          itemId:'endDate',  
+          format:'Y-m-d',  
           value:new Date(),
+		  editable:false,
           listeners: {  
           focus: function(){
             var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();

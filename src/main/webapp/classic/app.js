@@ -31092,6 +31092,97 @@ Ext.define('Ext.overrides.mixin.Focusable', {override:'Ext.Component', focusCls:
     Ext.focusTask = new Ext.util.DelayedTask;
   }
 });
+Ext.define('Ext.layout.container.border.Region', {override:'Ext.Component', initBorderRegion:function() {
+  var me = this;
+  if (!me._borderRegionInited) {
+    me._borderRegionInited = true;
+    me.addStateEvents(['changeregion', 'changeweight']);
+    Ext.override(me, {getState:function() {
+      var state = me.callParent();
+      state = me.addPropertyToState(state, 'region');
+      state = me.addPropertyToState(state, 'weight');
+      return state;
+    }});
+  }
+}, getOwningBorderContainer:function() {
+  var layout = this.getOwningBorderLayout();
+  return layout && layout.owner;
+}, getOwningBorderLayout:function() {
+  var layout = this.ownerLayout;
+  return layout && layout.isBorderLayout ? layout : null;
+}, setRegion:function(region) {
+  var me = this, borderLayout, old = me.region;
+  if (typeof region !== 'string') {
+    Ext.raise('Use setBox to set the size or position of a component.');
+  }
+  if (region !== old) {
+    borderLayout = me.getOwningBorderLayout();
+    if (borderLayout) {
+      var regionFlags = borderLayout.regionFlags[region], placeholder = me.placeholder, splitter = me.splitter, owner = borderLayout.owner, regionMeta = borderLayout.regionMeta, collapsed = me.collapsed || me.floated, delta, items, index;
+      if (me.fireEventArgs('beforechangeregion', [me, region]) === false) {
+        return old;
+      }
+      Ext.suspendLayouts();
+      me.region = region;
+      Ext.apply(me, regionFlags);
+      if (me.updateCollapseTool) {
+        me.updateCollapseTool();
+      }
+      if (splitter) {
+        Ext.apply(splitter, regionFlags);
+        splitter.updateOrientation();
+        items = owner.items;
+        index = items.indexOf(me);
+        if (index >= 0) {
+          delta = regionMeta[region].splitterDelta;
+          if (items.getAt(index + delta) !== splitter) {
+            items.remove(splitter);
+            index = items.indexOf(me);
+            if (delta > 0) {
+              ++index;
+            }
+            items.insert(index, splitter);
+          }
+        }
+      }
+      if (placeholder) {
+        if (collapsed) {
+          me.expand(false);
+        }
+        owner.remove(placeholder);
+        me.placeholder = null;
+        if (collapsed) {
+          me.collapse(null, false);
+        }
+      }
+      owner.updateLayout();
+      Ext.resumeLayouts(true);
+      me.fireEventArgs('changeregion', [me, old]);
+    } else {
+      me.region = region;
+    }
+  }
+  return old;
+}, setWeight:function(weight) {
+  var me = this, ownerCt = me.getOwningBorderContainer(), placeholder = me.placeholder, old = me.weight;
+  if (weight !== old) {
+    if (me.fireEventArgs('beforechangeweight', [me, weight]) !== false) {
+      me.weight = weight;
+      if (placeholder) {
+        placeholder.weight = weight;
+      }
+      if (ownerCt) {
+        ownerCt.updateLayout();
+      }
+      me.fireEventArgs('changeweight', [me, old]);
+    }
+  }
+  return old;
+}}, function(Component) {
+  var proto = Component.prototype;
+  proto.setBorderRegion = proto.setRegion;
+  proto.setRegionWeight = proto.setWeight;
+});
 Ext.define('Ext.theme.neptune.Component', {override:'Ext.Component', initComponent:function() {
   this.callParent();
   if (this.dock && this.border === undefined) {
@@ -83172,6 +83263,484 @@ defaultAnimatePolicy:{y:true, height:true}, constructor:function() {
   }
   return out;
 }, afterCollapse:Ext.emptyFn, afterExpand:Ext.emptyFn});
+Ext.define('Ext.resizer.BorderSplitter', {extend:Ext.resizer.Splitter, alias:'widget.bordersplitter', collapseTarget:null, getTrackerConfig:function() {
+  var trackerConfig = this.callParent();
+  trackerConfig.xclass = 'Ext.resizer.BorderSplitterTracker';
+  return trackerConfig;
+}, onTargetCollapse:function(target) {
+  this.callParent([target]);
+  if (this.performCollapse !== false && target.collapseMode == 'mini') {
+    target.addCls(target.baseCls + '-' + target.collapsedCls + '-mini');
+  }
+}, onTargetExpand:function(target) {
+  this.callParent([target]);
+  if (this.performCollapse !== false && target.collapseMode == 'mini') {
+    target.removeCls(target.baseCls + '-' + target.collapsedCls + '-mini');
+  }
+}});
+Ext.define('Ext.layout.container.Border', {extend:Ext.layout.container.Container, alias:'layout.border', alternateClassName:'Ext.layout.BorderLayout', targetCls:Ext.baseCSSPrefix + 'border-layout-ct', itemCls:[Ext.baseCSSPrefix + 'border-item', Ext.baseCSSPrefix + 'box-item'], type:'border', isBorderLayout:true, padding:undefined, percentageRe:/(\d+)%/, horzPositionProp:'left', padOnContainerProp:'left', padNotOnContainerProp:'right', axisProps:{horz:{borderBegin:'west', borderEnd:'east', horizontal:true, 
+posProp:'x', sizeProp:'width', sizePropCap:'Width'}, vert:{borderBegin:'north', borderEnd:'south', horizontal:false, posProp:'y', sizeProp:'height', sizePropCap:'Height'}}, centerRegion:null, manageMargins:true, panelCollapseAnimate:true, panelCollapseMode:'placeholder', regionWeights:{north:20, south:10, center:0, west:-10, east:-20}, beginAxis:function(ownerContext, regions, name) {
+  var me = this, props = me.axisProps[name], isVert = !props.horizontal, sizeProp = props.sizeProp, totalFlex = 0, childItems = ownerContext.childItems, length = childItems.length, center, i, childContext, centerFlex, comp, region, match, size, type, target, placeholder;
+  for (i = 0; i < length; ++i) {
+    childContext = childItems[i];
+    comp = childContext.target;
+    childContext.layoutPos = {};
+    if (comp.region) {
+      childContext.region = region = comp.region;
+      childContext.isCenter = comp.isCenter;
+      childContext.isHorz = comp.isHorz;
+      childContext.isVert = comp.isVert;
+      childContext.weight = comp.weight || me.regionWeights[region] || 0;
+      comp.weight = childContext.weight;
+      regions[comp.id] = childContext;
+      if (comp.isCenter) {
+        center = childContext;
+        centerFlex = comp.flex;
+        ownerContext.centerRegion = center;
+        continue;
+      }
+      if (isVert !== childContext.isVert) {
+        continue;
+      }
+      childContext.reverseWeighting = region === props.borderEnd;
+      size = comp[sizeProp];
+      type = typeof size;
+      if (!comp.collapsed) {
+        if (type === 'string' && (match = me.percentageRe.exec(size))) {
+          childContext.percentage = parseInt(match[1], 10);
+        } else {
+          if (comp.flex) {
+            totalFlex += childContext.flex = comp.flex;
+          }
+        }
+      }
+    }
+  }
+  if (center) {
+    target = center.target;
+    if (placeholder = target.placeholderFor) {
+      if (!centerFlex && isVert === placeholder.collapsedVertical()) {
+        centerFlex = 0;
+        center.collapseAxis = name;
+      }
+    } else {
+      if (target.collapsed && isVert === target.collapsedVertical()) {
+        centerFlex = 0;
+        center.collapseAxis = name;
+      }
+    }
+  }
+  if (centerFlex == null) {
+    centerFlex = 1;
+  }
+  totalFlex += centerFlex;
+  return Ext.apply({before:isVert ? 'top' : 'left', totalFlex:totalFlex}, props);
+}, beginLayout:function(ownerContext) {
+  var me = this, items = me.getLayoutItems(), pad = me.padding, type = typeof pad, padOnContainer = false, childContext, item, length, i, regions, collapseTarget, doShow, hidden, region;
+  if (ownerContext.heightModel.shrinkWrap) {
+    Ext.raise('Border layout does not currently support shrinkWrap height. ' + 'Please specify a height on component: ' + me.owner.id + ", or use a container layout that sets the component's height.");
+  }
+  if (ownerContext.widthModel.shrinkWrap) {
+    Ext.raise('Border layout does not currently support shrinkWrap width. ' + 'Please specify a width on component: ' + me.owner.id + ", or use a container layout that sets the component's width.");
+  }
+  if (pad) {
+    if (type === 'string' || type === 'number') {
+      pad = Ext.util.Format.parseBox(pad);
+    }
+  } else {
+    pad = ownerContext.getEl('getTargetEl').getPaddingInfo();
+    padOnContainer = true;
+  }
+  ownerContext.outerPad = pad;
+  ownerContext.padOnContainer = padOnContainer;
+  for (i = 0, length = items.length; i < length; ++i) {
+    item = items[i];
+    collapseTarget = me.getSplitterTarget(item);
+    if (collapseTarget) {
+      doShow = undefined;
+      hidden = !!item.hidden;
+      if (!collapseTarget.split) {
+        if (collapseTarget.isCollapsingOrExpanding) {
+          doShow = !!collapseTarget.collapsed;
+        }
+      } else {
+        if (hidden !== collapseTarget.hidden) {
+          doShow = !collapseTarget.hidden;
+        }
+      }
+      if (doShow) {
+        item.show();
+      } else {
+        if (doShow === false) {
+          item.hide();
+        }
+      }
+    }
+  }
+  me.callParent(arguments);
+  items = ownerContext.childItems;
+  length = items.length;
+  regions = {};
+  ownerContext.borderAxisHorz = me.beginAxis(ownerContext, regions, 'horz');
+  ownerContext.borderAxisVert = me.beginAxis(ownerContext, regions, 'vert');
+  for (i = 0; i < length; ++i) {
+    childContext = items[i];
+    collapseTarget = me.getSplitterTarget(childContext.target);
+    if (collapseTarget) {
+      region = regions[collapseTarget.id];
+      if (!region) {
+        region = ownerContext.getEl(collapseTarget.el, me);
+        region.region = collapseTarget.region;
+      }
+      childContext.collapseTarget = collapseTarget = region;
+      childContext.weight = collapseTarget.weight;
+      childContext.reverseWeighting = collapseTarget.reverseWeighting;
+      collapseTarget.splitter = childContext;
+      childContext.isHorz = collapseTarget.isHorz;
+      childContext.isVert = collapseTarget.isVert;
+    }
+  }
+  me.sortWeightedItems(items, 'reverseWeighting');
+  me.setupSplitterNeighbors(items);
+}, calculate:function(ownerContext) {
+  var me = this, containerSize = me.getContainerSize(ownerContext), childItems = ownerContext.childItems, length = childItems.length, horz = ownerContext.borderAxisHorz, vert = ownerContext.borderAxisVert, pad = ownerContext.outerPad, padOnContainer = ownerContext.padOnContainer, i, childContext, childMargins, size, horzPercentTotal, vertPercentTotal;
+  horz.begin = pad[me.padOnContainerProp];
+  vert.begin = pad.top;
+  horzPercentTotal = horz.end = horz.flexSpace = containerSize.width + (padOnContainer ? pad[me.padOnContainerProp] : -pad[me.padNotOnContainerProp]);
+  vertPercentTotal = vert.end = vert.flexSpace = containerSize.height + (padOnContainer ? pad.top : -pad.bottom);
+  for (i = 0; i < length; ++i) {
+    childContext = childItems[i];
+    childMargins = childContext.getMarginInfo();
+    if (childContext.isHorz || childContext.isCenter) {
+      horz.addUnflexed(childMargins.width);
+      horzPercentTotal -= childMargins.width;
+    }
+    if (childContext.isVert || childContext.isCenter) {
+      vert.addUnflexed(childMargins.height);
+      vertPercentTotal -= childMargins.height;
+    }
+    if (!childContext.flex && !childContext.percentage) {
+      if (childContext.isHorz || childContext.isCenter && childContext.collapseAxis === 'horz') {
+        size = childContext.getProp('width');
+        horz.addUnflexed(size);
+        if (childContext.collapseTarget) {
+          horzPercentTotal -= size;
+        }
+      } else {
+        if (childContext.isVert || childContext.isCenter && childContext.collapseAxis === 'vert') {
+          size = childContext.getProp('height');
+          vert.addUnflexed(size);
+          if (childContext.collapseTarget) {
+            vertPercentTotal -= size;
+          }
+        }
+      }
+    }
+  }
+  for (i = 0; i < length; ++i) {
+    childContext = childItems[i];
+    childMargins = childContext.getMarginInfo();
+    if (childContext.percentage) {
+      if (childContext.isHorz) {
+        size = Math.ceil(horzPercentTotal * childContext.percentage / 100);
+        size = childContext.setWidth(size);
+        horz.addUnflexed(size);
+      } else {
+        if (childContext.isVert) {
+          size = Math.ceil(vertPercentTotal * childContext.percentage / 100);
+          size = childContext.setHeight(size);
+          vert.addUnflexed(size);
+        }
+      }
+    }
+  }
+  for (i = 0; i < length; ++i) {
+    childContext = childItems[i];
+    if (!childContext.isCenter) {
+      me.calculateChildAxis(childContext, horz);
+      me.calculateChildAxis(childContext, vert);
+    }
+  }
+  if (me.finishAxis(ownerContext, vert) + me.finishAxis(ownerContext, horz) < 2) {
+    me.done = false;
+  } else {
+    me.finishPositions(childItems);
+  }
+}, calculateChildAxis:function(childContext, axis) {
+  var collapseTarget = childContext.collapseTarget, setSizeMethod = 'set' + axis.sizePropCap, sizeProp = axis.sizeProp, childMarginSize = childContext.getMarginInfo()[sizeProp], region, isBegin, flex, pos, size;
+  if (collapseTarget) {
+    region = collapseTarget.region;
+  } else {
+    region = childContext.region;
+    flex = childContext.flex;
+  }
+  isBegin = region === axis.borderBegin;
+  if (!isBegin && region !== axis.borderEnd) {
+    childContext[setSizeMethod](axis.end - axis.begin - childMarginSize);
+    pos = axis.begin;
+  } else {
+    if (flex) {
+      size = Math.ceil(axis.flexSpace * (flex / axis.totalFlex));
+      size = childContext[setSizeMethod](size);
+    } else {
+      if (childContext.percentage) {
+        size = childContext.peek(sizeProp);
+      } else {
+        size = childContext.getProp(sizeProp);
+      }
+    }
+    size += childMarginSize;
+    if (isBegin) {
+      pos = axis.begin;
+      axis.begin += size;
+    } else {
+      axis.end = pos = axis.end - size;
+    }
+  }
+  childContext.layoutPos[axis.posProp] = pos;
+}, eachItem:function(region, fn, scope) {
+  var me = this, items = me.getLayoutItems(), i = 0, item;
+  if (Ext.isFunction(region)) {
+    fn = region;
+    scope = fn;
+  }
+  for (i; i < items.length; i++) {
+    item = items[i];
+    if (!region || item.region === region) {
+      if (fn.call(scope, item) === false) {
+        break;
+      }
+    }
+  }
+}, finishAxis:function(ownerContext, axis) {
+  var size = axis.end - axis.begin, center = ownerContext.centerRegion;
+  if (center) {
+    center['set' + axis.sizePropCap](size - center.getMarginInfo()[axis.sizeProp]);
+    center.layoutPos[axis.posProp] = axis.begin;
+  }
+  return Ext.isNumber(size) ? 1 : 0;
+}, finishPositions:function(childItems) {
+  var length = childItems.length, index, childContext, marginProp = this.horzPositionProp;
+  for (index = 0; index < length; ++index) {
+    childContext = childItems[index];
+    childContext.setProp('x', childContext.layoutPos.x + childContext.marginInfo[marginProp]);
+    childContext.setProp('y', childContext.layoutPos.y + childContext.marginInfo.top);
+  }
+}, getLayoutItems:function() {
+  var owner = this.owner, ownerItems = owner && owner.items && owner.items.items || [], length = ownerItems.length, items = [], i = 0, ownerItem, placeholderFor;
+  for (; i < length; i++) {
+    ownerItem = ownerItems[i];
+    placeholderFor = ownerItem.placeholderFor;
+    if (ownerItem.hidden || (!ownerItem.floated || ownerItem.isCollapsingOrExpanding === 2) && !(placeholderFor && placeholderFor.isCollapsingOrExpanding === 2)) {
+      items.push(ownerItem);
+    }
+  }
+  return items;
+}, getPlaceholder:function(comp) {
+  return comp.getPlaceholder && comp.getPlaceholder();
+}, getMaxWeight:function(region) {
+  return this.getMinMaxWeight(region);
+}, getMinWeight:function(region) {
+  return this.getMinMaxWeight(region, true);
+}, getMinMaxWeight:function(region, min) {
+  var me = this, weight = null;
+  me.eachItem(region, function(item) {
+    if (item.hasOwnProperty('weight')) {
+      if (weight === null) {
+        weight = item.weight;
+        return;
+      }
+      if (min && item.weight < weight || item.weight > weight) {
+        weight = item.weight;
+      }
+    }
+  }, this);
+  return weight;
+}, getSplitterTarget:function(splitter) {
+  var collapseTarget = splitter.collapseTarget;
+  if (collapseTarget && collapseTarget.collapsed) {
+    return collapseTarget.placeholder || collapseTarget;
+  }
+  return collapseTarget;
+}, isItemBoxParent:function(itemContext) {
+  return true;
+}, isItemShrinkWrap:function(item) {
+  return true;
+}, insertSplitter:function(item, index, hidden, splitterCfg) {
+  var region = item.region, splitter = Ext.apply({xtype:'bordersplitter', collapseTarget:item, id:item.id + '-splitter', hidden:hidden, canResize:item.splitterResize !== false, splitterFor:item, synthetic:true}, splitterCfg), at = index + (region === 'south' || region === 'east' ? 0 : 1);
+  if (item.collapseMode === 'mini') {
+    splitter.collapsedCls = item.collapsedCls;
+  }
+  item.splitter = this.owner.add(at, splitter);
+}, getMoveAfterIndex:function(after) {
+  var index = this.callParent(arguments);
+  if (after.splitter) {
+    index++;
+  }
+  return index;
+}, moveItemBefore:function(item, before) {
+  var beforeRegion;
+  if (before && before.splitter) {
+    beforeRegion = before.region;
+    if (beforeRegion === 'south' || beforeRegion === 'east') {
+      before = before.splitter;
+    }
+  }
+  return this.callParent([item, before]);
+}, onAdd:function(item, index) {
+  var me = this, placeholderFor = item.placeholderFor, region = item.region, isCenter, split, hidden, cfg;
+  me.callParent(arguments);
+  if (region) {
+    Ext.apply(item, me.regionFlags[region]);
+    if (me.owner.isViewport) {
+      item.isViewportBorderChild = true;
+    }
+    if (item.initBorderRegion) {
+      item.initBorderRegion();
+    }
+    isCenter = region === 'center';
+    if (isCenter) {
+      if (me.centerRegion) {
+        Ext.raise('Cannot have multiple center regions in a BorderLayout.');
+      }
+      me.centerRegion = item;
+    } else {
+      split = item.split;
+      hidden = !!item.hidden;
+      if (typeof split === 'object') {
+        cfg = split;
+        split = true;
+      }
+      if ((item.isHorz || item.isVert) && (split || item.collapseMode === 'mini')) {
+        me.insertSplitter(item, index, hidden || !split, cfg);
+      }
+    }
+    if (!isCenter && !item.hasOwnProperty('collapseMode')) {
+      item.collapseMode = me.panelCollapseMode;
+    }
+    if (!item.hasOwnProperty('animCollapse')) {
+      if (item.collapseMode !== 'placeholder') {
+        item.animCollapse = false;
+      } else {
+        item.animCollapse = me.panelCollapseAnimate;
+      }
+    }
+    if (hidden && item.placeholder && item.placeholder.isVisible()) {
+      me.owner.insert(index, item.placeholder);
+    }
+  } else {
+    if (placeholderFor) {
+      Ext.apply(item, me.regionFlags[placeholderFor.region]);
+      item.region = placeholderFor.region;
+      item.weight = placeholderFor.weight;
+    }
+  }
+}, onDestroy:function() {
+  this.centerRegion = null;
+  this.callParent();
+}, onRemove:function(comp, isDestroying) {
+  var me = this, region = comp.region, splitter = comp.splitter, owner = me.owner, destroying = owner.destroying, el;
+  if (region) {
+    if (comp.isCenter) {
+      me.centerRegion = null;
+    }
+    delete comp.isCenter;
+    delete comp.isHorz;
+    delete comp.isVert;
+    if (splitter && !owner.destroying) {
+      owner.doRemove(splitter, true);
+    }
+    delete comp.splitter;
+  }
+  me.callParent(arguments);
+  if (!destroying && !isDestroying && comp.rendered) {
+    el = comp.getEl();
+    if (el) {
+      el.setStyle('top', '');
+      el.setStyle(me.horzPositionProp, '');
+    }
+  }
+}, regionMeta:{center:{splitterDelta:0}, north:{splitterDelta:1}, south:{splitterDelta:-1}, west:{splitterDelta:1}, east:{splitterDelta:-1}}, regionFlags:{center:{isCenter:true, isHorz:false, isVert:false}, north:{isCenter:false, isHorz:false, isVert:true, collapseDirection:'top'}, south:{isCenter:false, isHorz:false, isVert:true, collapseDirection:'bottom'}, west:{isCenter:false, isHorz:true, isVert:false, collapseDirection:'left'}, east:{isCenter:false, isHorz:true, isVert:false, collapseDirection:'right'}}, 
+setupSplitterNeighbors:function(items) {
+  var edgeRegions = {}, length = items.length, touchedRegions = this.touchedRegions, i, j, center, count, edge, comp, region, splitter, touched;
+  for (i = 0; i < length; ++i) {
+    comp = items[i].target;
+    region = comp.region;
+    if (comp.isCenter) {
+      center = comp;
+    } else {
+      if (region) {
+        touched = touchedRegions[region];
+        for (j = 0, count = touched.length; j < count; ++j) {
+          edge = edgeRegions[touched[j]];
+          if (edge) {
+            edge.neighbors.push(comp);
+          }
+        }
+        if (comp.placeholderFor) {
+          splitter = comp.placeholderFor.splitter;
+        } else {
+          splitter = comp.splitter;
+        }
+        if (splitter) {
+          splitter.neighbors = [];
+        }
+        edgeRegions[region] = splitter;
+      }
+    }
+  }
+  if (center) {
+    touched = touchedRegions.center;
+    for (j = 0, count = touched.length; j < count; ++j) {
+      edge = edgeRegions[touched[j]];
+      if (edge) {
+        edge.neighbors.push(center);
+      }
+    }
+  }
+}, touchedRegions:{center:['north', 'south', 'east', 'west'], north:['north', 'east', 'west'], south:['south', 'east', 'west'], east:['east', 'north', 'south'], west:['west', 'north', 'south']}, sizePolicies:{vert:{readsWidth:0, readsHeight:1, setsWidth:1, setsHeight:0}, horz:{readsWidth:1, readsHeight:0, setsWidth:0, setsHeight:1}, flexAll:{readsWidth:0, readsHeight:0, setsWidth:1, setsHeight:1}}, getItemSizePolicy:function(item) {
+  var me = this, policies = this.sizePolicies, collapseTarget, size, policy, placeholderFor;
+  if (item.isCenter) {
+    placeholderFor = item.placeholderFor;
+    if (placeholderFor) {
+      if (placeholderFor.collapsedVertical()) {
+        return policies.vert;
+      }
+      return policies.horz;
+    }
+    if (item.collapsed) {
+      if (item.collapsedVertical()) {
+        return policies.vert;
+      }
+      return policies.horz;
+    }
+    return policies.flexAll;
+  }
+  collapseTarget = item.collapseTarget;
+  if (collapseTarget) {
+    return collapseTarget.isVert ? policies.vert : policies.horz;
+  }
+  if (item.region) {
+    if (item.isVert) {
+      size = item.height;
+      policy = policies.vert;
+    } else {
+      size = item.width;
+      policy = policies.horz;
+    }
+    if (item.flex || typeof size === 'string' && me.percentageRe.test(size)) {
+      return policies.flexAll;
+    }
+    return policy;
+  }
+  return me.autoSizePolicy;
+}}, function() {
+  var methods = {addUnflexed:function(px) {
+    this.flexSpace = Math.max(this.flexSpace - px, 0);
+  }}, props = this.prototype.axisProps;
+  Ext.apply(props.horz, methods);
+  Ext.apply(props.vert, methods);
+});
 Ext.define('Ext.layout.container.Card', {extend:Ext.layout.container.Fit, alternateClassName:'Ext.layout.CardLayout', alias:'layout.card', type:'card', hideInactive:true, deferredRender:false, getRenderTree:function() {
   var me = this, activeItem = me.getActiveItem();
   if (activeItem) {
@@ -83319,6 +83888,89 @@ Ext.define('Ext.layout.container.Card', {extend:Ext.layout.container.Fit, altern
 }, setItemHideMode:function(item) {
   item.originalHideMode = item.hideMode;
   item.hideMode = 'offsets';
+}});
+Ext.define('Ext.resizer.BorderSplitterTracker', {extend:Ext.resizer.SplitterTracker, getPrevCmp:null, getNextCmp:null, calculateConstrainRegion:function() {
+  var me = this, splitter = me.splitter, collapseTarget = splitter.collapseTarget, defaultSplitMin = splitter.defaultSplitMin, sizePropCap = splitter.vertical ? 'Width' : 'Height', minSizeProp = 'min' + sizePropCap, maxSizeProp = 'max' + sizePropCap, getSizeMethod = 'get' + sizePropCap, neighbors = splitter.neighbors, length = neighbors.length, box = collapseTarget.el.getBox(), left = box.x, top = box.y, right = box.right, bottom = box.bottom, size = splitter.vertical ? right - left : bottom - top, 
+  i, neighbor, neighborMaxSize, minRange, maxRange, maxGrowth, maxShrink, targetSize;
+  minRange = (collapseTarget[minSizeProp] || Math.min(size, defaultSplitMin)) - size;
+  maxRange = collapseTarget[maxSizeProp];
+  if (!maxRange) {
+    maxRange = 1000000000;
+  } else {
+    maxRange -= size;
+  }
+  targetSize = size;
+  for (i = 0; i < length; ++i) {
+    neighbor = neighbors[i];
+    size = neighbor[getSizeMethod]();
+    neighborMaxSize = neighbor[maxSizeProp];
+    if (neighborMaxSize === null) {
+      neighborMaxSize = undefined;
+    }
+    maxGrowth = size - neighborMaxSize;
+    maxShrink = size - (neighbor[minSizeProp] || Math.min(size, defaultSplitMin));
+    if (!isNaN(maxGrowth)) {
+      if (minRange < maxGrowth) {
+        minRange = maxGrowth;
+      }
+    }
+    if (maxRange > maxShrink) {
+      maxRange = maxShrink;
+    }
+  }
+  if (maxRange - minRange < 2) {
+    return null;
+  }
+  box = new Ext.util.Region(top, right, bottom, left);
+  me.constraintAdjusters[me.getCollapseDirection()](box, minRange, maxRange, splitter);
+  me.dragInfo = {minRange:minRange, maxRange:maxRange, targetSize:targetSize};
+  return box;
+}, constraintAdjusters:{left:function(box, minRange, maxRange, splitter) {
+  box[0] = box.x = box.left = box.right + minRange;
+  box.right += maxRange + splitter.getWidth();
+}, top:function(box, minRange, maxRange, splitter) {
+  box[1] = box.y = box.top = box.bottom + minRange;
+  box.bottom += maxRange + splitter.getHeight();
+}, bottom:function(box, minRange, maxRange, splitter) {
+  box.bottom = box.top - minRange;
+  box.top -= maxRange + splitter.getHeight();
+}, right:function(box, minRange, maxRange, splitter) {
+  box.right = box.left - minRange;
+  box[0] = box.x = box.left = box.x - maxRange + splitter.getWidth();
+}}, onBeforeStart:function(e) {
+  var me = this, splitter = me.splitter, collapseTarget = splitter.collapseTarget, neighbors = splitter.neighbors, length = neighbors.length, i, neighbor;
+  if (collapseTarget.collapsed) {
+    return false;
+  }
+  for (i = 0; i < length; ++i) {
+    neighbor = neighbors[i];
+    if (neighbor.collapsed && neighbor.isHorz === collapseTarget.isHorz) {
+      return false;
+    }
+  }
+  if (!(me.constrainTo = me.calculateConstrainRegion())) {
+    return false;
+  }
+  return true;
+}, performResize:function(e, offset) {
+  var me = this, splitter = me.splitter, collapseDirection = splitter.getCollapseDirection(), collapseTarget = splitter.collapseTarget, adjusters = me.splitAdjusters[splitter.vertical ? 'horz' : 'vert'], delta = offset[adjusters.index], dragInfo = me.dragInfo, owner;
+  if (collapseDirection === 'right' || collapseDirection === 'bottom') {
+    delta = -delta;
+  }
+  delta = Math.min(Math.max(dragInfo.minRange, delta), dragInfo.maxRange);
+  if (delta) {
+    (owner = splitter.ownerCt).suspendLayouts();
+    adjusters.adjustTarget(collapseTarget, dragInfo.targetSize, delta);
+    owner.resumeLayouts(true);
+  }
+}, splitAdjusters:{horz:{index:0, adjustTarget:function(target, size, delta) {
+  target.flex = null;
+  target.setSize(size + delta);
+}}, vert:{index:1, adjustTarget:function(target, targetSize, delta) {
+  target.flex = null;
+  target.setSize(undefined, targetSize + delta);
+}}}, getCollapseDirection:function() {
+  return this.splitter.getCollapseDirection();
 }});
 Ext.define('Ext.resizer.ResizeTracker', {extend:Ext.dd.DragTracker, dynamic:true, preserveRatio:false, preventDefault:false, constrainTo:null, proxyCls:Ext.baseCSSPrefix + 'resizable-proxy', constructor:function(config) {
   var me = this, widthRatio, heightRatio, throttledResizeFn;
@@ -99802,6 +100454,7 @@ Ext.define('Admin.model.Subscription', {extend:Admin.model.Base, fields:[{type:'
 Ext.define('Admin.model.YearwiseData', {extend:Admin.model.Base, fields:[{name:'year'}, {name:'data'}]});
 Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'realName', type:'string'}, {name:'deptName', type:'string'}, {name:'postName', type:'string'}, {name:'mobilePhone', type:'string'}, {name:'mail', type:'string'}, {name:'qq_number', type:'int'}]});
 Ext.define('Admin.model.authority.AuthorityModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'roleId', type:'int'}, {name:'userName', type:'string'}, {name:'roleName', type:'string'}, {name:'modulesText', type:'string'}]});
+Ext.define('Admin.model.department.DepartmentModel', {extend:Admin.model.Base, fields:[{name:'deptId', type:'int'}, {name:'deptName', type:'string'}]});
 Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {name:'read'}, {type:'string', name:'title'}, {name:'user_id'}, {type:'string', name:'contents'}, {type:'string', name:'from'}, {name:'has_attachments'}, {name:'attachments'}, {name:'received_on', type:'date'}, {name:'favorite'}]});
 Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
 Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
@@ -99820,6 +100473,7 @@ Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'Na
 viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}]}});
 Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json?roleLevel\x3d' + loginUserRoleLevel, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:10, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
+Ext.define('Admin.store.department.DepartmentStore', {extend:Ext.data.Store, alias:'store.departmentStore', model:'Admin.model.department.DepartmentModel', proxy:{type:'ajax', url:'dept/findAll.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'deptId'}});
 Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
 Ext.define('Admin.store.email.Inbox', {extend:Ext.data.Store, alias:'store.inbox', model:'Admin.model.email.Email', pageSize:20, autoLoad:true, proxy:{type:'api', url:'~api/email/inbox'}});
 Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', model:'Admin.model.faq.Category', proxy:{type:'api', url:'~api/faq/faq'}});
@@ -99979,12 +100633,12 @@ Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', store
 }});
 Ext.define('Admin.view.address.address', {extend:Ext.container.Container, xtype:'address', controller:'addressViewController', viewModel:{type:'addressViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'addressGrid'}]});
 Ext.define('Admin.view.address.AddressGrid', {extend:Ext.grid.Panel, xtype:'addressGrid', title:'\x3cb\x3e通讯中心\x3c/b\x3e', bind:'{addressLists}', id:'addressGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'编号', dataIndex:'userId', hidden:true}, {text:'联系人', dataIndex:'realName', flex:1}, {text:'所属部门', dataIndex:'deptName', width:188}, {text:'职位', dataIndex:'postName', width:188}, {text:'联系电话', dataIndex:'mobilePhone', width:188}, {text:'联系邮箱', dataIndex:'mail', width:188}, 
-{text:'QQ', dataIndex:'qq_number', width:188}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200, reference:'addressGridSearchText'}, {xtype:'tbtext', text:'所属部门'}, {xtype:'combobox', name:'deptName', reference:'addressGridSearchField', store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'', 'name':'全部'}, {'value':'财务部', 'name':'财务部'}, {'value':'市场部', 'name':'市场部'}, {'value':'人事部', 'name':'人事部'}]}), queryMode:'local', displayField:'name', 
-valueField:'value'}, {text:'查找', listeners:{click:'addressGridSearch'}}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+{text:'QQ', dataIndex:'qq_number', width:188}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200, reference:'addressGridSearchText'}, {xtype:'tbtext', text:'所属部门'}, {xtype:'combobox', name:'deptId', reference:'addressGridSearchField', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', listeners:{click:'addressGridSearch'}}]}), 
+bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
 Ext.define('Admin.view.address.AddressViewController', {extend:Ext.app.ViewController, alias:'controller.addressViewController', addressGridSearch:function(bt) {
-  var searchField = this.lookupReference('addressGridSearchField').getValue();
+  var searchField = this.lookupReference('addressGridSearchField').getRawValue();
   var searchText = this.lookupReference('addressGridSearchText').getValue();
-  Ext.Ajax.request({url:'staff/findByPage', params:{realName:searchText, dept:searchField, page:1, start:0, limit:25, sort:'userId', dir:'DESC'}, success:function(response, options) {
+  Ext.Ajax.request({url:'staff/findByPage', params:{realName:searchText, deptName:searchField, page:1, start:0, limit:25, sort:'userId', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     Ext.getCmp('addressGrid').getStore().loadData(tnpdata.content, false);
   }});
@@ -100150,6 +100804,9 @@ Ext.define('Admin.view.dashboard.TopMovie', {extend:Ext.panel.Panel, xtype:'topm
 label:{field:'x', display:'rotate', contrast:true, font:'12px Arial'}, xField:'yvalue'}], interactions:[{type:'rotate'}]}]});
 Ext.define('Admin.view.dashboard.Widgets', {extend:Ext.Panel, xtype:'dashboardwidgetspanel', cls:'dashboard-widget-block shadow', bodyPadding:15, title:'Widgets', layout:{type:'vbox', align:'stretch'}, items:[{xtype:'slider', width:400, fieldLabel:'Single Slider', value:40}, {xtype:'tbspacer', flex:0.3}, {xtype:'multislider', width:400, fieldLabel:'Range Slider', values:[10, 40]}, {xtype:'tbspacer', flex:0.3}, {xtype:'pagingtoolbar', width:360, displayInfo:false}, {xtype:'tbspacer', flex:0.3}, {xtype:'progressbar', 
 cls:'widget-progressbar', value:0.4}, {xtype:'tbspacer'}]});
+Ext.define('Admin.view.department.Department', {extend:Ext.container.Container, xtype:'department', height:Ext.Element.getViewportHeight() - 200, viewModel:{type:'departmentViewModel'}, layout:'border', margin:'20 20 20 20', items:[{title:'部门设置', region:'west', width:550, collapsible:true, margins:'5 0 0 0', cmargins:'5 5 0 0', split:true, xtype:'departmentGrid'}, {title:'职位设置', region:'center', margins:'5 0 0 0', cmargins:'5 5 0 0'}]});
+Ext.define('Admin.view.department.DepartmentGrid', {extend:Ext.grid.Panel, id:'departmentGrid', xtype:'departmentGrid', title:'\x3cb\x3e组织架构\x3c/b\x3e', bind:'{deptLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'ID', sortable:true, dataIndex:'deptId', hidden:true}, {text:'部门名名称', sortable:true, dataIndex:'deptName', flex:1}], bbar:Ext.create('Ext.PagingToolbar', {bind:'{deptLists}', displayInfo:true, displayMsg:'第{0}-{1}条  共{2}条', emptyMsg:'没有任何记录'})});
+Ext.define('Admin.view.department.DepartmentViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.departmentViewModel', stores:{deptLists:{type:'departmentStore', autoLoad:true}}});
 Ext.define('Admin.view.email.Compose', {extend:Ext.form.Panel, alias:'widget.emailcompose', viewModel:{type:'emailcompose'}, controller:'emailcompose', cls:'email-compose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'textfield', fieldLabel:'To'}, {xtype:'textfield', fieldLabel:'Subject'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'Message'}], 
 bbar:{overflowHandler:'menu', items:[{xtype:'filefield', width:400, labelWidth:80, fieldLabel:'Attachment', labelSeparator:'', buttonConfig:{xtype:'filebutton', glyph:'', iconCls:'x-fa fa-cloud-upload', text:'Browse'}}, '-\x3e', {xtype:'button', ui:'soft-red', text:'Discard', handler:'onComposeDiscardClick'}, {xtype:'button', ui:'gray', text:'Save'}, {xtype:'button', ui:'soft-green', text:'Send'}]}});
 Ext.define('Admin.view.email.ComposeViewController', {extend:Ext.app.ViewController, alias:'controller.emailcompose', onComposeDiscardClick:function(bt) {
@@ -100464,7 +101121,7 @@ Ext.define('Admin.view.notice.NoticeGrid', {extend:Ext.grid.Panel, xtype:'notice
   var orderWindow = Ext.widget('orderWindow', {title:'查看公告', html:'\x3ch1 align\x3d"center"\x3e' + grid.getStore().getAt(rowIndex).data.noticeName + '\x3c/h1\x3e' + '\x3cp\x3e' + grid.getStore().getAt(rowIndex).data.noticeText + '\x3c/p\x3e'});
 }}, selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1}, {text:'发布时间', sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', id:'noticeUpdateDeleteColum', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', 
 handler:'noticeGridOpenEditWindow'}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'noticeGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {id:'xiaotingzi2', items:[{text:'新增', id:'noticeAddButton', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'删除', id:'noticeDeleteButton', iconCls:'x-fa fa-trash', handler:'noticeGridDeleteDate'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300, itemsId:'searchText'}, {xtype:'tbtext', text:'时间：'}, 
-{xtype:'datefield', itemId:'beginDate', format:'Y-m-d', value:'1972-01-01'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
+{xtype:'datefield', itemId:'beginDate', format:'Y-m-d', value:'1972-01-01', editable:false}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', itemId:'endDate', format:'Y-m-d', value:new Date, editable:false, listeners:{focus:function() {
   var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
   this.setMinValue(cc);
 }}}, {text:'查找', handler:'noticeGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{noticeLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'}), on:function() {
@@ -100650,7 +101307,7 @@ Ext.define('Admin.view.resources.ResourcesGrid', {extend:Ext.grid.Panel, xtype:'
 text:'操作', width:150, tdCls:'action', items:['-', {icon:'resources/images/icons/dowanload.png', tooltip:'下载', handler:'resourcesGridDownloadOne'}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'resourcesGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {id:'resources2', items:[{text:'上传', id:'resourceUploadButton', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:function() {
   var cfg = Ext.apply({xtype:'orderWindow'}, {title:'资料上传', items:[Ext.apply({xtype:'resourcesForm'})]});
   Ext.create(cfg);
-}}, '-', {text:'批量下载', iconCls:'x-fa fa-arrow-circle-o-down', handler:'resourcesGridDownloadMany'}, '-', {text:'批量删除', id:'resourceDeleteButton', iconCls:'x-fa fa-trash', handler:'resourcesGridDelete'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', format:'Y-m-d', value:'1972-01-01'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', format:'Y-m-d', value:new Date, listeners:{focus:function() {
+}}, '-', {text:'批量下载', iconCls:'x-fa fa-arrow-circle-o-down', handler:'resourcesGridDownloadMany'}, '-', {text:'批量删除', id:'resourceDeleteButton', iconCls:'x-fa fa-trash', handler:'resourcesGridDelete'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', format:'Y-m-d', value:'1972-01-01', editable:false}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', format:'Y-m-d', value:new Date, editable:false, listeners:{focus:function() {
   var cc = Ext.getCmp('resources2').items.getAt(9).getValue();
   this.setMinValue(cc);
 }}}, {text:'查找', handler:'resourcesGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{resourcesLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'}), on:function() {
