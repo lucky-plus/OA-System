@@ -45,6 +45,7 @@ public class DeptController {
 	
 	@RequestMapping("/findAll")
 	public @ResponseBody Page<Department> findAll(ExtjsPageable pageable) {
+		pageable.setSort("deptId");
 		return deptService.findAll(pageable.getPageable());
 	}
 
