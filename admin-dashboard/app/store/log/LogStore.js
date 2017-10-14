@@ -13,7 +13,7 @@ Ext.define('Admin.store.log.LogStore', {
 		simpleSortMode: true
 	},
 
-	pageSize: 25,
+	pageSize: 15,
 	autoLoad: true,
 	remoteSort: true,//全局排序
     sorters: {

@@ -26,7 +26,7 @@ Ext.define('Admin.view.log.LogViewController', {
 					endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'),
 					page:1,
 					start:0,
-					limit:25,
+					limit:15,
 					sort:'createDate',
 					dir:'DESC'
 			},

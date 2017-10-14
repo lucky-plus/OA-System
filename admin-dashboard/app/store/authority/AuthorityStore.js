@@ -13,7 +13,7 @@ Ext.define('Admin.store.authority.AuthorityStore', {
 		simpleSortMode: true
 	},
 
-	pageSize: 10,
+	pageSize: 15,
 	autoLoad: true,
 	remoteSort: true,//全局排序
     sorters: {

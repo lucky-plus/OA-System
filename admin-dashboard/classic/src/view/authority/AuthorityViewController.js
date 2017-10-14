@@ -55,7 +55,7 @@ Ext.define('Admin.view.authority.AuthorityViewController', {
                     roleName:roleName,
 					page:1,
 					start:0,
-					limit:25,
+					limit:15,
 					sort:'userId',
 					dir:'DESC'
 			},

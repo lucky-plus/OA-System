@@ -160,18 +160,6 @@ Ext.define('Admin.view.main.MainController', {
               "load",function(){
                 this.getRoot().appendChild(
                   {
-                      text: '个人中心',
-                      iconCls: 'x-fa fa-user',
-                      viewType: 'profile',
-                      leaf: true
-                  }
-                );
-              }
-            );
-            rootTree.on(
-              "load",function(){
-                this.getRoot().appendChild(
-                  {
                     text: '信息中心',
                     iconCls: 'x-fa fa-leanpub',
                     expanded: false,
@@ -199,6 +187,18 @@ Ext.define('Admin.view.main.MainController', {
                             leaf: true
                         }
                       ]
+                  }
+                );
+              }
+            );
+            rootTree.on(
+              "load",function(){
+                this.getRoot().appendChild(
+                  {
+                      text: '任务管理',
+                      iconCls: 'x-fa fa-tasks',
+                      viewType: 'task',
+                      leaf: true
                   }
                 );
               }
@@ -248,7 +248,7 @@ Ext.define('Admin.view.main.MainController', {
                       this.getRoot().appendChild(
                         {
                             text: '用户管理',
-                            iconCls: 'x-fa fa-leanpub',
+                            iconCls: 'x-fa fa-user-circle-o',
                             expanded: false,
                             selectable: false,
                             //routeId: 'pages-parent',
@@ -256,13 +256,13 @@ Ext.define('Admin.view.main.MainController', {
                             children: [
                                 {
                                     text: '角色管理',
-                                    iconCls: 'x-fa fa-file-o',
+                                    iconCls: 'x-fa fa-user-o',
                                     viewType: 'role',
                                     leaf: true
                                 },
                                 {
                                     text: '权限设置',
-                                    iconCls: 'x-fa  fa-arrow-circle-o-down',
+                                    iconCls: 'x-fa  fa-cogs',
                                     viewType: 'authority',
                                     leaf: true
                                 }
@@ -282,7 +282,7 @@ Ext.define('Admin.view.main.MainController', {
                       this.getRoot().appendChild(
                         {
                             text: '日志中心',
-                            iconCls: 'x-fa fa-user',
+                            iconCls: 'x-fa fa-paper-plane',
                             viewType: 'log',
                              leaf: true
                         }
