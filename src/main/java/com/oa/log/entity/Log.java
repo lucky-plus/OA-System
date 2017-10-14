@@ -45,7 +45,7 @@ public class Log {
 		return content;
 	}
 	@ManyToOne
-	//@JoinColumn(name="userId")
+	@JoinColumn(name="userId")
 	public UserInfornation getUser() {
 		return user;
 	}
