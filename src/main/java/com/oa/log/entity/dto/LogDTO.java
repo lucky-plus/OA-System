@@ -91,9 +91,11 @@ public class LogDTO {
 					 predicate.add(cb.equal(root.get("operation").as(String.class), logDTO.getOperation()));
 				 }
 				 if(logDTO.getBeginDate()!=null && !"".equals(logDTO.getBeginDate().toString())) {
+					 System.out.println(logDTO.getBeginDate());
 					 predicate.add(cb.greaterThanOrEqualTo(root.get("createDate").as(Date.class), logDTO.getBeginDate()));
 				 }
 				 if(logDTO.getEndDate()!=null && !"".equals(logDTO.getEndDate().toString())){
+					 System.out.println(logDTO.getEndDate());
 					 predicate.add(cb.lessThanOrEqualTo(root.get("createDate").as(Date.class), logDTO.getEndDate()));
 				 }
 				 //3.根据Predicate集合生成并返回and 连接的 where条件

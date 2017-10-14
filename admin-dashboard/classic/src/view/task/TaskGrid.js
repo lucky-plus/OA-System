@@ -1,7 +1,4 @@
-﻿/**
-*订单模块子视图
-*/
-Ext.define('Admin.view.task.TaskGrid', {		//1.修改文件路径
+﻿Ext.define('Admin.view.task.TaskGrid', {		//1.修改文件路径
       extend: 'Ext.grid.Panel',					//2.继承的组件类型
 	//3.重写继承组件的属性：
     xtype: 'taskGrid',
@@ -10,56 +7,90 @@ Ext.define('Admin.view.task.TaskGrid', {		//1.修改文件路径
 	id:'taskGrid',
 	selModel: Ext.create('Ext.selection.CheckboxModel'),
 	columns: [
-		{text: '操作时间' ,sortable:true ,dataIndex:'createDate' ,width:150,
+		{text: 'taskId'	,sortable:false ,dataIndex:'taskId',hidden:true},
+		{text: '任务名称', sortable:false ,dataIndex:'taskName' ,width:100},
+		{text: '任务发布时间' ,sortable:true ,dataIndex:'createDate' ,width:100,
 		 renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
-		{text: '操作类型'  ,sortable:true ,dataIndex:'operation'  ,width:80},
-		{text: '操作人', sortable:true ,dataIndex:'userName' ,width:80},
-		{text: '具体操作', sortable:true ,dataIndex:'content' ,flex:1}
+		{text: '接收者', sortable:false ,dataIndex:'userName' ,width:100},
+		{text: '发布者', sortable:false ,dataIndex:'createName' ,width:100},
+		{text: '状态'  ,sortable:false ,dataIndex:'taskState'  ,flex:1}
 	],	
 
 
 	tbar: Ext.create('Ext.Toolbar', {
 			id: 'taskCondition',
-			items:[ {xtype:'tbtext',
-				text:'操作人：'
-			},{
-				xtype:'textfield',
-				width:100,
-				itemsId:'userName'
-				
-			},{xtype:'tbtext',
-				text:'操作类型：'
-			},{
-				xtype:'textfield',
-				width:100,
-				itemsId:'operation'
-				
-			},{xtype:'tbtext',
-				text:'时间：'
-			},{
-				 xtype:'datefield',  
-                    itemId:'beginDate',  
-                    format:'Y-m-d',  
-					value:'1972-01-01'
+			// items:[
+			// {
+			// 	items:[ {
+			// 		text: '发布任务',
+			// 		id: 'taskAddButton',
+			// 		iconCls:'x-fa fa-plus',
+			// 		ui:'soft-blue',
+			// 		//handler: 'roleGridAdd'
+			// 		listeners:{
+			// 			click:'taskGridAdd'
+			// 		}
+			// 	},'-', {
+			// 		text: '修改',
+			// 		id: 'taskUpdateButton',
+			// 		iconCls:'x-fa fa-edit',
+			// 		handler: 'taskGridEdit'
+			// 	},'-', {
+			// 		text: '删除',
+			// 		id: 'taskDeleteButton',
+			// 		iconCls:'x-fa fa-trash',
+			// 		handler: 'taskGridDelete'
+			// 	}]
+			// },{
+				items:[ {xtype:'tbtext',
+					text:'接收者：'
+				},{
+					xtype:'textfield',
+					width:100,
+					itemsId:'userName'
 					
-			
-			},{xtype:'tbtext',
-				text:'至：'
-			},{
-				xtype:'datefield',  
-                    itemId:'endDate',  
-                    format:'Y-m-d',  
-					value:new Date(),
-					listeners: {  
-					focus: function(){
-						var cc = Ext.getCmp('taskCondition').items.getAt(7).getValue();
-						this.setMinValue(cc);
-						}  	
-					}
-			},{
-				text: '查找',
-				handler:'taskGridFind'
-			}]
+				},{xtype:'tbtext',
+					text:'发布者：'
+				},{
+					xtype:'textfield',
+					width:100,
+					itemsId:'createName'
+					
+				},{xtype:'tbtext',
+					text:'状态：'
+				},{
+					xtype:'textfield',
+					width:100,
+					itemsId:'taskState'
+					
+				},{xtype:'tbtext',
+					text:'发布时间：'
+				},{
+					 xtype:'datefield',  
+	                    itemId:'beginDate',  
+	                    format:'Y-m-d',  
+						value:'2017-01-01'
+						
+				
+				},{xtype:'tbtext',
+					text:'至：'
+				},{
+					xtype:'datefield',  
+	                    itemId:'endDate',  
+	                    format:'Y-m-d',  
+						value:new Date(),
+						listeners: {  
+						focus: function(){
+							var cc = Ext.getCmp('taskCondition').items.getAt(7).getValue();
+							this.setMinValue(cc);
+							}  	
+						}
+				},{
+					text: '查找',
+					handler:'taskGridFind'
+				}]
+			// }
+			// ]
 	}),
 	
 	

@@ -1,7 +1,4 @@
-﻿/**
-*订单模块子视图
-*/
-Ext.define('Admin.view.log.LogGrid', {		//1.修改文件路径
+﻿Ext.define('Admin.view.log.LogGrid', {		//1.修改文件路径
       extend: 'Ext.grid.Panel',					//2.继承的组件类型
 	//3.重写继承组件的属性：
     xtype: 'logGrid',
@@ -37,22 +34,24 @@ Ext.define('Admin.view.log.LogGrid', {		//1.修改文件路径
 			},{xtype:'tbtext',
 				text:'时间：'
 			},{
-				 xtype:'datefield',  
+				 xtype:'datefield', 
+				 editable:false,//禁止手工修改 
                     itemId:'beginDate',  
                     format:'Y-m-d',  
-					value:'1972-01-01'
+					value:'2017-01-01'
 					
 			
 			},{xtype:'tbtext',
 				text:'至：'
 			},{
-				xtype:'datefield',  
+				xtype:'datefield',
+				editable:false,//禁止手工修改 
                     itemId:'endDate',  
                     format:'Y-m-d',  
 					value:new Date(),
 					listeners: {  
 					focus: function(){
-						var cc = Ext.getCmp('logCondition').items.getAt(7).getValue();
+						var cc = Ext.getCmp('logCondition').items.getAt(5).getValue();
 						this.setMinValue(cc);
 						}  	
 					}
