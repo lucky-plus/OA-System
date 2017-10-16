@@ -51,6 +51,10 @@ Ext.define('Admin.view.role.UpdateTaskGridForm', {
 		name:'createDate',
 	},{
 		xtype: 'hidden',
+		fieldLabel: 'completeDate',
+		name:'completeDate',
+	},{
+		xtype: 'hidden',
 		fieldLabel: 'createName',
 		name:'createName',
 	},{

@@ -23,6 +23,7 @@ public class Task {
 	private String taskName;
 	private String taskText;
 	private Date createDate;
+	private Date completeDate;
 	private String taskState;
 	private String createId;		//发布者ID
 	private String createName;		//发布者姓名
@@ -47,6 +48,11 @@ public class Task {
 	public Date getCreateDate() {
 		return createDate;
 	}
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+	public Date getCompleteDate() {
+		return completeDate;
+	}
 	
 	public String getTaskState() {
 		return taskState;
@@ -65,7 +71,10 @@ public class Task {
 	public UserInfornation getUser() {
 		return user;
 	}
-	
+
+	public void setCompleteDate(Date completeDate) {
+		this.completeDate = completeDate;
+	}
 	public void setTaskId(Integer taskId) {
 		this.taskId = taskId;
 	}

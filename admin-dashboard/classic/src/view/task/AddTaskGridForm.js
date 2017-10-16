@@ -31,37 +31,22 @@ Ext.define('Admin.view.role.AddTaskGridForm', {
     },
     items: [{
 		xtype: 'hidden',
-		fieldLabel: 'taskId',
-		//allowBlank: false,
-		name:'taskId'
-	},{
-		xtype: 'hidden',
 		fieldLabel: 'createId',
-		//allowBlank: false,
-		name:'createId'
-		// ,value: loginUserId
-	},{
-		xtype: 'hidden',
-		fieldLabel: 'userId',
-		//allowBlank: false,
-		name:'userId'
-	},{
-		xtype: 'hidden',
-		fieldLabel: 'createDate',
-		name:'createDate',
+		name:'createId',
+		value: loginUserId
 	},{
 		xtype: 'hidden',
 		fieldLabel: 'createName',
 		name:'createName',
+		value: loginUser
 	},{
 		xtype: 'textfield',
 		fieldLabel: '任务名称',
 		name:'taskName'
 	},{
-		xtype: 'textfield',  
-		editable:false,
-		fieldLabel: '接收者',
-		name:'userName'
+		xtype: 'textfield',
+		fieldLabel: 'userId',
+		name:'userId'
 	},{
         xtype: 'htmleditor',
         buttonDefaults: {

@@ -1,6 +1,7 @@
 package com.oa.business.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class TaskServices implements ITaskService {
 	public void save(TaskDTO dto) {
 		Task entity = new Task();
 		TaskDTO.dtoToEntity(dto, entity);
+		if(entity.getTaskId() == null) {
+			entity.setCreateDate(new Date());
+		}
 		taskDao.save(entity);
 	}
 
@@ -66,7 +70,8 @@ public class TaskServices implements ITaskService {
 
 	@Override
 	public void updateTaskState(Integer taskId, String taskState) {
-		taskDao.updateTaskState(taskId, taskState);
+		Date completeDate = new Date();
+		taskDao.updateTaskState(taskId, taskState, completeDate);
 	}
 
 }

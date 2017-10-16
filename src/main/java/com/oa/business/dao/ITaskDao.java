@@ -1,5 +1,7 @@
 package com.oa.business.dao;
 
+import java.util.Date;
+
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +14,7 @@ public interface ITaskDao extends PagingAndSortingRepository<Task, Integer>, Jpa
 	
 	@Modifying
 	@Transactional
-	@Query("update Task t set t.taskState = ?2 where t.taskId = ?1")
-	public void updateTaskState(Integer taskId, String taskState);
+	@Query("update Task t set t.taskState = ?2, t.completeDate = ?3 where t.taskId = ?1")
+	public void updateTaskState(Integer taskId, String taskState, Date completeDate);
 	
 }

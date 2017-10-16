@@ -9,8 +9,10 @@
     {text: 'taskId' ,sortable:false ,dataIndex:'taskId',hidden:true},
     {text: 'createId' ,sortable:false ,dataIndex:'createId',hidden:true},
     {text: 'userId' ,sortable:false ,dataIndex:'userId',hidden:true},
-    {text: '任务名称', sortable:false ,dataIndex:'taskName' ,width:200},
-    {text: '任务发布时间' ,sortable:true ,dataIndex:'createDate' ,width:250,
+    {text: '任务名称', sortable:false ,dataIndex:'taskName' ,width:150},
+    {text: '任务发布时间' ,sortable:true ,dataIndex:'createDate' ,width:200,
+     renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
+    {text: '任务完成时间' ,sortable:true ,dataIndex:'completeDate' ,width:200,
      renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
     {text: '接收者', sortable:false ,dataIndex:'userName' ,width:150},
     {text: '发布者', sortable:false ,dataIndex:'createName' ,width:150},
@@ -18,7 +20,7 @@
     {
       xtype: 'actioncolumn',
       text: '终止任务',
-      width: 200,
+      width: 150,
       tdCls: 'action', 
         items: [{
           icon:'resources/images/icons/delete2.png',

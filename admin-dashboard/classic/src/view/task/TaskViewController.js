@@ -19,9 +19,9 @@ Ext.define('Admin.view.task.TaskViewController', {
         if (selModel.hasSelection()) {//判断是否选中记录
            var record = selModel.getSelection()[0];//获取选中的第一条记录
            //创建修改window和form
-		   var orderWindow = Ext.widget('editTaskGridForm',{
+		   var orderWindow = Ext.widget('taskGridWindow',{
 				title:'修改任务',
-				items: [{xtype: 'taskGridForm'}]
+				items: [{xtype: 'editTaskGridForm'}]
 			});
 		   		//让form加载选中记录
            orderWindow.down("form").getForm().loadRecord(record);
@@ -76,7 +76,8 @@ Ext.define('Admin.view.task.TaskViewController', {
 			success : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 
 				win.close();
-				Ext.getCmp('taskGrid').store.reload();
+				var grid = btn.up('gridpanel')
+				grid.store.reload();
 			}, 
 			failure : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 
