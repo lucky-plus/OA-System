@@ -36,10 +36,10 @@ public class TaskController {
 	{
 		try {
 			taskService.delete(ids);
-			 return new ExtjsAjaxResult(true,"操作成功！");
+			return new ExtjsAjaxResult(true,"操作成功！");
 		} catch (Exception e) {
-			 e.printStackTrace();
-			 return new ExtjsAjaxResult(false,"操作失败！");
+			e.printStackTrace();
+			return new ExtjsAjaxResult(false,"操作失败！");
 		}
 	}
 	
@@ -51,6 +51,17 @@ public class TaskController {
 	@RequestMapping("/findByCondition")
 	public @ResponseBody Page<TaskDTO> findByCondition(TaskDTO taskDTO, ExtjsPageable pageable) {
 		return taskService.findAll(TaskDTO.getWhereClause(taskDTO), pageable.getPageable());
+	}
+	
+	@RequestMapping("/updateTaskState")
+	public @ResponseBody ExtjsAjaxResult updateTaskState(Integer taskId, String taskState) {
+		try {
+			taskService.updateTaskState(taskId, taskState);
+			return new ExtjsAjaxResult(true,"操作成功！");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ExtjsAjaxResult(false,"操作失败！");
+		}
 	}
 	
 }

@@ -64,4 +64,9 @@ public class TaskServices implements ITaskService {
 		return dtoPage;
 	}
 
+	@Override
+	public void updateTaskState(Integer taskId, String taskState) {
+		taskDao.updateTaskState(taskId, taskState);
+	}
+
 }

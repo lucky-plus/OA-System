@@ -14,4 +14,6 @@ public interface ITaskService {
 	public void delete(Integer[] ids);
 	public Page<TaskDTO> findAll(Pageable pageable);
 	public Page<TaskDTO> findAll(Specification<Task> spec, Pageable pageable);
+	
+	public void updateTaskState(Integer taskId, String taskState);
 }

@@ -3,8 +3,8 @@
 	//3.重写继承组件的属性：
     xtype: 'task',
 
-    //controller: 'taskViewController',			//视图绑定viewController
-    //viewModel : {type: 'taskViewModel'},	//视图绑定viewModel
+    controller: 'taskViewController',			//视图绑定viewController
+    viewModel : {type: 'taskViewModel'},	//视图绑定viewModel
     
     layout:'fit',
     margin: '20 20 20 20',

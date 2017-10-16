@@ -12,6 +12,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oa.business.entity.Task;
 import com.oa.staff.entity.UserInfornation;
 
@@ -40,7 +41,7 @@ public class TaskDTO {
 
 	public static void dtoToEntity(TaskDTO dto, Task entity) {
 		BeanUtils.copyProperties(dto, entity);
-		if(dto.getUserId() != null && "".equals(dto.getUserId())) {
+		if(dto.getUserId() != null && !"".equals(dto.getUserId())) {
 			UserInfornation user = new UserInfornation();
 			user.setUserId(dto.getUserId());
 			entity.setUser(user);
@@ -65,9 +66,12 @@ public class TaskDTO {
 	public void setTaskText(String taskText) {
 		this.taskText = taskText;
 	}
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
 	public Date getCreateDate() {
 		return createDate;
 	}
+	
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
@@ -128,6 +132,9 @@ public class TaskDTO {
 				 }
 				 if(taskDTO.getUserName()!=null && !"".equals(taskDTO.getUserName())) {
 					 predicate.add(cb.like(root.get("user").get("userName").as(String.class),"%"+ taskDTO.getUserName()+"%"));
+				 }
+				 if(taskDTO.getTaskState() !=null && !"".equals(taskDTO.getTaskState())) {
+					 predicate.add(cb.equal(root.get("taskState").as(String.class), taskDTO.getTaskState()));
 				 }
 				 if(taskDTO.getBeginDate()!=null && !"".equals(taskDTO.getBeginDate().toString())) {
 					 System.out.println(taskDTO.getBeginDate());
