@@ -1,8 +1,9 @@
 ﻿Ext.define('Admin.view.task.ReleaseTaskGrid', {    //1.修改文件路径
       extend: 'Ext.grid.Panel',         //2.继承的组件类型
   //3.重写继承组件的属性：
-    xtype: 'releaseTaskGrid',
-  title:'<b>日志记录</b>',
+  xtype: 'releaseTaskGrid',
+  id:'releaseTaskGrid',
+  title:'<b>发布任务</b>',
   bind:'{taskLists}',
   selModel: Ext.create('Ext.selection.CheckboxModel'),
   columns: [
@@ -14,18 +15,29 @@
      renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
     {text: '任务完成时间' ,sortable:true ,dataIndex:'completeDate' ,width:200,
      renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
-    {text: '接收者', sortable:false ,dataIndex:'userName' ,width:150},
-    {text: '发布者', sortable:false ,dataIndex:'createName' ,width:150},
-    {text: '状态'  ,sortable:false ,dataIndex:'taskState'  ,flex:150},
+    {text: '接收者', sortable:false ,dataIndex:'userName' ,width:120},
+    {text: '发布者', sortable:false ,dataIndex:'createName' ,width:120},
+    {text: '状态'  ,sortable:false ,dataIndex:'taskState'  ,flex:120},
     {
       xtype: 'actioncolumn',
       text: '终止任务',
-      width: 150,
+      width: 100,
       tdCls: 'action', 
         items: [{
           icon:'resources/images/icons/delete2.png',
           tooltip: '终止任务',
           handler: ('setStateStop')
+      }]
+    },
+    {
+      xtype: 'actioncolumn',
+      text: '查看详情',
+      width: 100,
+      tdCls: 'action',
+        items: [{
+          icon:'resources/images/icons/search.png',
+          tooltip: '查看详情',
+          handler: ('showTaskText')
       }]
     }
   ], 

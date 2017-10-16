@@ -31,6 +31,7 @@ public class TaskServices implements ITaskService {
 		TaskDTO.dtoToEntity(dto, entity);
 		if(entity.getTaskId() == null) {
 			entity.setCreateDate(new Date());
+			entity.setTaskState("未完成");
 		}
 		taskDao.save(entity);
 	}
@@ -70,8 +71,12 @@ public class TaskServices implements ITaskService {
 
 	@Override
 	public void updateTaskState(Integer taskId, String taskState) {
-		Date completeDate = new Date();
-		taskDao.updateTaskState(taskId, taskState, completeDate);
+		if("已完成".equals(taskState)) {
+			Date completeDate = new Date();
+			taskDao.updateTaskState(taskId, taskState, completeDate);
+		}else if("已终止".equals(taskState)) {
+			taskDao.updateTaskState(taskId, taskState);
+		}
 	}
 
 }

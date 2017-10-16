@@ -16,5 +16,10 @@ public interface ITaskDao extends PagingAndSortingRepository<Task, Integer>, Jpa
 	@Transactional
 	@Query("update Task t set t.taskState = ?2, t.completeDate = ?3 where t.taskId = ?1")
 	public void updateTaskState(Integer taskId, String taskState, Date completeDate);
+
+	@Modifying
+	@Transactional
+	@Query("update Task t set t.taskState = ?2 where t.taskId = ?1")
+	public void updateTaskState(Integer taskId, String taskState);
 	
 }

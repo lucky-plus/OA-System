@@ -76,8 +76,7 @@ Ext.define('Admin.view.task.TaskViewController', {
 			success : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 
 				win.close();
-				var grid = btn.up('gridpanel')
-				grid.store.reload();
+				Ext.getCmp('releaseTaskGrid').store.reload();
 			}, 
 			failure : function(form, action) { 
 				Ext.Msg.alert("提示",action.result.msg); 
@@ -236,6 +235,16 @@ Ext.define('Admin.view.task.TaskViewController', {
 	    grid.getStore().reload();
 		}
 	    })
-   }
+   },
+
+   showTaskText: function(grid, rowIndex, colIndex) {
+	  var record = grid.getStore().getAt(rowIndex);
+	  var taskName = record.data.taskName;
+	  var taskText = record.data.taskText;
+	  var taskWindow = Ext.widget('showTaskTextWindow',{
+	        title:'任务详情',
+	        html:'<h1 align="center">'+taskName+'</h1>'+'<p>'+taskText+'</p>'
+	      });
+	}
 
 });
