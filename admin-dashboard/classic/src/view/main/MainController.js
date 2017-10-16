@@ -156,6 +156,8 @@ Ext.define('Admin.view.main.MainController', {
             //动态加载菜单
             var rootTree = Ext.data.StoreManager.lookup('NavigationTree');
             
+            var modules = eval(loginUserModules);
+
             rootTree.on(
               "load",function(){
                 this.getRoot().appendChild(
@@ -191,18 +193,156 @@ Ext.define('Admin.view.main.MainController', {
                 );
               }
             );
+
+            var taskFlag = 1;
+            for (var i = 0; i < modules.length; i++) {
+                var module1 = modules[i];
+                if(module1.modelName == "任务--发布任务") {
+                  taskFlag = 2;
+                  for(var j = 0; j < modules.length; j++) {
+                      var module2 = modules[j];
+                      if(module2.modelName == "任务--查看所有任务") {
+                          taskFlag = 4;
+                          break;
+                      }
+                  }
+                  break;
+                } else if(module1.modelName == "任务--查看所有任务") {
+                  taskFlag = 3;
+                  for(var k = 0; k < modules.length; k++) {
+                      var module3 = modules[k];
+                      if(module3.modelName == "任务--发布任务") {
+                          taskFlag = 4;
+                          break;
+                      }
+                  }
+                  break;
+                }
+            }
+
+          if(taskFlag == 4) {
             rootTree.on(
               "load",function(){
                 this.getRoot().appendChild(
                   {
                       text: '任务管理',
                       iconCls: 'x-fa fa-tasks',
-                      viewType: 'task',
-                      leaf: true
-                  }
+                      expanded: false,
+                      selectable: false,
+                      //routeId: 'pages-parent',
+                      //id: 'pages-parent',
+
+                      children: [
+                        {
+                            text: '我的任务',
+                            iconCls: 'x-fa fa-align-left',
+                            viewType: 'mytask',
+                            leaf: true
+                        },
+                        {
+                            text: '发布任务',
+                            iconCls: 'x-fa  fa-indent',
+                            viewType: 'releasetask',
+                            leaf: true
+                        },
+                        {
+                            text: '所有任务',
+                            iconCls: 'x-fa fa-list ',
+                            viewType: 'alltasks',
+                            leaf: true
+                        }
+                      ]
+                    }
                 );
               }
             );
+          } else if(taskFlag == 3) {
+            rootTree.on(
+              "load",function(){
+                this.getRoot().appendChild(
+                  {
+                      text: '任务管理',
+                      iconCls: 'x-fa fa-tasks',
+                      expanded: false,
+                      selectable: false,
+                      //routeId: 'pages-parent',
+                      //id: 'pages-parent',
+
+                      children: [
+                        {
+                            text: '我的任务',
+                            iconCls: 'x-fa fa-align-left',
+                            viewType: 'mytask',
+                            leaf: true
+                        },
+                        {
+                            text: '所有任务',
+                            iconCls: 'x-fa fa-list ',
+                            viewType: 'alltasks',
+                            leaf: true
+                        }
+                      ]
+                    }
+                );
+              }
+            );
+          } else if(taskFlag == 2) {
+            rootTree.on(
+              "load",function(){
+                this.getRoot().appendChild(
+                  {
+                      text: '任务管理',
+                      iconCls: 'x-fa fa-tasks',
+                      expanded: false,
+                      selectable: false,
+                      //routeId: 'pages-parent',
+                      //id: 'pages-parent',
+
+                      children: [
+                        {
+                            text: '我的任务',
+                            iconCls: 'x-fa fa-align-left',
+                            viewType: 'mytask',
+                            leaf: true
+                        },
+                        {
+                            text: '发布任务',
+                            iconCls: 'x-fa  fa-indent',
+                            viewType: 'releasetask',
+                            leaf: true
+                        }
+                      ]
+                    }
+                );
+              }
+            );
+          } else if(taskFlag == 1) {
+            rootTree.on(
+              "load",function(){
+                this.getRoot().appendChild(
+                  {
+                      text: '任务管理',
+                      iconCls: 'x-fa fa-tasks',
+                      expanded: false,
+                      selectable: false,
+                      //routeId: 'pages-parent',
+                      //id: 'pages-parent',
+
+                      children: [
+                        {
+                            text: '我的任务',
+                            iconCls: 'x-fa fa-align-left',
+                            viewType: 'mytask',
+                            leaf: true
+                        }
+                      ]
+                    }
+                );
+              }
+            );
+          }
+
+
 			rootTree.on(
               "load",function(){
                 this.getRoot().appendChild(
@@ -238,7 +378,7 @@ Ext.define('Admin.view.main.MainController', {
                 );
               }
             );
-            var modules = eval(loginUserModules);
+
             for(var i = 0; i < modules.length; i++) {
               var module = modules[i];
               if(module.modelName == "用户管理") {

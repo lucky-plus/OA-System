@@ -26,7 +26,7 @@
 				reference: 'addressGridSearchText'
 			},{xtype:'tbtext',
 				text:'所属部门'
-			},{
+			},'-',{
 			xtype: 'combobox',
 			name:'deptId',
 			id:'deptComBoBox1',
