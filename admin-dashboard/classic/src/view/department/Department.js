@@ -7,7 +7,7 @@ Ext.define('Admin.view.department.Department', {		//1.修改文件路径
     extend: 'Ext.container.Container',	//2.继承的组件类型
 	xtype: 'department',
 	height:Ext.Element.getViewportHeight()-200,//必须设置高，否则无法使用border布局
-    //controller: 'orderViewController',		
+    controller: 'departmentViewController',		
     viewModel : {type: 'departmentViewModel'},	
 	requires: [
         'Ext.layout.container.Border'
@@ -22,7 +22,7 @@ Ext.define('Admin.view.department.Department', {		//1.修改文件路径
 		margins: '5 0 0 0',
 		cmargins: '5 5 0 0',
 		split: true,
-		xtype: 'departmentGrid'
+		xtype: 'departmentTree'
 	},{
 		title: '职位设置',
 		region:'center',

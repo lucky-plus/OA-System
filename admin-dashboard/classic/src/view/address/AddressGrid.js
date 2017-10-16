@@ -29,6 +29,7 @@
 			},{
 			xtype: 'combobox',
 			name:'deptId',
+			id:'deptComBoBox1',
 			reference: 'addressGridSearchField',
 			store : 
 			new Ext.data.Store( {
@@ -38,9 +39,15 @@
 				reader : {type:'json'},//需要显示的数据实体字段
 				autoLoad : true
 				}),
+		    listeners:{
+				select: function(){
+					this.Store.reload();
+				}
+			},
 			queryMode: 	  'local',
 			displayField: 'deptName',
-			valueField:   'deptId'
+			valueField:   'deptId',
+			
 			
 			},{
 				text:'查找',

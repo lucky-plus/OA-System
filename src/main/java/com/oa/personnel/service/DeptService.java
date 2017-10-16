@@ -1,5 +1,6 @@
 package com.oa.personnel.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.oa.personnel.dao.IDeptDao;
 import com.oa.personnel.entity.Department;
+import com.oa.personnel.web.TreeNode;
 
 @Service
 public class DeptService implements IDeptService {
@@ -35,7 +37,12 @@ public class DeptService implements IDeptService {
 
 	@Override
 	public List<Department> findAll() {
-		return (List<Department>) deptDao.findAll();
+		List <Department> deptList=(List<Department>) deptDao.findAll();
+		for(Department entity: deptList) {
+			entity.setParentNode(null);
+			entity.setChildNodes(null);
+		}
+		return deptList;
 	}
 
 	@Override
@@ -48,4 +55,43 @@ public class DeptService implements IDeptService {
 		return deptDao.findAll(deptName, pageable);
 	}
 
+
+	public List<TreeNode> findNodes(Integer parentId) 
+	{
+		List<TreeNode> nodeList = new ArrayList<TreeNode>();
+		List<Department> lists;
+		if(parentId==null) {
+			lists =  deptDao.findParentNodes();
+		}else {
+			lists =  deptDao.findChildNodes(parentId);
+		}
+		for(Department d : lists) {
+			TreeNode node  = new TreeNode();
+			node.setId(d.getDeptId());
+			node.setText(d.getDeptName());
+			if(d.getChildNodes()!=null) {
+				if(d.getChildNodes().size()>0) {
+					node.setLeaf(false);//设置为父节点
+				}else {
+					node.setLeaf(true);//设置为子节点
+				}
+			}
+			nodeList.add(node);
+		}
+		return nodeList;
+	}
+
+	@Override
+	public Department findOne(Integer id) {
+		return deptDao.findOne(id);
+	}
+
+	@Override
+	public void delete(Department dept) {
+		 deptDao.delete(dept);
+		
+	}
+
+
+	
 }

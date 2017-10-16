@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oa.personnel.entity.Department;
@@ -21,10 +22,20 @@ public class DeptController {
 	private IDeptService deptService;
 	
 	@RequestMapping("/saveOrUpdate")
-	public @ResponseBody ExtjsAjaxResult saveOrUpdate(Department dept) {
+	public @ResponseBody ExtjsAjaxResult saveOrUpdate(Department dept,Integer parentId) {
 		try {
-			deptService.save(dept);
-			return new ExtjsAjaxResult(true,"操作成功！");
+			if(parentId==null) {
+				deptService.save(dept);
+				return new ExtjsAjaxResult(true,"操作成功！");
+			}
+			else {
+			   deptService.save(dept);
+			   Department parent=deptService.findOne(parentId);
+			   parent.getChildNodes().add(dept);
+	           dept.setParentNode(parent);
+	           deptService.save(dept);
+				return new ExtjsAjaxResult(true,"操作成功！");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ExtjsAjaxResult(false,"操作失败！");
@@ -58,5 +69,16 @@ public class DeptController {
 	public @ResponseBody List<Department> findDepts() {
 		return deptService.findAll();
 	}
+	
+	@RequestMapping("/findNodes")
+	public @ResponseBody List<TreeNode> findNodesByParentId(@RequestParam("node") String node)
+	{
+		if(node.equals("root")) {
+			return deptService.findNodes(null);
+		}else {
+			return deptService.findNodes(Integer.parseInt(node));
+		}
+	}
+
 	
 }

@@ -84801,6 +84801,42 @@ Ext.define('Ext.theme.triton.selection.CheckboxModel', {override:'Ext.selection.
     header.getView().ownerGrid.el.syncRepaint();
   }
 }});
+Ext.define('Ext.selection.TreeModel', {extend:Ext.selection.RowModel, alias:'selection.treemodel', selectOnExpanderClick:false, constructor:function(config) {
+  var me = this;
+  me.callParent([config]);
+  if (me.pruneRemoved) {
+    me.pruneRemoved = false;
+    me.pruneRemovedNodes = true;
+  }
+}, getStoreListeners:function() {
+  var me = this, result = me.callParent();
+  result.noderemove = me.onNodeRemove;
+  return result;
+}, onNodeRemove:function(parent, node, isMove) {
+  if (!isMove) {
+    var toDeselect = [];
+    this.gatherSelected(node, toDeselect);
+    if (toDeselect.length) {
+      this.deselect(toDeselect);
+    }
+  }
+}, pruneRemovedOnRefresh:function() {
+  return this.pruneRemovedNodes;
+}, vetoSelection:function(e) {
+  var view = this.view, select = this.selectOnExpanderClick, veto = !select && e.type === 'click' && e.getTarget(view.expanderSelector || view.lockingPartner && view.lockingPartner.expanderSelector);
+  return veto || this.callParent([e]);
+}, privates:{gatherSelected:function(node, toDeselect) {
+  var childNodes = node.childNodes, i, len, child;
+  if (this.selected.containsKey(node.id)) {
+    toDeselect.push(node);
+  }
+  if (childNodes) {
+    for (i = 0, len = childNodes.length; i < len; ++i) {
+      child = childNodes[i];
+      this.gatherSelected(child, toDeselect);
+    }
+  }
+}}});
 Ext.define('Ext.slider.Thumb', {overCls:Ext.baseCSSPrefix + 'slider-thumb-over', constructor:function(config) {
   var me = this;
   Ext.apply(me, config || {}, {cls:Ext.baseCSSPrefix + 'slider-thumb', constrain:false});
@@ -86109,6 +86145,776 @@ Ext.define('Ext.tab.Panel', {extend:Ext.panel.Panel, alias:'widget.tabpanel', al
 }}});
 Ext.define('Ext.toolbar.Fill', {extend:Ext.Component, alias:'widget.tbfill', alternateClassName:'Ext.Toolbar.Fill', ariaRole:'presentation', isFill:true, flex:1});
 Ext.define('Ext.toolbar.Spacer', {extend:Ext.Component, alias:'widget.tbspacer', alternateClassName:'Ext.Toolbar.Spacer', baseCls:Ext.baseCSSPrefix + 'toolbar-spacer', ariaRole:'presentation'});
+Ext.define('Ext.tree.Column', {extend:Ext.grid.column.Column, alias:'widget.treecolumn', tdCls:Ext.baseCSSPrefix + 'grid-cell-treecolumn', autoLock:true, lockable:false, draggable:false, hideable:false, iconCls:Ext.baseCSSPrefix + 'tree-icon', checkboxCls:Ext.baseCSSPrefix + 'tree-checkbox', elbowCls:Ext.baseCSSPrefix + 'tree-elbow', expanderCls:Ext.baseCSSPrefix + 'tree-expander', textCls:Ext.baseCSSPrefix + 'tree-node-text', innerCls:Ext.baseCSSPrefix + 'grid-cell-inner-treecolumn', customIconCls:Ext.baseCSSPrefix + 
+'tree-icon-custom', isTreeColumn:true, cellTpl:['\x3ctpl for\x3d"lines"\x3e', '\x3cdiv class\x3d"{parent.childCls} {parent.elbowCls}-img ', '{parent.elbowCls}-\x3ctpl if\x3d"."\x3eline\x3ctpl else\x3eempty\x3c/tpl\x3e" role\x3d"presentation"\x3e\x3c/div\x3e', '\x3c/tpl\x3e', '\x3cdiv class\x3d"{childCls} {elbowCls}-img {elbowCls}', '\x3ctpl if\x3d"isLast"\x3e-end\x3c/tpl\x3e\x3ctpl if\x3d"expandable"\x3e-plus {expanderCls}\x3c/tpl\x3e" role\x3d"presentation"\x3e\x3c/div\x3e', '\x3ctpl if\x3d"checked !\x3d\x3d null"\x3e', 
+'\x3cdiv role\x3d"button" {ariaCellCheckboxAttr}', ' class\x3d"{childCls} {checkboxCls}\x3ctpl if\x3d"checked"\x3e {checkboxCls}-checked\x3c/tpl\x3e"\x3e\x3c/div\x3e', '\x3c/tpl\x3e', '\x3ctpl if\x3d"glyph"\x3e', '\x3cspan class\x3d"{baseIconCls}" ', '\x3ctpl if\x3d"glyphFontFamily"\x3e', 'style\x3d"font-family:{glyphFontFamily}"', '\x3c/tpl\x3e', '\x3e{glyph}\x3c/span\x3e', '\x3ctpl else\x3e', '\x3ctpl if\x3d"icon"\x3e', '\x3cimg src\x3d"{blankUrl}"', '\x3ctpl else\x3e', '\x3cdiv', '\x3c/tpl\x3e', 
+' role\x3d"presentation" class\x3d"{childCls} {baseIconCls} {customIconCls} ', '{baseIconCls}-\x3ctpl if\x3d"leaf"\x3eleaf\x3ctpl else\x3e\x3ctpl if\x3d"expanded"\x3eparent-expanded\x3ctpl else\x3eparent\x3c/tpl\x3e\x3c/tpl\x3e {iconCls}" ', '\x3ctpl if\x3d"icon"\x3estyle\x3d"background-image:url({icon})"/\x3e\x3ctpl else\x3e\x3e\x3c/div\x3e\x3c/tpl\x3e', '\x3c/tpl\x3e', '\x3ctpl if\x3d"href"\x3e', '\x3ca href\x3d"{href}" role\x3d"link" target\x3d"{hrefTarget}" class\x3d"{textCls} {childCls}"\x3e{value}\x3c/a\x3e', 
+'\x3ctpl else\x3e', '\x3cspan class\x3d"{textCls} {childCls}"\x3e{value}\x3c/span\x3e', '\x3c/tpl\x3e'], uiFields:{checked:1, icon:1, iconCls:1}, rowFields:{expanded:1, loaded:1, expandable:1, leaf:1, loading:1, qtip:1, qtitle:1, cls:1}, initComponent:function() {
+  var me = this;
+  me.rendererScope = me.scope;
+  me.setupRenderer();
+  me.innerRenderer = me.renderer;
+  me.renderer = me.treeRenderer;
+  me.callParent();
+  me.scope = me;
+  me.hasCustomRenderer = me.innerRenderer && me.innerRenderer.length > 1;
+}, treeRenderer:function(value, metaData, record, rowIdx, colIdx, store, view) {
+  var me = this, cls = record.get('cls'), rendererData;
+  if (metaData && cls) {
+    metaData.tdCls += ' ' + cls;
+  }
+  rendererData = me.initTemplateRendererData(value, metaData, record, rowIdx, colIdx, store, view);
+  return me.lookupTpl('cellTpl').apply(rendererData);
+}, initTemplateRendererData:function(value, metaData, record, rowIdx, colIdx, store, view) {
+  var me = this, innerRenderer = me.innerRenderer, data = record.data, parent = record.parentNode, rootVisible = view.rootVisible, lines = [], parentData, glyph, glyphFontFamily;
+  while (parent && (rootVisible || parent.data.depth > 0)) {
+    parentData = parent.data;
+    lines[rootVisible ? parentData.depth : parentData.depth - 1] = parent.isLastVisible() ? 0 : 1;
+    parent = parent.parentNode;
+  }
+  if (metaData) {
+    metaData.iconCls = metaData.icon = metaData.glyph = null;
+  } else {
+    metaData = {};
+  }
+  value = innerRenderer ? innerRenderer.apply(me.rendererScope, arguments) : value;
+  glyph = metaData.glyph || data.glyph;
+  if (glyph) {
+    glyph = Ext.Glyph.fly(glyph);
+    glyphFontFamily = glyph.fontFamily;
+    glyph = glyph.character;
+  }
+  return {record:record, baseIconCls:me.iconCls, customIconCls:data.icon || data.iconCls ? me.customIconCls : '', glyph:glyph, glyphFontFamily:glyphFontFamily, iconCls:metaData.iconCls || data.iconCls, icon:metaData.icon || data.icon, checkboxCls:me.checkboxCls, checked:data.checked, elbowCls:me.elbowCls, expanderCls:me.expanderCls, textCls:me.textCls, leaf:data.leaf, expandable:record.isExpandable(), expanded:data.expanded, isLast:record.isLastVisible(), blankUrl:Ext.BLANK_IMAGE_URL, href:data.href, 
+  hrefTarget:data.hrefTarget, lines:lines, metaData:metaData, childCls:me.getChildCls ? me.getChildCls() + ' ' : '', value:value || store.defaultRootText};
+}, shouldUpdateCell:function(record, changedFieldNames) {
+  var me = this, i = 0, len, field;
+  if (me.hasCustomRenderer) {
+    return 1;
+  }
+  if (changedFieldNames) {
+    len = changedFieldNames.length;
+    for (; i < len; ++i) {
+      field = changedFieldNames[i];
+      if (me.rowFields[field]) {
+        return 1;
+      }
+      if (me.uiFields[field]) {
+        return 2;
+      }
+    }
+  }
+  return me.callParent([record, changedFieldNames]);
+}});
+Ext.define('Ext.tree.NavigationModel', {extend:Ext.grid.NavigationModel, alias:'view.navigation.tree', initKeyNav:function(view) {
+  var me = this, columns = me.view.ownerGrid.columns;
+  me.isTreeGrid = columns && columns.length > 1;
+  me.callParent([view]);
+  me.view.grid.on({columnschanged:me.onColumnsChanged, scope:me});
+}, onKeyNavCreate:function(keyNav) {
+  var fn = this.onAsterisk;
+  keyNav.map.addBinding([{key:'8', shift:true, handler:fn, scope:this}, {key:Ext.event.Event.NUM_MULTIPLY, handler:fn, scope:this}]);
+}, onColumnsChanged:function() {
+  this.isTreeGrid = this.view.ownerGrid.getVisibleColumnManager().getColumns().length > 1;
+}, onCellClick:function(view, cell, cellIndex, record, row, recordIndex, clickEvent) {
+  this.callParent([view, cell, cellIndex, record, row, recordIndex, clickEvent]);
+  return !clickEvent.nodeToggled;
+}, onKeyLeft:function(keyEvent) {
+  var me = this, view = keyEvent.view, record = me.record;
+  if (me.isTreeGrid && !keyEvent.ctrlKey) {
+    return me.callParent([keyEvent]);
+  }
+  if (keyEvent.position.column.isTreeColumn && record.isExpanded()) {
+    view.collapse(record);
+  } else {
+    record = record.parentNode;
+    if (record && !(record.isRoot() && !view.rootVisible)) {
+      me.setPosition(record, null, keyEvent);
+    }
+  }
+}, onKeyRight:function(keyEvent) {
+  var me = this, record = me.record;
+  if (me.isTreeGrid && !keyEvent.ctrlKey) {
+    return me.callParent([keyEvent]);
+  }
+  if (!record.isLeaf()) {
+    if (keyEvent.position.column.isTreeColumn && !record.isExpanded()) {
+      keyEvent.view.expand(record);
+    } else {
+      if (record.isExpanded()) {
+        record = record.childNodes[0];
+        if (record) {
+          me.setPosition(record);
+        }
+      }
+    }
+  }
+}, onKeyEnter:function(keyEvent) {
+  if (this.record.data.checked != null) {
+    this.toggleCheck(keyEvent);
+  } else {
+    this.callParent([keyEvent]);
+  }
+}, onKeySpace:function(keyEvent) {
+  if (this.record.data.checked != null) {
+    this.toggleCheck(keyEvent);
+  } else {
+    this.callParent([keyEvent]);
+  }
+}, toggleCheck:function(keyEvent) {
+  this.view.onCheckChange(keyEvent);
+}, onAsterisk:function(keyEvent) {
+  this.view.ownerGrid.expandAll();
+}});
+Ext.define('Ext.tree.View', {extend:Ext.view.Table, alias:'widget.treeview', config:{selectionModel:{type:'treemodel'}}, isTreeView:true, loadingCls:Ext.baseCSSPrefix + 'grid-tree-loading', expandedCls:Ext.baseCSSPrefix + 'grid-tree-node-expanded', leafCls:Ext.baseCSSPrefix + 'grid-tree-node-leaf', expanderSelector:'.' + Ext.baseCSSPrefix + 'tree-expander', checkboxSelector:'.' + Ext.baseCSSPrefix + 'tree-checkbox', expanderIconOverCls:Ext.baseCSSPrefix + 'tree-expander-over', nodeAnimWrapCls:Ext.baseCSSPrefix + 
+'tree-animator-wrap', ariaRole:'treegrid', loadMask:false, rootVisible:true, expandDuration:250, collapseDuration:250, toggleOnDblClick:true, stripeRows:false, treeRowTpl:['{%', 'this.processRowValues(values);', 'this.nextTpl.applyOut(values, out, parent);', '%}', {priority:10, processRowValues:function(rowValues) {
+  var record = rowValues.record, view = rowValues.view;
+  rowValues.rowAttr['data-qtip'] = record.get('qtip') || '';
+  rowValues.rowAttr['data-qtitle'] = record.get('qtitle') || '';
+  rowValues.rowAttr['aria-level'] = record.getDepth() + 1;
+  if (record.isLeaf()) {
+    rowValues.rowClasses.push(view.leafCls);
+  } else {
+    if (record.isExpanded()) {
+      rowValues.rowClasses.push(view.expandedCls);
+      rowValues.rowAttr['aria-expanded'] = true;
+    } else {
+      rowValues.rowAttr['aria-expanded'] = false;
+    }
+  }
+  if (record.isLoading()) {
+    rowValues.rowClasses.push(view.loadingCls);
+  }
+}}], initComponent:function() {
+  var me = this;
+  if (me.bufferedRenderer) {
+    me.animate = false;
+  } else {
+    if (me.initialConfig.animate === undefined) {
+      me.animate = Ext.enableFx;
+    }
+  }
+  me.store = me.panel.getStore();
+  me.onRootChange(me.store.getRoot());
+  me.animQueue = {};
+  me.animWraps = {};
+  me.callParent();
+  me.store.setRootVisible(me.rootVisible);
+  me.addRowTpl(me.lookupTpl('treeRowTpl'));
+}, onFillComplete:function(treeStore, fillRoot, newNodes) {
+  var me = this, store = me.store, start = store.indexOf(newNodes[0]);
+  fillRoot.triggerUIUpdate();
+  if (!newNodes.length || start === -1) {
+    return;
+  }
+  me.onAdd(me.store, newNodes, start);
+  me.refreshPartner();
+}, refreshPartner:function() {
+  var partner = this.lockingPartner;
+  if (partner) {
+    partner.refresh();
+  }
+}, afterRender:function() {
+  var me = this;
+  me.callParent();
+  me.el.on({scope:me, delegate:me.expanderSelector, mouseover:me.onExpanderMouseOver, mouseout:me.onExpanderMouseOut});
+}, processUIEvent:function(e) {
+  if (e.getTarget('.' + this.nodeAnimWrapCls, this.el)) {
+    return false;
+  }
+  return this.callParent([e]);
+}, setRootNode:function(node) {
+  this.node = node;
+}, getChecked:function() {
+  var checked = [];
+  this.node.cascade(function(rec) {
+    if (rec.get('checked')) {
+      checked.push(rec);
+    }
+  });
+  return checked;
+}, isItemChecked:function(rec) {
+  return rec.get('checked');
+}, createAnimWrap:function(record, index) {
+  var me = this, node = me.getNode(record), tmpEl;
+  tmpEl = Ext.fly(node).insertSibling({role:'presentation', tag:'div', cls:me.nodeAnimWrapCls}, 'after');
+  return {record:record, node:node, el:tmpEl, expanding:false, collapsing:false, animateEl:tmpEl, targetEl:tmpEl};
+}, getAnimWrap:function(parent, bubble) {
+  if (!this.animate) {
+    return null;
+  }
+  var wraps = this.animWraps, wrap = wraps[parent.internalId];
+  if (bubble !== false) {
+    while (!wrap && parent) {
+      parent = parent.parentNode;
+      if (parent) {
+        wrap = wraps[parent.internalId];
+      }
+    }
+  }
+  return wrap;
+}, doAdd:function(records, index) {
+  var me = this, record = records[0], parent = record.parentNode, all = me.all, relativeIndex, animWrap = me.getAnimWrap(parent), targetEl, childNodes, len, result, children;
+  if (!animWrap || !animWrap.expanding) {
+    return me.callParent([records, index]);
+  }
+  result = me.bufferRender(records, index, true);
+  children = result.children;
+  parent = animWrap.record;
+  targetEl = animWrap.targetEl;
+  childNodes = targetEl.dom.childNodes;
+  len = childNodes.length;
+  relativeIndex = index - me.indexInStore(parent) - 1;
+  if (!len || relativeIndex >= len) {
+    targetEl.appendChild(result.fragment, true);
+  } else {
+    Ext.fly(childNodes[relativeIndex]).insertSibling(children, 'before', true);
+  }
+  all.insert(index, children);
+  return children;
+}, onRemove:function(ds, records, index) {
+  var me = this, empty, i, oldItems;
+  if (me.viewReady) {
+    empty = me.store.getCount() === 0;
+    if (me.bufferedRenderer) {
+      return me.callParent([ds, records, index]);
+    }
+    oldItems = this.all.slice(index, index + records.length);
+    if (empty) {
+      me.refresh();
+    } else {
+      for (i = records.length - 1, index += i; i >= 0; --i, --index) {
+        me.doRemove(records[i], index);
+      }
+      me.refreshSizePending = true;
+    }
+    me.fireItemMutationEvent('itemremove', records, index, oldItems, me);
+  }
+}, doRemove:function(record, index) {
+  var me = this, all = me.all, animWrap = me.getAnimWrap(record), item = all.item(index), node = item ? item.dom : null;
+  if (!node || !animWrap || !animWrap.collapsing) {
+    return me.callParent([record, index]);
+  }
+  animWrap.targetEl.dom.insertBefore(node, animWrap.targetEl.dom.firstChild);
+  all.removeElement(index);
+}, onBeforeExpand:function(parent, records, index) {
+  var me = this, animWrap;
+  if (me.rendered && me.all.getCount() && me.animate) {
+    if (me.getNode(parent)) {
+      animWrap = me.getAnimWrap(parent, false);
+      if (!animWrap) {
+        animWrap = me.animWraps[parent.internalId] = me.createAnimWrap(parent);
+        animWrap.animateEl.setHeight(0);
+      } else {
+        if (animWrap.collapsing) {
+          animWrap.targetEl.select(me.itemSelector).destroy();
+        }
+      }
+      animWrap.expanding = true;
+      animWrap.collapsing = false;
+    }
+  }
+}, onExpand:function(parent) {
+  var me = this, queue = me.animQueue, id = parent.getId(), node = me.getNode(parent), index = node ? me.indexOf(node) : -1, animWrap, animateEl, targetEl;
+  if (me.singleExpand) {
+    me.ensureSingleExpand(parent);
+  }
+  if (index === -1) {
+    return;
+  }
+  animWrap = me.getAnimWrap(parent, false);
+  if (!animWrap) {
+    parent.isExpandingOrCollapsing = false;
+    me.fireEvent('afteritemexpand', parent, index, node);
+    return;
+  }
+  animateEl = animWrap.animateEl;
+  targetEl = animWrap.targetEl;
+  animateEl.stopAnimation();
+  queue[id] = true;
+  Ext.on('idle', function() {
+    animateEl.dom.style.height = '0px';
+  }, null, {single:true});
+  animateEl.animate({from:{height:0}, to:{height:targetEl.dom.scrollHeight}, duration:me.expandDuration, listeners:{afteranimate:function() {
+    var items = targetEl.dom.childNodes, activeEl = Ext.Element.getActiveElement();
+    if (items.length) {
+      if (!targetEl.contains(activeEl)) {
+        activeEl = null;
+      }
+      animWrap.el.insertSibling(items, 'before', true);
+      if (activeEl) {
+        Ext.fly(activeEl).focus();
+      }
+    }
+    animWrap.el.destroy();
+    queue[id] = null;
+    if (!me.destroyed) {
+      me.animWraps[animWrap.record.internalId] = null;
+    }
+  }}, callback:function() {
+    parent.isExpandingOrCollapsing = false;
+    if (!me.destroyed) {
+      me.refreshSize(true);
+    }
+    me.fireEvent('afteritemexpand', parent, index, node);
+  }});
+}, onBeforeCollapse:function(parent, records, index, callback, scope) {
+  var me = this, animWrap;
+  if (me.rendered && me.all.getCount()) {
+    if (me.animate) {
+      if (parent.getTreeStore().isVisible(parent)) {
+        animWrap = me.getAnimWrap(parent);
+        if (!animWrap) {
+          animWrap = me.animWraps[parent.internalId] = me.createAnimWrap(parent, index);
+        } else {
+          if (animWrap.expanding) {
+            animWrap.targetEl.select(this.itemSelector).destroy();
+          }
+        }
+        animWrap.expanding = false;
+        animWrap.collapsing = true;
+        animWrap.callback = callback;
+        animWrap.scope = scope;
+      }
+    } else {
+      me.onCollapseCallback = callback;
+      me.onCollapseScope = scope;
+    }
+  }
+}, onCollapse:function(parent) {
+  var me = this, queue = me.animQueue, id = parent.getId(), node = me.getNode(parent), index = node ? me.indexOf(node) : -1, animWrap = me.getAnimWrap(parent), animateEl;
+  if (!me.all.getCount() || !parent.isVisible()) {
+    return;
+  }
+  if (!animWrap) {
+    parent.isExpandingOrCollapsing = false;
+    me.fireEvent('afteritemcollapse', parent, index, node);
+    Ext.callback(me.onCollapseCallback, me.onCollapseScope);
+    me.onCollapseCallback = me.onCollapseScope = null;
+    return;
+  }
+  animateEl = animWrap.animateEl;
+  queue[id] = true;
+  animateEl.stopAnimation();
+  animateEl.animate({to:{height:0}, duration:me.collapseDuration, listeners:{afteranimate:function() {
+    animWrap.el.destroy();
+    queue[id] = null;
+    if (!me.destroyed) {
+      me.animWraps[animWrap.record.internalId] = null;
+    }
+  }}, callback:function() {
+    parent.isExpandingOrCollapsing = false;
+    if (!me.destroyed) {
+      me.refreshSize(true);
+    }
+    me.fireEvent('afteritemcollapse', parent, index, node);
+    Ext.callback(animWrap.callback, animWrap.scope);
+    animWrap.callback = animWrap.scope = null;
+  }});
+}, isAnimating:function(node) {
+  return !!this.animQueue[node.getId()];
+}, expand:function(record, deep, callback, scope) {
+  var me = this, doAnimate = !!me.animate, result;
+  if (!doAnimate || !record.isExpandingOrCollapsing) {
+    if (!record.isLeaf()) {
+      record.isExpandingOrCollapsing = doAnimate;
+    }
+    Ext.suspendLayouts();
+    result = record.expand(deep, callback, scope);
+    Ext.resumeLayouts(true);
+    return result;
+  }
+}, collapse:function(record, deep, callback, scope) {
+  var me = this, doAnimate = !!me.animate;
+  if (!doAnimate || !record.isExpandingOrCollapsing) {
+    if (!record.isLeaf()) {
+      record.isExpandingOrCollapsing = doAnimate;
+    }
+    return record.collapse(deep, callback, scope);
+  }
+}, toggle:function(record, deep, callback, scope) {
+  if (record.isExpanded()) {
+    this.collapse(record, deep, callback, scope);
+  } else {
+    this.expand(record, deep, callback, scope);
+  }
+}, onItemDblClick:function(record, item, index, e) {
+  var me = this, editingPlugin = me.editingPlugin;
+  me.callParent([record, item, index, e]);
+  if (me.toggleOnDblClick && record.isExpandable() && !(editingPlugin && editingPlugin.clicksToEdit === 2)) {
+    me.toggle(record);
+  }
+}, onCellClick:function(cell, cellIndex, record, row, rowIndex, e) {
+  var me = this, column = e.position.column;
+  if (column.isTreeColumn) {
+    if (e.getTarget(me.checkboxSelector, cell) && record.get('checked') != null) {
+      me.onCheckChange(e);
+      if (column.stopSelection) {
+        e.stopSelection = true;
+      }
+    } else {
+      if (e.getTarget(me.expanderSelector, cell) && record.isExpandable()) {
+        me.getNavigationModel().setPosition(e.position);
+        me.toggle(record, e.ctrlKey);
+        e.nodeToggled = true;
+      }
+    }
+    return me.callParent([cell, cellIndex, record, row, rowIndex, e]);
+  }
+}, onCheckChange:function(e) {
+  var me = this, record = e.record, wasChecked = record.get('checked'), checked;
+  if (wasChecked === 1) {
+    checked = true;
+  } else {
+    checked = !wasChecked;
+  }
+  me.setChecked(record, checked, e);
+}, setChecked:function(record, meChecked, e, options) {
+  var me = this, checkPropagation = me.checkPropagationFlags[me.ownerGrid.checkPropagation.toLowerCase()], wasChecked = record.data.checked, halfCheckedValue = me.ownerGrid.triStateCheckbox ? 1 : false, progagateCheck = (!options || options.propagateCheck !== false) && checkPropagation & 1, checkParent = (!options || options.checkParent !== false) && checkPropagation & 2, parentNode, parentChecked, foundCheck, foundClear, childNodes, matchedChildCount = 0, len, i;
+  if (me.fireEvent('beforecheckchange', record, wasChecked, e) === false) {
+    return;
+  }
+  if (meChecked !== 1 && progagateCheck) {
+    childNodes = record.childNodes;
+    len = childNodes.length;
+    for (i = 0; i < len; i++) {
+      me.setChecked(childNodes[i], meChecked, e, {checkParent:false});
+      if (childNodes[i].get('checked') === meChecked) {
+        matchedChildCount++;
+      }
+    }
+    if (matchedChildCount !== len) {
+      meChecked = matchedChildCount ? halfCheckedValue : false;
+    }
+  }
+  if (record.get('checked') !== meChecked) {
+    record.set('checked', meChecked, options);
+    me.fireEvent('checkchange', record, meChecked, e);
+    if (checkParent && (parentNode = record.parentNode) && (parentChecked = parentNode.data.checked) != null) {
+      childNodes = parentNode.childNodes;
+      len = childNodes.length;
+      if (meChecked === halfCheckedValue) {
+        parentChecked = halfCheckedValue;
+      } else {
+        if (len === 1) {
+          parentChecked = meChecked;
+        } else {
+          foundCheck = foundClear = false;
+          for (i = 0; !(foundCheck && foundClear) & i < len; i++) {
+            if (childNodes[i].data.checked === 1) {
+              foundCheck = foundClear = true;
+            } else {
+              if (!childNodes[i].data.checked) {
+                foundClear = true;
+              } else {
+                foundCheck = true;
+              }
+            }
+          }
+          parentChecked = foundCheck && foundClear ? halfCheckedValue : foundCheck ? true : false;
+        }
+      }
+      if (parentNode.get('checked') !== parentChecked) {
+        me.setChecked(parentNode, parentChecked, e, {propagateCheck:false});
+      }
+    }
+  }
+}, onExpanderMouseOver:function(e) {
+  Ext.fly(e.getTarget(this.cellSelector, 10)).addCls(this.expanderIconOverCls);
+}, onExpanderMouseOut:function(e) {
+  Ext.fly(e.getTarget(this.cellSelector, 10)).removeCls(this.expanderIconOverCls);
+}, getStoreListeners:function() {
+  return Ext.apply(this.callParent(), {rootchange:this.onRootChange, fillcomplete:this.onFillComplete});
+}, onBindStore:function(store, initial, propName, oldStore) {
+  var oldRoot = oldStore && oldStore.getRootNode(), newRoot = store && store.getRootNode();
+  this.callParent([store, initial, propName, oldStore]);
+  if (newRoot !== oldRoot) {
+    this.onRootChange(newRoot, oldRoot);
+  }
+}, onRootChange:function(newRoot, oldRoot) {
+  var me = this, grid = me.grid;
+  if (oldRoot) {
+    me.rootListeners.destroy();
+    me.rootListeners = null;
+  }
+  if (newRoot) {
+    me.rootListeners = newRoot.on({beforeexpand:me.onBeforeExpand, expand:me.onExpand, beforecollapse:me.onBeforeCollapse, collapse:me.onCollapse, destroyable:true, scope:me});
+    grid.addRelayers(newRoot);
+  }
+}, ensureSingleExpand:function(node) {
+  var parent = node.parentNode;
+  if (parent) {
+    parent.eachChild(function(child) {
+      if (child !== node && child.isExpanded()) {
+        child.collapse();
+      }
+    });
+  }
+}, privates:{checkPropagationFlags:{none:0, down:1, up:2, both:3}, deferRefreshForLoad:function(store) {
+  var ret = this.callParent([store]), options, node;
+  if (ret) {
+    options = store.lastOptions;
+    node = options && options.node;
+    if (node && node !== store.getRoot()) {
+      ret = false;
+    }
+  }
+  return ret;
+}}});
+Ext.define('Ext.tree.Panel', {extend:Ext.panel.Table, alias:'widget.treepanel', alternateClassName:['Ext.tree.TreePanel', 'Ext.TreePanel'], viewType:'treeview', treeCls:Ext.baseCSSPrefix + 'tree-panel', rowLines:false, lines:true, useArrows:false, singleExpand:false, ddConfig:{enableDrag:true, enableDrop:true}, rootVisible:true, displayField:'text', root:null, checkPropagation:'none', normalCfgCopy:['displayField', 'root', 'singleExpand', 'useArrows', 'lines', 'rootVisible', 'scroll'], lockedCfgCopy:['displayField', 
+'root', 'singleExpand', 'useArrows', 'lines', 'rootVisible'], isTree:true, arrowCls:Ext.baseCSSPrefix + 'tree-arrows', linesCls:Ext.baseCSSPrefix + 'tree-lines', noLinesCls:Ext.baseCSSPrefix + 'tree-no-lines', autoWidthCls:Ext.baseCSSPrefix + 'autowidth-table', constructor:function(config) {
+  config = config || {};
+  if (config.animate === undefined) {
+    config.animate = Ext.isBoolean(this.animate) ? this.animate : Ext.enableFx;
+  }
+  this.enableAnimations = config.animate;
+  delete config.animate;
+  this.callParent([config]);
+}, initComponent:function() {
+  var me = this, cls = [me.treeCls], store, autoTree, view;
+  if (me.useArrows) {
+    cls.push(me.arrowCls);
+    me.lines = false;
+  }
+  if (me.lines) {
+    cls.push(me.linesCls);
+  } else {
+    if (!me.useArrows) {
+      cls.push(me.noLinesCls);
+    }
+  }
+  store = me.applyStore(me.store);
+  if (!store.getRoot()) {
+    store.setRoot({});
+  }
+  store.setRootVisible(me.rootVisible);
+  if (!me.columns) {
+    me.isAutoTree = autoTree = true;
+  }
+  me.viewConfig = Ext.apply({rootVisible:me.rootVisible, animate:me.enableAnimations, singleExpand:me.singleExpand, node:store.getRoot(), navigationModel:'tree', isAutoTree:autoTree}, me.viewConfig);
+  if (autoTree) {
+    me.addCls(me.autoWidthCls);
+    me.columns = [{xtype:'treecolumn', text:me.hideHeaders === true ? 'Name' : null, flex:1, dataIndex:me.displayField}];
+  }
+  if (me.cls) {
+    cls.push(me.cls);
+  }
+  me.cls = cls.join(' ');
+  me.callParent();
+  view = me.getView();
+  me.relayEvents(view, ['beforecheckchange', 'checkchange', 'afteritemexpand', 'afteritemcollapse']);
+}, applyStore:function(store) {
+  var me = this;
+  if (Ext.isString(store)) {
+    store = me.store = Ext.StoreMgr.lookup(store);
+  } else {
+    if (!store || !store.isStore) {
+      store = Ext.apply({type:'tree', proxy:'memory'}, store);
+      if (me.root) {
+        store.root = me.root;
+      }
+      if (me.fields) {
+        store.fields = me.fields;
+      } else {
+        if (me.model) {
+          store.model = me.model;
+        }
+      }
+      if (me.folderSort) {
+        store.folderSort = me.folderSort;
+      }
+      store = me.store = Ext.StoreMgr.lookup(store);
+    } else {
+      if (me.root) {
+        store = me.store = Ext.data.StoreManager.lookup(store);
+        store.setRoot(me.root);
+        if (me.folderSort !== undefined) {
+          store.folderSort = me.folderSort;
+          store.sort();
+        }
+      }
+    }
+  }
+  return store;
+}, setRoot:function(root) {
+  this.store.setRoot(root);
+}, setStore:function(store) {
+  var me = this;
+  store = me.applyStore(store);
+  if (!store.getRoot()) {
+    store.setRoot({});
+  }
+  store.setRootVisible(me.rootVisible);
+  if (me.enableLocking) {
+    me.reconfigure(store);
+  } else {
+    if (me.view) {
+      me.view.setRootNode(store.getRootNode());
+    }
+    me.bindStore(store);
+  }
+}, bindStore:function(store, initial) {
+  var me = this, root = store.getRoot();
+  me.callParent(arguments);
+  store.singleExpand = me.singleExpand;
+  me.storeListeners = me.mon(store, {destroyable:true, rootchange:me.onRootChange, scope:me});
+  me.storeRelayers = me.relayEvents(store, ['beforeload', 'load']);
+  if (!me.rootVisible && !store.autoLoad && !(root.isExpanded() || root.isLoading())) {
+    if (root.isLoaded()) {
+      root.data.expanded = true;
+      store.onNodeExpand(root, root.childNodes);
+    } else {
+      if (store.autoLoad !== false && !store.hasPendingLoad()) {
+        root.data.expanded = false;
+        root.expand();
+      }
+    }
+  }
+  store.ownerTree = me;
+  if (!initial) {
+    me.view.setRootNode(root);
+  }
+}, addRelayers:function(newRoot) {
+  var me = this;
+  if (me.rootRelayers) {
+    me.rootRelayers.destroy();
+    me.rootRelayers = null;
+  }
+  me.rootRelayers = me.mon(newRoot, {destroyable:true, append:me.createRelayer('itemappend'), remove:me.createRelayer('itemremove'), move:me.createRelayer('itemmove', [0, 4]), insert:me.createRelayer('iteminsert'), beforeappend:me.createRelayer('beforeitemappend'), beforeremove:me.createRelayer('beforeitemremove'), beforemove:me.createRelayer('beforeitemmove'), beforeinsert:me.createRelayer('beforeiteminsert'), expand:me.createRelayer('itemexpand', [0, 1]), collapse:me.createRelayer('itemcollapse', 
+  [0, 1]), beforeexpand:me.createRelayer('beforeitemexpand', [0, 1]), beforecollapse:me.createRelayer('beforeitemcollapse', [0, 1]), scope:me});
+}, unbindStore:function() {
+  var me = this, store = me.store;
+  if (store) {
+    me.callParent();
+    Ext.destroy(me.storeListeners, me.storeRelayers, me.rootRelayers);
+    delete store.ownerTree;
+    store.singleExpand = null;
+  }
+}, setRootNode:function() {
+  return this.store.setRoot.apply(this.store, arguments);
+}, getRootNode:function() {
+  return this.store.getRoot();
+}, onRootChange:function(root) {
+  this.view.setRootNode(root);
+}, getChecked:function() {
+  return this.getView().getChecked();
+}, isItemChecked:function(rec) {
+  return rec.get('checked');
+}, expandNode:function(record, deep, callback, scope) {
+  return this.getView().expand(record, deep, callback, scope || this);
+}, collapseNode:function(record, deep, callback, scope) {
+  return this.getView().collapse(record, deep, callback, scope || this);
+}, expandAll:function(callback, scope) {
+  var me = this, root = me.getRootNode();
+  if (root) {
+    Ext.suspendLayouts();
+    root.expand(true, callback, scope || me);
+    Ext.resumeLayouts(true);
+  }
+}, collapseAll:function(callback, scope) {
+  var me = this, root = me.getRootNode(), view = me.getView();
+  if (root) {
+    Ext.suspendLayouts();
+    scope = scope || me;
+    if (view.rootVisible) {
+      root.collapse(true, callback, scope);
+    } else {
+      root.collapseChildren(true, callback, scope);
+    }
+    Ext.resumeLayouts(true);
+  }
+}, expandPath:function(path, options) {
+  var args = arguments, me = this, view = me.view, field = options && options.field || me.store.model.idProperty, select, doFocus, separator = options && options.separator || '/', callback, scope, current, index, keys, rooted, expander;
+  if (options && typeof options === 'object') {
+    field = options.field || me.store.model.idProperty;
+    separator = options.separator || '/';
+    callback = options.callback;
+    scope = options.scope;
+    select = options.select;
+    doFocus = options.focus;
+  } else {
+    field = args[1] || me.store.model.idProperty;
+    separator = args[2] || '/';
+    callback = args[3];
+    scope = args[4];
+  }
+  if (Ext.isEmpty(path)) {
+    return Ext.callback(callback, scope || me, [false, null]);
+  }
+  keys = path.split(separator);
+  rooted = !keys[0];
+  if (rooted) {
+    current = me.getRootNode();
+    index = 1;
+  } else {
+    current = me.store.findNode(field, keys[0]);
+    index = 0;
+  }
+  if (!current || rooted && current.get(field) + '' !== keys[1]) {
+    return Ext.callback(callback, scope || me, [false, current]);
+  }
+  expander = function(newChildren) {
+    var node = this, len, i, value;
+    if (++index === keys.length) {
+      if (select) {
+        view.getSelectionModel().select(node);
+      }
+      if (doFocus) {
+        view.getNavigationModel().setPosition(node, 0);
+      }
+      return Ext.callback(callback, scope || me, [true, node, view.getNode(node)]);
+    }
+    for (i = 0, len = newChildren ? newChildren.length : 0; i < len; i++) {
+      node = newChildren[i];
+      value = node.get(field);
+      if (value || value === 0) {
+        value = value.toString();
+      }
+      if (value === keys[index]) {
+        return node.expand(false, expander);
+      }
+    }
+    node = this;
+    Ext.callback(callback, scope || me, [false, node, view.getNode(node)]);
+  };
+  current.expand(false, expander);
+}, ensureVisible:function(path, options) {
+  if (path.isEntity || typeof path === 'number') {
+    return this.callParent([path, options]);
+  }
+  var me = this, field = options && options.field || me.store.model.idProperty, separator = options && options.separator || '/', callback, scope, keys, rooted, last, node, parentNode, onLastExpanded = function(success, lastExpanded, lastExpandedHtmlNode, targetNode) {
+    if (!targetNode && success && lastExpanded) {
+      targetNode = lastExpanded.findChild(field, last);
+    }
+    if (targetNode) {
+      me.doEnsureVisible(targetNode, options);
+    } else {
+      Ext.callback(callback, scope || me, [false, lastExpanded]);
+    }
+  };
+  if (options) {
+    callback = options.callback;
+    scope = options.scope;
+  }
+  keys = path.split(separator);
+  rooted = !keys[0];
+  last = keys.pop();
+  if (keys.length && !(rooted && keys.length === 1)) {
+    me.expandPath(keys.join(separator), field, separator, onLastExpanded);
+  } else {
+    node = me.store.findNode(field, last);
+    if (node) {
+      parentNode = node.parentNode;
+      if (parentNode && !parentNode.isExpanded()) {
+        parentNode.expand();
+      }
+      onLastExpanded(true, null, null, node);
+    } else {
+      Ext.callback(callback, scope || me, [false, null]);
+    }
+  }
+}, selectPath:function(path, field, separator, callback, scope) {
+  this.ensureVisible(path, {field:field, separator:separator, select:true, callback:callback, scope:scope});
+}});
 Ext.define('Ext.draw.ContainerBase', {extend:Ext.panel.Panel, previewTitleText:'Chart Preview', previewAltText:'Chart preview', layout:'container', addElementListener:function() {
   var me = this, args = arguments;
   if (me.rendered) {
@@ -100454,7 +101260,7 @@ Ext.define('Admin.model.Subscription', {extend:Admin.model.Base, fields:[{type:'
 Ext.define('Admin.model.YearwiseData', {extend:Admin.model.Base, fields:[{name:'year'}, {name:'data'}]});
 Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'realName', type:'string'}, {name:'deptName', type:'string'}, {name:'postName', type:'string'}, {name:'mobilePhone', type:'string'}, {name:'mail', type:'string'}, {name:'qq_number', type:'int'}]});
 Ext.define('Admin.model.authority.AuthorityModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'roleId', type:'int'}, {name:'userName', type:'string'}, {name:'roleName', type:'string'}, {name:'modulesText', type:'string'}]});
-Ext.define('Admin.model.department.DepartmentModel', {extend:Admin.model.Base, fields:[{name:'deptId', type:'int'}, {name:'deptName', type:'string'}]});
+Ext.define('Admin.model.department.DepartmentModel', {extend:Admin.model.Base, fields:[{name:'deptId', type:'int'}, {name:'deptName', type:'string'}, {name:'parentId', type:'int'}]});
 Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {name:'read'}, {type:'string', name:'title'}, {name:'user_id'}, {type:'string', name:'contents'}, {type:'string', name:'from'}, {name:'has_attachments'}, {name:'attachments'}, {name:'received_on', type:'date'}, {name:'favorite'}]});
 Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
 Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
@@ -100473,7 +101279,7 @@ Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'Na
 iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}, {text:'个人中心', iconCls:'x-fa fa-user', viewType:'profile', leaf:true}]}});
 Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json?roleLevel\x3d' + loginUserRoleLevel, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
-Ext.define('Admin.store.department.DepartmentStore', {extend:Ext.data.Store, alias:'store.departmentStore', model:'Admin.model.department.DepartmentModel', proxy:{type:'ajax', url:'dept/findAll.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'deptId'}});
+Ext.define('Admin.store.department.DepartmentStore', {extend:Ext.data.TreeStore, alias:'store.departmentStore', proxy:{type:'ajax', url:'dept/findNodes', reader:{type:'json'}}, root:{text:'组织架构', expanded:true}});
 Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
 Ext.define('Admin.store.email.Inbox', {extend:Ext.data.Store, alias:'store.inbox', model:'Admin.model.email.Email', pageSize:20, autoLoad:true, proxy:{type:'api', url:'~api/email/inbox'}});
 Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', model:'Admin.model.faq.Category', proxy:{type:'api', url:'~api/faq/faq'}});
@@ -100633,8 +101439,9 @@ Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', store
 }});
 Ext.define('Admin.view.address.address', {extend:Ext.container.Container, xtype:'address', controller:'addressViewController', viewModel:{type:'addressViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'addressGrid'}]});
 Ext.define('Admin.view.address.AddressGrid', {extend:Ext.grid.Panel, xtype:'addressGrid', title:'\x3cb\x3e通讯中心\x3c/b\x3e', bind:'{addressLists}', id:'addressGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'编号', dataIndex:'userId', hidden:true}, {text:'联系人', dataIndex:'realName', flex:1}, {text:'所属部门', dataIndex:'deptName', width:188}, {text:'职位', dataIndex:'postName', width:188}, {text:'联系电话', dataIndex:'mobilePhone', width:188}, {text:'联系邮箱', dataIndex:'mail', width:188}, 
-{text:'QQ', dataIndex:'qq_number', width:188}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200, reference:'addressGridSearchText'}, {xtype:'tbtext', text:'所属部门'}, {xtype:'combobox', name:'deptId', reference:'addressGridSearchField', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', listeners:{click:'addressGridSearch'}}]}), 
-bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+{text:'QQ', dataIndex:'qq_number', width:188}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200, reference:'addressGridSearchText'}, {xtype:'tbtext', text:'所属部门'}, {xtype:'combobox', name:'deptId', id:'deptComBoBox1', reference:'addressGridSearchField', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), listeners:{select:function() {
+  this.Store.reload();
+}}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', listeners:{click:'addressGridSearch'}}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
 Ext.define('Admin.view.address.AddressViewController', {extend:Ext.app.ViewController, alias:'controller.addressViewController', addressGridSearch:function(bt) {
   var searchField = this.lookupReference('addressGridSearchField').getRawValue();
   var searchText = this.lookupReference('addressGridSearchText').getValue();
@@ -100804,9 +101611,81 @@ Ext.define('Admin.view.dashboard.TopMovie', {extend:Ext.panel.Panel, xtype:'topm
 label:{field:'x', display:'rotate', contrast:true, font:'12px Arial'}, xField:'yvalue'}], interactions:[{type:'rotate'}]}]});
 Ext.define('Admin.view.dashboard.Widgets', {extend:Ext.Panel, xtype:'dashboardwidgetspanel', cls:'dashboard-widget-block shadow', bodyPadding:15, title:'Widgets', layout:{type:'vbox', align:'stretch'}, items:[{xtype:'slider', width:400, fieldLabel:'Single Slider', value:40}, {xtype:'tbspacer', flex:0.3}, {xtype:'multislider', width:400, fieldLabel:'Range Slider', values:[10, 40]}, {xtype:'tbspacer', flex:0.3}, {xtype:'pagingtoolbar', width:360, displayInfo:false}, {xtype:'tbspacer', flex:0.3}, {xtype:'progressbar', 
 cls:'widget-progressbar', value:0.4}, {xtype:'tbspacer'}]});
-Ext.define('Admin.view.department.Department', {extend:Ext.container.Container, xtype:'department', height:Ext.Element.getViewportHeight() - 200, viewModel:{type:'departmentViewModel'}, layout:'border', margin:'20 20 20 20', items:[{title:'部门设置', region:'west', width:550, collapsible:true, margins:'5 0 0 0', cmargins:'5 5 0 0', split:true, xtype:'departmentGrid'}, {title:'职位设置', region:'center', margins:'5 0 0 0', cmargins:'5 5 0 0'}]});
-Ext.define('Admin.view.department.DepartmentGrid', {extend:Ext.grid.Panel, id:'departmentGrid', xtype:'departmentGrid', title:'\x3cb\x3e组织架构\x3c/b\x3e', bind:'{deptLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'ID', sortable:true, dataIndex:'deptId', hidden:true}, {text:'部门名名称', sortable:true, dataIndex:'deptName', flex:1}], bbar:Ext.create('Ext.PagingToolbar', {bind:'{deptLists}', displayInfo:true, displayMsg:'第{0}-{1}条  共{2}条', emptyMsg:'没有任何记录'})});
+Ext.define('Admin.view.department.Department', {extend:Ext.container.Container, xtype:'department', height:Ext.Element.getViewportHeight() - 200, controller:'departmentViewController', viewModel:{type:'departmentViewModel'}, layout:'border', margin:'20 20 20 20', items:[{title:'部门设置', region:'west', width:550, collapsible:true, margins:'5 0 0 0', cmargins:'5 5 0 0', split:true, xtype:'departmentTree'}, {title:'职位设置', region:'center', margins:'5 0 0 0', cmargins:'5 5 0 0'}]});
+Ext.define('Admin.view.department.DepartmentForm', {extend:Ext.form.Panel, alias:'widget.deptForm', controller:'departmentViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'deptId', name:'deptId', handler:'deptGridOpenEditWindow'}, {xtype:'combobox', fieldLabel:'上级部门', name:'parentId', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, 
+autoLoad:true}), listeners:{render:function() {
+  this.store.reload();
+}}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {xtype:'textfield', fieldLabel:'部门名称', name:'deptName'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'deptGridFormSubmit'}, {xtype:'button', text:'取消', handler:'deptGridWindowClose'}]}});
+Ext.define('Admin.view.department.DepartmentTree', {extend:Ext.tree.Panel, id:'departmentTree', xtype:'departmentTree', title:'\x3cb\x3e组织架构\x3c/b\x3e', bind:'{deptLists}', tbar:Ext.create('Ext.Toolbar', {items:[{text:'新增部门', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'deptGridOpenAddWindow'}, '-', {text:'删除', iconCls:'x-fa fa-trash'}]})});
+Ext.define('Admin.view.dept.DepartmentViewController', {extend:Ext.app.ViewController, alias:'controller.departmentViewController', deptGridOpenAddWindow:function(btn) {
+  Ext.widget('deptWindow', {title:'新增部门', items:[{xtype:'deptForm'}]});
+}, deptGridOpenEditWindow:function(btn) {
+  var grid = btn.up('gridpanel');
+  var selModel = grid.getSelectionModel();
+  if (selModel.hasSelection()) {
+    var record = selModel.getSelection()[0];
+    var deptWindow = Ext.widget('deptWindow', {title:'修改订单', items:[{xtype:'deptForm'}]});
+    deptWindow.down('form').getForm().loadRecord(record);
+  } else {
+    Ext.Msg.alert('提示', '请选择一行数据进行编辑!');
+  }
+}, deptGridDeleteDate:function(btn) {
+  var grid = btn.up('gridpanel');
+  var selModel = grid.getSelectionModel();
+  if (selModel.hasSelection()) {
+    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+      if (button == 'yes') {
+        var selected = selModel.getSelection();
+        var selectIds = [];
+        Ext.each(selected, function(record) {
+          selectIds.push(record.data.id);
+        });
+        Ext.Ajax.request({url:'dept/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
+          var json = Ext.util.JSON.decode(response.responseText);
+          if (json.success) {
+            Ext.Msg.alert('操作成功', json.msg);
+            grid.getStore().reload();
+          } else {
+            Ext.Msg.alert('操作失败', json.msg);
+          }
+        }});
+      }
+    });
+  } else {
+    Ext.Msg.alert('提示', '请选择一行数据进行删除!');
+  }
+}, deptGridFormSubmit:function(btn) {
+  var deptGridForm = btn.up('form').getForm();
+  var win = btn.up('window');
+  deptGridForm.submit({url:'dept/saveOrUpdate', method:'post', success:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+    win.close();
+    Ext.getCmp('departmentTree').store.reload();
+  }, failure:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+  }});
+}, deptGridWindowClose:function(btn) {
+  var win = btn.up('window');
+  if (win) {
+    win.close();
+  }
+}});
 Ext.define('Admin.view.department.DepartmentViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.departmentViewModel', stores:{deptLists:{type:'departmentStore', autoLoad:true}}});
+Ext.define('Admin.view.department.DepartmentWindow', {extend:Ext.window.Window, alias:'widget.deptWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.5), Math.floor(height * 0.3));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
 Ext.define('Admin.view.email.Compose', {extend:Ext.form.Panel, alias:'widget.emailcompose', viewModel:{type:'emailcompose'}, controller:'emailcompose', cls:'email-compose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'textfield', fieldLabel:'To'}, {xtype:'textfield', fieldLabel:'Subject'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'Message'}], 
 bbar:{overflowHandler:'menu', items:[{xtype:'filefield', width:400, labelWidth:80, fieldLabel:'Attachment', labelSeparator:'', buttonConfig:{xtype:'filebutton', glyph:'', iconCls:'x-fa fa-cloud-upload', text:'Browse'}}, '-\x3e', {xtype:'button', ui:'soft-red', text:'Discard', handler:'onComposeDiscardClick'}, {xtype:'button', ui:'gray', text:'Save'}, {xtype:'button', ui:'soft-green', text:'Send'}]}});
 Ext.define('Admin.view.email.ComposeViewController', {extend:Ext.app.ViewController, alias:'controller.emailcompose', onComposeDiscardClick:function(bt) {
