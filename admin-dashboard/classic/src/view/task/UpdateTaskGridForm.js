@@ -1,7 +1,7 @@
-Ext.define('Admin.view.role.TaskGridForm', {
+Ext.define('Admin.view.role.UpdateTaskGridForm', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.taskGridForm',
-	id:'taskGridForm',//Ext.getCmp('roleGridForm');
+    alias: 'widget.editTaskGridForm',
+	id:'editTaskGridForm',//Ext.getCmp('roleGridForm');
     requires: [
         'Ext.button.Button',
         'Ext.form.field.Text',
@@ -46,18 +46,22 @@ Ext.define('Admin.view.role.TaskGridForm', {
 		//allowBlank: false,
 		name:'userId'
 	},{
-		xtype: 'textfield',
-		fieldLabel: '任务名称',
-		name:'taskName'
-	},{
 		xtype: 'hidden',
 		fieldLabel: 'createDate',
 		name:'createDate',
 	},{
+		xtype: 'hidden',
+		fieldLabel: 'createName',
+		name:'createName',
+	},{
+		xtype: 'textfield',
+		fieldLabel: '任务名称',
+		name:'taskName'
+	},{
 		xtype: 'textfield',  
 		editable:false,
-		fieldLabel: '发布者',
-		name:'createName'
+		fieldLabel: '接收者',
+		name:'userName'
 	},{
         xtype: 'htmleditor',
         buttonDefaults: {

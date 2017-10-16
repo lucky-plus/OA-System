@@ -1,10 +1,9 @@
-﻿Ext.define('Admin.view.task.TaskGrid', {    //1.修改文件路径
+﻿Ext.define('Admin.view.task.MyTaskGrid', {    //1.修改文件路径
       extend: 'Ext.grid.Panel',         //2.继承的组件类型
   //3.重写继承组件的属性：
-    xtype: 'taskGrid',
+    xtype: 'myTaskGrid',
   title:'<b>日志记录</b>',
   bind:'{taskLists}',
-  id:'taskGrid',
   selModel: Ext.create('Ext.selection.CheckboxModel'),
   columns: [
     {text: 'taskId' ,sortable:false ,dataIndex:'taskId',hidden:true},
@@ -19,89 +18,31 @@
     {
       xtype: 'actioncolumn',
       text: '标记任务完成',
-      width:100,
+      width: 200,
       tdCls: 'action',
         items: [{
           icon:'resources/images/icons/complete.png',
           tooltip: '标记完成',
           handler: ('setStateComplete')
       }]
-    },
-    {
-      xtype: 'actioncolumn',
-      text: '终止任务',
-      width:100,
-      tdCls: 'action', 
-        items: [{
-          icon:'resources/images/icons/delete2.png',
-          tooltip: '终止任务',
-          handler: ('setStateStop')
-      }]
     }
   ], 
 
 	tbar: Ext.create('Ext.Toolbar', {
-			id: 'taskCondition',
-			// items:[
-			// {
-			// 	items:[ {
-			// 		text: '发布任务',
-			// 		id: 'taskAddButton',
-			// 		iconCls:'x-fa fa-plus',
-			// 		ui:'soft-blue',
-			// 		//handler: 'roleGridAdd'
-			// 		listeners:{
-			// 			click:'taskGridAdd'
-			// 		}
-			// 	},'-', {
-			// 		text: '修改',
-			// 		id: 'taskUpdateButton',
-			// 		iconCls:'x-fa fa-edit',
-			// 		handler: 'taskGridEdit'
-			// 	},'-', {
-			// 		text: '删除',
-			// 		id: 'taskDeleteButton',
-			// 		iconCls:'x-fa fa-trash',
-			// 		handler: 'taskGridDelete'
-			// 	}]
-			// },{
-				items:[{
-					text: '发布任务',
-					id: 'taskAddButton',
-					iconCls:'x-fa fa-plus',
-					ui:'soft-blue',
-					//handler: 'roleGridAdd'
-					listeners:{
-						click:'taskGridAdd'
-					}
-				},'-', {
-					text: '修改',
-					id: 'taskUpdateButton',
-					iconCls:'x-fa fa-edit',
-					handler: 'taskGridEdit'
-				},'-', {
-					text: '删除',
-					id: 'taskDeleteButton',
-					iconCls:'x-fa fa-trash',
-					handler: 'taskGridDelete'
-				},{xtype:'tbtext',
-					text:'接收者：'
-				},{
-					xtype:'textfield',
-					width:100,
-					itemsId:'userName'
-					
-				},{xtype:'tbtext',
+			id: 'myTaskCondition',
+				items:[{xtype:'tbtext',
 					text:'发布者：'
 				},{
 					xtype:'textfield',
-					width:100,
+					width:90,
 					itemsId:'createName'
 					
-				},{
+				},{xtype:'tbtext',
+	                text:'状态:'
+	            },{
 					xtype: 'combobox',
-					fieldLabel: '状态',
 					name:'taskState',
+           			width:100,
 					store:  Ext.create('Ext.data.Store', {
 						fields: ['value', 'name'],
 						data : [
@@ -117,7 +58,8 @@
 				{xtype:'tbtext',
 					text:'发布时间：'
 				},{
-					 xtype:'datefield',  
+					 xtype:'datefield',
+           			 width:125,  
 				 		editable:false,
 	                    itemId:'beginDate',  
 	                    format:'Y-m-d',  
@@ -128,22 +70,21 @@
 					text:'至：'
 				},{
 					xtype:'datefield',  
+         			width:125,
 				 		editable:false,  
 	                    itemId:'endDate',  
 	                    format:'Y-m-d',  
 						value:new Date(),
 						listeners: {  
 						focus: function(){
-							var cc = Ext.getCmp('taskCondition').items.getAt(7).getValue();
+							var cc = Ext.getCmp('myTaskCondition').items.getAt(5).getValue();
 							this.setMinValue(cc);
 							}  	
 						}
 				},{
 					text: '查找',
-					handler:'taskGridFind'
+					handler:'myTaskGridFind'
 				}]
-			// }
-			// ]
 	}),
 	
 	

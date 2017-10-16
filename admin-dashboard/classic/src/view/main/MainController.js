@@ -197,9 +197,32 @@ Ext.define('Admin.view.main.MainController', {
                   {
                       text: '任务管理',
                       iconCls: 'x-fa fa-tasks',
-                      viewType: 'task',
-                      leaf: true
-                  }
+                      expanded: false,
+                      selectable: false,
+                      //routeId: 'pages-parent',
+                      //id: 'pages-parent',
+
+                      children: [
+                        {
+                            text: '我的任务',
+                            iconCls: 'x-fa fa-file-o',
+                            viewType: 'mytask',
+                            leaf: true
+                        },
+                        {
+                            text: '发布任务',
+                            iconCls: 'x-fa  fa-arrow-circle-o-down',
+                            viewType: 'releasetask',
+                            leaf: true
+                        },
+                        {
+                            text: '所有任务',
+                            iconCls: 'x-fa fa-book ',
+                            viewType: 'alltasks',
+                            leaf: true
+                        }
+                      ]
+                    }
                 );
               }
             );

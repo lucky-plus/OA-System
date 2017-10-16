@@ -100635,7 +100635,7 @@ Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', store
 }});
 Ext.define('Admin.view.address.address', {extend:Ext.container.Container, xtype:'address', controller:'addressViewController', viewModel:{type:'addressViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'addressGrid'}]});
 Ext.define('Admin.view.address.AddressGrid', {extend:Ext.grid.Panel, xtype:'addressGrid', title:'\x3cb\x3e通讯中心\x3c/b\x3e', bind:'{addressLists}', id:'addressGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'编号', dataIndex:'userId', hidden:true}, {text:'联系人', dataIndex:'realName', flex:1}, {text:'所属部门', dataIndex:'deptName', width:188}, {text:'职位', dataIndex:'postName', width:188}, {text:'联系电话', dataIndex:'mobilePhone', width:188}, {text:'联系邮箱', dataIndex:'mail', width:188}, 
-{text:'QQ', dataIndex:'qq_number', width:188}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200, reference:'addressGridSearchText'}, {xtype:'tbtext', text:'所属部门'}, {xtype:'combobox', name:'deptId', reference:'addressGridSearchField', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', listeners:{click:'addressGridSearch'}}]}), 
+{text:'QQ', dataIndex:'qq_number', width:188}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200, reference:'addressGridSearchText'}, {xtype:'tbtext', text:'所属部门'}, '-', {xtype:'combobox', name:'deptId', reference:'addressGridSearchField', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', listeners:{click:'addressGridSearch'}}]}), 
 bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
 Ext.define('Admin.view.address.AddressViewController', {extend:Ext.app.ViewController, alias:'controller.addressViewController', addressGridSearch:function(bt) {
   var searchField = this.lookupReference('addressGridSearchField').getRawValue();
@@ -101060,7 +101060,7 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
         this.getRoot().appendChild({text:'信息中心', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'公告中心', iconCls:'x-fa fa-file-o', viewType:'notice', leaf:true}, {text:'资源下载', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'resources', leaf:true}, {text:'通讯录', iconCls:'x-fa fa-book ', viewType:'address', leaf:true}]});
       });
       rootTree.on('load', function() {
-        this.getRoot().appendChild({text:'任务管理', iconCls:'x-fa fa-tasks', viewType:'task', leaf:true});
+        this.getRoot().appendChild({text:'任务管理', iconCls:'x-fa fa-tasks', expanded:false, selectable:false, children:[{text:'我的任务', iconCls:'x-fa fa-file-o', viewType:'mytask', leaf:true}, {text:'发布任务', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'releasetask', leaf:true}, {text:'所有任务', iconCls:'x-fa fa-book ', viewType:'alltasks', leaf:true}]});
       });
       rootTree.on('load', function() {
         this.getRoot().appendChild({text:'人事管理', iconCls:'x-fa fa-bar-chart', expanded:false, selectable:false, children:[{text:'员工管理', iconCls:'x-fa fa-address-book', viewType:'staff', leaf:true}, {text:'部门管理', iconCls:'x-fa  fa-group', viewType:'department', leaf:true}, {text:'人事记录', iconCls:'x-fa  fa-pencil ', viewType:'records', leaf:true}]});
@@ -101626,17 +101626,33 @@ Ext.define('Admin.view.staff.StaffWindow', {extend:Ext.window.Window, alias:'wid
   this.setSize(Math.floor(width * 0.5), Math.floor(height * 0.8));
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
-Ext.define('Admin.view.task.Task', {extend:Ext.container.Container, xtype:'task', controller:'taskViewController', viewModel:{type:'taskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'taskGrid'}]});
-Ext.define('Admin.view.task.TaskGrid', {extend:Ext.grid.Panel, xtype:'taskGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{taskLists}', id:'taskGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'taskId', sortable:false, dataIndex:'taskId', hidden:true}, {text:'createId', sortable:false, dataIndex:'createId', hidden:true}, {text:'userId', sortable:false, dataIndex:'userId', hidden:true}, {text:'任务名称', sortable:false, dataIndex:'taskName', width:200}, {text:'任务发布时间', sortable:true, 
-dataIndex:'createDate', width:250, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'接收者', sortable:false, dataIndex:'userName', width:150}, {text:'发布者', sortable:false, dataIndex:'createName', width:150}, {text:'状态', sortable:false, dataIndex:'taskState', flex:150}, {xtype:'actioncolumn', text:'标记任务完成', width:100, tdCls:'action', items:[{icon:'resources/images/icons/complete.png', tooltip:'标记完成', handler:'setStateComplete'}]}, {xtype:'actioncolumn', text:'终止任务', width:100, tdCls:'action', 
-items:[{icon:'resources/images/icons/delete2.png', tooltip:'终止任务', handler:'setStateStop'}]}], tbar:Ext.create('Ext.Toolbar', {id:'taskCondition', items:[{text:'发布任务', id:'taskAddButton', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'taskGridAdd'}}, '-', {text:'修改', id:'taskUpdateButton', iconCls:'x-fa fa-edit', handler:'taskGridEdit'}, '-', {text:'删除', id:'taskDeleteButton', iconCls:'x-fa fa-trash', handler:'taskGridDelete'}, {xtype:'tbtext', text:'接收者：'}, {xtype:'textfield', width:100, 
-itemsId:'userName'}, {xtype:'tbtext', text:'发布者：'}, {xtype:'textfield', width:100, itemsId:'createName'}, {xtype:'combobox', fieldLabel:'状态', name:'taskState', store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'未完成', 'name':'未完成'}, {'value':'已完成', 'name':'已完成'}, {'value':'已终止', 'name':'已终止'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {xtype:'tbtext', text:'发布时间：'}, {xtype:'datefield', editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, 
-{xtype:'tbtext', text:'至：'}, {xtype:'datefield', editable:false, itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
-  var cc = Ext.getCmp('taskCondition').items.getAt(7).getValue();
+Ext.define('Admin.view.role.AddTaskGridForm', {extend:Ext.form.Panel, alias:'widget.addTaskGridForm', id:'addTaskGridForm', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'taskId', name:'taskId'}, {xtype:'hidden', fieldLabel:'createId', name:'createId'}, {xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'hidden', fieldLabel:'createDate', name:'createDate'}, 
+{xtype:'hidden', fieldLabel:'createName', name:'createName'}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, {xtype:'textfield', editable:false, fieldLabel:'接收者', name:'userName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', fieldLabel:'taskState', name:'taskState'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', 
+text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
+Ext.define('Admin.view.task.AllTask', {extend:Ext.container.Container, xtype:'alltasks', controller:'taskViewController', viewModel:{type:'taskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'allTaskGrid'}]});
+Ext.define('Admin.view.task.AllTaskGrid', {extend:Ext.grid.Panel, xtype:'allTaskGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{taskLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'taskId', sortable:false, dataIndex:'taskId', hidden:true}, {text:'createId', sortable:false, dataIndex:'createId', hidden:true}, {text:'userId', sortable:false, dataIndex:'userId', hidden:true}, {text:'任务名称', sortable:false, dataIndex:'taskName', width:200}, {text:'任务发布时间', sortable:true, dataIndex:'createDate', 
+width:250, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'接收者', sortable:false, dataIndex:'userName', width:150}, {text:'发布者', sortable:false, dataIndex:'createName', width:150}, {text:'状态', sortable:false, dataIndex:'taskState', flex:150}], tbar:Ext.create('Ext.Toolbar', {id:'allTaskCondition', items:[{xtype:'tbtext', text:'接收者：'}, {xtype:'textfield', width:90, itemsId:'userName'}, {xtype:'tbtext', text:'发布者：'}, {xtype:'textfield', width:90, itemsId:'createName'}, {xtype:'tbtext', 
+text:'状态:'}, {xtype:'combobox', name:'taskState', width:100, store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'未完成', 'name':'未完成'}, {'value':'已完成', 'name':'已完成'}, {'value':'已终止', 'name':'已终止'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {xtype:'tbtext', text:'发布时间：'}, {xtype:'datefield', width:125, editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', width:125, editable:false, itemId:'endDate', 
+format:'Y-m-d', value:new Date, listeners:{focus:function() {
+  var cc = Ext.getCmp('allTaskCondition').items.getAt(7).getValue();
   this.setMinValue(cc);
-}}}, {text:'查找', handler:'taskGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
-Ext.define('Admin.view.role.TaskGridForm', {extend:Ext.form.Panel, alias:'widget.taskGridForm', id:'taskGridForm', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'taskId', name:'taskId'}, {xtype:'hidden', fieldLabel:'createId', name:'createId'}, {xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, {xtype:'hidden', 
-fieldLabel:'createDate', name:'createDate'}, {xtype:'textfield', editable:false, fieldLabel:'发布者', name:'createName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', fieldLabel:'taskState', name:'taskState'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
+}}}, {text:'查找', handler:'allTaskGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.task.MyTask', {extend:Ext.container.Container, xtype:'mytask', controller:'taskViewController', viewModel:{type:'taskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'myTaskGrid'}]});
+Ext.define('Admin.view.task.MyTaskGrid', {extend:Ext.grid.Panel, xtype:'myTaskGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{taskLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'taskId', sortable:false, dataIndex:'taskId', hidden:true}, {text:'createId', sortable:false, dataIndex:'createId', hidden:true}, {text:'userId', sortable:false, dataIndex:'userId', hidden:true}, {text:'任务名称', sortable:false, dataIndex:'taskName', width:200}, {text:'任务发布时间', sortable:true, dataIndex:'createDate', 
+width:250, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'接收者', sortable:false, dataIndex:'userName', width:150}, {text:'发布者', sortable:false, dataIndex:'createName', width:150}, {text:'状态', sortable:false, dataIndex:'taskState', flex:150}, {xtype:'actioncolumn', text:'标记任务完成', width:200, tdCls:'action', items:[{icon:'resources/images/icons/complete.png', tooltip:'标记完成', handler:'setStateComplete'}]}], tbar:Ext.create('Ext.Toolbar', {id:'myTaskCondition', items:[{xtype:'tbtext', text:'发布者：'}, 
+{xtype:'textfield', width:90, itemsId:'createName'}, {xtype:'tbtext', text:'状态:'}, {xtype:'combobox', name:'taskState', width:100, store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'未完成', 'name':'未完成'}, {'value':'已完成', 'name':'已完成'}, {'value':'已终止', 'name':'已终止'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {xtype:'tbtext', text:'发布时间：'}, {xtype:'datefield', width:125, editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, {xtype:'tbtext', 
+text:'至：'}, {xtype:'datefield', width:125, editable:false, itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
+  var cc = Ext.getCmp('myTaskCondition').items.getAt(5).getValue();
+  this.setMinValue(cc);
+}}}, {text:'查找', handler:'myTaskGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.task.ReleaseTask', {extend:Ext.container.Container, xtype:'releasetask', controller:'taskViewController', viewModel:{type:'taskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'releaseTaskGrid'}]});
+Ext.define('Admin.view.task.ReleaseTaskGrid', {extend:Ext.grid.Panel, xtype:'releaseTaskGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{taskLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'taskId', sortable:false, dataIndex:'taskId', hidden:true}, {text:'createId', sortable:false, dataIndex:'createId', hidden:true}, {text:'userId', sortable:false, dataIndex:'userId', hidden:true}, {text:'任务名称', sortable:false, dataIndex:'taskName', width:200}, {text:'任务发布时间', sortable:true, 
+dataIndex:'createDate', width:250, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'接收者', sortable:false, dataIndex:'userName', width:150}, {text:'发布者', sortable:false, dataIndex:'createName', width:150}, {text:'状态', sortable:false, dataIndex:'taskState', flex:150}, {xtype:'actioncolumn', text:'终止任务', width:200, tdCls:'action', items:[{icon:'resources/images/icons/delete2.png', tooltip:'终止任务', handler:'setStateStop'}]}], dockedItems:[Ext.create('Ext.Toolbar', {items:[{text:'发布任务', id:'taskAddButton', 
+iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'taskGridAdd'}}, '-', {text:'修改', id:'taskUpdateButton', iconCls:'x-fa fa-edit', handler:'taskGridEdit'}, '-', {text:'删除', id:'taskDeleteButton', iconCls:'x-fa fa-trash', handler:'taskGridDelete'}]}), Ext.create('Ext.Toolbar', {id:'releaseTaskCondition', items:[{xtype:'tbtext', text:'接收者：'}, {xtype:'textfield', width:90, itemsId:'userName'}, {xtype:'tbtext', text:'状态:'}, {xtype:'combobox', name:'taskState', width:100, store:Ext.create('Ext.data.Store', 
+{fields:['value', 'name'], data:[{'value':'未完成', 'name':'未完成'}, {'value':'已完成', 'name':'已完成'}, {'value':'已终止', 'name':'已终止'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {xtype:'tbtext', text:'发布时间：'}, {xtype:'datefield', width:125, editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', width:125, editable:false, itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
+  var cc = Ext.getCmp('releaseTaskCondition').items.getAt(5).getValue();
+  this.setMinValue(cc);
+}}}, {text:'查找', handler:'releaseTaskGridFind'}]})], bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
 Ext.define('Admin.view.task.TaskGridWindow', {extend:Ext.window.Window, alias:'widget.taskGridWindow', autoShow:true, modal:true, layout:'fit', afterRender:function() {
   var me = this;
   me.callParent(arguments);
@@ -101654,14 +101670,14 @@ Ext.define('Admin.view.task.TaskGridWindow', {extend:Ext.window.Window, alias:'w
 }});
 Ext.define('Admin.view.notcie.TaskText', {extend:Ext.form.Panel, alias:'widget.taskText', id:'taskText', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'displayfield', name:'taskName'}, {xtype:'displayfield', name:'taskText'}]});
 Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController, alias:'controller.taskViewController', taskGridAdd:function(bt) {
-  var cfg = Ext.apply({xtype:'taskGridWindow'}, {title:'发布任务', items:[Ext.apply({xtype:'taskGridForm'})]});
+  var cfg = Ext.apply({xtype:'taskGridWindow'}, {title:'发布任务', items:[Ext.apply({xtype:'addTaskGridForm'})]});
   Ext.create(cfg);
 }, taskGridEdit:function(btn) {
   var grid = btn.up('gridpanel');
   var selModel = grid.getSelectionModel();
   if (selModel.hasSelection()) {
     var record = selModel.getSelection()[0];
-    var orderWindow = Ext.widget('taskGridWindow', {title:'修改任务', items:[{xtype:'taskGridForm'}]});
+    var orderWindow = Ext.widget('editTaskGridForm', {title:'修改任务', items:[{xtype:'taskGridForm'}]});
     orderWindow.down('form').getForm().loadRecord(record);
   } else {
     Ext.Msg.alert('提示', '请选择一行数据进行编辑!');
@@ -101704,26 +101720,83 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
   if (win) {
     win.close();
   }
-}, taskGridFind:function(btn) {
+}, myTaskGridFind:function(btn) {
   var grid = btn.up('gridpanel');
   var record = grid.getStore();
-  var userName = Ext.getCmp('taskCondition').items.getAt(5).getValue();
-  var createName = Ext.getCmp('taskCondition').items.getAt(7).getValue();
-  var taskState = Ext.getCmp('taskCondition').items.getAt(8).getValue();
+  var createName = Ext.getCmp('myTaskCondition').items.getAt(1).getValue();
+  var taskState = Ext.getCmp('myTaskCondition').items.getAt(3).getValue();
   var beginTime = null;
   var endTime = null;
-  beginTime = Ext.getCmp('taskCondition').items.getAt(10).getValue();
+  beginTime = Ext.getCmp('myTaskCondition').items.getAt(5).getValue();
   if (beginTime && beginTime.length != 0) {
-    endTime = Ext.Date.add(Ext.getCmp('taskCondition').items.getAt(12).getValue(), Ext.Date.DAY, 1);
+    endTime = Ext.Date.add(Ext.getCmp('myTaskCondition').items.getAt(7).getValue(), Ext.Date.DAY, 1);
   } else {
-    endTime = Ext.getCmp('taskCondition').items.getAt(12).getValue();
+    endTime = Ext.getCmp('myTaskCondition').items.getAt(7).getValue();
+  }
+  Ext.Ajax.request({url:'task/findByCondition.json', params:{createName:createName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
+    var tnpdata = Ext.util.JSON.decode(response.responseText);
+    grid.getStore().loadData(tnpdata.content, false);
+  }});
+}, releaseTaskGridFind:function(btn) {
+  var grid = btn.up('gridpanel');
+  var record = grid.getStore();
+  var userName = Ext.getCmp('releaseTaskCondition').items.getAt(1).getValue();
+  var taskState = Ext.getCmp('releaseTaskCondition').items.getAt(3).getValue();
+  var beginTime = null;
+  var endTime = null;
+  beginTime = Ext.getCmp('releaseTaskCondition').items.getAt(5).getValue();
+  if (beginTime && beginTime.length != 0) {
+    endTime = Ext.Date.add(Ext.getCmp('releaseTaskCondition').items.getAt(7).getValue(), Ext.Date.DAY, 1);
+  } else {
+    endTime = Ext.getCmp('releaseTaskCondition').items.getAt(7).getValue();
+  }
+  Ext.Ajax.request({url:'task/findByCondition.json', params:{userName:userName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
+    var tnpdata = Ext.util.JSON.decode(response.responseText);
+    grid.getStore().loadData(tnpdata.content, false);
+  }});
+}, allTaskGridFind:function(btn) {
+  var grid = btn.up('gridpanel');
+  var record = grid.getStore();
+  var userName = Ext.getCmp('allTaskCondition').items.getAt(1).getValue();
+  var createName = Ext.getCmp('allTaskCondition').items.getAt(3).getValue();
+  var taskState = Ext.getCmp('allTaskCondition').items.getAt(5).getValue();
+  var beginTime = null;
+  var endTime = null;
+  beginTime = Ext.getCmp('allTaskCondition').items.getAt(7).getValue();
+  if (beginTime && beginTime.length != 0) {
+    endTime = Ext.Date.add(Ext.getCmp('allTaskCondition').items.getAt(9).getValue(), Ext.Date.DAY, 1);
+  } else {
+    endTime = Ext.getCmp('allTaskCondition').items.getAt(9).getValue();
   }
   Ext.Ajax.request({url:'task/findByCondition.json', params:{userName:userName, createName:createName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     grid.getStore().loadData(tnpdata.content, false);
   }});
+}, setStateComplete:function(grid, rowIndex, colIndex) {
+  var record = grid.getStore().getAt(rowIndex);
+  var taskId = record.data.taskId;
+  var taskName = record.data.taskName;
+  Ext.Msg.confirm('', '确定将任务"' + taskName + '"标记为完成吗？', function(button) {
+    if (button == 'yes') {
+      Ext.Ajax.request({url:'task/updateTaskState', method:'post', params:{taskId:taskId, taskState:'已完成'}});
+      grid.getStore().reload();
+    }
+  });
+}, setStateStop:function(grid, rowIndex, colIndex) {
+  var record = grid.getStore().getAt(rowIndex);
+  var taskId = record.data.taskId;
+  var taskName = record.data.taskName;
+  Ext.Msg.confirm('', '确定将终止任务"' + taskName + '"吗？', function(button) {
+    if (button == 'yes') {
+      Ext.Ajax.request({url:'task/updateTaskState', method:'post', params:{taskId:taskId, taskState:'已终止'}});
+      grid.getStore().reload();
+    }
+  });
 }});
 Ext.define('Admin.view.task.TaskViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.taskViewModel', stores:{taskLists:{type:'taskStore', autoLoad:true}}});
+Ext.define('Admin.view.role.UpdateTaskGridForm', {extend:Ext.form.Panel, alias:'widget.editTaskGridForm', id:'editTaskGridForm', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'taskId', name:'taskId'}, {xtype:'hidden', fieldLabel:'createId', name:'createId'}, {xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'hidden', fieldLabel:'createDate', name:'createDate'}, 
+{xtype:'hidden', fieldLabel:'createName', name:'createName'}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, {xtype:'textfield', editable:false, fieldLabel:'接收者', name:'userName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', fieldLabel:'taskState', name:'taskState'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', 
+text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
 Ext.define('Admin.view.widgets.WidgetA', {extend:Ext.panel.Panel, xtype:'widget-a', cls:'admin-widget shadow', items:[{xtype:'image', cls:'widget-top-container-first-img', height:66, width:66, alt:'profile-image', src:'resources/images/user-profile/3.png'}, {xtype:'component', cls:'widget-top-first-container postion-class', height:135}, {xtype:'container', cls:'widget-bottom-first-container postion-class', height:135, padding:'30 0 0 0', layout:{type:'vbox', align:'center'}, items:[{xtype:'label', 
 cls:'widget-name-text', html:'John Doe'}, {xtype:'label', html:'Administrator'}, {xtype:'toolbar', cls:'widget-tool-button', flex:1, items:[{ui:'soft-green', text:'Follow'}, {ui:'soft-blue', text:'Message'}]}]}]});
 Ext.define('Admin.view.widgets.WidgetB', {extend:Ext.panel.Panel, xtype:'widget-b', cls:'admin-widget shadow', items:[{xtype:'image', cls:'widget-top-container-first-img', height:66, width:66, alt:'profile-image', src:'resources/images/user-profile/4.png'}, {xtype:'component', cls:'widget-top-second-container postion-class', height:135}, {xtype:'container', cls:'widget-bottom-first-container postion-class', height:135, padding:'30 0 0 0', layout:{type:'vbox', align:'center'}, items:[{xtype:'label', 
