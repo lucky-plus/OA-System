@@ -104,4 +104,9 @@ public class TaskServices implements ITaskService {
 		}
 	}
 
+	@Override
+	public String findTaskNameByTaskId(Integer taskId) {
+		return taskDao.findTaskNameByTaskId(taskId);
+	}
+
 }

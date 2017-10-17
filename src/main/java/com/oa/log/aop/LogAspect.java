@@ -21,6 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.oa.authority.entity.Role;
 import com.oa.authority.entity.dto.RoleDTO;
 import com.oa.business.entity.dto.TaskDTO;
+import com.oa.business.service.ITaskService;
 import com.oa.log.entity.Log;
 import com.oa.log.service.ILogService;
 import com.oa.message.entity.dto.NoticeDTO;
@@ -37,6 +38,8 @@ public class LogAspect {
 	Logger LOGGER = LoggerFactory.getLogger(LogAspect.class);
 	@Autowired
 	private ILogService logService;
+	@Autowired
+	private ITaskService taskService;
 	
 	//声明切入点
 	@Pointcut("execution(* com.oa.*.service.*.*(..))")
@@ -98,6 +101,25 @@ public class LogAspect {
 			
 			log.setContent(content.toString());
 			logService.save(log);
+			
+		} else if(methodName.contains("updateTaskState")) {
+
+			//记录操作类型
+			String operation = "修改";
+			log.setOperation(operation);
+			
+			Object[] params = joinPoint.getArgs();
+			Integer taskId = (Integer) params[0];
+			String taskState = (String) params[1];
+			String taskName = taskService.findTaskNameByTaskId(taskId);
+			if("已终止".equals(taskState)) {
+				content.append("终止了任务："+taskName);
+			} else if("已完成".equals(taskState)) {
+				content.append("完成了任务："+taskName);
+			}
+			log.setContent(content.toString());
+			logService.save(log);
+			
 		}
 		
 	}

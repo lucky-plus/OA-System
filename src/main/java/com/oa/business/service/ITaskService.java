@@ -20,4 +20,5 @@ public interface ITaskService {
 	public Page<TaskDTO> findAll(Specification<Task> spec, Pageable pageable);
 	
 	public void updateTaskState(Integer taskId, String taskState);
+	public String findTaskNameByTaskId(Integer taskId);
 }
