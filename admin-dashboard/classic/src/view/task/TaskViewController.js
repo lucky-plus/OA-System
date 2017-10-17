@@ -201,40 +201,50 @@ Ext.define('Admin.view.task.TaskViewController', {
 	    var record = grid.getStore().getAt(rowIndex);
 	    var taskId=record.data.taskId;
 	    var taskName=record.data.taskName;
-		Ext.Msg.confirm("", "确定将任务\""+taskName+"\"标记为完成吗？", function (button) {
-		if (button == "yes") {
-	    Ext.Ajax.request({ 
-			url : 'task/updateTaskState', 
-			method : 'post', 
-			params : {
-				taskId: taskId,
-				taskState: '已完成'
-			},  
-			
-	    });
-	    grid.getStore().reload();
+	    var taskState=record.data.taskState;
+	    if(taskState.indexOf("已完成") >= 0) {
+	    	Ext.Msg.alert("提示", "任务\""+taskName+"\"已完成，不能重复标记为完成状态");
+	    } else if(taskState.indexOf("已终止") >= 0) {
+	    	Ext.Msg.alert("提示", "任务\""+taskName+"\"已终止，不能标记为完成状态");
+	    } else {
+			Ext.Msg.confirm("", "确定将任务\""+taskName+"\"标记为完成吗？", function (button) {
+			if (button == "yes") {
+		    Ext.Ajax.request({ 
+				url : 'task/updateTaskState', 
+				method : 'post', 
+				params : {
+					taskId: taskId,
+					taskState: '已完成'
+				}
+			});
+		    grid.getStore().reload();
+			}
+	    	})
 		}
-	    })
    },
 	
    setStateStop: function(grid, rowIndex, colIndex) {
 	    var record = grid.getStore().getAt(rowIndex);
 	    var taskId=record.data.taskId;
 	    var taskName=record.data.taskName;
-		Ext.Msg.confirm("", "确定将终止任务\""+taskName+"\"吗？", function (button) {
-		if (button == "yes") {
-	    Ext.Ajax.request({ 
-			url : 'task/updateTaskState', 
-			method : 'post', 
-			params : {
-				taskId: taskId,
-				taskState: '已终止'
-			},  
-			
-	    });
-	    grid.getStore().reload();
+	    var taskState=record.data.taskState;
+	    if(taskState.indexOf("已终止") >= 0) {
+	    	Ext.Msg.alert("提示", "任务\""+taskName+"\"已终止，不能重复标记为终止状态");
+	    } else {
+			Ext.Msg.confirm("", "确定将终止任务\""+taskName+"\"吗？", function (button) {
+			if (button == "yes") {
+		    Ext.Ajax.request({ 
+				url : 'task/updateTaskState', 
+				method : 'post', 
+				params : {
+					taskId: taskId,
+					taskState: '已终止'
+				}  
+		    });
+		    grid.getStore().reload();
+			}
+	    	})
 		}
-	    })
    },
 
    showTaskText: function(grid, rowIndex, colIndex) {

@@ -20,6 +20,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.oa.authority.entity.Role;
 import com.oa.authority.entity.dto.RoleDTO;
+import com.oa.business.entity.dto.TaskDTO;
 import com.oa.log.entity.Log;
 import com.oa.log.service.ILogService;
 import com.oa.message.entity.dto.NoticeDTO;
@@ -172,6 +173,20 @@ public class LogAspect {
 			log.setContent(content.toString());
 			logService.save(log);
 			
+		} else if(param.contains("TaskDTO")) {
+			Object[] params = joinPoint.getArgs();
+			TaskDTO task = (TaskDTO) params[0];
+			if(task.getTaskId() != null) {
+				operation = "修改";
+				log.setOperation(operation);
+			} else {
+				operation = "添加";
+				log.setOperation(operation);
+			}
+			content.append(operation+"了任务："+task.getTaskName());
+			log.setContent(content.toString());
+			logService.save(log);
+			
 		}
 		
 	}
@@ -190,6 +205,8 @@ public class LogAspect {
 			content.append(operation+"了职务,所删职务ID为:");
 		} else if(className.contains("User")) {
 			content.append(operation+"了用户,所删用户ID为:");
+		} else if(className.contains("Task")) {
+			content.append(operation+"了任务,所删任务ID为:");
 		}
 
 		Object[] params = joinPoint.getArgs();

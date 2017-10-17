@@ -72,10 +72,14 @@ public class TaskServices implements ITaskService {
 	@Override
 	public void updateTaskState(Integer taskId, String taskState) {
 		if("已完成".equals(taskState)) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("<font color=\"green\">"+taskState+"</font>");
 			Date completeDate = new Date();
-			taskDao.updateTaskState(taskId, taskState, completeDate);
+			taskDao.updateTaskState(taskId, sb.toString(), completeDate);
 		}else if("已终止".equals(taskState)) {
-			taskDao.updateTaskState(taskId, taskState);
+			StringBuffer sb = new StringBuffer();
+			sb.append("<font color=\"red\">"+taskState+"</font>");
+			taskDao.updateTaskState(taskId, sb.toString());
 		}
 	}
 
