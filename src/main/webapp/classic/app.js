@@ -102552,8 +102552,9 @@ Ext.define('Admin.view.staff.StaffWindow', {extend:Ext.window.Window, alias:'wid
   this.setSize(Math.floor(width * 0.5), Math.floor(height * 0.8));
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
-Ext.define('Admin.view.role.AddTaskGridForm', {extend:Ext.form.Panel, alias:'widget.addTaskGridForm', id:'addTaskGridForm', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'createId', name:'createId', value:loginUserId}, {xtype:'hidden', fieldLabel:'createName', name:'createName', value:loginUser}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, {xtype:'textfield', 
-fieldLabel:'userId', name:'userId'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', fieldLabel:'taskState', name:'taskState'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
+Ext.define('Admin.view.role.AddTaskGridForm', {extend:Ext.form.Panel, alias:'widget.addTaskGridForm', id:'addTaskGridForm', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'createId', name:'createId', value:loginUserId}, {xtype:'hidden', fieldLabel:'createName', name:'createName', value:loginUser}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, {xtype:'combobox', 
+fieldLabel:'接收者', name:'userId', id:'taskcombobox', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'staff/findTaskUser.json?roleLevel\x3d' + loginUserRoleLevel}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'realName', valueField:'userId'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', fieldLabel:'taskState', 
+name:'taskState'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
 Ext.define('Admin.view.task.AllTask', {extend:Ext.container.Container, xtype:'alltasks', controller:'taskViewController', viewModel:{type:'taskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'allTaskGrid'}]});
 Ext.define('Admin.view.task.AllTaskGrid', {extend:Ext.grid.Panel, xtype:'allTaskGrid', title:'\x3cb\x3e所有任务\x3c/b\x3e', bind:'{taskLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'taskId', sortable:false, dataIndex:'taskId', hidden:true}, {text:'createId', sortable:false, dataIndex:'createId', hidden:true}, {text:'userId', sortable:false, dataIndex:'userId', hidden:true}, {text:'任务名称', sortable:false, dataIndex:'taskName', width:150}, {text:'任务发布时间', sortable:true, dataIndex:'createDate', 
 width:200, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'任务完成时间', sortable:true, dataIndex:'completeDate', width:200}, {text:'接收者', sortable:false, dataIndex:'userName', width:120}, {text:'发布者', sortable:false, dataIndex:'createName', width:120}, {text:'状态', sortable:false, dataIndex:'taskState', flex:120}, {xtype:'actioncolumn', text:'查看详情', width:100, tdCls:'action', items:[{icon:'resources/images/icons/search.png', tooltip:'查看详情', handler:'showTaskText'}]}], tbar:Ext.create('Ext.Toolbar', 
@@ -102613,17 +102614,25 @@ Ext.define('Admin.view.notcie.TaskText', {extend:Ext.form.Panel, alias:'widget.t
 Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController, alias:'controller.taskViewController', taskGridAdd:function(bt) {
   var cfg = Ext.apply({xtype:'taskGridWindow'}, {title:'发布任务', items:[Ext.apply({xtype:'addTaskGridForm'})]});
   Ext.create(cfg);
-}, taskGridEdit:function(btn) {
-  var grid = btn.up('gridpanel');
-  var selModel = grid.getSelectionModel();
-  if (selModel.hasSelection()) {
-    var record = selModel.getSelection()[0];
-    var orderWindow = Ext.widget('taskGridWindow', {title:'修改任务', items:[{xtype:'editTaskGridForm'}]});
-    orderWindow.down('form').getForm().loadRecord(record);
-  } else {
-    Ext.Msg.alert('提示', '请选择一行数据进行编辑!');
-  }
-}, taskGridDelete:function(btn) {
+}, taskGridEdit: function(btn, rowIndex, colIndex){
+      var grid = btn.up('gridpanel');//获取Grid视图
+      var selModel = grid.getSelectionModel();//获取Grid的SelectionModel
+      if (selModel.hasSelection()) {//判断是否选中记录
+      // var parentId=tree.up('panel').getStore().getAt(tree.up('panel').deptment);
+      // var record=tree.up('panel').deptFind;
+        var record = btn.up('gridpanel').getStore().getAt(rowIndex);
+        var taskWindow = Ext.widget('taskGridWindow',{
+        title:'修改任务',
+        items: [{
+          xtype: 'editTaskGridForm',
+          }]
+        });
+      //让form加载选中记录
+      taskWindow.down("form").items.getAt(7).setValue(record.get('realName'));
+      }else{
+        Ext.Msg.alert('警告','请选择一行数据进行编辑')
+      }
+  }, taskGridDelete:function(btn) {
   var grid = btn.up('gridpanel');
   var selModel = grid.getSelectionModel();
   if (selModel.hasSelection()) {
@@ -102755,8 +102764,8 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
 }});
 Ext.define('Admin.view.task.TaskViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.taskViewModel', stores:{taskLists:{type:'taskStore', autoLoad:true}}});
 Ext.define('Admin.view.role.UpdateTaskGridForm', {extend:Ext.form.Panel, alias:'widget.editTaskGridForm', id:'editTaskGridForm', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'taskId', name:'taskId'}, {xtype:'hidden', fieldLabel:'createId', name:'createId'}, {xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'hidden', fieldLabel:'createDate', name:'createDate'}, 
-{xtype:'hidden', fieldLabel:'completeDate', name:'completeDate'}, {xtype:'hidden', fieldLabel:'createName', name:'createName'}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, {xtype:'textfield', editable:false, fieldLabel:'接收者', name:'userName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', fieldLabel:'taskState', name:'taskState'}], 
-bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
+{xtype:'hidden', fieldLabel:'completeDate', name:'completeDate'}, {xtype:'hidden', fieldLabel:'createName', name:'createName'}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, {xtype:'combobox', fieldLabel:'接收者', name:'userId', id:'taskcombobox', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'staff/findTaskUser.json?roleLevel\x3d' + loginUserRoleLevel}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'realName', valueField:'userId'}, {xtype:'htmleditor', 
+buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', fieldLabel:'taskState', name:'taskState'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
 Ext.define('Admin.view.widgets.WidgetA', {extend:Ext.panel.Panel, xtype:'widget-a', cls:'admin-widget shadow', items:[{xtype:'image', cls:'widget-top-container-first-img', height:66, width:66, alt:'profile-image', src:'resources/images/user-profile/3.png'}, {xtype:'component', cls:'widget-top-first-container postion-class', height:135}, {xtype:'container', cls:'widget-bottom-first-container postion-class', height:135, padding:'30 0 0 0', layout:{type:'vbox', align:'center'}, items:[{xtype:'label', 
 cls:'widget-name-text', html:'John Doe'}, {xtype:'label', html:'Administrator'}, {xtype:'toolbar', cls:'widget-tool-button', flex:1, items:[{ui:'soft-green', text:'Follow'}, {ui:'soft-blue', text:'Message'}]}]}]});
 Ext.define('Admin.view.widgets.WidgetB', {extend:Ext.panel.Panel, xtype:'widget-b', cls:'admin-widget shadow', items:[{xtype:'image', cls:'widget-top-container-first-img', height:66, width:66, alt:'profile-image', src:'resources/images/user-profile/4.png'}, {xtype:'component', cls:'widget-top-second-container postion-class', height:135}, {xtype:'container', cls:'widget-bottom-first-container postion-class', height:135, padding:'30 0 0 0', layout:{type:'vbox', align:'center'}, items:[{xtype:'label', 

@@ -30,8 +30,8 @@ public class MailUtil {
 	
 	static {
 		props.put("mail.smtp.host", "smtp.qq.com");
-//		props.put("mail.smtp.ssl.enable", "true");
-//		props.put("mail.smtp.port", 465);
+		props.put("mail.smtp.ssl.enable", "true");
+		props.put("mail.smtp.port", 465);
 		props.put("mail.smtp.auth", "true");
 		
 		session = Session.getDefaultInstance(props);

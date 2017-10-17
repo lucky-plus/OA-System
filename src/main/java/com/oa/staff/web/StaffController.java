@@ -1,6 +1,7 @@
 package com.oa.staff.web;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oa.staff.entity.dto.PostUserDTO;
+import com.oa.staff.entity.dto.TaskUserDTO;
 import com.oa.staff.entity.dto.UserRoleDTO;
 import com.oa.staff.service.IStaffService;
 import com.oa.utils.ExtjsAjaxResult;
@@ -96,6 +98,11 @@ public class StaffController {
 			 e.printStackTrace();
 			 return new ExtjsAjaxResult(false,"操作失败！");
 		}
+	}
+	
+	@RequestMapping("/findTaskUser")
+	public @ResponseBody List<TaskUserDTO> findTaskUser(Integer roleLevel) {
+		return staffService.findTaskUser(roleLevel);
 	}
 	
 }
