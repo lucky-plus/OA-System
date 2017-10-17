@@ -25,4 +25,7 @@ public interface IStaffDao extends PagingAndSortingRepository<UserInfornation, S
 	@Query("update UserInfornation u set u.role.roleId = ?2 where u.userId = ?1")
 	public void userRoleUpdate(String userId, Integer roleId);
 	
+	@Query("select mail from UserInfornation u where u.userId = ?1")
+	public String findMailByUserId(String userId);
+	
 }
