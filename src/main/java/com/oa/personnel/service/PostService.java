@@ -31,10 +31,10 @@ public class PostService implements IPostService {
 		postDao.save(entity);
 	}
 
-	@Override
-	public void delete(Integer id) {
-		postDao.delete(id);
-	}
+//	@Override
+//	public void delete(Integer id) {
+//		postDao.delete(id);
+//	}
 
 	@Override
 	public ExtjsAjaxResult delete(Integer[] ids) {

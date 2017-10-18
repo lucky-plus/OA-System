@@ -88,18 +88,6 @@ public class StaffController {
 		}
 	}
 	
-	@PostMapping("/deleteone")
-	public @ResponseBody ExtjsAjaxResult delete(String id)
-	{
-		try {
-			staffService.delete(id);
-			 return new ExtjsAjaxResult(true,"操作成功！");
-		} catch (Exception e) {
-			 e.printStackTrace();
-			 return new ExtjsAjaxResult(false,"操作失败！");
-		}
-	}
-	
 	@RequestMapping("/findTaskUser")
 	public @ResponseBody List<TaskUserDTO> findTaskUser(Integer roleLevel) {
 		return staffService.findTaskUser(roleLevel);

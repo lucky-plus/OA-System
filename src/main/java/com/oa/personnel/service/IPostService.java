@@ -13,7 +13,7 @@ import com.oa.utils.ExtjsAjaxResult;
 public interface IPostService {
 
 	public void save(PostDTO post);
-	public void delete(Integer id);
+//	public void delete(Integer id);
 	public ExtjsAjaxResult delete(Integer[] ids);
 	public List<PostDTO> findAll();
 	public Page<PostDTO> findAll(Pageable pageable);

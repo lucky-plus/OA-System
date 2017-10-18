@@ -116,10 +116,6 @@ public class StaffService implements IStaffService {
 		staffDao.delete(entity);
 	}
 
-	public void delete(String id) {
-		staffDao.delete(id);
-	}
-
 	@Override
 	public void delete(String[] ids) {
 		for (String id : ids) {
