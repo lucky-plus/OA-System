@@ -160,8 +160,11 @@ public class TaskDTO {
 				 //1.声明Predicate集合
 				 List<Predicate> predicate = new ArrayList<>();
 				 //2.根据DTO查询条件动态添加Predicate
-				 if(taskDTO.getCreateName()!=null && !"".equals(taskDTO.getCreateName())) {
-					 predicate.add(cb.like(root.get("createName").as(String.class),"%"+taskDTO.getCreateName()+"%"));
+				 if(taskDTO.getCreateId()!=null && !"".equals(taskDTO.getCreateId())) {
+					 predicate.add(cb.equal(root.get("createId").as(String.class),taskDTO.getCreateId()));
+				 }
+				 if(taskDTO.getUserId()!=null && !"".equals(taskDTO.getUserId())) {
+					 predicate.add(cb.like(root.get("user").get("userId").as(String.class),"%"+taskDTO.getUserId()+"%"));
 				 }
 				 if(taskDTO.getRealName()!=null && !"".equals(taskDTO.getRealName())) {
 					 predicate.add(cb.like(root.get("user").get("realName").as(String.class),"%"+taskDTO.getRealName()+"%"));

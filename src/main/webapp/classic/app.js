@@ -101266,7 +101266,7 @@ Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'i
 Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
 Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
 Ext.define('Admin.model.faq.Question', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}]});
-Ext.define('Admin.model.log.LogModel', {extend:Admin.model.Base, fields:[{name:'createDate', type:'date'}, {name:'operation', type:'string'}, {name:'userName', type:'string'}, {name:'content', type:'string'}]});
+Ext.define('Admin.model.log.LogModel', {extend:Admin.model.Base, fields:[{name:'createDate', type:'date'}, {name:'operation', type:'string'}, {name:'userName', type:'string'}, {name:'realName', type:'string'}, {name:'content', type:'string'}]});
 Ext.define('Admin.model.notice.NoticeModel', {extend:Admin.model.Base, fields:[{name:'noticeId', type:'int'}, {name:'noticeName', type:'string'}, {name:'noticeTime', type:'date'}, {name:'userId', type:'string'}]});
 Ext.define('Admin.model.order.OrderModel', {extend:Admin.model.Base, fields:[{name:'id', type:'int'}, {name:'orderNumber', type:'string'}, {name:'createTime', type:'date'}, {name:'level', type:'string'}, {name:'price', type:'float'}]});
 Ext.define('Admin.model.resources.ResourcesModel', {extend:Admin.model.Base, fields:[{name:'resId', type:'int'}, {name:'resName', type:'string'}, {name:'resTime', type:'date'}, {name:'resIdentify', type:'string'}, {name:'userId', type:'string'}]});
@@ -101294,7 +101294,9 @@ Ext.define('Admin.store.role.RoleStore', {extend:Ext.data.Store, alias:'store.ro
 Ext.define('Admin.store.search.Results', {extend:Ext.data.Store, alias:'store.searchresults', model:'Admin.model.search.Result', proxy:{type:'api', url:'~api/search/results'}, autoLoad:'true', sorters:{direction:'ASC', property:'title'}});
 Ext.define('Admin.store.search.Users', {extend:Ext.data.Store, alias:'store.searchusers', model:'Admin.model.search.User', proxy:{type:'api', url:'~api/search/users'}, autoLoad:'true', sorters:{direction:'ASC', property:'fullname'}});
 Ext.define('Admin.store.staff.StaffStore', {extend:Ext.data.Store, alias:'store.staffStore', model:'Admin.model.staff.StaffModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
-Ext.define('Admin.store.task.TaskStore', {extend:Ext.data.Store, alias:'store.taskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findAll.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
+Ext.define('Admin.store.task.AllTaskStore', {extend:Ext.data.Store, alias:'store.allTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findByCondition.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
+Ext.define('Admin.store.task.MyTaskStore', {extend:Ext.data.Store, alias:'store.myTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findByCondition.json?userId\x3d' + loginUserId, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
+Ext.define('Admin.store.task.ReleaseTaskStore', {extend:Ext.data.Store, alias:'store.releaseTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findByCondition.json?createId\x3d' + loginUserId, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
 Ext.define('Admin.view.chart.Bounces', {extend:Ext.chart.CartesianChart, xtype:'chartbounces', animation:!Ext.isIE9m && Ext.os.is.Desktop, height:22, background:'rgba(255, 255, 255, 1)', colors:['rgba(250,222,225, 0.8)'], insetPadding:{top:0, left:0, right:0, bottom:0}, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y2value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'area', xField:'xvalue', yField:['y2value']}], 
 interactions:[{type:'panzoom'}]});
 Ext.define('Admin.view.chart.Network', {extend:Ext.chart.CartesianChart, xtype:'chartnetwork', animation:!Ext.isIE9m && Ext.os.is.Desktop, insetPadding:0, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y1value', 'y2value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'line', colors:['rgba(103, 144, 199, 0.6)'], useDarkerStrokeColor:false, xField:'xvalue', yField:'y1value', fill:true, smooth:true}, {type:'line', 
@@ -101867,8 +101869,9 @@ Ext.define('Admin.view.forms.WizardOne', {extend:Ext.panel.Panel, alias:'widget.
 colorScheme:'blue', flex:1}]});
 Ext.define('Admin.view.forms.Wizards', {extend:Ext.container.Container, xtype:'forms', cls:'wizards', defaultFocus:'wizardform', layout:'responsivecolumn', items:[{xtype:'formswizardone', userCls:'big-100'}, {xtype:'wizardform', cls:'wizardtwo shadow', colorScheme:'soft-purple', userCls:'big-50 small-100'}, {xtype:'wizardform', cls:'wizardthree shadow', colorScheme:'soft-green', userCls:'big-50 small-100'}]});
 Ext.define('Admin.view.log.Log', {extend:Ext.container.Container, xtype:'log', controller:'logViewController', viewModel:{type:'logViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'logGrid'}]});
-Ext.define('Admin.view.log.LogGrid', {extend:Ext.grid.Panel, xtype:'logGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{logLists}', id:'logGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'操作时间', sortable:true, dataIndex:'createDate', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'操作类型', sortable:true, dataIndex:'operation', width:80}, {text:'操作人', sortable:true, dataIndex:'userName', width:80}, {text:'具体操作', sortable:true, dataIndex:'content', flex:1}], 
-tbar:Ext.create('Ext.Toolbar', {id:'logCondition', items:[{xtype:'tbtext', text:'操作人：'}, {xtype:'textfield', width:100, itemsId:'userName'}, {xtype:'tbtext', text:'操作类型：'}, {xtype:'textfield', width:100, itemsId:'operation'}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', editable:false, itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
+Ext.define('Admin.view.log.LogGrid', {extend:Ext.grid.Panel, xtype:'logGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{logLists}', id:'logGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'操作时间', sortable:true, dataIndex:'createDate', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'操作类型', sortable:true, dataIndex:'operation', width:100}, {text:'操作人用户名', sortable:true, dataIndex:'userName', width:100}, {text:'操作人姓名', sortable:true, dataIndex:'realName', 
+width:100}, {text:'具体操作', sortable:true, dataIndex:'content', flex:1}], tbar:Ext.create('Ext.Toolbar', {id:'logCondition', items:[{xtype:'tbtext', text:'用户名：'}, {xtype:'textfield', width:100, itemsId:'userName'}, {xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:100, itemsId:'realName'}, {xtype:'tbtext', text:'操作类型：'}, {xtype:'textfield', width:100, itemsId:'operation'}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, 
+{xtype:'tbtext', text:'至：'}, {xtype:'datefield', editable:false, itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
   var cc = Ext.getCmp('logCondition').items.getAt(5).getValue();
   this.setMinValue(cc);
 }}}, {text:'查找', handler:'logGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
@@ -102510,132 +102513,68 @@ Ext.define('Admin.view.staff.StaffGrid', {extend:Ext.grid.Panel, xtype:'staffGri
 width:125, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'入职时间', sortable:true, dataIndex:'onDutDate', width:125, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'所属部门', sortable:true, dataIndex:'deptName', width:125}, {text:'职位', sortable:true, dataIndex:'postName', width:125}, {text:'联系电话', sortable:true, dataIndex:'mobilePhone', width:125}, {xtype:'actioncolumn', text:'操作', flex:1, tdCls:'action', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:'staffGridOpenEditWindow'}, 
 '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'staffGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'新建员工', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'staffGridOnClick'}}, '-', {text:'批量删除', iconCls:'x-fa fa-trash', handler:'staffGridDelete'}, '-', {xtype:'tbtext', text:'姓名'}, {xtype:'textfield', width:150, reference:'staffGridSearchText'}, {xtype:'tbtext', text:'部门'}, {xtype:'combobox', reference:'staffGridSearchField', name:'deptId', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), 
 reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', handler:'staffGridSearch'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{staffLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
-Ext.define('Admin.view.staff.StaffViewController', {
-    extend: 'Ext.app.ViewController',
-    alias: 'controller.StaffViewController',
-
-    staffGridOnClick: function(bt) {
-		//alert("Add Wiondws");
-		var cfg = Ext.apply({
-			xtype:'staffWindow'
-		},{
-			title:'添加员工',
-			items:[Ext.apply({xtype:'staffForm'})]
-		});
-		Ext.create(cfg);
-    },
-	
-	staffGridOpenEditWindow:function(grid, rowIndex, colIndex){
-			var record = grid.getStore().getAt(rowIndex);
-		   var staffWindow = Ext.widget('staffWindow',{
-				title:'修改部门',
-				items: [{xtype: 'staffEditForm'}]
-			});
-		   		//让form加载选中记录
-           staffWindow.down("form").getForm().loadRecord(record);
-	},
-   
-	staffGridDelete: function(btn) {
-		var grid = btn.up('gridpanel');
-		var selModel = grid.getSelectionModel();
-        if (selModel.hasSelection()) {
-            Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
-                if (button == "yes") {
-                    var selected = selModel.getSelection();
-                    var selectIds = []; //要删除的id
-                    Ext.each(selected, function (record) {
-                        selectIds.push(record.data.userId);
-                    })
-                  	Ext.Ajax.request({ 
-						url : 'staff/delete', 
-						method : 'post', 
-						params : { 
-							ids:selectIds
-						}, 
-						success: function(response, options) {
-			                var json = Ext.util.JSON.decode(response.responseText);
-				            if(json.success){
-				            	Ext.Msg.alert('操作成功', json.msg);
-				                grid.getStore().reload();
-					        }else{
-					        	Ext.Msg.alert('操作失败', json.msg);
-					        }
-			            }
-					});
-
-                }
-            });
-		}
-
-   },
-   
-    staffGridDeleteOne:function(grid, rowIndex, colIndex){
-	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
-		if (button == "yes") {
-	   var record = grid.getStore().getAt(rowIndex);
-	   var userId=record.data.userId;
-	   Ext.Ajax.request({ 
-			url : 'staff/delete', 
-			method : 'post', 
-			params : { 
-					ids:userId
-			},  
-			
-	   });
-	   grid.getStore().reload();
-		}
-	   })
-   },
-   
-	staffGridFromSubmit: function(btn) {
-		var staffForm = btn.up('form').getForm();
-		var win = btn.up('window');
-		staffForm.submit( { 
-			url : 'staff/saveOrUpdate', 
-			method : 'post', 
-			success : function(form, action) { 
-				Ext.Msg.alert("提示",action.result.msg); 
-				win.close();
-				Ext.getCmp('staffGrid').store.reload();
-			}, 
-			failure : function(form, action) { 
-				Ext.Msg.alert("提示",action.result.msg); 
-				
-			} 
-		}); 
-
-   },
-   
-   
-   staffGridSearch: function(bt) {
-		var searchField = this.lookupReference('staffGridSearchField').getRawValue();
-		var searchText = this.lookupReference('staffGridSearchText').getValue();
-		Ext.Ajax.request({ 
-			url : 'staff/findByPage', 
-			params : { 
-                    realName:searchText,
-					deptName:searchField,
-					page:1,
-					start:0,
-					limit:25,
-					sort:'userId',
-					dir:'DESC'
-			},
-			success: function(response, options){
-				var tnpdata= Ext.util.JSON.decode(response.responseText) ;
-				Ext.getCmp('staffGrid').getStore().loadData(tnpdata.content,false);
-			}
-			
-	   });
-	},
-   
-	staffGridWindowsClose: function(btn) {
-		var win=btn.up('window');
-		if(win){
-			win.close();
-		}
-   }
-});
+Ext.define('Admin.view.staff.StaffViewController', {extend:Ext.app.ViewController, alias:'controller.StaffViewController', staffGridOnClick:function(bt) {
+  var cfg = Ext.apply({xtype:'staffWindow'}, {title:'添加员工', items:[Ext.apply({xtype:'staffForm'})]});
+  Ext.create(cfg);
+}, staffGridOpenEditWindow:function(grid, rowIndex, colIndex) {
+  var record = grid.getStore().getAt(rowIndex);
+  var staffWindow = Ext.widget('staffWindow', {title:'修改部门', items:[{xtype:'staffEditForm'}]});
+  staffWindow.down('form').getForm().loadRecord(record);
+}, staffGridDelete:function(btn) {
+  var grid = btn.up('gridpanel');
+  var selModel = grid.getSelectionModel();
+  if (selModel.hasSelection()) {
+    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+      if (button == 'yes') {
+        var selected = selModel.getSelection();
+        var selectIds = [];
+        Ext.each(selected, function(record) {
+          selectIds.push(record.data.userId);
+        });
+        Ext.Ajax.request({url:'staff/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
+          var json = Ext.util.JSON.decode(response.responseText);
+          if (json.success) {
+            Ext.Msg.alert('操作成功', json.msg);
+            grid.getStore().reload();
+          } else {
+            Ext.Msg.alert('操作失败', json.msg);
+          }
+        }});
+      }
+    });
+  }
+}, staffGridDeleteOne:function(grid, rowIndex, colIndex) {
+  Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+    if (button == 'yes') {
+      var record = grid.getStore().getAt(rowIndex);
+      var userId = record.data.userId;
+      Ext.Ajax.request({url:'staff/delete', method:'post', params:{ids:userId}});
+      grid.getStore().reload();
+    }
+  });
+}, staffGridFromSubmit:function(btn) {
+  var staffForm = btn.up('form').getForm();
+  var win = btn.up('window');
+  staffForm.submit({url:'staff/saveOrUpdate', method:'post', success:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+    win.close();
+    Ext.getCmp('staffGrid').store.reload();
+  }, failure:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+  }});
+}, staffGridSearch:function(bt) {
+  var searchField = this.lookupReference('staffGridSearchField').getRawValue();
+  var searchText = this.lookupReference('staffGridSearchText').getValue();
+  Ext.Ajax.request({url:'staff/findByPage', params:{realName:searchText, deptName:searchField, page:1, start:0, limit:25, sort:'userId', dir:'DESC'}, success:function(response, options) {
+    var tnpdata = Ext.util.JSON.decode(response.responseText);
+    Ext.getCmp('staffGrid').getStore().loadData(tnpdata.content, false);
+  }});
+}, staffGridWindowsClose:function(btn) {
+  var win = btn.up('window');
+  if (win) {
+    win.close();
+  }
+}});
 Ext.define('Admin.view.staff.StaffViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.staffViewModel', stores:{staffLists:{type:'staffStore', autoLoad:true}}});
 Ext.define('Admin.view.staff.StaffWindow', {extend:Ext.window.Window, alias:'widget.staffWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
   var me = this;
@@ -102655,7 +102594,7 @@ Ext.define('Admin.view.staff.StaffWindow', {extend:Ext.window.Window, alias:'wid
 Ext.define('Admin.view.role.AddTaskGridForm', {extend:Ext.form.Panel, alias:'widget.addTaskGridForm', id:'addTaskGridForm', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'createId', name:'createId', value:loginUserId}, {xtype:'hidden', fieldLabel:'createName', name:'createName', value:loginUserRealName}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, 
 {xtype:'combobox', fieldLabel:'接收者', name:'userId', id:'taskcombobox', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'staff/findTaskUser.json?roleLevel\x3d' + loginUserRoleLevel}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'realName', valueField:'userId'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', 
 fieldLabel:'taskState', name:'taskState'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
-Ext.define('Admin.view.task.AllTask', {extend:Ext.container.Container, xtype:'alltasks', controller:'taskViewController', viewModel:{type:'taskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'allTaskGrid'}]});
+Ext.define('Admin.view.task.AllTask', {extend:Ext.container.Container, xtype:'alltasks', controller:'taskViewController', viewModel:{type:'allTaskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'allTaskGrid'}]});
 Ext.define('Admin.view.task.AllTaskGrid', {extend:Ext.grid.Panel, xtype:'allTaskGrid', title:'\x3cb\x3e所有任务\x3c/b\x3e', bind:'{taskLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'taskId', sortable:false, dataIndex:'taskId', hidden:true}, {text:'createId', sortable:false, dataIndex:'createId', hidden:true}, {text:'userId', sortable:false, dataIndex:'userId', hidden:true}, {text:'任务名称', sortable:false, dataIndex:'taskName', width:150}, {text:'任务发布时间', sortable:true, dataIndex:'createDate', 
 width:200, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'任务完成时间', sortable:true, dataIndex:'completeDate', width:200}, {text:'接收者', sortable:false, dataIndex:'realName', width:120}, {text:'发布者', sortable:false, dataIndex:'createName', width:120}, {text:'状态', sortable:false, dataIndex:'taskState', flex:120}, {xtype:'actioncolumn', text:'查看详情', width:100, tdCls:'action', items:[{icon:'resources/images/icons/search.png', tooltip:'查看详情', handler:'showTaskText'}]}], tbar:Ext.create('Ext.Toolbar', 
 {id:'allTaskCondition', items:[{xtype:'tbtext', text:'接收者：'}, {xtype:'textfield', width:90, itemsId:'realName'}, {xtype:'tbtext', text:'发布者：'}, {xtype:'textfield', width:90, itemsId:'createName'}, {xtype:'tbtext', text:'状态:'}, {xtype:'combobox', name:'taskState', width:100, store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'未完成', 'name':'未完成'}, {'value':'已完成', 'name':'已完成'}, {'value':'已终止', 'name':'已终止'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {xtype:'tbtext', 
@@ -102663,7 +102602,8 @@ text:'发布时间：'}, {xtype:'datefield', width:125, editable:false, itemId:'
   var cc = Ext.getCmp('allTaskCondition').items.getAt(7).getValue();
   this.setMinValue(cc);
 }}}, {text:'查找', handler:'allTaskGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
-Ext.define('Admin.view.task.MyTask', {extend:Ext.container.Container, xtype:'mytask', controller:'taskViewController', viewModel:{type:'taskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'myTaskGrid'}]});
+Ext.define('Admin.view.task.AllTaskViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.allTaskViewModel', stores:{taskLists:{type:'allTaskStore', autoLoad:true}}});
+Ext.define('Admin.view.task.MyTask', {extend:Ext.container.Container, xtype:'mytask', controller:'taskViewController', viewModel:{type:'myTaskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'myTaskGrid'}]});
 Ext.define('Admin.view.task.MyTaskGrid', {extend:Ext.grid.Panel, xtype:'myTaskGrid', title:'\x3cb\x3e我的任务\x3c/b\x3e', bind:'{taskLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'taskId', sortable:false, dataIndex:'taskId', hidden:true}, {text:'createId', sortable:false, dataIndex:'createId', hidden:true}, {text:'userId', sortable:false, dataIndex:'userId', hidden:true}, {text:'任务名称', sortable:false, dataIndex:'taskName', width:150}, {text:'任务发布时间', sortable:true, dataIndex:'createDate', 
 width:200, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'任务完成时间', sortable:true, dataIndex:'completeDate', width:200}, {text:'接收者', sortable:false, dataIndex:'realName', width:120}, {text:'发布者', sortable:false, dataIndex:'createName', width:120}, {text:'状态', sortable:false, dataIndex:'taskState', flex:120}, {xtype:'actioncolumn', text:'标记任务完成', width:100, tdCls:'action', items:[{icon:'resources/images/icons/complete.png', tooltip:'标记完成', handler:'setStateComplete'}]}, {xtype:'actioncolumn', 
 text:'查看详情', width:100, tdCls:'action', items:[{icon:'resources/images/icons/search.png', tooltip:'查看详情', handler:'showTaskText'}]}], tbar:Ext.create('Ext.Toolbar', {id:'myTaskCondition', items:[{xtype:'tbtext', text:'发布者：'}, {xtype:'textfield', width:90, itemsId:'createName'}, {xtype:'tbtext', text:'状态:'}, {xtype:'combobox', name:'taskState', width:100, store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'未完成', 'name':'未完成'}, {'value':'已完成', 'name':'已完成'}, {'value':'已终止', 
@@ -102671,7 +102611,8 @@ text:'查看详情', width:100, tdCls:'action', items:[{icon:'resources/images/i
   var cc = Ext.getCmp('myTaskCondition').items.getAt(5).getValue();
   this.setMinValue(cc);
 }}}, {text:'查找', handler:'myTaskGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
-Ext.define('Admin.view.task.ReleaseTask', {extend:Ext.container.Container, xtype:'releasetask', controller:'taskViewController', viewModel:{type:'taskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'releaseTaskGrid'}]});
+Ext.define('Admin.view.task.MyTaskViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.myTaskViewModel', stores:{taskLists:{type:'myTaskStore', autoLoad:true}}});
+Ext.define('Admin.view.task.ReleaseTask', {extend:Ext.container.Container, xtype:'releasetask', controller:'taskViewController', viewModel:{type:'releaseTaskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'releaseTaskGrid'}]});
 Ext.define('Admin.view.task.ReleaseTaskGrid', {extend:Ext.grid.Panel, xtype:'releaseTaskGrid', id:'releaseTaskGrid', title:'\x3cb\x3e发布任务\x3c/b\x3e', bind:'{taskLists}', listeners:{cellclick:function(btn, td, cellIndex, record, tr, rowIndex) {
   btn.up('panel').task = rowIndex;
   btn.up('panel').taskFind = record;
@@ -102683,6 +102624,7 @@ format:'Y-m-d', value:new Date, listeners:{focus:function() {
   var cc = Ext.getCmp('releaseTaskCondition').items.getAt(5).getValue();
   this.setMinValue(cc);
 }}}, {text:'查找', handler:'releaseTaskGridFind'}]})], bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.task.ReleaseTaskViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.releaseTaskViewModel', stores:{taskLists:{type:'releaseTaskStore', autoLoad:true}}});
 Ext.define('Admin.view.task.ShowTaskTextWindow', {extend:Ext.window.Window, alias:'widget.showTaskTextWindow', autoShow:true, modal:true, layout:'fit', afterRender:function() {
   var me = this;
   me.callParent(arguments);
@@ -102778,7 +102720,7 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
   } else {
     endTime = Ext.getCmp('myTaskCondition').items.getAt(7).getValue();
   }
-  Ext.Ajax.request({url:'task/findByCondition.json', params:{createName:createName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
+  Ext.Ajax.request({url:'task/findByCondition.json', params:{userId:loginUserId, createName:createName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     grid.getStore().loadData(tnpdata.content, false);
   }});
@@ -102795,7 +102737,7 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
   } else {
     endTime = Ext.getCmp('releaseTaskCondition').items.getAt(7).getValue();
   }
-  Ext.Ajax.request({url:'task/findByCondition.json', params:{realName:realName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
+  Ext.Ajax.request({url:'task/findByCondition.json', params:{createId:loginUserId, realName:realName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     grid.getStore().loadData(tnpdata.content, false);
   }});
@@ -102857,7 +102799,6 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
   var taskText = record.data.taskText;
   var taskWindow = Ext.widget('showTaskTextWindow', {title:'任务详情', html:'\x3ch1 align\x3d"center"\x3e' + taskName + '\x3c/h1\x3e' + '\x3cp\x3e' + taskText + '\x3c/p\x3e'});
 }});
-Ext.define('Admin.view.task.TaskViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.taskViewModel', stores:{taskLists:{type:'taskStore', autoLoad:true}}});
 Ext.define('Admin.view.role.UpdateTaskGridForm', {extend:Ext.form.Panel, alias:'widget.editTaskGridForm', id:'editTaskGridForm', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'taskId', name:'taskId'}, {xtype:'hidden', fieldLabel:'createId', name:'createId'}, {xtype:'hidden', fieldLabel:'createDate', name:'createDate'}, {xtype:'hidden', fieldLabel:'completeDate', 
 name:'completeDate'}, {xtype:'hidden', fieldLabel:'createName', name:'createName'}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, {xtype:'combobox', fieldLabel:'接收者', name:'userId', id:'taskcombobox', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'staff/findTaskUser.json?roleLevel\x3d' + loginUserRoleLevel}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'realName', valueField:'userId'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, 
 flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', fieldLabel:'taskState', name:'taskState'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
