@@ -63,10 +63,10 @@ Ext.define('Admin.view.staff.StaffViewController', {
 	   var record = grid.getStore().getAt(rowIndex);
 	   var userId=record.data.userId;
 	   Ext.Ajax.request({ 
-			url : 'staff/deleteone', 
+			url : 'staff/delete', 
 			method : 'post', 
 			params : { 
-					id:userId
+					ids:userId
 			},  
 			
 	   });

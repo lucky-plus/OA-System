@@ -102510,68 +102510,132 @@ Ext.define('Admin.view.staff.StaffGrid', {extend:Ext.grid.Panel, xtype:'staffGri
 width:125, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'入职时间', sortable:true, dataIndex:'onDutDate', width:125, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'所属部门', sortable:true, dataIndex:'deptName', width:125}, {text:'职位', sortable:true, dataIndex:'postName', width:125}, {text:'联系电话', sortable:true, dataIndex:'mobilePhone', width:125}, {xtype:'actioncolumn', text:'操作', flex:1, tdCls:'action', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:'staffGridOpenEditWindow'}, 
 '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'staffGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'新建员工', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'staffGridOnClick'}}, '-', {text:'批量删除', iconCls:'x-fa fa-trash', handler:'staffGridDelete'}, '-', {xtype:'tbtext', text:'姓名'}, {xtype:'textfield', width:150, reference:'staffGridSearchText'}, {xtype:'tbtext', text:'部门'}, {xtype:'combobox', reference:'staffGridSearchField', name:'deptId', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), 
 reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', handler:'staffGridSearch'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{staffLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
-Ext.define('Admin.view.staff.StaffViewController', {extend:Ext.app.ViewController, alias:'controller.StaffViewController', staffGridOnClick:function(bt) {
-  var cfg = Ext.apply({xtype:'staffWindow'}, {title:'添加员工', items:[Ext.apply({xtype:'staffForm'})]});
-  Ext.create(cfg);
-}, staffGridOpenEditWindow:function(grid, rowIndex, colIndex) {
-  var record = grid.getStore().getAt(rowIndex);
-  var staffWindow = Ext.widget('staffWindow', {title:'修改部门', items:[{xtype:'staffEditForm'}]});
-  staffWindow.down('form').getForm().loadRecord(record);
-}, staffGridDelete:function(btn) {
-  var grid = btn.up('gridpanel');
-  var selModel = grid.getSelectionModel();
-  if (selModel.hasSelection()) {
-    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
-      if (button == 'yes') {
-        var selected = selModel.getSelection();
-        var selectIds = [];
-        Ext.each(selected, function(record) {
-          selectIds.push(record.data.userId);
-        });
-        Ext.Ajax.request({url:'staff/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
-          var json = Ext.util.JSON.decode(response.responseText);
-          if (json.success) {
-            Ext.Msg.alert('操作成功', json.msg);
-            grid.getStore().reload();
-          } else {
-            Ext.Msg.alert('操作失败', json.msg);
-          }
-        }});
-      }
-    });
-  }
-}, staffGridDeleteOne:function(grid, rowIndex, colIndex) {
-  Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
-    if (button == 'yes') {
-      var record = grid.getStore().getAt(rowIndex);
-      var userId = record.data.userId;
-      Ext.Ajax.request({url:'staff/deleteone', method:'post', params:{id:userId}});
-      grid.getStore().reload();
-    }
-  });
-}, staffGridFromSubmit:function(btn) {
-  var staffForm = btn.up('form').getForm();
-  var win = btn.up('window');
-  staffForm.submit({url:'staff/saveOrUpdate', method:'post', success:function(form, action) {
-    Ext.Msg.alert('提示', action.result.msg);
-    win.close();
-    Ext.getCmp('staffGrid').store.reload();
-  }, failure:function(form, action) {
-    Ext.Msg.alert('提示', action.result.msg);
-  }});
-}, staffGridSearch:function(bt) {
-  var searchField = this.lookupReference('staffGridSearchField').getRawValue();
-  var searchText = this.lookupReference('staffGridSearchText').getValue();
-  Ext.Ajax.request({url:'staff/findByPage', params:{realName:searchText, deptName:searchField, page:1, start:0, limit:25, sort:'userId', dir:'DESC'}, success:function(response, options) {
-    var tnpdata = Ext.util.JSON.decode(response.responseText);
-    Ext.getCmp('staffGrid').getStore().loadData(tnpdata.content, false);
-  }});
-}, staffGridWindowsClose:function(btn) {
-  var win = btn.up('window');
-  if (win) {
-    win.close();
-  }
-}});
+Ext.define('Admin.view.staff.StaffViewController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.StaffViewController',
+
+    staffGridOnClick: function(bt) {
+		//alert("Add Wiondws");
+		var cfg = Ext.apply({
+			xtype:'staffWindow'
+		},{
+			title:'添加员工',
+			items:[Ext.apply({xtype:'staffForm'})]
+		});
+		Ext.create(cfg);
+    },
+	
+	staffGridOpenEditWindow:function(grid, rowIndex, colIndex){
+			var record = grid.getStore().getAt(rowIndex);
+		   var staffWindow = Ext.widget('staffWindow',{
+				title:'修改部门',
+				items: [{xtype: 'staffEditForm'}]
+			});
+		   		//让form加载选中记录
+           staffWindow.down("form").getForm().loadRecord(record);
+	},
+   
+	staffGridDelete: function(btn) {
+		var grid = btn.up('gridpanel');
+		var selModel = grid.getSelectionModel();
+        if (selModel.hasSelection()) {
+            Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+                if (button == "yes") {
+                    var selected = selModel.getSelection();
+                    var selectIds = []; //要删除的id
+                    Ext.each(selected, function (record) {
+                        selectIds.push(record.data.userId);
+                    })
+                  	Ext.Ajax.request({ 
+						url : 'staff/delete', 
+						method : 'post', 
+						params : { 
+							ids:selectIds
+						}, 
+						success: function(response, options) {
+			                var json = Ext.util.JSON.decode(response.responseText);
+				            if(json.success){
+				            	Ext.Msg.alert('操作成功', json.msg);
+				                grid.getStore().reload();
+					        }else{
+					        	Ext.Msg.alert('操作失败', json.msg);
+					        }
+			            }
+					});
+
+                }
+            });
+		}
+
+   },
+   
+    staffGridDeleteOne:function(grid, rowIndex, colIndex){
+	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+		if (button == "yes") {
+	   var record = grid.getStore().getAt(rowIndex);
+	   var userId=record.data.userId;
+	   Ext.Ajax.request({ 
+			url : 'staff/delete', 
+			method : 'post', 
+			params : { 
+					ids:userId
+			},  
+			
+	   });
+	   grid.getStore().reload();
+		}
+	   })
+   },
+   
+	staffGridFromSubmit: function(btn) {
+		var staffForm = btn.up('form').getForm();
+		var win = btn.up('window');
+		staffForm.submit( { 
+			url : 'staff/saveOrUpdate', 
+			method : 'post', 
+			success : function(form, action) { 
+				Ext.Msg.alert("提示",action.result.msg); 
+				win.close();
+				Ext.getCmp('staffGrid').store.reload();
+			}, 
+			failure : function(form, action) { 
+				Ext.Msg.alert("提示",action.result.msg); 
+				
+			} 
+		}); 
+
+   },
+   
+   
+   staffGridSearch: function(bt) {
+		var searchField = this.lookupReference('staffGridSearchField').getRawValue();
+		var searchText = this.lookupReference('staffGridSearchText').getValue();
+		Ext.Ajax.request({ 
+			url : 'staff/findByPage', 
+			params : { 
+                    realName:searchText,
+					deptName:searchField,
+					page:1,
+					start:0,
+					limit:25,
+					sort:'userId',
+					dir:'DESC'
+			},
+			success: function(response, options){
+				var tnpdata= Ext.util.JSON.decode(response.responseText) ;
+				Ext.getCmp('staffGrid').getStore().loadData(tnpdata.content,false);
+			}
+			
+	   });
+	},
+   
+	staffGridWindowsClose: function(btn) {
+		var win=btn.up('window');
+		if(win){
+			win.close();
+		}
+   }
+});
 Ext.define('Admin.view.staff.StaffViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.staffViewModel', stores:{staffLists:{type:'staffStore', autoLoad:true}}});
 Ext.define('Admin.view.staff.StaffWindow', {extend:Ext.window.Window, alias:'widget.staffWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
   var me = this;
