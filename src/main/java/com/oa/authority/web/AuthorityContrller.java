@@ -36,6 +36,7 @@ public class AuthorityContrller {
 				
 				//4.将用户放入session域中
 				session.setAttribute("userName", user.getUserName());
+				session.setAttribute("realName", user.getRealName());
 				session.setAttribute("userId", user.getUserId());
 				session.setAttribute("roleLevel", user.getRole().getRoleLevel());
 				

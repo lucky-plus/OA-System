@@ -1,5 +1,7 @@
 package com.oa.business.entity.dto;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,12 +24,13 @@ public class TaskDTO {
 	private String taskName;
 	private String taskText;
 	private Date createDate;
-	private Date completeDate;
+	private String completeDate;
 	private String taskState;
 	private String createId;		//发布者ID
 	private String createName;		//发布者姓名
 	private String userId;			//接收者ID
 	private String userName;		//接收者姓名
+	private String realName;		//接收者真实姓名姓名
 	
 	private Date beginDate;
 	private Date endDate;
@@ -37,6 +40,12 @@ public class TaskDTO {
 		if(entity.getUser() != null) {
 			dto.setUserId(entity.getUser().getUserId());
 			dto.setUserName(entity.getUser().getUserName());
+			dto.setRealName(entity.getUser().getRealName());
+		}
+		if(entity.getCompleteDate() != null) {
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String completeDate = sf.format(entity.getCompleteDate());
+			dto.setCompleteDate(completeDate);
 		}
 	}
 
@@ -46,6 +55,16 @@ public class TaskDTO {
 			UserInfornation user = new UserInfornation();
 			user.setUserId(dto.getUserId());
 			entity.setUser(user);
+		}
+		if(dto.getCompleteDate() != null && !"".equals(dto.getCompleteDate())) {
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date completeDate = null;
+			try {
+				completeDate = sf.parse(dto.getCompleteDate());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			entity.setCompleteDate(completeDate);
 		}
 	}
 	
@@ -73,12 +92,11 @@ public class TaskDTO {
 		return createDate;
 	}
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-	public Date getCompleteDate() {
+	public String getCompleteDate() {
 		return completeDate;
 	}
 
-	public void setCompleteDate(Date completeDate) {
+	public void setCompleteDate(String completeDate) {
 		this.completeDate = completeDate;
 	}
 	public void setCreateDate(Date createDate) {
@@ -126,6 +144,12 @@ public class TaskDTO {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
+	public String getRealName() {
+		return realName;
+	}
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
 
 	/**
      * 动态生成where语句
@@ -137,13 +161,13 @@ public class TaskDTO {
 				 List<Predicate> predicate = new ArrayList<>();
 				 //2.根据DTO查询条件动态添加Predicate
 				 if(taskDTO.getCreateName()!=null && !"".equals(taskDTO.getCreateName())) {
-					 predicate.add(cb.like(root.get("createName").as(String.class),"%"+ taskDTO.getCreateName()+"%"));
+					 predicate.add(cb.like(root.get("createName").as(String.class),"%"+taskDTO.getCreateName()+"%"));
 				 }
-				 if(taskDTO.getUserName()!=null && !"".equals(taskDTO.getUserName())) {
-					 predicate.add(cb.like(root.get("user").get("userName").as(String.class),"%"+ taskDTO.getUserName()+"%"));
+				 if(taskDTO.getRealName()!=null && !"".equals(taskDTO.getRealName())) {
+					 predicate.add(cb.like(root.get("user").get("realName").as(String.class),"%"+taskDTO.getRealName()+"%"));
 				 }
 				 if(taskDTO.getTaskState() !=null && !"".equals(taskDTO.getTaskState())) {
-					 predicate.add(cb.equal(root.get("taskState").as(String.class), taskDTO.getTaskState()));
+					 predicate.add(cb.like(root.get("taskState").as(String.class), "%"+taskDTO.getTaskState()+"%"));
 				 }
 				 if(taskDTO.getBeginDate()!=null && !"".equals(taskDTO.getBeginDate().toString())) {
 					 System.out.println(taskDTO.getBeginDate());

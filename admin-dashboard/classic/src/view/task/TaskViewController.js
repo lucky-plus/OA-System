@@ -13,23 +13,23 @@ Ext.define('Admin.view.task.TaskViewController', {
 		Ext.create(cfg);
     },
 	
-	taskGridEdit: function(btn) {
-		var grid = btn.up('gridpanel');//获取Grid视图
-		var selModel = grid.getSelectionModel();//获取Grid的SelectionModel
-        if (selModel.hasSelection()) {//判断是否选中记录
-           var record = selModel.getSelection()[0];//获取选中的第一条记录
-           //创建修改window和form
-		   var orderWindow = Ext.widget('taskGridWindow',{
+	taskGridEdit: function(btn, rowIndex, colIndex){
+		  if(btn.up('panel').task!=undefined){
+			var task=btn.up('panel').getStore().getAt(btn.up('panel').task);
+			var record=btn.up('panel').taskFind;
+		    var taskWindow = Ext.widget('taskGridWindow',{
 				title:'修改任务',
-				items: [{xtype: 'editTaskGridForm'}]
-			});
-		   		//让form加载选中记录
-           orderWindow.down("form").getForm().loadRecord(record);
-        }else{
-        	Ext.Msg.alert('提示',"请选择一行数据进行编辑!");
-        }
-
-   },
+				items: [{
+					xtype: 'editTaskGridForm',
+					}]
+		  	});
+		  //让form加载选中记录
+		  taskWindow.down("form").items.getAt(6).setValue(record.get('userId'));
+		  taskWindow.down("form").getForm().loadRecord(task);
+		  }else{
+			  Ext.Msg.alert('警告','请选择一行数据进行编辑')
+		  }
+	},
    
 	taskGridDelete: function(btn) {
 		var grid = btn.up('gridpanel');
@@ -130,7 +130,7 @@ Ext.define('Admin.view.task.TaskViewController', {
    releaseTaskGridFind: function(btn){
 	   var grid = btn.up('gridpanel');
 	   var record = grid.getStore();
-	   var userName=Ext.getCmp('releaseTaskCondition').items.getAt(1).getValue();
+	   var realName=Ext.getCmp('releaseTaskCondition').items.getAt(1).getValue();
 	   var taskState=Ext.getCmp('releaseTaskCondition').items.getAt(3).getValue();
 	   var beginTime=null;
 	   var endTime=null;
@@ -144,7 +144,7 @@ Ext.define('Admin.view.task.TaskViewController', {
 	   Ext.Ajax.request({ 
 			url : 'task/findByCondition.json', 
 			params : { 
-                    userName:userName,
+                    realName:realName,
                     taskState:taskState,
 					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),
 					endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'),
@@ -164,7 +164,7 @@ Ext.define('Admin.view.task.TaskViewController', {
    allTaskGridFind: function(btn){
 	   var grid = btn.up('gridpanel');
 	   var record = grid.getStore();
-	   var userName=Ext.getCmp('allTaskCondition').items.getAt(1).getValue();
+	   var realName=Ext.getCmp('allTaskCondition').items.getAt(1).getValue();
 	   var createName=Ext.getCmp('allTaskCondition').items.getAt(3).getValue();
 	   var taskState=Ext.getCmp('allTaskCondition').items.getAt(5).getValue();
 	   var beginTime=null;
@@ -179,7 +179,7 @@ Ext.define('Admin.view.task.TaskViewController', {
 	   Ext.Ajax.request({ 
 			url : 'task/findByCondition.json', 
 			params : { 
-                    userName:userName,
+                    realName:realName,
                     createName:createName,
                     taskState:taskState,
 					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),
@@ -201,40 +201,50 @@ Ext.define('Admin.view.task.TaskViewController', {
 	    var record = grid.getStore().getAt(rowIndex);
 	    var taskId=record.data.taskId;
 	    var taskName=record.data.taskName;
-		Ext.Msg.confirm("", "确定将任务\""+taskName+"\"标记为完成吗？", function (button) {
-		if (button == "yes") {
-	    Ext.Ajax.request({ 
-			url : 'task/updateTaskState', 
-			method : 'post', 
-			params : {
-				taskId: taskId,
-				taskState: '已完成'
-			},  
-			
-	    });
-	    grid.getStore().reload();
+	    var taskState=record.data.taskState;
+	    if(taskState.indexOf("已完成") >= 0) {
+	    	Ext.Msg.alert("提示", "任务\""+taskName+"\"已完成，不能重复标记为完成状态");
+	    } else if(taskState.indexOf("已终止") >= 0) {
+	    	Ext.Msg.alert("提示", "任务\""+taskName+"\"已终止，不能标记为完成状态");
+	    } else {
+			Ext.Msg.confirm("", "确定将任务\""+taskName+"\"标记为完成吗？", function (button) {
+			if (button == "yes") {
+		    Ext.Ajax.request({ 
+				url : 'task/updateTaskState', 
+				method : 'post', 
+				params : {
+					taskId: taskId,
+					taskState: '已完成'
+				}
+			});
+		    grid.getStore().reload();
+			}
+	    	})
 		}
-	    })
    },
 	
    setStateStop: function(grid, rowIndex, colIndex) {
 	    var record = grid.getStore().getAt(rowIndex);
 	    var taskId=record.data.taskId;
 	    var taskName=record.data.taskName;
-		Ext.Msg.confirm("", "确定将终止任务\""+taskName+"\"吗？", function (button) {
-		if (button == "yes") {
-	    Ext.Ajax.request({ 
-			url : 'task/updateTaskState', 
-			method : 'post', 
-			params : {
-				taskId: taskId,
-				taskState: '已终止'
-			},  
-			
-	    });
-	    grid.getStore().reload();
+	    var taskState=record.data.taskState;
+	    if(taskState.indexOf("已终止") >= 0) {
+	    	Ext.Msg.alert("提示", "任务\""+taskName+"\"已终止，不能重复标记为终止状态");
+	    } else {
+			Ext.Msg.confirm("", "确定将终止任务\""+taskName+"\"吗？", function (button) {
+			if (button == "yes") {
+		    Ext.Ajax.request({ 
+				url : 'task/updateTaskState', 
+				method : 'post', 
+				params : {
+					taskId: taskId,
+					taskState: '已终止'
+				}  
+		    });
+		    grid.getStore().reload();
+			}
+	    	})
 		}
-	    })
    },
 
    showTaskText: function(grid, rowIndex, colIndex) {

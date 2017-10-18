@@ -5,6 +5,13 @@
   id:'releaseTaskGrid',
   title:'<b>发布任务</b>',
   bind:'{taskLists}',
+  listeners:{
+    cellclick:function(btn,td, cellIndex, record, tr, rowIndex){
+		btn.up('panel').task = rowIndex;
+		btn.up('panel').taskFind = record;
+		// Ext.getCmp('postGrid').getStore().load({params:{deptId : record.get('id')}});
+	}
+  },
   selModel: Ext.create('Ext.selection.CheckboxModel'),
   columns: [
     {text: 'taskId' ,sortable:false ,dataIndex:'taskId',hidden:true},
@@ -13,9 +20,8 @@
     {text: '任务名称', sortable:false ,dataIndex:'taskName' ,width:150},
     {text: '任务发布时间' ,sortable:true ,dataIndex:'createDate' ,width:200,
      renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
-    {text: '任务完成时间' ,sortable:true ,dataIndex:'completeDate' ,width:200,
-     renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
-    {text: '接收者', sortable:false ,dataIndex:'userName' ,width:120},
+    {text: '任务完成时间' ,sortable:true ,dataIndex:'completeDate' ,width:200},
+    {text: '接收者', sortable:false ,dataIndex:'realName' ,width:120},
     {text: '发布者', sortable:false ,dataIndex:'createName' ,width:120},
     {text: '状态'  ,sortable:false ,dataIndex:'taskState'  ,flex:120},
     {
@@ -72,7 +78,7 @@
 			},{
 				xtype:'textfield',
 				width:90,
-				itemsId:'userName'
+				itemsId:'realName'
 				
 			},{xtype:'tbtext',
                 text:'状态:'

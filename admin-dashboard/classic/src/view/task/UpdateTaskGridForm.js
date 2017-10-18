@@ -42,11 +42,6 @@ Ext.define('Admin.view.role.UpdateTaskGridForm', {
 		// ,value: loginUserId
 	},{
 		xtype: 'hidden',
-		fieldLabel: 'userId',
-		//allowBlank: false,
-		name:'userId'
-	},{
-		xtype: 'hidden',
 		fieldLabel: 'createDate',
 		name:'createDate',
 	},{
@@ -62,11 +57,22 @@ Ext.define('Admin.view.role.UpdateTaskGridForm', {
 		fieldLabel: '任务名称',
 		name:'taskName'
 	},{
-		xtype: 'textfield',  
-		editable:false,
-		fieldLabel: '接收者',
-		name:'userName'
-	},{
+      	xtype: 'combobox',
+      	fieldLabel: '接收者',
+      	name:'userId',
+      	id: 'taskcombobox',
+      	store : 
+      	new Ext.data.Store( {
+        	proxy : new Ext.data.HttpProxy( {
+              url : 'staff/findTaskUser.json?roleLevel='+loginUserRoleLevel //提交到某action的某方法
+            }),
+        reader : {type:'json'},//需要显示的数据实体字段
+        autoLoad : true
+        }),
+      	queryMode:    'local',
+      	displayField: 'realName',
+      	valueField:   'userId'
+  	},{
         xtype: 'htmleditor',
         buttonDefaults: {
             tooltip: {

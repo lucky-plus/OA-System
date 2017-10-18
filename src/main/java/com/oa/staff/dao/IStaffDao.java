@@ -20,9 +20,18 @@ public interface IStaffDao extends PagingAndSortingRepository<UserInfornation, S
 	@Query("from UserInfornation u where u.role.roleLevel < ?1")
 	public Page<UserInfornation> findUserRole(Integer roleLevel, Pageable pageable);
 
+	@Query("from UserInfornation t where t.role.roleLevel < ?1")
+	public List<UserInfornation> findTaskUser(Integer roleLevel);
+	
 	@Modifying
 	@Transactional
 	@Query("update UserInfornation u set u.role.roleId = ?2 where u.userId = ?1")
 	public void userRoleUpdate(String userId, Integer roleId);
+	
+	@Query("select mail from UserInfornation u where u.userId = ?1")
+	public String findMailByUserId(String userId);
+
+	@Query("select realName from UserInfornation u where u.userId = ?1")
+	public String findRealNameByUserId(String userId);
 	
 }

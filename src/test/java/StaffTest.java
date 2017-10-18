@@ -76,6 +76,7 @@ public class StaffTest {
 		staffService.userRoleUpdate(userId, roleId);
 	}
 	
+	
 	@Test
 	public void testSave() {
 		PostUserDTO entity = new PostUserDTO();
@@ -84,4 +85,12 @@ public class StaffTest {
 		entity.setPostId(1);
 		staffService.save(entity);
 	}
+	
+	@Test
+	public void testFindRealName() {
+		String realName = staffDao.findRealNameByUserId("8");
+		System.out.println(realName);
+	}
+	
+
 }

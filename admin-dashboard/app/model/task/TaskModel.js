@@ -7,9 +7,10 @@ Ext.define('Admin.model.task.TaskModel', {
         {name:'taskName' ,type: 'string'},
         {name:'taskText' ,type: 'string'},
         {name:'createDate' ,type: 'date'},
-        {name:'completeDate' ,type: 'date'},
+        {name:'completeDate' ,type: 'string'},
 		{name:'taskState' ,type: 'string'},
 		{name:'createName' ,type: 'string'},
-		{name:'userName' ,type: 'string'}
+		{name:'userName' ,type: 'string'},
+        {name:'realName' ,type: 'string'}
     ]
 });

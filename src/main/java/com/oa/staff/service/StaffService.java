@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.oa.staff.dao.IStaffDao;
 import com.oa.staff.entity.UserInfornation;
 import com.oa.staff.entity.dto.PostUserDTO;
+import com.oa.staff.entity.dto.TaskUserDTO;
 import com.oa.staff.entity.dto.UserRoleDTO;
 
 @Service
@@ -122,6 +123,20 @@ public class StaffService implements IStaffService {
 		for (String id : ids) {
 			staffDao.delete(id);
 		}
+	}
+
+	@Override
+	public List<TaskUserDTO> findTaskUser(Integer roleLevel) {
+		List<UserInfornation> entityList = staffDao.findTaskUser(roleLevel);
+		List<TaskUserDTO> dtoList = new ArrayList<TaskUserDTO>();
+		if(entityList.size() > 0) {
+			for(UserInfornation user : entityList) {
+				TaskUserDTO dto = new TaskUserDTO();
+				TaskUserDTO.entityToDto(user, dto);
+				dtoList.add(dto);
+			}
+		}
+		return dtoList;
 	}
 
 
