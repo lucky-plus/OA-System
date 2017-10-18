@@ -12,8 +12,9 @@ Ext.define('Admin.view.authority.AuthorityGrid', {		//1.修改文件路径
 	columns: [
 		{text: 'userId'	,sortable:true ,dataIndex:'userId',hidden:true},
 		{text: 'roleId'	,sortable:true ,dataIndex:'roleId',hidden:true},
-        {text: '用户名称' ,sortable:true ,dataIndex:'userName' ,width:150},
-		{text: '角色名称'  ,sortable:true ,dataIndex:'roleName'  ,width:150},
+        {text: '用户名' ,sortable:true ,dataIndex:'userName' ,width:100},
+        {text: '姓名名' ,sortable:true ,dataIndex:'realName' ,width:100},
+		{text: '角色名称'  ,sortable:true ,dataIndex:'roleName'  ,width:100},
 		{text: '所拥有的权限', sortable:true ,dataIndex:'modulesText' ,flex:1}
 	],	
 
@@ -26,11 +27,18 @@ Ext.define('Admin.view.authority.AuthorityGrid', {		//1.修改文件路径
 				ui:'soft-blue',
 				handler: 'roleGridEdit'
 			},'-',{xtype:'tbtext',
-				text:'用户名称：'
+				text:'用户名：'
 			},{
 				xtype:'textfield',
 				width:100,
 				itemsId:'userName'
+				
+			},{xtype:'tbtext',
+				text:'姓名：'
+			},{
+				xtype:'textfield',
+				width:100,
+				itemsId:'realName'
 				
 			},{xtype:'tbtext',
 				text:'角色名称：'

@@ -110,6 +110,7 @@ Ext.define('Admin.view.task.TaskViewController', {
 	   Ext.Ajax.request({ 
 			url : 'task/findByCondition.json', 
 			params : { 
+					userId: loginUserId,
                     createName:createName,
                     taskState:taskState,
 					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),
@@ -143,7 +144,8 @@ Ext.define('Admin.view.task.TaskViewController', {
 	   }
 	   Ext.Ajax.request({ 
 			url : 'task/findByCondition.json', 
-			params : { 
+			params : {
+					createId: loginUserId,
                     realName:realName,
                     taskState:taskState,
 					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),

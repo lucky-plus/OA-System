@@ -9,8 +9,9 @@
 	columns: [
 		{text: '操作时间' ,sortable:true ,dataIndex:'createDate' ,width:150,
 		 renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
-		{text: '操作类型'  ,sortable:true ,dataIndex:'operation'  ,width:80},
-		{text: '操作人', sortable:true ,dataIndex:'userName' ,width:80},
+		{text: '操作类型'  ,sortable:true ,dataIndex:'operation'  ,width:100},
+		{text: '操作人用户名', sortable:true ,dataIndex:'userName' ,width:100},
+		{text: '操作人姓名', sortable:true ,dataIndex:'realName' ,width:100},
 		{text: '具体操作', sortable:true ,dataIndex:'content' ,flex:1}
 	],	
 
@@ -18,11 +19,18 @@
 	tbar: Ext.create('Ext.Toolbar', {
 			id: 'logCondition',
 			items:[ {xtype:'tbtext',
-				text:'操作人：'
+				text:'用户名：'
 			},{
 				xtype:'textfield',
 				width:100,
 				itemsId:'userName'
+				
+			},{xtype:'tbtext',
+				text:'姓名：'
+			},{
+				xtype:'textfield',
+				width:100,
+				itemsId:'realName'
 				
 			},{xtype:'tbtext',
 				text:'操作类型：'

@@ -22,6 +22,7 @@ public class LogDTO {
 	private String operation;
 	private String content;
 	private String userName;
+	private String realName;
 
 	private Date beginDate;
 	private Date endDate;
@@ -29,6 +30,7 @@ public class LogDTO {
 	public static void entityToDto(Log entity, LogDTO dto) {
 		BeanUtils.copyProperties(entity, dto);
 		dto.setUserName(entity.getUser().getUserName());
+		dto.setRealName(entity.getUser().getRealName());
 	}
 	
 	public Integer getLogId() {
@@ -73,6 +75,12 @@ public class LogDTO {
 	}
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	public String getRealName() {
+		return realName;
+	}
+	public void setRealName(String realName) {
+		this.realName = realName;
 	}
 
 	/**

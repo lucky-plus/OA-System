@@ -111,6 +111,41 @@ Ext.define('Admin.view.staff.StaffForm', {
 			displayField: 'postName',
 			valueField:   'postId'
 		},{
+			xtype: 'radiogroup',
+	    	id: 'radiogroupOperation2',
+			fieldLabel: '角色名称',
+			columns: 5,
+			vertical: true,
+			listeners: {
+		      render: function () {
+		        //通过extjs的ajax获取
+		        Ext.Ajax.request({
+		            url: 'role/findRoleByLevel.json?roleLevel='+loginUserRoleLevel,
+		            // 这里async 必须设置成false 否则页面加载时，无法将动态创建的checkBoxGroup添加到容器中
+		            async : false,
+		            success: function (response) {
+		                var data = eval("(" + response.responseText + ")");
+		                var len = data.length;//obj.data.length; "Table"这里的Table指的是后台返回 类似于data
+		                if (data == null || len == 0) {
+		                    return;
+		                }
+
+		                var radiogroup = Ext.getCmp("radiogroupOperation2");
+		                for (var i = 0; i < len; i++) {
+		                    var radiobox = new Ext.form.Radio(
+		                      {
+		                          boxLabel: data[i].roleName,
+		                          name: 'roleId',
+		                          inputValue: data[i].roleId,
+		                          checked: false
+		                      });
+		                    radiogroup.items.add(radiobox);
+		                }
+		            }
+		        });
+		      }
+		    }
+	},{
 		xtype: 'textfield',
 		fieldLabel: '联系电话',
 		name:'mobilePhone'
