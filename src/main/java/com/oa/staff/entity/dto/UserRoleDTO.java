@@ -20,6 +20,7 @@ public class UserRoleDTO {
 	
 	private String userId;
 	private String userName;
+	private String realName;
 	
 	private Integer roleId;
 	private String roleName;
@@ -91,7 +92,14 @@ public class UserRoleDTO {
 		this.modulesText = modulesText;
 	}
 	
-	
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
 	/**
      * 动态生成where语句
      */
@@ -106,6 +114,9 @@ public class UserRoleDTO {
 				 }
 				 if(userDTO.getUserName()!=null && !"".equals(userDTO.getUserName())) {
 					 predicate.add(cb.like(root.get("userName").as(String.class),"%"+ userDTO.getUserName()+"%"));
+				 }
+				 if(userDTO.getRealName()!=null && !"".equals(userDTO.getRealName())) {
+					 predicate.add(cb.like(root.get("realName").as(String.class),"%"+ userDTO.getRealName()+"%"));
 				 }
 				 if(userDTO.getRoleName()!=null && !"".equals(userDTO.getRoleName())) {
 					 predicate.add(cb.like(root.get("role").get("roleName").as(String.class),"%"+ userDTO.getRoleName()+"%"));

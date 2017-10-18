@@ -101259,7 +101259,7 @@ Ext.define('Admin.model.PersonalInfo', {extend:Admin.model.Base, fields:[{name:'
 Ext.define('Admin.model.Subscription', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'subscription'}]});
 Ext.define('Admin.model.YearwiseData', {extend:Admin.model.Base, fields:[{name:'year'}, {name:'data'}]});
 Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'realName', type:'string'}, {name:'deptName', type:'string'}, {name:'postName', type:'string'}, {name:'mobilePhone', type:'string'}, {name:'mail', type:'string'}, {name:'qq_number', type:'int'}]});
-Ext.define('Admin.model.authority.AuthorityModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'roleId', type:'int'}, {name:'userName', type:'string'}, {name:'roleName', type:'string'}, {name:'modulesText', type:'string'}]});
+Ext.define('Admin.model.authority.AuthorityModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'roleId', type:'int'}, {name:'userName', type:'string'}, {name:'realName', type:'string'}, {name:'roleName', type:'string'}, {name:'modulesText', type:'string'}]});
 Ext.define('Admin.model.department.DepartmentModel', {extend:Admin.model.Base, fields:[{name:'deptId', type:'int'}, {name:'deptName', type:'string'}, {name:'parentId', type:'int'}]});
 Ext.define('Admin.model.department.PostModel', {extend:Admin.model.Base, fields:[{name:'postId', type:'int'}, {name:'postName', type:'string'}, {name:'deptName', type:'string'}, {name:'postDescribe', type:'string'}]});
 Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {name:'read'}, {type:'string', name:'title'}, {name:'user_id'}, {type:'string', name:'contents'}, {type:'string', name:'from'}, {name:'has_attachments'}, {name:'attachments'}, {name:'received_on', type:'date'}, {name:'favorite'}]});
@@ -101521,9 +101521,9 @@ isValid:function() {
 }}, {xtype:'button', scale:'large', ui:'soft-blue', formBind:true, reference:'submitButton', bind:false, margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'Signup', listeners:{click:'onSignupClick'}}, {xtype:'box', html:'\x3cdiv class\x3d"outer-div"\x3e\x3cdiv class\x3d"seperator"\x3eOR\x3c/div\x3e\x3c/div\x3e'}, {xtype:'button', scale:'large', ui:'facebook', margin:'5 0', iconAlign:'right', iconCls:'x-fa fa-facebook', text:'Login with Facebook', listeners:{click:'onFaceBookLogin'}}, 
 {xtype:'component', html:'\x3cdiv style\x3d"text-align:right"\x3e' + '\x3ca href\x3d"#login" class\x3d"link-forgot-password"\x3e' + 'Back to Log In\x3c/a\x3e' + '\x3c/div\x3e'}]}]});
 Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xtype:'authority', controller:'AuthorityViewController', viewModel:{type:'authorityViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'authorityGrid'}]});
-Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e权限设置\x3c/b\x3e', bind:'{userRoleLists}', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'userId', sortable:true, dataIndex:'userId', hidden:true}, {text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'用户名称', sortable:true, dataIndex:'userName', width:150}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:150}, {text:'所拥有的权限', 
-sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {id:'authorityCondition', items:[{text:'修改权限', iconCls:'x-fa fa-edit', ui:'soft-blue', handler:'roleGridEdit'}, '-', {xtype:'tbtext', text:'用户名称：'}, {xtype:'textfield', width:100, itemsId:'userName'}, {xtype:'tbtext', text:'角色名称：'}, {xtype:'textfield', width:100, itemsId:'roleName'}, {text:'查找', handler:'authorityGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{userRoleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', 
-emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e权限设置\x3c/b\x3e', bind:'{userRoleLists}', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'userId', sortable:true, dataIndex:'userId', hidden:true}, {text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'用户名', sortable:true, dataIndex:'userName', width:100}, {text:'姓名名', sortable:true, dataIndex:'realName', width:100}, {text:'角色名称', 
+sortable:true, dataIndex:'roleName', width:100}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {id:'authorityCondition', items:[{text:'修改权限', iconCls:'x-fa fa-edit', ui:'soft-blue', handler:'roleGridEdit'}, '-', {xtype:'tbtext', text:'用户名：'}, {xtype:'textfield', width:100, itemsId:'userName'}, {xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:100, itemsId:'realName'}, {xtype:'tbtext', text:'角色名称：'}, {xtype:'textfield', width:100, itemsId:'roleName'}, 
+{text:'查找', handler:'authorityGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{userRoleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
 Ext.define('Admin.view.authority.AuthorityGridForm', {extend:Ext.form.Panel, alias:'widget.authorityGridForm', id:'authorityGridForm', controller:'AuthorityViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'用户名称', name:'userName', readOnly:true}, {xtype:'radiogroup', id:'radiogroupOperation', fieldLabel:'角色名称', columns:5, vertical:true, 
 listeners:{render:function() {
   Ext.Ajax.request({url:'role/findRoleByLevel.json?roleLevel\x3d' + loginUserRoleLevel, async:false, success:function(response) {
@@ -101578,8 +101578,9 @@ Ext.define('Admin.view.authority.AuthorityViewController', {extend:Ext.app.ViewC
   var grid = btn.up('gridpanel');
   var record = grid.getStore();
   var userName = Ext.getCmp('authorityCondition').items.getAt(3).getValue();
-  var roleName = Ext.getCmp('authorityCondition').items.getAt(5).getValue();
-  Ext.Ajax.request({url:'staff/findUserRoleByCondition.json', params:{roleLevel:loginUserRoleLevel, userName:userName, roleName:roleName, page:1, start:0, limit:15, sort:'userId', dir:'DESC'}, success:function(response, options) {
+  var realName = Ext.getCmp('authorityCondition').items.getAt(5).getValue();
+  var roleName = Ext.getCmp('authorityCondition').items.getAt(7).getValue();
+  Ext.Ajax.request({url:'staff/findUserRoleByCondition.json', params:{roleLevel:loginUserRoleLevel, userName:userName, realName:realName, roleName:roleName, page:1, start:0, limit:15, sort:'userId', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     grid.getStore().loadData(tnpdata.content, false);
   }});
@@ -102507,8 +102508,20 @@ Ext.define('Admin.view.staff.StaffForm', {extend:Ext.form.Panel, alias:'widget.s
 fieldLabel:'入职时间', name:'onDutDate', value:new Date}, {xtype:'combobox', id:'deptComBoBox', name:'deptId', fieldLabel:'部门', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId', listeners:{select:function() {
   var dept = Ext.getCmp('deptComBoBox');
   Ext.getCmp('postComBoBox').getStore().load({params:{deptId:dept.getValue()}});
-}}}, {xtype:'combobox', id:'postComBoBox', queryMode:'remote', name:'postId', async:false, fieldLabel:'职位', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'post/findPostsByDeptId'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'postName', valueField:'postId'}, {xtype:'textfield', fieldLabel:'联系电话', name:'mobilePhone'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'staffGridFromSubmit'}, {xtype:'button', 
-text:'取消', handler:'staffGridWindowsClose'}]}});
+}}}, {xtype:'combobox', id:'postComBoBox', queryMode:'remote', name:'postId', async:false, fieldLabel:'职位', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'post/findPostsByDeptId'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'postName', valueField:'postId'}, {xtype:'radiogroup', id:'radiogroupOperation2', fieldLabel:'角色名称', columns:5, vertical:true, listeners:{render:function() {
+  Ext.Ajax.request({url:'role/findRoleByLevel.json?roleLevel\x3d' + loginUserRoleLevel, async:false, success:function(response) {
+    var data = eval('(' + response.responseText + ')');
+    var len = data.length;
+    if (data == null || len == 0) {
+      return;
+    }
+    var radiogroup = Ext.getCmp('radiogroupOperation2');
+    for (var i = 0; i < len; i++) {
+      var radiobox = new Ext.form.Radio({boxLabel:data[i].roleName, name:'roleId', inputValue:data[i].roleId, checked:false});
+      radiogroup.items.add(radiobox);
+    }
+  }});
+}}}, {xtype:'textfield', fieldLabel:'联系电话', name:'mobilePhone'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'staffGridFromSubmit'}, {xtype:'button', text:'取消', handler:'staffGridWindowsClose'}]}});
 Ext.define('Admin.view.staff.StaffGrid', {extend:Ext.grid.Panel, xtype:'staffGrid', title:'\x3cb\x3e员工列表\x3c/b\x3e', bind:'{staffLists}', id:'staffGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'ID', sortable:true, dataIndex:'userId', hidden:true}, {text:'职工姓名', sortable:true, dataIndex:'realName', width:120}, {text:'性别', sortable:true, dataIndex:'sex', width:120}, {text:'籍贯', sortable:true, dataIndex:'nativePlace', width:120}, {text:'出生时间', sortable:true, dataIndex:'birthday', 
 width:125, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'入职时间', sortable:true, dataIndex:'onDutDate', width:125, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'所属部门', sortable:true, dataIndex:'deptName', width:125}, {text:'职位', sortable:true, dataIndex:'postName', width:125}, {text:'联系电话', sortable:true, dataIndex:'mobilePhone', width:125}, {xtype:'actioncolumn', text:'操作', flex:1, tdCls:'action', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:'staffGridOpenEditWindow'}, 
 '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'staffGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'新建员工', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'staffGridOnClick'}}, '-', {text:'批量删除', iconCls:'x-fa fa-trash', handler:'staffGridDelete'}, '-', {xtype:'tbtext', text:'姓名'}, {xtype:'textfield', width:150, reference:'staffGridSearchText'}, {xtype:'tbtext', text:'部门'}, {xtype:'combobox', reference:'staffGridSearchField', name:'deptId', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), 

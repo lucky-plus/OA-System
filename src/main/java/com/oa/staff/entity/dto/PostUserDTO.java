@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.oa.authority.entity.Role;
 import com.oa.personnel.entity.Department;
 import com.oa.personnel.entity.Post;
 import com.oa.staff.entity.UserInfornation;
@@ -35,6 +36,8 @@ public class PostUserDTO {
 	private int qq_number;
 	
 	private Integer deptId;
+	private Integer roleId;
+	
 	public Integer getDeptId() {
 		return deptId;
 	}
@@ -53,12 +56,17 @@ public class PostUserDTO {
 	public static void  dtoToEntity(PostUserDTO dto,UserInfornation entity) {
 		BeanUtils.copyProperties(dto, entity);
 		Integer postId = dto.getPostId();
+		Integer roleId = dto.getRoleId();
 		
 		if(postId!=null) {
 			Post post = new Post();
 			post.setPostId(postId);;//关联关系维护
-			
 			entity.setPost(post);;
+		}
+		if(roleId!=null) {
+			Role role = new Role();
+			role.setRoleId(roleId);
+			entity.setRole(role);
 		}
 		
 	}
@@ -139,7 +147,12 @@ public class PostUserDTO {
 	public String getDeptName() {
 		return deptName;
 	}
-
+	public Integer getRoleId() {
+		return roleId;
+	}
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
+	}
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}

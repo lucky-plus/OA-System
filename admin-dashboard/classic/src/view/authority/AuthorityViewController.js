@@ -45,13 +45,15 @@ Ext.define('Admin.view.authority.AuthorityViewController', {
 	   var grid = btn.up('gridpanel');
 	   var record = grid.getStore();
 	   var userName=Ext.getCmp('authorityCondition').items.getAt(3).getValue();
-	   var roleName=Ext.getCmp('authorityCondition').items.getAt(5).getValue();
+	   var realName=Ext.getCmp('authorityCondition').items.getAt(5).getValue();
+	   var roleName=Ext.getCmp('authorityCondition').items.getAt(7).getValue();
 	   
 	   Ext.Ajax.request({ 
 			url : 'staff/findUserRoleByCondition.json', 
 			params : {
 					roleLevel:loginUserRoleLevel,
                     userName:userName,
+                    realName:realName,
                     roleName:roleName,
 					page:1,
 					start:0,
