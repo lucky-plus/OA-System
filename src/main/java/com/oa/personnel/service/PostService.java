@@ -107,4 +107,9 @@ public class PostService implements IPostService {
 		return dtoList;
 	}
 
+	@Override
+	public void updateUserPost(String userId, Integer postId) {
+		postDao.updateUserPost(userId, postId);
+	}
+
 }
