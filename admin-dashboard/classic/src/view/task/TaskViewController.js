@@ -14,12 +14,9 @@ Ext.define('Admin.view.task.TaskViewController', {
     },
 	
 	taskGridEdit: function(btn, rowIndex, colIndex){
-		  var grid = btn.up('gridpanel');//获取Grid视图
-		  var selModel = grid.getSelectionModel();//获取Grid的SelectionModel
-          if (selModel.hasSelection()) {//判断是否选中记录
-			// var parentId=tree.up('panel').getStore().getAt(tree.up('panel').deptment);
-			// var record=tree.up('panel').deptFind;
-			var record = btn.up('gridpanel').getStore().getAt(rowIndex);
+		  if(btn.up('panel').task!=undefined){
+			var task=btn.up('panel').getStore().getAt(btn.up('panel').task);
+			var record=btn.up('panel').taskFind;
 		    var taskWindow = Ext.widget('taskGridWindow',{
 				title:'修改任务',
 				items: [{
@@ -27,28 +24,12 @@ Ext.define('Admin.view.task.TaskViewController', {
 					}]
 		  	});
 		  //让form加载选中记录
-		  taskWindow.down("form").items.getAt(7).setValue(record.get('realName'));
+		  taskWindow.down("form").items.getAt(6).setValue(record.get('userId'));
+		  taskWindow.down("form").getForm().loadRecord(task);
 		  }else{
 			  Ext.Msg.alert('警告','请选择一行数据进行编辑')
 		  }
 	},
-	// taskGridEdit: function(btn) {
-	// 	var grid = btn.up('gridpanel');//获取Grid视图
-	// 	var selModel = grid.getSelectionModel();//获取Grid的SelectionModel
- //        if (selModel.hasSelection()) {//判断是否选中记录
- //           var record = selModel.getSelection()[0];//获取选中的第一条记录
- //           //创建修改window和form
-	// 	   var taskWindow = Ext.widget('taskGridWindow',{
-	// 			title:'修改任务',
-	// 			items: [{xtype: 'editTaskGridForm'}]
-	// 		});
-	// 	   		//让form加载选中记录
- //           taskWindow.down("form").getForm().loadRecord(record);
- //        }else{
- //        	Ext.Msg.alert('提示',"请选择一行数据进行编辑!");
- //        }
-
- //    },
    
 	taskGridDelete: function(btn) {
 		var grid = btn.up('gridpanel');
@@ -149,7 +130,7 @@ Ext.define('Admin.view.task.TaskViewController', {
    releaseTaskGridFind: function(btn){
 	   var grid = btn.up('gridpanel');
 	   var record = grid.getStore();
-	   var userName=Ext.getCmp('releaseTaskCondition').items.getAt(1).getValue();
+	   var realName=Ext.getCmp('releaseTaskCondition').items.getAt(1).getValue();
 	   var taskState=Ext.getCmp('releaseTaskCondition').items.getAt(3).getValue();
 	   var beginTime=null;
 	   var endTime=null;
@@ -163,7 +144,7 @@ Ext.define('Admin.view.task.TaskViewController', {
 	   Ext.Ajax.request({ 
 			url : 'task/findByCondition.json', 
 			params : { 
-                    userName:userName,
+                    realName:realName,
                     taskState:taskState,
 					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),
 					endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'),
@@ -183,7 +164,7 @@ Ext.define('Admin.view.task.TaskViewController', {
    allTaskGridFind: function(btn){
 	   var grid = btn.up('gridpanel');
 	   var record = grid.getStore();
-	   var userName=Ext.getCmp('allTaskCondition').items.getAt(1).getValue();
+	   var realName=Ext.getCmp('allTaskCondition').items.getAt(1).getValue();
 	   var createName=Ext.getCmp('allTaskCondition').items.getAt(3).getValue();
 	   var taskState=Ext.getCmp('allTaskCondition').items.getAt(5).getValue();
 	   var beginTime=null;
@@ -198,7 +179,7 @@ Ext.define('Admin.view.task.TaskViewController', {
 	   Ext.Ajax.request({ 
 			url : 'task/findByCondition.json', 
 			params : { 
-                    userName:userName,
+                    realName:realName,
                     createName:createName,
                     taskState:taskState,
 					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),

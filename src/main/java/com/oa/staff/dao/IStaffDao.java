@@ -30,5 +30,8 @@ public interface IStaffDao extends PagingAndSortingRepository<UserInfornation, S
 	
 	@Query("select mail from UserInfornation u where u.userId = ?1")
 	public String findMailByUserId(String userId);
+
+	@Query("select realName from UserInfornation u where u.userId = ?1")
+	public String findRealNameByUserId(String userId);
 	
 }

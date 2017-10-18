@@ -24,5 +24,8 @@ public interface ITaskDao extends PagingAndSortingRepository<Task, Integer>, Jpa
 	
 	@Query("select taskName from Task t where t.taskId = ?1")
 	public String findTaskNameByTaskId(Integer taskId);
+
+	@Query("select t.user.realName from Task t where t.taskId = ?1")
+	public String findUserNameByTaskId(Integer taskId);
 	
 }

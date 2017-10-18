@@ -9,6 +9,7 @@
     <title>Home Page</title>
     <script type="text/javascript">
 			var loginUser = '<%=session.getAttribute("userName")%>';
+			var loginUserRealName = '<%=session.getAttribute("realName")%>';
 			var loginUserId = '<%=session.getAttribute("userId")%>';
 			var loginUserRoleLevel = '<%=session.getAttribute("roleLevel")%>';
 			var loginUserModules = '<%=session.getAttribute("userModules")%>';

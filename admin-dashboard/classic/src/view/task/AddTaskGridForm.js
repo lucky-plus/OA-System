@@ -38,7 +38,7 @@ Ext.define('Admin.view.role.AddTaskGridForm', {
 		xtype: 'hidden',
 		fieldLabel: 'createName',
 		name:'createName',
-		value: loginUser
+		value: loginUserRealName
 	},{
 		xtype: 'textfield',
 		fieldLabel: '任务名称',

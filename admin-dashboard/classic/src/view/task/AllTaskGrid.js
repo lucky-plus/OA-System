@@ -13,7 +13,7 @@
     {text: '任务发布时间' ,sortable:true ,dataIndex:'createDate' ,width:200,
      renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
     {text: '任务完成时间' ,sortable:true ,dataIndex:'completeDate' ,width:200},
-    {text: '接收者', sortable:false ,dataIndex:'userName' ,width:120},
+    {text: '接收者', sortable:false ,dataIndex:'realName' ,width:120},
     {text: '发布者', sortable:false ,dataIndex:'createName' ,width:120},
     {text: '状态'  ,sortable:false ,dataIndex:'taskState'  ,flex:120},
     {
@@ -36,7 +36,7 @@
         },{
           xtype:'textfield',
           width:90,
-          itemsId:'userName'
+          itemsId:'realName'
           
         },{xtype:'tbtext',
           text:'发布者：'

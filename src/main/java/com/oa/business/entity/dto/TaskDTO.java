@@ -30,6 +30,7 @@ public class TaskDTO {
 	private String createName;		//发布者姓名
 	private String userId;			//接收者ID
 	private String userName;		//接收者姓名
+	private String realName;		//接收者真实姓名姓名
 	
 	private Date beginDate;
 	private Date endDate;
@@ -39,6 +40,7 @@ public class TaskDTO {
 		if(entity.getUser() != null) {
 			dto.setUserId(entity.getUser().getUserId());
 			dto.setUserName(entity.getUser().getUserName());
+			dto.setRealName(entity.getUser().getRealName());
 		}
 		if(entity.getCompleteDate() != null) {
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -142,6 +144,12 @@ public class TaskDTO {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
+	public String getRealName() {
+		return realName;
+	}
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
 
 	/**
      * 动态生成where语句
@@ -155,8 +163,8 @@ public class TaskDTO {
 				 if(taskDTO.getCreateName()!=null && !"".equals(taskDTO.getCreateName())) {
 					 predicate.add(cb.like(root.get("createName").as(String.class),"%"+taskDTO.getCreateName()+"%"));
 				 }
-				 if(taskDTO.getUserName()!=null && !"".equals(taskDTO.getUserName())) {
-					 predicate.add(cb.like(root.get("user").get("userName").as(String.class),"%"+taskDTO.getUserName()+"%"));
+				 if(taskDTO.getRealName()!=null && !"".equals(taskDTO.getRealName())) {
+					 predicate.add(cb.like(root.get("user").get("realName").as(String.class),"%"+taskDTO.getRealName()+"%"));
 				 }
 				 if(taskDTO.getTaskState() !=null && !"".equals(taskDTO.getTaskState())) {
 					 predicate.add(cb.like(root.get("taskState").as(String.class), "%"+taskDTO.getTaskState()+"%"));

@@ -42,11 +42,6 @@ Ext.define('Admin.view.role.UpdateTaskGridForm', {
 		// ,value: loginUserId
 	},{
 		xtype: 'hidden',
-		fieldLabel: 'userId',
-		//allowBlank: false,
-		name:'userId'
-	},{
-		xtype: 'hidden',
 		fieldLabel: 'createDate',
 		name:'createDate',
 	},{

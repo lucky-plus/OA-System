@@ -40,18 +40,36 @@ public class TaskServices implements ITaskService {
 		if(entity.getTaskId() == null) {
 			entity.setCreateDate(new Date());
 			entity.setTaskState("未完成");
-			
+
+			String realName = staffDao.findRealNameByUserId(entity.getUser().getUserId());
 			String toAddr = staffDao.findMailByUserId(entity.getUser().getUserId());
 			
 			StringBuffer content = new StringBuffer();
 			content.append("<h1>任务——"+entity.getTaskName()+"</h1><br/>");
 			content.append("<b>发布者：</b>"+entity.getCreateName()+"<br/>");
-//			content.append("<b>接收者：</b>"+dto.getUserName()+"<br/>");
+			content.append("<b>接收者：</b>"+realName+"<br/>");
 			String createDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(entity.getCreateDate());
 			content.append("<b>发布时间：</b>"+createDate+"<br/><br/>");
 			content.append("<b>任务内容：</b>"+entity.getTaskText());
 			
 			MailUtil.sendMessage(toAddr, "您有新的任务通知", content.toString());
+			
+		} else {
+			String userName = taskDao.findUserNameByTaskId(entity.getTaskId());
+			String realName = staffDao.findRealNameByUserId(entity.getUser().getUserId());
+			if(!userName.equals(realName)) {
+				String toAddr = staffDao.findMailByUserId(entity.getUser().getUserId());
+				
+				StringBuffer content = new StringBuffer();
+				content.append("<h1>任务——"+entity.getTaskName()+"</h1><br/>");
+				content.append("<b>发布者：</b>"+entity.getCreateName()+"<br/>");
+				content.append("<b>接收者：</b>"+realName+"<br/>");
+				String createDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(entity.getCreateDate());
+				content.append("<b>发布时间：</b>"+createDate+"<br/><br/>");
+				content.append("<b>任务内容：</b>"+entity.getTaskText());
+				
+				MailUtil.sendMessage(toAddr, "您有新的任务通知", content.toString());
+			}
 			
 		}
 		taskDao.save(entity);

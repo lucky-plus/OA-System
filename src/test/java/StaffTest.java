@@ -75,4 +75,10 @@ public class StaffTest {
 		staffService.userRoleUpdate(userId, roleId);
 	}
 	
+	@Test
+	public void testFindRealName() {
+		String realName = staffDao.findRealNameByUserId("8");
+		System.out.println(realName);
+	}
+	
 }
