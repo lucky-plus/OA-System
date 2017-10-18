@@ -75,6 +75,32 @@ Ext.define('Admin.view.staff.StaffViewController', {
 	   })
    },
    
+   staffGridEditSubmit: function(btn) {
+		var staffForm = btn.up('form').getForm();
+		var win = btn.up('window');
+		var userId=Ext.getCmp('staffEditForm').items.getAt(0).getValue();
+		var postId=Ext.getCmp('staffEditForm').items.getAt(3).getValue();
+		staffForm.submit( { 
+			url : 'post/updateUserPost', 
+			method : 'post', 
+			params:{
+				userId:userId,
+				postId:postId
+			},
+			success : function(form, action) { 
+				Ext.Msg.alert("提示",action.result.msg); 
+				win.close();
+				Ext.getCmp('staffGrid').store.reload();
+			}, 
+			failure : function(form, action) { 
+				Ext.Msg.alert("提示",action.result.msg); 
+				
+			} 
+		}); 
+
+   },
+   
+   
 	staffGridFromSubmit: function(btn) {
 		var staffForm = btn.up('form').getForm();
 		var win = btn.up('window');

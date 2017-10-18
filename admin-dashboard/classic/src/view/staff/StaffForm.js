@@ -69,6 +69,9 @@ Ext.define('Admin.view.staff.StaffForm', {
 		queryMode: 	  'local',
 		displayField: 'deptName',
 		valueField:   'deptId',
+		listConfig : {//设置下拉时显示的样式
+			maxHeight : 200,//下拉时最大高度
+		},
 		listeners: {// select监听函数
             select: function(){  				
 				var dept = Ext.getCmp('deptComBoBox');
