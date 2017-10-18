@@ -33,16 +33,17 @@ public class PostController {
 	}
 	
 	@RequestMapping("/delete")
-	public @ResponseBody ExtjsAjaxResult deleteAuthority(Integer[] ids)
+	public @ResponseBody ExtjsAjaxResult deleteAuthority(Integer postId)
 	{
 		try {
-			postService.delete(ids);
+			postService.delete(postId);
 			 return new ExtjsAjaxResult(true,"操作成功！");
 		} catch (Exception e) {
 			 e.printStackTrace();
 			 return new ExtjsAjaxResult(false,"操作失败！");
 		}
 	}
+	
 	
 	@RequestMapping("/findAll")
 	public @ResponseBody Page<PostDTO> findAll(ExtjsPageable pageable) {

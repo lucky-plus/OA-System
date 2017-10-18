@@ -50,7 +50,7 @@ public class UserInfornation {
 	private Role role;
 
 	@Id
-	@Column(length=8)
+	@Column(length=32)
 	public String getUserId() {
 		return userId;
 	}

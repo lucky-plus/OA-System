@@ -16,6 +16,7 @@ import com.oa.message.entity.Notice;
 import com.oa.message.entity.dto.NoticeDTO;
 import com.oa.staff.dao.IStaffDao;
 import com.oa.staff.entity.UserInfornation;
+import com.oa.staff.entity.dto.PostUserDTO;
 import com.oa.staff.entity.dto.UserRoleDTO;
 import com.oa.staff.service.IStaffService;
 
@@ -75,4 +76,12 @@ public class StaffTest {
 		staffService.userRoleUpdate(userId, roleId);
 	}
 	
+	@Test
+	public void testSave() {
+		PostUserDTO entity = new PostUserDTO();
+		entity.setRealName("测试1111");
+		entity.setUserName("测试111");
+		entity.setPostId(1);
+		staffService.save(entity);
+	}
 }

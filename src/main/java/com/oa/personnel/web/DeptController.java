@@ -43,10 +43,10 @@ public class DeptController {
 	}
 	
 	@RequestMapping("/delete")
-	public @ResponseBody ExtjsAjaxResult deleteAuthority(Integer[] ids)
+	public @ResponseBody ExtjsAjaxResult deleteAuthority(Integer deptId)
 	{
 		try {
-			deptService.delete(ids);
+			deptService.delete(deptId);
 			 return new ExtjsAjaxResult(true,"操作成功！");
 		} catch (Exception e) {
 			 e.printStackTrace();

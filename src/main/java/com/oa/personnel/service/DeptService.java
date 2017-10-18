@@ -24,8 +24,31 @@ public class DeptService implements IDeptService {
 	}
 
 	@Override
-	public void delete(Integer id) {
-		deptDao.delete(id);
+	public void delete(Integer nodeId) {
+		
+		Department node = deptDao.findOne(nodeId);//当前删除的节点
+		Department parentNode = node.getParentNode();//当前删除的节点的父节点
+		if(parentNode!=null) {
+			//有父节点。则把当前节点的子节点挂到父节点下（双向关联）。父节点为null则直接作为根节点。
+			//遍历当前删除的节点的子节点
+			for(Department c  : node.getChildNodes()) {
+				parentNode.getChildNodes().add(c);
+				c.setParentNode(parentNode);
+			}
+			parentNode.getChildNodes().remove(node);
+		}else {
+			//没有父节点直接设置为null，作为根节点
+			for(Department c  : node.getChildNodes()) {
+				c.setParentNode(null);
+			}
+		}
+		node.setParentNode(null);
+		
+		deptDao.save(node);
+
+		node.getChildNodes().clear();
+		deptDao.delete(node);
+
 	}
 
 	@Override

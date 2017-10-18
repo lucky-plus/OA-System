@@ -24,10 +24,27 @@ Ext.define('Admin.view.department.Department', {		//1.修改文件路径
 		split: true,
 		xtype: 'departmentTree'
 	},{
-		title: '职位设置',
+		title: '职位查看',
 		region:'center',
 		margins: '5 0 0 0',
 		cmargins: '5 5 0 0',
-		//xtype: 'postGrid'
-	}]
+		xtype: 'panel',
+		layout:{
+			type:'vbox',
+			align: 'stretch'
+		},
+		items: [{
+			text:'职位查看',
+			//anchor:'-10,-100',
+			xtype: 'postGrid',
+			forceFit : false,
+			height:'60%'
+			}, {
+			title:'职位设置',
+			//anchor:'-10,-100',
+			xtype: 'postForm'
+		}],
+	},
+
+	]
 });

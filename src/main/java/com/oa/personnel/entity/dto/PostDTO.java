@@ -20,6 +20,7 @@ public class PostDTO {
 	private Integer postId;
 	private String postName;
 	private String creatBy;			//创建人职工号
+	private String postDescribe;
 	
 	private Integer deptId;
 	private String deptName;
@@ -50,6 +51,10 @@ public class PostDTO {
 	public String getPostName() {
 		return postName;
 	}
+	public String getPostDescribe() {
+		return postDescribe;
+	}
+
 	public void setPostName(String postName) {
 		this.postName = postName;
 	}
@@ -72,6 +77,10 @@ public class PostDTO {
 		this.deptName = deptName;
 	}
 	
+	public void setPostDescribe(String postDescribe) {
+		this.postDescribe = postDescribe;
+	}
+
 	/**
      * 动态生成where语句
      */

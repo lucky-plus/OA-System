@@ -1,6 +1,7 @@
-Ext.define('Admin.view.department.DepartmentForm', {
+Ext.define('Admin.view.department.PostForm', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.deptForm',
+    alias: 'widget.postForm',
+	id:'postForm',
     requires: [
         'Ext.button.Button',
         'Ext.form.field.Text',
@@ -31,15 +32,15 @@ Ext.define('Admin.view.department.DepartmentForm', {
     items: [
 	{
 		xtype: 'hidden',
-		fieldLabel: 'deptId',
+		fieldLabel: 'postId',
 			//allowBlank: false,
-		name:'deptId',
-		handler:'deptGridOpenEditWindow'
+		name:'postId',
+		//handler:'deptGridOpenEditWindow'
 	},
 	{
 		xtype: 'combobox',
-		fieldLabel: '上级部门',
-		name:'parentId',			
+		fieldLabel: '所属部门',
+		name:'deptId',			
 		store:  new Ext.data.Store( {
 				proxy : new Ext.data.HttpProxy( {
 							url : 'dept/findDepts'//提交到某action的某方法
@@ -57,8 +58,12 @@ Ext.define('Admin.view.department.DepartmentForm', {
 		valueField:   'deptId',
 	},{
 		xtype: 'textfield',
-		fieldLabel: '部门名称',
-		name:'deptName'
+		fieldLabel: '职位名称',
+		name:'postName'
+    },{
+		xtype: 'textfield',
+		fieldLabel: '职位描述',
+		name:'postDescribe'
     }],
 
 	
@@ -69,12 +74,12 @@ Ext.define('Admin.view.department.DepartmentForm', {
 			ui:'soft-blue',
 			//ui: 'soft-red',
 			text: '保存',
-			handler: 'deptGridFormSubmit'
+			handler: 'postGridFormSubmit'
 		},{
 			xtype: 'button',
 			//ui: 'gray',
-			text: '取消',
-			handler: 'deptGridWindowClose'
+			text: '删除',
+			handler: 'postGridDeleteOne'
 		}]
     }
 });

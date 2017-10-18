@@ -2,6 +2,7 @@ package com.oa.staff.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -100,6 +101,9 @@ public class StaffService implements IStaffService {
 	public void save(PostUserDTO dto) {
 		UserInfornation entity=new UserInfornation();
 		PostUserDTO.dtoToEntity(dto, entity);
+		String userId = UUID.randomUUID().toString().replaceAll("-", "");
+		System.out.println(userId);
+		entity.setUserId(userId);
 		staffDao.save(entity);
 		
 	}

@@ -101261,6 +101261,7 @@ Ext.define('Admin.model.YearwiseData', {extend:Admin.model.Base, fields:[{name:'
 Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'realName', type:'string'}, {name:'deptName', type:'string'}, {name:'postName', type:'string'}, {name:'mobilePhone', type:'string'}, {name:'mail', type:'string'}, {name:'qq_number', type:'int'}]});
 Ext.define('Admin.model.authority.AuthorityModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'roleId', type:'int'}, {name:'userName', type:'string'}, {name:'roleName', type:'string'}, {name:'modulesText', type:'string'}]});
 Ext.define('Admin.model.department.DepartmentModel', {extend:Admin.model.Base, fields:[{name:'deptId', type:'int'}, {name:'deptName', type:'string'}, {name:'parentId', type:'int'}]});
+Ext.define('Admin.model.department.PostModel', {extend:Admin.model.Base, fields:[{name:'postId', type:'int'}, {name:'postName', type:'string'}, {name:'deptName', type:'string'}, {name:'postDescribe', type:'string'}]});
 Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {name:'read'}, {type:'string', name:'title'}, {name:'user_id'}, {type:'string', name:'contents'}, {type:'string', name:'from'}, {name:'has_attachments'}, {name:'attachments'}, {name:'received_on', type:'date'}, {name:'favorite'}]});
 Ext.define('Admin.model.email.Friend', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'thumbnail'}, {type:'boolean', name:'online'}]});
 Ext.define('Admin.model.faq.Category', {extend:Admin.model.Base, fields:[{type:'string', name:'name'}], hasMany:{name:'questions', model:'faq.Question'}});
@@ -101280,7 +101281,8 @@ Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'Na
 iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}, {text:'个人中心', iconCls:'x-fa fa-user', viewType:'profile', leaf:true}]}});
 Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json?roleLevel\x3d' + loginUserRoleLevel, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
-Ext.define('Admin.store.department.DepartmentStore', {extend:Ext.data.TreeStore, alias:'store.departmentStore', proxy:{type:'ajax', url:'dept/findNodes', reader:{type:'json'}}, root:{text:'组织架构', expanded:true}});
+Ext.define('Admin.store.department.DepartmentStore', {extend:Ext.data.TreeStore, alias:'store.departmentStore', id:'departmentStore', proxy:{type:'ajax', url:'dept/findNodes', reader:{type:'json'}}, root:{text:'组织架构', expanded:true}});
+Ext.define('Admin.store.department.PostStore', {extend:Ext.data.Store, alias:'store.postStore', model:'Admin.model.department.PostModel', proxy:{type:'ajax', url:'post/findPostsByDeptId.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'postId'}});
 Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
 Ext.define('Admin.store.email.Inbox', {extend:Ext.data.Store, alias:'store.inbox', model:'Admin.model.email.Email', pageSize:20, autoLoad:true, proxy:{type:'api', url:'~api/email/inbox'}});
 Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', model:'Admin.model.faq.Category', proxy:{type:'api', url:'~api/faq/faq'}});
@@ -101613,48 +101615,40 @@ Ext.define('Admin.view.dashboard.TopMovie', {extend:Ext.panel.Panel, xtype:'topm
 label:{field:'x', display:'rotate', contrast:true, font:'12px Arial'}, xField:'yvalue'}], interactions:[{type:'rotate'}]}]});
 Ext.define('Admin.view.dashboard.Widgets', {extend:Ext.Panel, xtype:'dashboardwidgetspanel', cls:'dashboard-widget-block shadow', bodyPadding:15, title:'Widgets', layout:{type:'vbox', align:'stretch'}, items:[{xtype:'slider', width:400, fieldLabel:'Single Slider', value:40}, {xtype:'tbspacer', flex:0.3}, {xtype:'multislider', width:400, fieldLabel:'Range Slider', values:[10, 40]}, {xtype:'tbspacer', flex:0.3}, {xtype:'pagingtoolbar', width:360, displayInfo:false}, {xtype:'tbspacer', flex:0.3}, {xtype:'progressbar', 
 cls:'widget-progressbar', value:0.4}, {xtype:'tbspacer'}]});
-Ext.define('Admin.view.department.Department', {extend:Ext.container.Container, xtype:'department', height:Ext.Element.getViewportHeight() - 200, controller:'departmentViewController', viewModel:{type:'departmentViewModel'}, layout:'border', margin:'20 20 20 20', items:[{title:'部门设置', region:'west', width:550, collapsible:true, margins:'5 0 0 0', cmargins:'5 5 0 0', split:true, xtype:'departmentTree'}, {title:'职位设置', region:'center', margins:'5 0 0 0', cmargins:'5 5 0 0'}]});
+Ext.define('Admin.view.department.Department', {extend:Ext.container.Container, xtype:'department', height:Ext.Element.getViewportHeight() - 200, controller:'departmentViewController', viewModel:{type:'departmentViewModel'}, layout:'border', margin:'20 20 20 20', items:[{title:'部门设置', region:'west', width:550, collapsible:true, margins:'5 0 0 0', cmargins:'5 5 0 0', split:true, xtype:'departmentTree'}, {title:'职位查看', region:'center', margins:'5 0 0 0', cmargins:'5 5 0 0', xtype:'panel', layout:{type:'vbox', 
+align:'stretch'}, items:[{text:'职位查看', xtype:'postGrid', forceFit:false, height:'60%'}, {title:'职位设置', xtype:'postForm'}]}]});
 Ext.define('Admin.view.department.DepartmentForm', {extend:Ext.form.Panel, alias:'widget.deptForm', controller:'departmentViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'deptId', name:'deptId', handler:'deptGridOpenEditWindow'}, {xtype:'combobox', fieldLabel:'上级部门', name:'parentId', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, 
 autoLoad:true}), listeners:{render:function() {
   this.store.reload();
 }}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {xtype:'textfield', fieldLabel:'部门名称', name:'deptName'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'deptGridFormSubmit'}, {xtype:'button', text:'取消', handler:'deptGridWindowClose'}]}});
-Ext.define('Admin.view.department.DepartmentTree', {extend:Ext.tree.Panel, id:'departmentTree', xtype:'departmentTree', title:'\x3cb\x3e组织架构\x3c/b\x3e', bind:'{deptLists}', tbar:Ext.create('Ext.Toolbar', {items:[{text:'新增部门', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'deptGridOpenAddWindow'}, '-', {text:'删除', iconCls:'x-fa fa-trash'}]})});
+Ext.define('Admin.view.department.DepartmentTree', {extend:Ext.tree.Panel, id:'departmentTree', xtype:'departmentTree', deptment:undefined, deptFind:undefined, rootVisible:false, title:'\x3cb\x3e组织架构\x3c/b\x3e', bind:'{deptLists}', listeners:{cellclick:function(tree, td, cellIndex, record, tr, rowIndex) {
+  tree.up('panel').deptment = rowIndex;
+  tree.up('panel').deptFind = record;
+  Ext.getCmp('postGrid').getStore().load({params:{deptId:record.get('id')}});
+}}, tbar:Ext.create('Ext.Toolbar', {items:[{text:'新增部门', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'deptGridOpenAddWindow'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'deptGridDeleteOne'}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'deptGridOpenEditWindow'}]})});
 Ext.define('Admin.view.dept.DepartmentViewController', {extend:Ext.app.ViewController, alias:'controller.departmentViewController', deptGridOpenAddWindow:function(btn) {
   Ext.widget('deptWindow', {title:'新增部门', items:[{xtype:'deptForm'}]});
-}, deptGridOpenEditWindow:function(btn) {
-  var grid = btn.up('gridpanel');
-  var selModel = grid.getSelectionModel();
-  if (selModel.hasSelection()) {
-    var record = selModel.getSelection()[0];
-    var deptWindow = Ext.widget('deptWindow', {title:'修改订单', items:[{xtype:'deptForm'}]});
-    deptWindow.down('form').getForm().loadRecord(record);
+}, deptGridDeleteOne:function(tree, rowIndex, colIndex) {
+  Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+    if (button == 'yes' && tree.up('panel').deptment != undefined) {
+      var record = tree.up('panel').getStore().getAt(tree.up('panel').deptment).get('id');
+      Ext.Ajax.request({url:'dept/delete', method:'post', params:{deptId:record}});
+      tree.up('panel').getStore().reload();
+      tree.up('panel').deptment = undefined;
+    } else {
+      Ext.Msg.alert('警告', '请选择一行数据进行编辑');
+    }
+  });
+}, deptGridOpenEditWindow:function(tree, rowIndex, colIndex) {
+  if (tree.up('panel').deptment != undefined) {
+    var parentId = tree.up('panel').getStore().getAt(tree.up('panel').deptment);
+    var record = tree.up('panel').deptFind;
+    var deptWindow = Ext.widget('deptWindow', {title:'修改部门', items:[{xtype:'deptForm'}]});
+    deptWindow.down('form').items.getAt(0).setValue(record.get('id'));
+    deptWindow.down('form').getForm().loadRecord(parentId);
+    deptWindow.down('form').items.getAt(2).setValue(record.get('text'));
   } else {
-    Ext.Msg.alert('提示', '请选择一行数据进行编辑!');
-  }
-}, deptGridDeleteDate:function(btn) {
-  var grid = btn.up('gridpanel');
-  var selModel = grid.getSelectionModel();
-  if (selModel.hasSelection()) {
-    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
-      if (button == 'yes') {
-        var selected = selModel.getSelection();
-        var selectIds = [];
-        Ext.each(selected, function(record) {
-          selectIds.push(record.data.id);
-        });
-        Ext.Ajax.request({url:'dept/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
-          var json = Ext.util.JSON.decode(response.responseText);
-          if (json.success) {
-            Ext.Msg.alert('操作成功', json.msg);
-            grid.getStore().reload();
-          } else {
-            Ext.Msg.alert('操作失败', json.msg);
-          }
-        }});
-      }
-    });
-  } else {
-    Ext.Msg.alert('提示', '请选择一行数据进行删除!');
+    Ext.Msg.alert('警告', '请选择一行数据进行编辑');
   }
 }, deptGridFormSubmit:function(btn) {
   var deptGridForm = btn.up('form').getForm();
@@ -101671,8 +101665,29 @@ Ext.define('Admin.view.dept.DepartmentViewController', {extend:Ext.app.ViewContr
   if (win) {
     win.close();
   }
+}, postGridFormSubmit:function(btn) {
+  var deptGridForm = btn.up('form').getForm();
+  var win = btn.up('window');
+  deptGridForm.submit({url:'post/saveOrUpdate', method:'post', success:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+    Ext.getCmp('postGrid').store.reload();
+    Ext.getCmp('postForm').getForm().reset();
+  }, failure:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+  }});
+}, postGridDeleteOne:function(grid, rowIndex, colIndex) {
+  Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+    if (button == 'yes') {
+      var record = Ext.getCmp('postGrid').deleteId;
+      Ext.Ajax.request({url:'post/delete', method:'post', params:{postId:record.get('postId')}});
+      Ext.getCmp('postGrid').store.reload();
+      Ext.getCmp('postForm').getForm().reset();
+    } else {
+      Ext.Msg.alert('警告', '请选择一行数据进行编辑');
+    }
+  });
 }});
-Ext.define('Admin.view.department.DepartmentViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.departmentViewModel', stores:{deptLists:{type:'departmentStore', autoLoad:true}}});
+Ext.define('Admin.view.department.DepartmentViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.departmentViewModel', stores:{deptLists:{type:'departmentStore', autoLoad:true}, postLists:{type:'postStore', autoLoad:true}}});
 Ext.define('Admin.view.department.DepartmentWindow', {extend:Ext.window.Window, alias:'widget.deptWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
   var me = this;
   me.callParent(arguments);
@@ -101688,6 +101703,15 @@ Ext.define('Admin.view.department.DepartmentWindow', {extend:Ext.window.Window, 
   this.setSize(Math.floor(width * 0.5), Math.floor(height * 0.3));
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
+Ext.define('Admin.view.department.PostForm', {extend:Ext.form.Panel, alias:'widget.postForm', id:'postForm', controller:'departmentViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'postId', name:'postId'}, {xtype:'combobox', fieldLabel:'所属部门', name:'deptId', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), listeners:{render:function() {
+  this.store.reload();
+}}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {xtype:'textfield', fieldLabel:'职位名称', name:'postName'}, {xtype:'textfield', fieldLabel:'职位描述', name:'postDescribe'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'postGridFormSubmit'}, {xtype:'button', text:'删除', handler:'postGridDeleteOne'}]}});
+Ext.define('Admin.view.department.PostGrid', {extend:Ext.grid.Panel, id:'postGrid', xtype:'postGrid', bind:'{postLists}', deleteId:undefined, columns:[{sortable:false, dataIndex:'postId', hidden:true}, {text:'职位名称', sortable:false, dataIndex:'postName', width:150}, {text:'所属部门', sortable:false, dataIndex:'deptName', width:150}, {text:'职位描述', sortable:false, dataIndex:'postDescribe', flex:1}], listeners:{cellclick:function(grid, td, cellIndex, record, tr, rowIndex) {
+  var record = grid.getStore().getAt(rowIndex);
+  Ext.getCmp('postForm').getForm().loadRecord(record);
+  grid.up('panel').deleteId = record;
+}}});
+Ext.define('Admin.view.department.PostViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.postViewModel', stores:{postLists:{type:'postStore', autoLoad:true}}});
 Ext.define('Admin.view.email.Compose', {extend:Ext.form.Panel, alias:'widget.emailcompose', viewModel:{type:'emailcompose'}, controller:'emailcompose', cls:'email-compose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'textfield', fieldLabel:'To'}, {xtype:'textfield', fieldLabel:'Subject'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'Message'}], 
 bbar:{overflowHandler:'menu', items:[{xtype:'filefield', width:400, labelWidth:80, fieldLabel:'Attachment', labelSeparator:'', buttonConfig:{xtype:'filebutton', glyph:'', iconCls:'x-fa fa-cloud-upload', text:'Browse'}}, '-\x3e', {xtype:'button', ui:'soft-red', text:'Discard', handler:'onComposeDiscardClick'}, {xtype:'button', ui:'gray', text:'Save'}, {xtype:'button', ui:'soft-green', text:'Send'}]}});
 Ext.define('Admin.view.email.ComposeViewController', {extend:Ext.app.ViewController, alias:'controller.emailcompose', onComposeDiscardClick:function(bt) {

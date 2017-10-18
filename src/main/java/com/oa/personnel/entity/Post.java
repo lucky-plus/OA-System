@@ -15,7 +15,7 @@ public class Post {
 
 	private Integer postId;
 	private String postName;
-	private String creatBy;			//创建人职工号
+	private String postDescribe;;			
 	private Department department;
 	
 	@Id
@@ -26,9 +26,10 @@ public class Post {
 	public String getPostName() {
 		return postName;
 	}
-	public String getCreatBy() {
-		return creatBy;
+	public String getPostDescribe() {
+		return postDescribe;
 	}
+
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="deptId")
 	public Department getDepartment() {
@@ -41,11 +42,12 @@ public class Post {
 	public void setPostName(String postName) {
 		this.postName = postName;
 	}
-	public void setCreatBy(String creatBy) {
-		this.creatBy = creatBy;
-	}
+
 	public void setDepartment(Department department) {
 		this.department = department;
+	}
+	public void setPostDescribe(String postDescribe) {
+		this.postDescribe = postDescribe;
 	}
 	
 }

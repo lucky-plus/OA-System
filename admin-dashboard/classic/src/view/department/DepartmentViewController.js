@@ -9,72 +9,52 @@ Ext.define('Admin.view.dept.DepartmentViewController', {
 			});
     },
 
-	deptGridOpenEditWindow: function(btn) {
-		var grid = btn.up('gridpanel');//获取Grid视图
-		
-		var selModel = grid.getSelectionModel();//获取Grid的SelectionModel
-        if (selModel.hasSelection()) {//判断是否选中记录
-		
-           var record = selModel.getSelection()[0];//获取选中的第一条记录
-		   
-           //创建修改window和form
-		   var deptWindow = Ext.widget('deptWindow',{
-				title:'修改订单',
-				items: [{xtype: 'deptForm'}]
-			});
-			
-		   //让form加载选中记录
-           deptWindow.down("form").getForm().loadRecord(record);
-        }else{
-        	Ext.Msg.alert('提示',"请选择一行数据进行编辑!");
-        }
-    },
 	
-	deptGridDeleteDate: function(btn) {
-		var grid = btn.up('gridpanel');
-		var selModel = grid.getSelectionModel();
-		
-		
-        if (selModel.hasSelection()) {
-            Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
-                if (button == "yes") {
-                    var selected = selModel.getSelection();
-                    var selectIds = []; //要删除的id
-                    Ext.each(selected, function (record) {
-                        selectIds.push(record.data.id);
-                    });
-                  	Ext.Ajax.request({ 
-						url : 'dept/delete', 
-						method : 'post', 
-						params : { 
-							ids:selectIds
-						}, 
-						success: function(response, options) {
-			                var json = Ext.util.JSON.decode(response.responseText);
-				            if(json.success){
-				            	Ext.Msg.alert('操作成功', json.msg);
-				                grid.getStore().reload();
-					        }else{
-					        	Ext.Msg.alert('操作失败', json.msg);
-					        }
-			            }
-					});
-
-                }
-            });
+	deptGridDeleteOne:function(tree,rowIndex, colIndex){
+	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+		if (button == "yes"&&tree.up('panel').deptment!=undefined) {
+			   var record=tree.up('panel').getStore().getAt(tree.up('panel').deptment).get('id');
+			   Ext.Ajax.request({ 
+					url : 'dept/delete', 
+					method : 'post', 
+					params : { 
+							deptId:record
+					},  
+				
+		   });
+		tree.up('panel').getStore().reload();
+		tree.up('panel').deptment=undefined;
 		}else{
-        	Ext.Msg.alert('提示',"请选择一行数据进行删除!");
-        }
-    },
+			Ext.Msg.alert('警告','请选择一行数据进行编辑')
+		}
+	   })
+   },
+	  
+	  deptGridOpenEditWindow:function(tree, rowIndex, colIndex){
+		  if(tree.up('panel').deptment!=undefined){
+			var parentId=tree.up('panel').getStore().getAt(tree.up('panel').deptment);
+			var record=tree.up('panel').deptFind;
+		   var deptWindow = Ext.widget('deptWindow',{
+				title:'修改部门',
+				items: [{
+					xtype: 'deptForm',
+					}]
+			});
+		  //让form加载选中记录
+		  deptWindow.down("form").items.getAt(0).setValue(record.get('id'));
+		  deptWindow.down("form").getForm().loadRecord(parentId);
+          deptWindow.down("form").items.getAt(2).setValue(record.get('text'));
+		  }else{
+			  Ext.Msg.alert('警告','请选择一行数据进行编辑')
+		  }
+	},
+	
 	
 	deptGridFormSubmit: function(btn) {
 		
 		var deptGridForm = btn.up('form').getForm();
 		var win = btn.up('window');
-			//this.lookupReference('deptGrid').store.reload();  //lookupReference配合reference属性
 			deptGridForm.submit( { 
-				//waitTitle : '请稍后...', 
-				//waitMsg : '正在保存订单信息,请稍后...', 
 				url : 'dept/saveOrUpdate', 
 				method : 'post', 
 				success : function(form, action) { 
@@ -94,5 +74,44 @@ Ext.define('Admin.view.dept.DepartmentViewController', {
 		if(win){
 			win.close();
 		}
-    }
+    },
+	
+	
+	postGridFormSubmit: function(btn) {
+		var deptGridForm = btn.up('form').getForm();
+		var win = btn.up('window');
+			deptGridForm.submit( { 
+				url : 'post/saveOrUpdate', 
+				method : 'post', 
+				success : function(form, action) { 
+					Ext.Msg.alert("提示",action.result.msg); 
+					Ext.getCmp("postGrid").store.reload();
+					Ext.getCmp("postForm").getForm().reset();
+				}, 
+				failure : function(form, action) { 
+					Ext.Msg.alert("提示",action.result.msg); 
+					
+				} 
+			}); 
+    },
+	
+	postGridDeleteOne:function(grid, rowIndex, colIndex){
+	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+		if (button == "yes") {
+			var record=Ext.getCmp("postGrid").deleteId;
+			   Ext.Ajax.request({ 
+					url : 'post/delete', 
+					method : 'post', 
+					params : { 
+							postId:record.get('postId')
+					},  
+				
+		   });
+		Ext.getCmp("postGrid").store.reload();
+		Ext.getCmp("postForm").getForm().reset();
+		}else{
+			Ext.Msg.alert('警告','请选择一行数据进行编辑')
+		}
+	   })
+   },
 });
