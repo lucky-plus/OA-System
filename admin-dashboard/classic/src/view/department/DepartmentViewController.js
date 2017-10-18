@@ -105,10 +105,18 @@ Ext.define('Admin.view.dept.DepartmentViewController', {
 					params : { 
 							postId:record.get('postId')
 					},  
-				
+				success: function(response, options) {
+			                var json = Ext.util.JSON.decode(response.responseText);
+				            if(json.success){
+				            	Ext.Msg.alert('操作成功', json.msg);
+				               	Ext.getCmp("postGrid").store.reload();
+								Ext.getCmp("postForm").getForm().reset();
+					        }else{
+					        	Ext.Msg.alert('操作失败', json.msg);
+					        }
+			     }
 		   });
-		Ext.getCmp("postGrid").store.reload();
-		Ext.getCmp("postForm").getForm().reset();
+		
 		}else{
 			Ext.Msg.alert('警告','请选择一行数据进行编辑')
 		}

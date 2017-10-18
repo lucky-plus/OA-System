@@ -16,8 +16,8 @@ Ext.define('Admin.view.staff.StaffViewController', {
 	staffGridOpenEditWindow:function(grid, rowIndex, colIndex){
 			var record = grid.getStore().getAt(rowIndex);
 		   var staffWindow = Ext.widget('staffWindow',{
-				title:'修改公告',
-				items: [{xtype: 'staffForm'}]
+				title:'修改部门',
+				items: [{xtype: 'staffEditForm'}]
 			});
 		   		//让form加载选中记录
            staffWindow.down("form").getForm().loadRecord(record);

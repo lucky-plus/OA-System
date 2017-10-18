@@ -1,6 +1,6 @@
-Ext.define('Admin.view.staff.StaffForm', {
+Ext.define('Admin.view.staff.StaffEditForm', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.staffForm',
+    alias: 'widget.staffEditForm',
     requires: [
         'Ext.button.Button',
         'Ext.form.field.Text',
@@ -30,29 +30,10 @@ Ext.define('Admin.view.staff.StaffForm', {
         labelSeparator: ''
     },
     items: [{
-		xtype: 'hidden',
-		fieldLabel: 'userId',
-		//allowBlank: false,
-		name:'userId',
-
-	},{
 		xtype: 'textfield',
 		fieldLabel: '姓名',
-		name:'realName'
-	},{
-		xtype: 'textfield',
-		fieldLabel: '用户名',
-		name:'userName'
-	},{
-		xtype: 'textfield',
-		fieldLabel: '初始密码',
-		name:'password'
-	},{
-		xtype: 'datefield',
-		format: 'Y/m/d H:i:s',
-		fieldLabel: '入职时间',
-		name:'onDutDate',
-		value:new Date()
+		name:'realName',
+		edit:false
 	},{
 		xtype: 'combobox',
 		id: 'deptComBoBox',
@@ -107,11 +88,7 @@ Ext.define('Admin.view.staff.StaffForm', {
 			queryMode: 	  'local',
 			displayField: 'postName',
 			valueField:   'postId'
-		},{
-		xtype: 'textfield',
-		fieldLabel: '联系电话',
-		name:'mobilePhone'
-    }],
+		}],
 
 	
     bbar: {
@@ -121,7 +98,7 @@ Ext.define('Admin.view.staff.StaffForm', {
 			ui:'soft-blue',
 			//ui: 'soft-red',
 			text: '保存',
-			handler: 'staffGridFromSubmit'
+			//handler: 'staffGridFromSubmit'
 		},{
 			xtype: 'button',
 			//ui: 'gray',
