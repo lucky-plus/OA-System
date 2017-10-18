@@ -1,6 +1,7 @@
 Ext.define('Admin.view.staff.StaffEditForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.staffEditForm',
+	id:'staffEditForm',
     requires: [
         'Ext.button.Button',
         'Ext.form.field.Text',
@@ -30,10 +31,16 @@ Ext.define('Admin.view.staff.StaffEditForm', {
         labelSeparator: ''
     },
     items: [{
+		xtype: 'hidden',
+		fieldLabel: 'userId',
+		//allowBlank: false,
+		name:'userId',
+
+	},{
 		xtype: 'textfield',
 		fieldLabel: '姓名',
 		name:'realName',
-		edit:false
+		disabled:true
 	},{
 		xtype: 'combobox',
 		id: 'deptComBoBox',
@@ -50,6 +57,9 @@ Ext.define('Admin.view.staff.StaffEditForm', {
 		queryMode: 	  'local',
 		displayField: 'deptName',
 		valueField:   'deptId',
+		listConfig : {//设置下拉时显示的样式
+			maxHeight : 200,//下拉时最大高度
+		},
 		listeners: {// select监听函数
             select: function(){  				
 				var dept = Ext.getCmp('deptComBoBox');
@@ -98,7 +108,7 @@ Ext.define('Admin.view.staff.StaffEditForm', {
 			ui:'soft-blue',
 			//ui: 'soft-red',
 			text: '保存',
-			//handler: 'staffGridFromSubmit'
+			handler: 'staffGridEditSubmit'
 		},{
 			xtype: 'button',
 			//ui: 'gray',

@@ -24,6 +24,7 @@ Ext.define('Admin.view.dept.DepartmentViewController', {
 		   });
 		tree.up('panel').getStore().reload();
 		tree.up('panel').deptment=undefined;
+		Ext.getCmp("postForm").items.getAt(1).store.reload();
 		}else{
 			Ext.Msg.alert('警告','请选择一行数据进行编辑')
 		}
@@ -61,6 +62,7 @@ Ext.define('Admin.view.dept.DepartmentViewController', {
 					Ext.Msg.alert("提示",action.result.msg); 
 					win.close();
 					Ext.getCmp("departmentTree").store.reload();
+					Ext.getCmp("postForm").items.getAt(1).store.reload();
 				}, 
 				failure : function(form, action) { 
 					Ext.Msg.alert("提示",action.result.msg); 

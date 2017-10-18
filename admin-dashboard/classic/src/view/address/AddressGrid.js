@@ -44,6 +44,9 @@
 					this.Store.reload();
 				}
 			},
+			listConfig : {//设置下拉时显示的样式
+				maxHeight : 200,//下拉时最大高度
+			},
 			queryMode: 	  'local',
 			displayField: 'deptName',
 			valueField:   'deptId',

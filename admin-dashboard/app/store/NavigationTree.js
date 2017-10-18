@@ -12,8 +12,8 @@ Ext.define('Admin.store.NavigationTree', {
         children: [
 			{
 				text: '系统首页',
-                iconCls: 'x-fa fa-user',
-                viewType: 'profile',
+                iconCls: 'x-fa  fa-home',
+                viewType: 'homePage',
                 leaf: true
 			},
             {

@@ -101277,7 +101277,7 @@ Ext.define('Admin.model.search.User', {extend:Admin.model.Base, fields:[{type:'i
 Ext.define('Admin.model.staff.StaffModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'realName', type:'string'}, {name:'sex', type:'string'}, {name:'nativePlace', type:'string'}, {name:'birthday', type:'date'}, {name:'onDutDate', type:'date'}, {name:'dept', type:'string'}, {name:'mobilePhone', type:'string'}]});
 Ext.define('Admin.model.task.TaskModel', {extend:Admin.model.Base, fields:[{name:'taskId', type:'int'}, {name:'createId', type:'int'}, {name:'userId', type:'int'}, {name:'taskName', type:'string'}, {name:'taskText', type:'string'}, {name:'createDate', type:'date'}, {name:'completeDate', type:'string'}, {name:'taskState', type:'string'}, {name:'createName', type:'string'}, {name:'userName', type:'string'}, {name:'realName', type:'string'}]});
 Ext.define('Admin.proxy.API', {extend:Ext.data.proxy.Ajax, alias:'proxy.api', reader:{type:'json', rootProperty:'data'}});
-Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'系统首页', iconCls:'x-fa fa-user', viewType:'profile', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', 
+Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'系统首页', iconCls:'x-fa  fa-home', viewType:'homePage', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', 
 viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}, {text:'个人中心', iconCls:'x-fa fa-user', viewType:'profile', leaf:true}]}});
 Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json?roleLevel\x3d' + loginUserRoleLevel, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
@@ -101445,7 +101445,7 @@ Ext.define('Admin.view.address.address', {extend:Ext.container.Container, xtype:
 Ext.define('Admin.view.address.AddressGrid', {extend:Ext.grid.Panel, xtype:'addressGrid', title:'\x3cb\x3e通讯中心\x3c/b\x3e', bind:'{addressLists}', id:'addressGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'编号', dataIndex:'userId', hidden:true}, {text:'联系人', dataIndex:'realName', flex:1}, {text:'所属部门', dataIndex:'deptName', width:188}, {text:'职位', dataIndex:'postName', width:188}, {text:'联系电话', dataIndex:'mobilePhone', width:188}, {text:'联系邮箱', dataIndex:'mail', width:188}, 
 {text:'QQ', dataIndex:'qq_number', width:188}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200, reference:'addressGridSearchText'}, {xtype:'tbtext', text:'所属部门'}, '-', {xtype:'combobox', name:'deptId', id:'deptComBoBox1', reference:'addressGridSearchField', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), listeners:{select:function() {
   this.Store.reload();
-}}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', listeners:{click:'addressGridSearch'}}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+}}, listConfig:{maxHeight:200}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', listeners:{click:'addressGridSearch'}}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
 Ext.define('Admin.view.address.AddressViewController', {extend:Ext.app.ViewController, alias:'controller.addressViewController', addressGridSearch:function(bt) {
   var searchField = this.lookupReference('addressGridSearchField').getRawValue();
   var searchText = this.lookupReference('addressGridSearchText').getValue();
@@ -101620,7 +101620,7 @@ align:'stretch'}, items:[{text:'职位查看', xtype:'postGrid', forceFit:false,
 Ext.define('Admin.view.department.DepartmentForm', {extend:Ext.form.Panel, alias:'widget.deptForm', controller:'departmentViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'deptId', name:'deptId', handler:'deptGridOpenEditWindow'}, {xtype:'combobox', fieldLabel:'上级部门', name:'parentId', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, 
 autoLoad:true}), listeners:{render:function() {
   this.store.reload();
-}}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {xtype:'textfield', fieldLabel:'部门名称', name:'deptName'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'deptGridFormSubmit'}, {xtype:'button', text:'取消', handler:'deptGridWindowClose'}]}});
+}}, listConfig:{maxHeight:200}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {xtype:'textfield', fieldLabel:'部门名称', name:'deptName'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'deptGridFormSubmit'}, {xtype:'button', text:'取消', handler:'deptGridWindowClose'}]}});
 Ext.define('Admin.view.department.DepartmentTree', {extend:Ext.tree.Panel, id:'departmentTree', xtype:'departmentTree', deptment:undefined, deptFind:undefined, rootVisible:false, title:'\x3cb\x3e组织架构\x3c/b\x3e', bind:'{deptLists}', listeners:{cellclick:function(tree, td, cellIndex, record, tr, rowIndex) {
   tree.up('panel').deptment = rowIndex;
   tree.up('panel').deptFind = record;
@@ -101635,6 +101635,7 @@ Ext.define('Admin.view.dept.DepartmentViewController', {extend:Ext.app.ViewContr
       Ext.Ajax.request({url:'dept/delete', method:'post', params:{deptId:record}});
       tree.up('panel').getStore().reload();
       tree.up('panel').deptment = undefined;
+      Ext.getCmp('postForm').items.getAt(1).store.reload();
     } else {
       Ext.Msg.alert('警告', '请选择一行数据进行编辑');
     }
@@ -101657,6 +101658,7 @@ Ext.define('Admin.view.dept.DepartmentViewController', {extend:Ext.app.ViewContr
     Ext.Msg.alert('提示', action.result.msg);
     win.close();
     Ext.getCmp('departmentTree').store.reload();
+    Ext.getCmp('postForm').items.getAt(1).store.reload();
   }, failure:function(form, action) {
     Ext.Msg.alert('提示', action.result.msg);
   }});
@@ -101710,9 +101712,9 @@ Ext.define('Admin.view.department.DepartmentWindow', {extend:Ext.window.Window, 
   this.setSize(Math.floor(width * 0.5), Math.floor(height * 0.3));
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
-Ext.define('Admin.view.department.PostForm', {extend:Ext.form.Panel, alias:'widget.postForm', id:'postForm', controller:'departmentViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'postId', name:'postId'}, {xtype:'combobox', fieldLabel:'所属部门', name:'deptId', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), listeners:{render:function() {
+Ext.define('Admin.view.department.PostForm', {extend:Ext.form.Panel, alias:'widget.postForm', id:'postForm', controller:'departmentViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'postId', name:'postId'}, {xtype:'combobox', fieldLabel:'所属部门', name:'deptId', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), listeners:{select:function() {
   this.store.reload();
-}}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {xtype:'textfield', fieldLabel:'职位名称', name:'postName'}, {xtype:'textfield', fieldLabel:'职位描述', name:'postDescribe'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'postGridFormSubmit'}, {xtype:'button', text:'删除', handler:'postGridDeleteOne'}]}});
+}}, listConfig:{maxHeight:200}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {xtype:'textfield', fieldLabel:'职位名称', name:'postName'}, {xtype:'textfield', fieldLabel:'职位描述', name:'postDescribe'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'postGridFormSubmit'}, {xtype:'button', text:'删除', handler:'postGridDeleteOne'}]}});
 Ext.define('Admin.view.department.PostGrid', {extend:Ext.grid.Panel, id:'postGrid', xtype:'postGrid', bind:'{postLists}', deleteId:undefined, columns:[{sortable:false, dataIndex:'postId', hidden:true}, {text:'职位名称', sortable:false, dataIndex:'postName', width:150}, {text:'所属部门', sortable:false, dataIndex:'deptName', width:150}, {text:'职位描述', sortable:false, dataIndex:'postDescribe', flex:1}], listeners:{cellclick:function(grid, td, cellIndex, record, tr, rowIndex) {
   var record = grid.getStore().getAt(rowIndex);
   Ext.getCmp('postForm').getForm().loadRecord(record);
@@ -101866,6 +101868,7 @@ Ext.define('Admin.view.forms.WizardFormController', {extend:Ext.app.ViewControll
 Ext.define('Admin.view.forms.WizardOne', {extend:Ext.panel.Panel, alias:'widget.formswizardone', cls:'wizardone shadow', plugins:{responsive:true}, responsiveConfig:{'width \x3e\x3d 1000':{layout:{type:'box', align:'stretch', vertical:false}}, 'width \x3c 1000':{layout:{type:'box', align:'stretch', vertical:true}}}, items:[{xtype:'specialoffer', plugins:{responsive:true}, height:338, responsiveConfig:{'width \x3c 1000':{flex:null}, 'width \x3e\x3d 1000':{flex:1}}}, {xtype:'wizardform', cls:'wizardone', 
 colorScheme:'blue', flex:1}]});
 Ext.define('Admin.view.forms.Wizards', {extend:Ext.container.Container, xtype:'forms', cls:'wizards', defaultFocus:'wizardform', layout:'responsivecolumn', items:[{xtype:'formswizardone', userCls:'big-100'}, {xtype:'wizardform', cls:'wizardtwo shadow', colorScheme:'soft-purple', userCls:'big-50 small-100'}, {xtype:'wizardform', cls:'wizardthree shadow', colorScheme:'soft-green', userCls:'big-50 small-100'}]});
+Ext.define('Admin.view.homePage.HomePage', {extend:Ext.container.Container, xtype:'homePage', layout:'responsivecolumn', items:[{xtype:'postGrid', userCls:'big-50 small-100'}, {userCls:'big-50 small-100'}, {xtype:'noticeGrid', userCls:'big-50 small-100'}]});
 Ext.define('Admin.view.log.Log', {extend:Ext.container.Container, xtype:'log', controller:'logViewController', viewModel:{type:'logViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'logGrid'}]});
 Ext.define('Admin.view.log.LogGrid', {extend:Ext.grid.Panel, xtype:'logGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{logLists}', id:'logGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'操作时间', sortable:true, dataIndex:'createDate', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'操作类型', sortable:true, dataIndex:'operation', width:80}, {text:'操作人', sortable:true, dataIndex:'userName', width:80}, {text:'具体操作', sortable:true, dataIndex:'content', flex:1}], 
 tbar:Ext.create('Ext.Toolbar', {id:'logCondition', items:[{xtype:'tbtext', text:'操作人：'}, {xtype:'textfield', width:100, itemsId:'userName'}, {xtype:'tbtext', text:'操作类型：'}, {xtype:'textfield', width:100, itemsId:'operation'}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', editable:false, itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
@@ -102495,13 +102498,13 @@ iconCls:'x-fa fa-close'}, {xtype:'button', iconCls:'x-fa fa-ban'}], cls:'content
 Ext.define('Admin.view.search.ResultsController', {extend:Ext.app.ViewController, alias:'controller.searchresults'});
 Ext.define('Admin.view.search.ResultsModel', {extend:Ext.app.ViewModel, alias:'viewmodel.searchresults', stores:{allResults:{type:'searchresults'}, usersResults:{type:'searchusers'}, inboxResults:{type:'inbox'}}});
 Ext.define('Admin.view.staff.Staff', {extend:Ext.container.Container, xtype:'staff', controller:'StaffViewController', viewModel:{type:'staffViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'staffGrid'}]});
-Ext.define('Admin.view.staff.StaffEditForm', {extend:Ext.form.Panel, alias:'widget.staffEditForm', controller:'StaffViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'textfield', fieldLabel:'姓名', name:'realName', edit:false}, {xtype:'combobox', id:'deptComBoBox', name:'deptId', fieldLabel:'部门', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), 
-queryMode:'local', displayField:'deptName', valueField:'deptId', listeners:{select:function() {
+Ext.define('Admin.view.staff.StaffEditForm', {extend:Ext.form.Panel, alias:'widget.staffEditForm', id:'staffEditForm', controller:'StaffViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'姓名', name:'realName', disabled:true}, {xtype:'combobox', id:'deptComBoBox', name:'deptId', fieldLabel:'部门', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), 
+reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId', listConfig:{maxHeight:200}, listeners:{select:function() {
   var dept = Ext.getCmp('deptComBoBox');
   Ext.getCmp('postComBoBox').getStore().load({params:{deptId:dept.getValue()}});
-}}}, {xtype:'combobox', id:'postComBoBox', queryMode:'remote', name:'postId', async:false, fieldLabel:'职位', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'post/findPostsByDeptId'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'postName', valueField:'postId'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存'}, {xtype:'button', text:'取消', handler:'staffGridWindowsClose'}]}});
+}}}, {xtype:'combobox', id:'postComBoBox', queryMode:'remote', name:'postId', async:false, fieldLabel:'职位', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'post/findPostsByDeptId'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'postName', valueField:'postId'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'staffGridEditSubmit'}, {xtype:'button', text:'取消', handler:'staffGridWindowsClose'}]}});
 Ext.define('Admin.view.staff.StaffForm', {extend:Ext.form.Panel, alias:'widget.staffForm', controller:'StaffViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'姓名', name:'realName'}, {xtype:'textfield', fieldLabel:'用户名', name:'userName'}, {xtype:'textfield', fieldLabel:'初始密码', name:'password'}, {xtype:'datefield', format:'Y/m/d H:i:s', 
-fieldLabel:'入职时间', name:'onDutDate', value:new Date}, {xtype:'combobox', id:'deptComBoBox', name:'deptId', fieldLabel:'部门', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId', listeners:{select:function() {
+fieldLabel:'入职时间', name:'onDutDate', value:new Date}, {xtype:'combobox', id:'deptComBoBox', name:'deptId', fieldLabel:'部门', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId', listConfig:{maxHeight:200}, listeners:{select:function() {
   var dept = Ext.getCmp('deptComBoBox');
   Ext.getCmp('postComBoBox').getStore().load({params:{deptId:dept.getValue()}});
 }}}, {xtype:'combobox', id:'postComBoBox', queryMode:'remote', name:'postId', async:false, fieldLabel:'职位', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'post/findPostsByDeptId'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'postName', valueField:'postId'}, {xtype:'textfield', fieldLabel:'联系电话', name:'mobilePhone'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'staffGridFromSubmit'}, {xtype:'button', 
@@ -102509,133 +102512,81 @@ text:'取消', handler:'staffGridWindowsClose'}]}});
 Ext.define('Admin.view.staff.StaffGrid', {extend:Ext.grid.Panel, xtype:'staffGrid', title:'\x3cb\x3e员工列表\x3c/b\x3e', bind:'{staffLists}', id:'staffGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'ID', sortable:true, dataIndex:'userId', hidden:true}, {text:'职工姓名', sortable:true, dataIndex:'realName', width:120}, {text:'性别', sortable:true, dataIndex:'sex', width:120}, {text:'籍贯', sortable:true, dataIndex:'nativePlace', width:120}, {text:'出生时间', sortable:true, dataIndex:'birthday', 
 width:125, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'入职时间', sortable:true, dataIndex:'onDutDate', width:125, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'所属部门', sortable:true, dataIndex:'deptName', width:125}, {text:'职位', sortable:true, dataIndex:'postName', width:125}, {text:'联系电话', sortable:true, dataIndex:'mobilePhone', width:125}, {xtype:'actioncolumn', text:'操作', flex:1, tdCls:'action', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:'staffGridOpenEditWindow'}, 
 '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'staffGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'新建员工', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'staffGridOnClick'}}, '-', {text:'批量删除', iconCls:'x-fa fa-trash', handler:'staffGridDelete'}, '-', {xtype:'tbtext', text:'姓名'}, {xtype:'textfield', width:150, reference:'staffGridSearchText'}, {xtype:'tbtext', text:'部门'}, {xtype:'combobox', reference:'staffGridSearchField', name:'deptId', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), 
-reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', handler:'staffGridSearch'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{staffLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
-Ext.define('Admin.view.staff.StaffViewController', {
-    extend: 'Ext.app.ViewController',
-    alias: 'controller.StaffViewController',
-
-    staffGridOnClick: function(bt) {
-		//alert("Add Wiondws");
-		var cfg = Ext.apply({
-			xtype:'staffWindow'
-		},{
-			title:'添加员工',
-			items:[Ext.apply({xtype:'staffForm'})]
-		});
-		Ext.create(cfg);
-    },
-	
-	staffGridOpenEditWindow:function(grid, rowIndex, colIndex){
-			var record = grid.getStore().getAt(rowIndex);
-		   var staffWindow = Ext.widget('staffWindow',{
-				title:'修改部门',
-				items: [{xtype: 'staffEditForm'}]
-			});
-		   		//让form加载选中记录
-           staffWindow.down("form").getForm().loadRecord(record);
-	},
-   
-	staffGridDelete: function(btn) {
-		var grid = btn.up('gridpanel');
-		var selModel = grid.getSelectionModel();
-        if (selModel.hasSelection()) {
-            Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
-                if (button == "yes") {
-                    var selected = selModel.getSelection();
-                    var selectIds = []; //要删除的id
-                    Ext.each(selected, function (record) {
-                        selectIds.push(record.data.userId);
-                    })
-                  	Ext.Ajax.request({ 
-						url : 'staff/delete', 
-						method : 'post', 
-						params : { 
-							ids:selectIds
-						}, 
-						success: function(response, options) {
-			                var json = Ext.util.JSON.decode(response.responseText);
-				            if(json.success){
-				            	Ext.Msg.alert('操作成功', json.msg);
-				                grid.getStore().reload();
-					        }else{
-					        	Ext.Msg.alert('操作失败', json.msg);
-					        }
-			            }
-					});
-
-                }
-            });
-		}
-
-   },
-   
-    staffGridDeleteOne:function(grid, rowIndex, colIndex){
-	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
-		if (button == "yes") {
-	   var record = grid.getStore().getAt(rowIndex);
-	   var userId=record.data.userId;
-	   Ext.Ajax.request({ 
-			url : 'staff/delete', 
-			method : 'post', 
-			params : { 
-					ids:userId
-			},  
-			
-	   });
-	   grid.getStore().reload();
-		}
-	   })
-   },
-   
-	staffGridFromSubmit: function(btn) {
-		var staffForm = btn.up('form').getForm();
-		var win = btn.up('window');
-		staffForm.submit( { 
-			url : 'staff/saveOrUpdate', 
-			method : 'post', 
-			success : function(form, action) { 
-				Ext.Msg.alert("提示",action.result.msg); 
-				win.close();
-				Ext.getCmp('staffGrid').store.reload();
-			}, 
-			failure : function(form, action) { 
-				Ext.Msg.alert("提示",action.result.msg); 
-				
-			} 
-		}); 
-
-   },
-   
-   
-   staffGridSearch: function(bt) {
-		var searchField = this.lookupReference('staffGridSearchField').getRawValue();
-		var searchText = this.lookupReference('staffGridSearchText').getValue();
-		Ext.Ajax.request({ 
-			url : 'staff/findByPage', 
-			params : { 
-                    realName:searchText,
-					deptName:searchField,
-					page:1,
-					start:0,
-					limit:25,
-					sort:'userId',
-					dir:'DESC'
-			},
-			success: function(response, options){
-				var tnpdata= Ext.util.JSON.decode(response.responseText) ;
-				Ext.getCmp('staffGrid').getStore().loadData(tnpdata.content,false);
-			}
-			
-	   });
-	},
-   
-	staffGridWindowsClose: function(btn) {
-		var win=btn.up('window');
-		if(win){
-			win.close();
-		}
-   }
-});
+reader:{type:'json'}, autoLoad:true}), listConfig:{maxHeight:200}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', handler:'staffGridSearch'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{staffLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+Ext.define('Admin.view.staff.StaffViewController', {extend:Ext.app.ViewController, alias:'controller.StaffViewController', staffGridOnClick:function(bt) {
+  var cfg = Ext.apply({xtype:'staffWindow'}, {title:'添加员工', items:[Ext.apply({xtype:'staffForm'})]});
+  Ext.create(cfg);
+}, staffGridOpenEditWindow:function(grid, rowIndex, colIndex) {
+  var record = grid.getStore().getAt(rowIndex);
+  var staffWindow = Ext.widget('staffWindow', {title:'修改部门', items:[{xtype:'staffEditForm'}]});
+  staffWindow.down('form').getForm().loadRecord(record);
+}, staffGridDelete:function(btn) {
+  var grid = btn.up('gridpanel');
+  var selModel = grid.getSelectionModel();
+  if (selModel.hasSelection()) {
+    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+      if (button == 'yes') {
+        var selected = selModel.getSelection();
+        var selectIds = [];
+        Ext.each(selected, function(record) {
+          selectIds.push(record.data.userId);
+        });
+        Ext.Ajax.request({url:'staff/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
+          var json = Ext.util.JSON.decode(response.responseText);
+          if (json.success) {
+            Ext.Msg.alert('操作成功', json.msg);
+            grid.getStore().reload();
+          } else {
+            Ext.Msg.alert('操作失败', json.msg);
+          }
+        }});
+      }
+    });
+  }
+}, staffGridDeleteOne:function(grid, rowIndex, colIndex) {
+  Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+    if (button == 'yes') {
+      var record = grid.getStore().getAt(rowIndex);
+      var userId = record.data.userId;
+      Ext.Ajax.request({url:'staff/delete', method:'post', params:{ids:userId}});
+      grid.getStore().reload();
+    }
+  });
+}, staffGridEditSubmit:function(btn) {
+  var staffForm = btn.up('form').getForm();
+  var win = btn.up('window');
+  var userId = Ext.getCmp('staffEditForm').items.getAt(0).getValue();
+  var postId = Ext.getCmp('staffEditForm').items.getAt(3).getValue();
+  staffForm.submit({url:'post/updateUserPost', method:'post', params:{userId:userId, postId:postId}, success:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+    win.close();
+    Ext.getCmp('staffGrid').store.reload();
+  }, failure:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+  }});
+}, staffGridFromSubmit:function(btn) {
+  var staffForm = btn.up('form').getForm();
+  var win = btn.up('window');
+  staffForm.submit({url:'staff/saveOrUpdate', method:'post', success:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+    win.close();
+    Ext.getCmp('staffGrid').store.reload();
+  }, failure:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+  }});
+}, staffGridSearch:function(bt) {
+  var searchField = this.lookupReference('staffGridSearchField').getRawValue();
+  var searchText = this.lookupReference('staffGridSearchText').getValue();
+  Ext.Ajax.request({url:'staff/findByPage', params:{realName:searchText, deptName:searchField, page:1, start:0, limit:25, sort:'userId', dir:'DESC'}, success:function(response, options) {
+    var tnpdata = Ext.util.JSON.decode(response.responseText);
+    Ext.getCmp('staffGrid').getStore().loadData(tnpdata.content, false);
+  }});
+}, staffGridWindowsClose:function(btn) {
+  var win = btn.up('window');
+  if (win) {
+    win.close();
+  }
+}});
 Ext.define('Admin.view.staff.StaffViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.staffViewModel', stores:{staffLists:{type:'staffStore', autoLoad:true}}});
 Ext.define('Admin.view.staff.StaffWindow', {extend:Ext.window.Window, alias:'widget.staffWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
   var me = this;
