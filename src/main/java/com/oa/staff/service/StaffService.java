@@ -102,9 +102,11 @@ public class StaffService implements IStaffService {
 	public void save(PostUserDTO dto) {
 		UserInfornation entity=new UserInfornation();
 		PostUserDTO.dtoToEntity(dto, entity);
-		String userId = UUID.randomUUID().toString().replaceAll("-", "");
-		System.out.println(userId);
-		entity.setUserId(userId);
+		if(entity.getUserId() == null || "".equals(entity.getUserId())) {
+			String userId = UUID.randomUUID().toString().replaceAll("-", "");
+			System.out.println(userId);
+			entity.setUserId(userId);
+		}
 		staffDao.save(entity);
 		
 	}
@@ -112,10 +114,6 @@ public class StaffService implements IStaffService {
 	@Override
 	public void delete(UserInfornation entity) {
 		staffDao.delete(entity);
-	}
-
-	public void delete(String id) {
-		staffDao.delete(id);
 	}
 
 	@Override

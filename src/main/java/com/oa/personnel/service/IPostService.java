@@ -8,12 +8,13 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.oa.personnel.entity.Post;
 import com.oa.personnel.entity.dto.PostDTO;
+import com.oa.utils.ExtjsAjaxResult;
 
 public interface IPostService {
 
 	public void save(PostDTO post);
-	public void delete(Integer id);
-	public void delete(Integer[] ids);
+//	public void delete(Integer id);
+	public ExtjsAjaxResult delete(Integer[] ids);
 	public List<PostDTO> findAll();
 	public Page<PostDTO> findAll(Pageable pageable);
 	public Page<PostDTO> findAll(Specification<Post> spec, Pageable pageable);

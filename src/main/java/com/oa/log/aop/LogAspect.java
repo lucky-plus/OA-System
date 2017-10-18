@@ -181,17 +181,17 @@ public class LogAspect {
 			log.setContent(content.toString());
 			logService.save(log);
 			
-		} else if(param.contains("UserPostDTO")) {
+		} else if(param.contains("PostUserDTO")) {
 			Object[] params = joinPoint.getArgs();
 			PostUserDTO user = (PostUserDTO) params[0];
-			if(user.getUserId() != null) {
+			if(user.getUserId() != null && !"".equals(user.getUserId())) {
 				operation = "修改";
 				log.setOperation(operation);
 			} else {
 				operation = "添加";
 				log.setOperation(operation);
 			}
-			content.append(operation+"了用户："+user.getUserName());
+			content.append(operation+"了用户："+user.getUserName()+"("+user.getRealName()+")");
 			log.setContent(content.toString());
 			logService.save(log);
 			
@@ -225,16 +225,23 @@ public class LogAspect {
 			content.append(operation+"了部门,所删部门ID为:");
 		} else if(className.contains("Post")) {
 			content.append(operation+"了职务,所删职务ID为:");
-		} else if(className.contains("User")) {
+		} else if(className.contains("Staff")) {
 			content.append(operation+"了用户,所删用户ID为:");
 		} else if(className.contains("Task")) {
 			content.append(operation+"了任务,所删任务ID为:");
 		}
-
-		Object[] params = joinPoint.getArgs();
-		Integer[] ids = (Integer[]) params[0];
-		for(Integer id : ids) {
-			content.append(id.toString()+"、");
+		if(className.contains("Staff")) {
+			Object[] params = joinPoint.getArgs();
+			String[] ids = (String[]) params[0];
+			for(String id : ids) {
+				content.append(id+"、");
+			}
+		} else {
+			Object[] params = joinPoint.getArgs();
+			Integer[] ids = (Integer[]) params[0];
+			for(Integer id : ids) {
+				content.append(id.toString()+"、");
+			}
 		}
 		log.setContent(content.toString());
 		logService.save(log);

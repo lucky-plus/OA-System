@@ -17,7 +17,6 @@ public interface IStaffService {
 	//CRUD
 	public void save(PostUserDTO dto);
 	public void delete(UserInfornation entity);
-	public void delete(String id);
 	public void delete(String[] ids);
 	public UserInfornation findByUserName(String userName);
 	public Page<PostUserDTO> findAll(Pageable pageable);

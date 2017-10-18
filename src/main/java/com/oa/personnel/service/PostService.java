@@ -13,12 +13,16 @@ import org.springframework.stereotype.Service;
 import com.oa.personnel.dao.IPostDao;
 import com.oa.personnel.entity.Post;
 import com.oa.personnel.entity.dto.PostDTO;
+import com.oa.staff.dao.IStaffDao;
+import com.oa.utils.ExtjsAjaxResult;
 
 @Service
 public class PostService implements IPostService {
 
 	@Autowired
 	private IPostDao postDao;
+	@Autowired
+	private IStaffDao staffDao;
 	
 	@Override
 	public void save(PostDTO dto) {
@@ -27,16 +31,23 @@ public class PostService implements IPostService {
 		postDao.save(entity);
 	}
 
-	@Override
-	public void delete(Integer id) {
-		postDao.delete(id);
-	}
+//	@Override
+//	public void delete(Integer id) {
+//		postDao.delete(id);
+//	}
 
 	@Override
-	public void delete(Integer[] ids) {
+	public ExtjsAjaxResult delete(Integer[] ids) {
 		for(Integer id : ids) {
-			postDao.delete(id);
+			List<String> userIdList = staffDao.findUserIdByPostId(id);
+			if(userIdList.size()==0) {
+				postDao.delete(id);
+				return new ExtjsAjaxResult(true,"操作成功！");
+			} else {
+				return new ExtjsAjaxResult(false,"无法删除！该职位正在使用中！");
+			}
 		}
+		return new ExtjsAjaxResult(false,"操作失败！");
 	}
 
 	@Override

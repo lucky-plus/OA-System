@@ -33,11 +33,10 @@ public class PostController {
 	}
 	
 	@RequestMapping("/delete")
-	public @ResponseBody ExtjsAjaxResult deleteAuthority(Integer postId)
+	public @ResponseBody ExtjsAjaxResult deleteAuthority(Integer[] postId)
 	{
 		try {
-			postService.delete(postId);
-			 return new ExtjsAjaxResult(true,"操作成功！");
+			return postService.delete(postId);
 		} catch (Exception e) {
 			 e.printStackTrace();
 			 return new ExtjsAjaxResult(false,"操作失败！");
