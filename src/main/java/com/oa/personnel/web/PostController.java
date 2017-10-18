@@ -59,4 +59,14 @@ public class PostController {
 		return postService.findPostsByDeptId(deptId);
 	}
 	
+	@RequestMapping("/updateUserPost")
+	public @ResponseBody ExtjsAjaxResult updateUserPost(String userId, Integer postId) {
+		try {
+			postService.updateUserPost(userId, postId);
+			return new ExtjsAjaxResult(true,"操作成功！");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ExtjsAjaxResult(false,"操作失败！");
+		}
+	}
 }

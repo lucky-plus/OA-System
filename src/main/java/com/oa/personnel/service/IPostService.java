@@ -20,5 +20,6 @@ public interface IPostService {
 	public Page<PostDTO> findAll(Specification<Post> spec, Pageable pageable);
 	
 	public List<PostDTO> findPostsByDeptId(Integer deptId);
+	public void updateUserPost(String userId, Integer postId);
 	
 }
