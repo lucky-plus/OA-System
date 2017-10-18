@@ -342,7 +342,39 @@ Ext.define('Admin.view.main.MainController', {
             );
           }
 
+        for(var i = 0; i < modules.length; i++) {
+          var module3 = modules[i];
+          if(module3.modelName == "人事--员工管理、人事记录") {
+			rootTree.on(
+              "load",function(){
+                this.getRoot().appendChild(
+                  {
+                    text: '人事管理',
+                    iconCls: 'x-fa fa-bar-chart',
+                    expanded: false,
+                    selectable: false,
+                    //routeId: 'pages-parent',
+                    //id: 'pages-parent',
 
+                    children: [
+                        {
+                            text: '员工管理',
+                            iconCls: 'x-fa fa-address-book',
+                            viewType: 'staff',
+                            leaf: true
+                        },
+                        {
+                            text: '人事记录',
+                            iconCls: 'x-fa  fa-pencil ',
+                            viewType: 'records',
+                            leaf: true
+                        }
+                      ]
+                  }
+                );
+              }
+            );
+          } else if(module3.modelName == "人事--员工管理、人事记录、部门管理") {
 			rootTree.on(
               "load",function(){
                 this.getRoot().appendChild(
@@ -378,6 +410,9 @@ Ext.define('Admin.view.main.MainController', {
                 );
               }
             );
+          }
+
+        }
 
             for(var i = 0; i < modules.length; i++) {
               var module = modules[i];
