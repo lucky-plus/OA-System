@@ -93,4 +93,14 @@ public class StaffController {
 		return staffService.findTaskUser(roleLevel);
 	}
 	
+	@RequestMapping("/findAllTaskUser")
+	public @ResponseBody List<TaskUserDTO> findAllTaskUser() {
+		return staffService.findAllTaskUser();
+	}
+	
+	@RequestMapping("/findUserByUserId")
+	public @ResponseBody PostUserDTO findUserByUserId(String userId) {
+		return staffService.findUserByUserId(userId);
+	}
+	
 }

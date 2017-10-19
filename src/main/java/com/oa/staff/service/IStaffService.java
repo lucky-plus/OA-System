@@ -31,4 +31,9 @@ public interface IStaffService {
 	//分配任务查找接收者
 	public List<TaskUserDTO> findTaskUser(Integer roleLevel);
 	
+	//根据用户Id查找用户信息
+	public PostUserDTO findUserByUserId(String userId);
+
+	public List<TaskUserDTO> findAllTaskUser();
+	
 }

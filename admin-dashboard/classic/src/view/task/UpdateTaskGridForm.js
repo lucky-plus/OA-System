@@ -71,7 +71,13 @@ Ext.define('Admin.view.role.UpdateTaskGridForm', {
         }),
       	queryMode:    'local',
       	displayField: 'realName',
-      	valueField:   'userId'
+      	valueField:   'userId',
+        listConfig : {//设置下拉时显示的样式
+          maxHeight : 170,//下拉时最大高度
+          getInnerTpl : function() {
+             return '<div data-qtip="{userId}">{realName}</div>';//这里面的id和name是你的store里面的属性
+          }
+        }
   	},{
         xtype: 'htmleditor',
         buttonDefaults: {

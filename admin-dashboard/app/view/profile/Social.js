@@ -11,11 +11,10 @@ Ext.define('Admin.view.profile.Social', {
         type: 'vbox',
         align: 'middle'
     },
+    cls: 'timeline-items-wrap user-profile-desc',
 
     height: 320,
-    
     bodyPadding: 20,
-    
     items: [
         {
             xtype: 'image',
@@ -37,36 +36,20 @@ Ext.define('Admin.view.profile.Social', {
             html: 'CO-FOUNDER, CEO'
         },
         {
-            xtype: 'container',
-            layout: 'hbox',
-            defaults: {
-                xtype: 'button',
-                margin: 5
-            },
-            margin: 5,
-            items: [
-                {
-                    ui: 'facebook',
-                    iconCls: 'x-fa fa-facebook'
-                },
-                {
-                    ui: 'soft-cyan',
-                    iconCls: 'x-fa fa-twitter'
-                },
-                {
-                    ui: 'soft-red',
-                    iconCls: 'x-fa fa-google-plus'
-                },
-                {
-                    ui: 'soft-purple',
-                    iconCls: 'x-fa fa-envelope'
-                }
-            ]
+            xtype: 'component',
+            html: 'San Jose, CA',
+            padding: '0 0 12 0'
+        },
+        {
+            xtype: 'component',
+            html: 'Member since 1 years ago',
+            padding: '0 0 12 0'
         },
         {
             xtype: 'button',
-            width: 220,
-            text: 'Follow',
+            renderTO : Ext.getBody(),
+            width: 200,
+            text: '头像上传',
             platformConfig: {
                 classic: {
                     scale: 'large'
@@ -74,7 +57,10 @@ Ext.define('Admin.view.profile.Social', {
                 modern: {
                     ui: 'action'
                 }
-            }
+            },
+            listeners: {
+            click: 'showFileUploadFormWindow'
+        	}
         }
     ]
 });

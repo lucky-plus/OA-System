@@ -155,8 +155,47 @@ Ext.define('Admin.view.main.MainController', {
           if(loadFlag == 0) {
             //动态加载菜单
             var rootTree = Ext.data.StoreManager.lookup('NavigationTree');
-            
+
             var modules = eval(loginUserModules);
+
+            rootTree.on(
+              "load",function(){
+                this.getRoot().appendChild(
+                  {
+                      text: '个人中心',
+                      iconCls: 'x-fa fa-user',
+                      expanded: false,
+                      selectable: false,
+                      children: [
+                          {
+                              text: '资产列表',
+                              iconCls: 'x-fa fa-money',
+                              viewType: 'assets',
+                              leaf: true
+                          },
+                          {
+                              text: '个人信息',
+                              iconCls: 'x-fa fa-user-circle',
+                              viewType: 'profile',
+                              leaf: true
+                          }]
+                  }
+                );
+              }
+            );
+
+            // rootTree.on(
+            //   "load",function(){
+            //     this.getRoot().appendChild(
+            //       {
+            //           text: '资产列表',
+            //           iconCls: 'x-fa fa-money',
+            //           viewType: 'assets',
+            //           leaf: true
+            //       }
+            //     );
+            //   }
+            // );
 
             rootTree.on(
               "load",function(){

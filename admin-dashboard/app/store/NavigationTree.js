@@ -13,7 +13,7 @@ Ext.define('Admin.store.NavigationTree', {
 			{
 				text: '系统首页',
                 iconCls: 'x-fa  fa-home',
-                viewType: 'homePage',
+                viewType: 'dashboard',
                 leaf: true
 			},
             {
@@ -69,32 +69,7 @@ Ext.define('Admin.store.NavigationTree', {
                         leaf: true
                     }
                 ]
-            },
-            {
-                text: '个人中心',
-                iconCls: 'x-fa fa-user',
-                viewType: 'profile',
-                leaf: true
             }
-            // ,
-            // {
-            //     text: 'Widgets',
-            //     iconCls: 'x-fa fa-flask',
-            //     viewType: 'widgets',
-            //     leaf: true
-            // },
-            // {
-            //     text: 'Forms',
-            //     iconCls: 'x-fa fa-edit',
-            //     viewType: 'forms',
-            //     leaf: true
-            // },
-            // {
-            //     text: 'Charts',
-            //     iconCls: 'x-fa fa-pie-chart',
-            //     viewType: 'charts',
-            //     leaf: true
-            // }
         ]
     }
 });

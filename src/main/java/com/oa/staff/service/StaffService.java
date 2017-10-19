@@ -18,6 +18,8 @@ import com.oa.staff.entity.dto.PostUserDTO;
 import com.oa.staff.entity.dto.TaskUserDTO;
 import com.oa.staff.entity.dto.UserRoleDTO;
 
+import sun.launcher.resources.launcher;
+
 @Service
 public class StaffService implements IStaffService {
 
@@ -133,6 +135,26 @@ public class StaffService implements IStaffService {
 				TaskUserDTO.entityToDto(user, dto);
 				dtoList.add(dto);
 			}
+		}
+		return dtoList;
+	}
+
+	@Override
+	public PostUserDTO findUserByUserId(String userId) {
+		UserInfornation entity = staffDao.findUserByUserId(userId);
+		PostUserDTO dto = new PostUserDTO();
+		PostUserDTO.entityToDto(entity, dto);
+		return dto;
+	}
+
+	@Override
+	public List<TaskUserDTO> findAllTaskUser() {
+		List<UserInfornation> entityList = (List<UserInfornation>) staffDao.findAll();
+		List<TaskUserDTO> dtoList = new ArrayList<TaskUserDTO>();
+		for(UserInfornation entity : entityList) {
+			TaskUserDTO dto = new TaskUserDTO();
+			TaskUserDTO.entityToDto(entity, dto);
+			dtoList.add(dto);
 		}
 		return dtoList;
 	}
