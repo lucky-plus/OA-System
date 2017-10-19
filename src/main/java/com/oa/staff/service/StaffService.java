@@ -159,5 +159,19 @@ public class StaffService implements IStaffService {
 		return dtoList;
 	}
 
+	@Override
+	public List<PostUserDTO> findAll() {
+		List<UserInfornation> entityList = (List<UserInfornation>) staffDao.findAll();
+		List<PostUserDTO> dtoList = new ArrayList<PostUserDTO>();
+		if(entityList.size() > 0) {
+			for(UserInfornation user : entityList) {
+				PostUserDTO dto = new PostUserDTO();
+				PostUserDTO.entityToDto(user, dto);
+				dtoList.add(dto);
+			}
+		}
+		return dtoList;
+	}
+
 
 }

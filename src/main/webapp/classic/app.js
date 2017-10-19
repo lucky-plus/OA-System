@@ -101449,7 +101449,7 @@ Ext.define('Admin.view.address.address', {extend:Ext.container.Container, xtype:
 Ext.define('Admin.view.address.AddressGrid', {extend:Ext.grid.Panel, xtype:'addressGrid', title:'\x3cb\x3e通讯中心\x3c/b\x3e', bind:'{addressLists}', id:'addressGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'编号', dataIndex:'userId', hidden:true}, {text:'联系人', dataIndex:'realName', flex:1}, {text:'所属部门', dataIndex:'deptName', width:188}, {text:'职位', dataIndex:'postName', width:188}, {text:'联系电话', dataIndex:'mobilePhone', width:188}, {text:'联系邮箱', dataIndex:'mail', width:188}, 
 {text:'QQ', dataIndex:'qq_number', width:188}], tbar:Ext.create('Ext.Toolbar', {items:[{xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:200, reference:'addressGridSearchText'}, {xtype:'tbtext', text:'所属部门'}, '-', {xtype:'combobox', name:'deptId', id:'deptComBoBox1', reference:'addressGridSearchField', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), listeners:{select:function() {
   this.Store.reload();
-}}, listConfig:{maxHeight:200}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', listeners:{click:'addressGridSearch'}}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+}}, listConfig:{maxHeight:200}, queryMode:'local', displayField:'deptName', valueField:'deptId'}, {text:'查找', listeners:{click:'addressGridSearch'}}, '-\x3e', {text:'导出为Excel', iconCls:'x-fa fa-angle-right', ui:'soft-blue', listeners:{click:'messageDownload'}}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{addressLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
 Ext.define('Admin.view.address.AddressViewController', {extend:Ext.app.ViewController, alias:'controller.addressViewController', addressGridSearch:function(bt) {
   var searchField = this.lookupReference('addressGridSearchField').getRawValue();
   var searchText = this.lookupReference('addressGridSearchText').getValue();
@@ -101457,6 +101457,13 @@ Ext.define('Admin.view.address.AddressViewController', {extend:Ext.app.ViewContr
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     Ext.getCmp('addressGrid').getStore().loadData(tnpdata.content, false);
   }});
+}, messageDownload:function() {
+  Ext.Msg.confirm('提示', '确定导出通讯录吗？', function(button) {
+    if (button == 'yes') {
+      var file = '/OA-System/download';
+      location.href = file;
+    }
+  });
 }});
 Ext.define('Admin.view.address.AddressViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.addressViewModel', stores:{addressLists:{type:'addressStore', autoLoad:true}}});
 Ext.define('Admin.view.assets.Assets', {extend:Ext.container.Container, xtype:'assets', controller:'assetsViewController', viewModel:{type:'assetsViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'assetsGrid', assetsGrid:'assetsGrid'}]});

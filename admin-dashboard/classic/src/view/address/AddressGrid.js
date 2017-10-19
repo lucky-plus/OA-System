@@ -57,6 +57,13 @@
 				listeners: {
 					click: 'addressGridSearch'//快捷查询按钮
 				}
+			},'->',{
+				text: '导出为Excel',
+				iconCls:'x-fa fa-angle-right',
+				ui:'soft-blue',
+				listeners:{
+					click:'messageDownload'
+				}
 			}]
 	}),
 	
