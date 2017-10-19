@@ -25,7 +25,6 @@ public interface IAssetsService {
 		//高级查询（动态条件查询）
 		public Page<AssetsDTO> findAll(Specification<Assets> spec, Pageable pageable);
 		
-//		//自定义查询
-//		public Page<Assets> findByQuery(String assetsNumber,Double assetsPrice,Pageable pageable);
-//		public Page<Assets> findByAssetsNumberLikeAndAssetsPrice(String assetsNumber, Double assetsPrice, Pageable pageable);
+		//根据UserId查询资产信息
+		public List<AssetsDTO> findAssetsByUserId(String userId);
 }

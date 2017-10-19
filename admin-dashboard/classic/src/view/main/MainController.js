@@ -172,8 +172,12 @@ Ext.define('Admin.view.main.MainController', {
                               iconCls: 'x-fa fa-money',
                               viewType: 'assets',
                               leaf: true
-                          },
-                          {
+                          },{
+                              text: '我的资产',
+                              iconCls: 'x-fa fa-gg',
+                              viewType: 'myAssets',
+                              leaf: true
+                          },{
                               text: '个人信息',
                               iconCls: 'x-fa fa-user-circle',
                               viewType: 'profile',

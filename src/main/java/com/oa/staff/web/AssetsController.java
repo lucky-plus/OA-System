@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oa.staff.entity.dto.AssetsDTO;
+import com.oa.staff.entity.dto.PostUserDTO;
 import com.oa.staff.service.IAssetsService;
 import com.oa.utils.ExtjsAjaxResult;
 import com.oa.utils.ExtjsPageable;
@@ -30,15 +31,6 @@ public class AssetsController {
 		return assetsService.findAll();
 	}
 	
-//    //  显示数据  
-//
-//	@RequestMapping("/findPage")
-//	public @ResponseBody Page<AssetsDTO> findAll(ExtjsPageable pageable)
-//	{
-//		pageable.setSort("assetsId");
-//		return assetsService.findAll(pageable.getPageable());
-//	}
-//	
 	//查询请求
 	@RequestMapping("/findPage")
 	public @ResponseBody Page<AssetsDTO> findAll(AssetsDTO assetsDTO, ExtjsPageable pageable)
@@ -73,5 +65,10 @@ public class AssetsController {
 		}
 	}
 	
+	//根据UserId查询所拥有的资产
+	@RequestMapping("/findAssetsByUserId")
+	public @ResponseBody List<AssetsDTO> findAssetsByUserId(String userId) {
+		return assetsService.findAssetsByUserId(userId);
+	}
 
 }

@@ -85,7 +85,6 @@ public class PostUserDTO {
 				dto.setDeptId(dept.getDeptId());
 				dto.setDeptName(dept.getDeptName());
 			}
-
 		}
 		
 	}

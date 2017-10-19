@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.oa.staff.dao.IAssetsDao;
 import com.oa.staff.entity.Assets;
+import com.oa.staff.entity.UserInfornation;
 import com.oa.staff.entity.dto.AssetsDTO;
+import com.oa.staff.entity.dto.PostUserDTO;
 
 
 @Service
@@ -98,6 +100,19 @@ public class AssetsService implements IAssetsService {
 		}
 		PageImpl<AssetsDTO> page = new PageImpl<AssetsDTO>(dtoList, pageable, assetsPage.getTotalElements());
 		return page;
+	}
+
+	
+	@Override
+	public List<AssetsDTO> findAssetsByUserId(String userId) {
+		List<Assets> entityList = (List<Assets>) assetsDao.findAssetsByUserId(userId);
+		List<AssetsDTO> dtoList = new ArrayList<AssetsDTO>();
+		for(Assets entity : entityList) {
+			AssetsDTO dto = new AssetsDTO();
+			AssetsDTO.entityToDto(entity, dto);
+			dtoList.add(dto);
+		}
+		return dtoList;
 	}
 
 }

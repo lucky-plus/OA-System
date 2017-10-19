@@ -101260,6 +101260,7 @@ Ext.define('Admin.model.Subscription', {extend:Admin.model.Base, fields:[{type:'
 Ext.define('Admin.model.YearwiseData', {extend:Admin.model.Base, fields:[{name:'year'}, {name:'data'}]});
 Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'realName', type:'string'}, {name:'deptName', type:'string'}, {name:'postName', type:'string'}, {name:'mobilePhone', type:'string'}, {name:'mail', type:'string'}, {name:'qq_number', type:'int'}]});
 Ext.define('Admin.model.assets.AssetsModel', {extend:Admin.model.Base, fields:[{name:'assetsId', type:'int'}, {name:'assetsNumber', type:'string'}, {name:'assetsUsedTime', type:'date'}, {name:'beginDate', type:'date'}, {name:'endDate', type:'date'}, {name:'assetsName', type:'string'}, {name:'assetsPrice', type:'float'}, {name:'highPrice', type:'float'}, {name:'lowPrice', type:'float'}, {name:'assetsType', type:'string'}, {name:'userId', type:'string'}, {name:'realName', type:'string'}]});
+Ext.define('Admin.model.assets.MyAssetsModel', {extend:Admin.model.Base, fields:[{name:'assetsId', type:'int'}, {name:'assetsNumber', type:'string'}, {name:'assetsUsedTime', type:'date'}, {name:'beginDate', type:'date'}, {name:'endDate', type:'date'}, {name:'assetsName', type:'string'}, {name:'assetsPrice', type:'float'}, {name:'highPrice', type:'float'}, {name:'lowPrice', type:'float'}, {name:'assetsType', type:'string'}, {name:'userId', type:'string'}, {name:'realName', type:'string'}]});
 Ext.define('Admin.model.authority.AuthorityModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'roleId', type:'int'}, {name:'userName', type:'string'}, {name:'realName', type:'string'}, {name:'roleName', type:'string'}, {name:'modulesText', type:'string'}]});
 Ext.define('Admin.model.department.DepartmentModel', {extend:Admin.model.Base, fields:[{name:'deptId', type:'int'}, {name:'deptName', type:'string'}, {name:'parentId', type:'int'}]});
 Ext.define('Admin.model.department.PostModel', {extend:Admin.model.Base, fields:[{name:'postId', type:'int'}, {name:'postName', type:'string'}, {name:'deptName', type:'string'}, {name:'postDescribe', type:'string'}]});
@@ -101278,6 +101279,7 @@ Ext.define('Admin.model.search.User', {extend:Admin.model.Base, fields:[{type:'i
 Ext.define('Admin.model.staff.StaffModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'realName', type:'string'}, {name:'sex', type:'string'}, {name:'nativePlace', type:'string'}, {name:'birthday', type:'date'}, {name:'onDutDate', type:'date'}, {name:'dept', type:'string'}, {name:'mobilePhone', type:'string'}]});
 Ext.define('Admin.model.task.TaskModel', {extend:Admin.model.Base, fields:[{name:'taskId', type:'int'}, {name:'createId', type:'int'}, {name:'userId', type:'int'}, {name:'taskName', type:'string'}, {name:'taskText', type:'string'}, {name:'createDate', type:'date'}, {name:'completeDate', type:'string'}, {name:'taskState', type:'string'}, {name:'createName', type:'string'}, {name:'userName', type:'string'}, {name:'realName', type:'string'}]});
 Ext.define('Admin.proxy.API', {extend:Ext.data.proxy.Ajax, alias:'proxy.api', reader:{type:'json', rootProperty:'data'}});
+Ext.define('Admin.store.myAssets.MyAssetsStore', {extend:Ext.data.Store, alias:'store.myAssetsStore', model:'Admin.model.assets.AssetsModel', proxy:{type:'ajax', url:'assets/findAssetsByUserId.json?userId\x3d' + loginUserId, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'assetsId'}});
 Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'系统首页', iconCls:'x-fa  fa-home', viewType:'dashboard', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', 
 viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}]}});
 Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
@@ -102097,7 +102099,7 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
       var rootTree = Ext.data.StoreManager.lookup('NavigationTree');
       var modules = eval(loginUserModules);
       rootTree.on('load', function() {
-        this.getRoot().appendChild({text:'个人中心', iconCls:'x-fa fa-user', expanded:false, selectable:false, children:[{text:'资产列表', iconCls:'x-fa fa-money', viewType:'assets', leaf:true}, {text:'个人信息', iconCls:'x-fa fa-user-circle', viewType:'profile', leaf:true}]});
+        this.getRoot().appendChild({text:'个人中心', iconCls:'x-fa fa-user', expanded:false, selectable:false, children:[{text:'资产列表', iconCls:'x-fa fa-money', viewType:'assets', leaf:true}, {text:'我的资产', iconCls:'x-fa fa-gg', viewType:'myAssets', leaf:true}, {text:'个人信息', iconCls:'x-fa fa-user-circle', viewType:'profile', leaf:true}]});
       });
       rootTree.on('load', function() {
         this.getRoot().appendChild({text:'信息中心', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'公告中心', iconCls:'x-fa fa-file-o', viewType:'notice', leaf:true}, {text:'资源下载', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'resources', leaf:true}, {text:'通讯录', iconCls:'x-fa fa-book ', viewType:'address', leaf:true}]});
@@ -102216,6 +102218,55 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
   this.setCurrentView('email');
 }});
 Ext.define('Admin.view.main.MainModel', {extend:Ext.app.ViewModel, alias:'viewmodel.main', data:{currentView:null}});
+Ext.define('Admin.view.myAssets.MyAssets', {extend:Ext.container.Container, xtype:'myAssets', controller:'assetsViewController', viewModel:{type:'myAssetsViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'myAssetsGrid', myAssetsGrid:'myAssetsGrid'}]});
+Ext.define('Admin.view.myAssets.MyAssetsGrid', {extend:Ext.grid.Panel, id:'myAssetsGrid', xtype:'myAssetsGrid', title:'\x3cb\x3e资产列表\x3c/b\x3e', bind:'{myAssetsLists}', listeners:{cellclick:function(btn, td, cellIndex, record, tr, rowIndex) {
+  btn.up('panel').assets = rowIndex;
+  btn.up('panel').assetsFind = record;
+}}, selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'AssetsID', sortable:true, dataIndex:'assetsId', hidden:true}, {text:'资产编号', sortable:true, dataIndex:'assetsNumber', width:100}, {text:'资产名称', sortable:true, dataIndex:'assetsName', width:150}, {text:'创建时间', sortable:true, dataIndex:'assetsUsedTime', width:170, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'资产类型', sortable:true, dataIndex:'assetsType', width:150}, {text:'估计价值', sortable:true, dataIndex:'assetsPrice', 
+flex:1}], bbar:Ext.create('Ext.PagingToolbar', {bind:'{assetsLists}', displayInfo:true, displayMsg:'第{0}-{1}条 共{2}条', emptyMsg:'没有任何记录'})});
+Ext.define('Admin.view.myAssets.MyAssetsGridWindow', {extend:Ext.window.Window, alias:'widget.myAssetsGridWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.5), Math.floor(height * 0.5));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
+Ext.define('Admin.view.myAssets.MyAssetsViewController', {extend:Ext.app.ViewController, alias:'controller.myAssetsViewController', assetsPanelSearch:function(btn) {
+  var searchField = this.lookupReference('assetsSearchField').getValue();
+  var searchText = this.lookupReference('assetsSearchText').getValue();
+  var store = Ext.getCmp('assetsGrid').getStore();
+  Ext.apply(store.proxy.extraParams, {assetsName:'', assetsNumber:''});
+  if (searchField == 'assetsNumber') {
+    Ext.apply(store.proxy.extraParams, {assetsNumber:searchText});
+  }
+  if (searchField == 'assetsName') {
+    Ext.apply(store.proxy.extraParams, {assetsName:searchText});
+  }
+  store.load();
+}, showAssetsSearchWindow:function(btn) {
+  Ext.widget('assetsSearchWindow').show();
+}, assetsSearchFormSubmit:function(btn) {
+  var store = Ext.getCmp('assetsGrid').getStore();
+  Ext.apply(store.proxy.extraParams, {assetsNumber:'', assetsName:'', assetsType:'', lowPrice:'', highPrice:'', beginDate:'', endDate:''});
+  Ext.apply(store.proxy.extraParams, {assetsName:this.lookupReference('assetsSearchForm-assetsName').getValue(), assetsType:this.lookupReference('assetsSearchForm-assetsType').getValue(), lowPrice:this.lookupReference('assetsSearchForm-lowPrice').getValue(), highPrice:this.lookupReference('assetsSearchForm-highPrice').getValue(), beginDate:Ext.util.Format.date(this.lookupReference('assetsSearchForm-beginDate').getValue(), 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(this.lookupReference('assetsSearchForm-endDate').getValue(), 
+  'Y/m/d H:i:s')});
+  store.load();
+  btn.up('window').hide();
+}, assetsGridWindowClose:function(btn) {
+  var win = btn.up('window');
+  if (win) {
+    win.close();
+  }
+}});
+Ext.define('Admin.view.myAssets.MyAssetsViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.myAssetsViewModel', stores:{myAssetsLists:{type:'myAssetsStore', autoLoad:true}}});
 Ext.define('Admin.view.notice.notice', {extend:Ext.container.Container, xtype:'notice', controller:'NoticeViewController', viewModel:{type:'noticeViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'noticeGrid'}]});
 Ext.define('Admin.view.notice.NoticeCompose', {extend:Ext.form.Panel, alias:'widget.noticeCompose', viewModel:{type:'noticeCompose'}, controller:'NoticeViewController', cls:'noticeCompose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'noticeId', handler:'noticeGridOpenEditWindow'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'标题：', 
 name:'noticeName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'正文：', fontFamilies:['宋体', '隶书', '黑体'], name:'noticeText'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-red', text:'关闭', handler:'noticeGridWindowsClose'}, {xtype:'button', ui:'soft-green', text:'发布', handler:'noticeGridTextSubmit'}]}});
