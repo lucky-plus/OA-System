@@ -96,14 +96,6 @@ Ext.define('Admin.view.main.Main', {
                     cls: 'top-user-name'
                 },
                 {
-                    xtype: 'image',
-                    cls: 'header-right-profile-image',
-                    height: 35,
-                    width: 35,
-                    alt:'current user image',
-                    src: 'resources/images/user-profile/2.png'
-                },
-                {
                     xtype: 'button',
                     reference: 'logoutButton',
                     scale: 'small',

@@ -22,5 +22,15 @@ Ext.define('Admin.view.address.AddressViewController', {
 			}
 			
 	   });
-	}
+	},
+
+	messageDownload: function(){
+     Ext.Msg.confirm("提示", "确定导出通讯录吗？", function (button) {
+      if (button == "yes") {
+         var file="/OA-System/download";
+         location.href=file;
+      }
+     });
+   }
+
 });

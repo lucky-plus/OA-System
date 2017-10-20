@@ -34,6 +34,7 @@ public class PostUserDTO {
 	private String home;
 	private String realName;
 	private int qq_number;
+	private String pictureFileName;
 	
 	private Integer deptId;
 	private Integer roleId;
@@ -77,6 +78,7 @@ public class PostUserDTO {
 		
 		Post post = entity.getPost();
 		Department dept=post.getDepartment();
+		Role role = entity.getRole();
 
 		if(post!=null) {
 			dto.setPostId(post.getPostId());
@@ -85,7 +87,10 @@ public class PostUserDTO {
 				dto.setDeptId(dept.getDeptId());
 				dto.setDeptName(dept.getDeptName());
 			}
-
+		}
+		
+		if(role!=null) {
+			dto.setRoleId(role.getRoleId());
 		}
 		
 	}
@@ -149,6 +154,13 @@ public class PostUserDTO {
 	}
 	public Integer getRoleId() {
 		return roleId;
+	}
+	public String getPictureFileName() {
+		return pictureFileName;
+	}
+
+	public void setPictureFileName(String pictureFileName) {
+		this.pictureFileName = pictureFileName;
 	}
 	public void setRoleId(Integer roleId) {
 		this.roleId = roleId;

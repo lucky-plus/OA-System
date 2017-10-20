@@ -6,14 +6,14 @@ Ext.define('Admin.view.profile.ShareUpdate', {
     layout: 'fit',
 
     cls: 'share-panel',
-    
+
     items: [
         {
             xtype: 'textareafield',
             emptyText: "What's on your mind?"
         }
     ],
-    
+
     bbar: {
         defaults : {
                 margin:'0 10 5 0'

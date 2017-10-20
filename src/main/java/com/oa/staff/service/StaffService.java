@@ -18,6 +18,8 @@ import com.oa.staff.entity.dto.PostUserDTO;
 import com.oa.staff.entity.dto.TaskUserDTO;
 import com.oa.staff.entity.dto.UserRoleDTO;
 
+import sun.launcher.resources.launcher;
+
 @Service
 public class StaffService implements IStaffService {
 
@@ -104,8 +106,8 @@ public class StaffService implements IStaffService {
 		PostUserDTO.dtoToEntity(dto, entity);
 		if(entity.getUserId() == null || "".equals(entity.getUserId())) {
 			String userId = UUID.randomUUID().toString().replaceAll("-", "");
-			System.out.println(userId);
 			entity.setUserId(userId);
+			entity.setPictureFileName("default.png");
 		}
 		staffDao.save(entity);
 		
@@ -135,6 +137,46 @@ public class StaffService implements IStaffService {
 			}
 		}
 		return dtoList;
+	}
+
+	@Override
+	public PostUserDTO findUserByUserId(String userId) {
+		UserInfornation entity = staffDao.findUserByUserId(userId);
+		PostUserDTO dto = new PostUserDTO();
+		PostUserDTO.entityToDto(entity, dto);
+		return dto;
+	}
+
+	
+	@Override
+	public List<TaskUserDTO> findAllTaskUser() {
+		List<UserInfornation> entityList = (List<UserInfornation>) staffDao.findAll();
+		List<TaskUserDTO> dtoList = new ArrayList<TaskUserDTO>();
+		for(UserInfornation entity : entityList) {
+			TaskUserDTO dto = new TaskUserDTO();
+			TaskUserDTO.entityToDto(entity, dto);
+			dtoList.add(dto);
+		}
+		return dtoList;
+	}
+
+	@Override
+	public List<PostUserDTO> findAll() {
+		List<UserInfornation> entityList = (List<UserInfornation>) staffDao.findAll();
+		List<PostUserDTO> dtoList = new ArrayList<PostUserDTO>();
+		if(entityList.size() > 0) {
+			for(UserInfornation user : entityList) {
+				PostUserDTO dto = new PostUserDTO();
+				PostUserDTO.entityToDto(user, dto);
+				dtoList.add(dto);
+			}
+		}
+		return dtoList;
+	}
+
+	@Override
+	public void updatePictureFileName(String userId, String pictureFileName) {
+		staffDao.updatePictureFileName(userId, pictureFileName);
 	}
 
 

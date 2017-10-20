@@ -29,6 +29,7 @@ import com.oa.message.entity.dto.ResourcesDTO;
 import com.oa.personnel.entity.Department;
 import com.oa.personnel.entity.dto.PostDTO;
 import com.oa.staff.entity.UserInfornation;
+import com.oa.staff.entity.dto.AssetsDTO;
 import com.oa.staff.entity.dto.PostUserDTO;
 
 @Component
@@ -209,6 +210,20 @@ public class LogAspect {
 			log.setContent(content.toString());
 			logService.save(log);
 			
+		} else if(param.contains("AssetsDTO")) {
+			Object[] params = joinPoint.getArgs();
+			AssetsDTO assets = (AssetsDTO) params[0];
+			if(assets.getAssetsId() != null) {
+				operation = "修改";
+				log.setOperation(operation);
+			} else {
+				operation = "添加";
+				log.setOperation(operation);
+			}
+			content.append(operation+"了资产："+assets.getAssetsName());
+			log.setContent(content.toString());
+			logService.save(log);
+			
 		}
 		
 	}
@@ -229,6 +244,8 @@ public class LogAspect {
 			content.append(operation+"了用户,所删用户ID为:");
 		} else if(className.contains("Task")) {
 			content.append(operation+"了任务,所删任务ID为:");
+		} else if(className.contains("Asset")) {
+			content.append(operation+"了资产,所删资产ID为:");
 		}
 		if(className.contains("Staff")) {
 			Object[] params = joinPoint.getArgs();

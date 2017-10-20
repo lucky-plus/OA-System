@@ -19,6 +19,7 @@ public interface IStaffService {
 	public void delete(UserInfornation entity);
 	public void delete(String[] ids);
 	public UserInfornation findByUserName(String userName);
+	public List<PostUserDTO> findAll();
 	public Page<PostUserDTO> findAll(Pageable pageable);
 	public Page<PostUserDTO> findAll(Specification<UserInfornation> spec, Pageable pageable);
 	
@@ -30,5 +31,13 @@ public interface IStaffService {
 	
 	//分配任务查找接收者
 	public List<TaskUserDTO> findTaskUser(Integer roleLevel);
+	
+	//根据用户Id查找用户信息
+	public PostUserDTO findUserByUserId(String userId);
+
+	public List<TaskUserDTO> findAllTaskUser();
+	
+	//修改用户头像
+	public void updatePictureFileName(String userId, String pictureFileName);
 	
 }
