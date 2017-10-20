@@ -14,6 +14,8 @@
 			var loginUserRoleLevel = '<%=session.getAttribute("roleLevel")%>';
 			var loginUserModules = '<%=session.getAttribute("userModules")%>';
 			var pictureFileName = '<%=session.getAttribute("pictureFileName")%>';
+			var loginUserDeptName = '<%=session.getAttribute("deptName")%>';
+			var loginUserPostName = '<%=session.getAttribute("postName")%>';
 			var loadFlag = 0;
 	</script>
 
