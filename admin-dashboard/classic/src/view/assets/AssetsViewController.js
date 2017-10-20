@@ -10,20 +10,6 @@ Ext.define('Admin.view.assets.AssetsViewController', {
     },
 
 	assetsGridOpenEditWindow: function(btn) {
-		// var grid = btn.up('gridpanel');//获取Grid视图
-		// var selModel = grid.getSelectionModel();//获取Grid的SelectionModel
-  //       if (selModel.hasSelection()) {//判断是否选中记录
-  //          var record = selModel.getSelection()[0];//获取选中的第一条记录
-  //          //创建修改window和form
-		//    var assetsGridWindow = Ext.widget('assetsGridWindow',{
-		// 		title:'修改资产',
-		// 		items: [{xtype: 'assetsGridForm'}]
-		// 	});
-		//    //让form加载选中记录
-  //          assetsGridWindow.down("form").getForm().loadRecord(record);
-  //       }else{
-  //       	Ext.Msg.alert('提示',"请选择一行数据进行编辑!");
-  //       }
   		if(btn.up('panel').assets!=undefined){
 			var assets=btn.up('panel').getStore().getAt(btn.up('panel').assets);
 			var record=btn.up('panel').assetsFind;

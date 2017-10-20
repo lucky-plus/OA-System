@@ -22,42 +22,29 @@ Ext.define('Admin.view.profile.Social', {
             height: 120,
             width: 120,
             alt: 'profile-picture',
+            // src: 'resources/images/user-profile/'+pictureFileName
             src: 'resources/images/user-profile/20.png'
         },
         {
             xtype: 'component',
             cls: 'userProfileName',
-            height: '',
-            html: 'Jessica Warren'
+            html: loginUserRealName
         },
         {
             xtype: 'component',
             cls: 'userProfileDesc',
-            html: 'CO-FOUNDER, CEO'
+            html: loginUserDeptName
         },
         {
             xtype: 'component',
-            html: 'San Jose, CA',
-            padding: '0 0 12 0'
-        },
-        {
-            xtype: 'component',
-            html: 'Member since 1 years ago',
-            padding: '0 0 12 0'
+            padding: '0 0 12 0',
+            html: loginUserPostName
         },
         {
             xtype: 'button',
             renderTO : Ext.getBody(),
             width: 200,
             text: '头像上传',
-            platformConfig: {
-                classic: {
-                    scale: 'large'
-                },
-                modern: {
-                    ui: 'action'
-                }
-            },
             listeners: {
             click: 'showFileUploadFormWindow'
         	}

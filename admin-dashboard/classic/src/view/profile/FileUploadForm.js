@@ -28,6 +28,11 @@ Ext.define('Admin.view.profile.FileUploadForm', {
         labelSeparator: ''
     },
     items: [{
+        xtype: 'hidden',
+        fieldLabel: 'userId',
+        name:'userId',
+        value: loginUserId
+    },{
         id:'imageFile',
         xtype:'textfield',
         fieldLabel: '文件名称',

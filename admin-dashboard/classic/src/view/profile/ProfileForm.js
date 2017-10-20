@@ -1,6 +1,8 @@
 Ext.define('Admin.view.profile.ProfileForm', {
     extend: 'Ext.form.Panel',
     xtype: 'profileForm',
+    id: 'proForm',
+
     requires: [
                 'Ext.button.Button',
                 'Ext.form.field.Text',
@@ -15,8 +17,7 @@ Ext.define('Admin.view.profile.ProfileForm', {
             ],
 
     controller: 'profileViewController',
-    //viewModel:{type:'wizardFormModel'},
-
+    viewModel:{type:'profileViewModel'},
     fieldDefaults: {
         labelAlign: 'right',
         labelWidth: 90,
@@ -49,7 +50,8 @@ Ext.define('Admin.view.profile.ProfileForm', {
           fieldLabel: 'roleId',
             //allowBlank: false,
             name:'roleId'
-        },{
+        },
+        {
         xtype: 'fieldcontainer',
         margin: '30 0 10 0',
         fieldLabel: '名字',
@@ -75,26 +77,17 @@ Ext.define('Admin.view.profile.ProfileForm', {
                 xtype:'fieldcontainer',
                 margin: '0 0 30 0',
                 cls:'wizard-form-break',
-                defaultType:'radiofield',
+                xtype: 'radiogroup',
                 defaults:{flex:1},
                 layout:'hbox',
                 name:'sex',
                 editable : false,// 是否允许输入
                 allowBlank : false,// 不允许为空
-                value : 'man',
+                value : '男',
                 items:[
-                {
-                    boxLabel:'男',
-                    value : 'man',
-                    inputValue:'Free'
-                },
-                {
-                    boxLabel:'女',
-                    value : 'woman',
-                    inputValue:'Perosnal'
-                }
+                    { boxLabel: '男',   name: 'sex', inputValue: '男' },
+                    { boxLabel: '女', name: 'sex', inputValue: '女' }
                 ]
-
     },{
             xtype: 'container',
             layout: 'hbox',
@@ -135,12 +128,12 @@ Ext.define('Admin.view.profile.ProfileForm', {
         items: [{
             fieldLabel: '邮箱',
             emptyText : 'Email Address',
-            name: 'email',
+            name: 'mail',
             vtype: 'email',
             allowBlank: false
         },{
             fieldLabel: '手机',
-            name: 'phone',
+            name: 'mobilePhone',
             emptyText: 'xxx-xxx-xxxx',
             maskRe: /[\d\-]/,
             regex: /^\d{3}-\d{3}-\d{4}$/,
@@ -163,12 +156,12 @@ Ext.define('Admin.view.profile.ProfileForm', {
                     store:  Ext.create('Ext.data.Store', {
                         fields: ['value', 'name'],
                         data : [
-                            {"value":"HIGH",    "name":"大陆"},
-                            {"value":"MEDIUM",  "name":"港澳"},
-                            {"value":"LOW",     "name":"国外"}
-                                ]
+                            {"value":"大陆",    "name":"大陆"},
+                            {"value":"港澳",  "name":"港澳"},
+                            {"value":"国外",     "name":"国外"}
+                            ]
                     }),
-                    value:'HIGH',
+                    value:'大陆',
                     queryMode:    'local',
                     displayField: 'name',
                     valueField:   'value'
@@ -192,7 +185,6 @@ Ext.define('Admin.view.profile.ProfileForm', {
                     xtype: 'datefield',
                     format: 'Y/m/d H:i:s',
                     editable:false,//禁止手工修改
-                    value : '2017-01-01',
                     name:'birthday'
                 },
                 {
@@ -233,11 +225,6 @@ Ext.define('Admin.view.profile.ProfileForm', {
                     fieldLabel:'籍贯',
                     name:'nativePlace',
                     emptyText:'City'
-                },
-                {
-                    fieldLabel:'邮政编码',
-                    emptyText: 'xxxxxxxx',
-                    name:'postalCode'
                 }]
     },{
             xtype: 'container',
@@ -269,11 +256,32 @@ Ext.define('Admin.view.profile.ProfileForm', {
         listeners: {
             click: 'saveInfomationSubmit'
         }
-    }, {
-        text: '上传头像',
-        //hanlder:
-        listeners: {
-            click: 'showFileUploadFormWindow'
-        }
-    }]
-});
+    }],
+      on: function() {
+        Ext.Ajax.request({
+            url : 'staff/findUserByUserId.json?userId='+loginUserId,
+            method : 'post',
+            success: function(response) {
+                var profile = Ext.util.JSON.decode(response.responseText);
+                var proform = Ext.getCmp("proForm");
+                proform.items.getAt(0).setValue(profile.userId);
+                proform.items.getAt(1).setValue(profile.postId);
+                proform.items.getAt(2).setValue(profile.roleId);
+                proform.items.getAt(3).items.getAt(0).setValue(profile.realName);
+                proform.items.getAt(4).setValue(profile.sex);
+                proform.items.getAt(5).items.getAt(0).setValue(profile.password);
+                proform.items.getAt(6).items.getAt(0).setValue(profile.mail);
+                proform.items.getAt(6).items.getAt(1).setValue(profile.mobilePhone);
+                proform.items.getAt(7).items.getAt(0).setValue(profile.idType);
+                proform.items.getAt(7).items.getAt(1).setValue(profile.idNumber);
+                proform.items.getAt(8).items.getAt(0).setValue(profile.birthday);
+                proform.items.getAt(8).items.getAt(1).setValue(profile.onDutDate);
+                proform.items.getAt(9).items.getAt(0).setValue(profile.home);
+                proform.items.getAt(10).items.getAt(0).setValue(profile.nativePlace);
+                proform.items.getAt(11).items.getAt(0).setValue(profile.wechatNumber);
+                proform.items.getAt(11).items.getAt(1).setValue(profile.qq_number);
+            }
+        });
+    }
+ }
+);

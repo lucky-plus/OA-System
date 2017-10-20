@@ -3,7 +3,7 @@ Ext.define('Admin.view.profile.UserProfile',
         xtype:'profile',
         cls:'userProfile-container',
         layout:'responsivecolumn',
-        //controller: 'profileViewController',
+        controller: 'profileViewController',
         //viewModel : {type: 'profileViewModel'},
 
          items:[ {

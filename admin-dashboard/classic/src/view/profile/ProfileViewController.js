@@ -11,14 +11,13 @@ Ext.define('Admin.view.profile.ProfileViewController', {
 
     saveInfomationSubmit: function(btn) {
 	var profileForm = btn.up('form').getForm();
-		//this.lookupReference('assetsGrid').store.reload();  //lookupReference配合reference属性
 		profileForm.submit( {
-			//url : '',
+			url : 'staff/saveOrUpdate',
 			method : 'post',
 			success : function(form, action) {
 				Ext.Msg.alert("提示",action.result.msg);
 				win.close();
-				Ext.getCmp("assetsGrid").store.reload();
+				Ext.getCmp("profileForm").store.reload();
 			},
 			failure : function(form, action) {
 				Ext.Msg.alert("提示",action.result.msg);
@@ -31,7 +30,7 @@ Ext.define('Admin.view.profile.ProfileViewController', {
 	var fileUploadForm = btn.up('form').getForm();
 	var win = btn.up('window');
 	fileUploadForm.submit({
-			url : 'resources/upload',
+			url : 'staff/updatePicture',
 			method : 'post',
 			enctype:'multipart/form-dat',
 			success : function(form, action) {

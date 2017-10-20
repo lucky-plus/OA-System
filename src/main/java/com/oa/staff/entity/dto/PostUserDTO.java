@@ -77,6 +77,7 @@ public class PostUserDTO {
 		
 		Post post = entity.getPost();
 		Department dept=post.getDepartment();
+		Role role = entity.getRole();
 
 		if(post!=null) {
 			dto.setPostId(post.getPostId());
@@ -85,6 +86,10 @@ public class PostUserDTO {
 				dto.setDeptId(dept.getDeptId());
 				dto.setDeptName(dept.getDeptName());
 			}
+		}
+		
+		if(role!=null) {
+			dto.setRoleId(role.getRoleId());
 		}
 		
 	}
