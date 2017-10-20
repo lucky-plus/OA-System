@@ -17,10 +17,7 @@
   selModel: Ext.create('Ext.selection.CheckboxModel'),
   columns: [
     {text: '公告编号'       ,sortable:true ,dataIndex:'noticeId',hidden:true},
-             {text: '标题' ,dataIndex:'noticeName' ,flex:1 
-
-
-    },
+    {text: '标题' ,dataIndex:'noticeName' ,flex:1 },
     {text: '发布时间'  ,sortable:true ,dataIndex:'noticeTime'  ,width:150
       ,renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
     {text: '发布者',dataIndex:'userName'    ,width:150},

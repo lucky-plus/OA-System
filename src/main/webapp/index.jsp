@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10, user-scalable=yes">
-
+	<link rel="stylesheet" type="text/css" href="editor-app\css\headerNew.css">
     <title>Home Page</title>
     <script type="text/javascript">
 			var loginUser = '<%=session.getAttribute("userName")%>';

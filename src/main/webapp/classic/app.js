@@ -101288,6 +101288,7 @@ Ext.define('Admin.store.email.Inbox', {extend:Ext.data.Store, alias:'store.inbox
 Ext.define('Admin.store.faq.FAQ', {extend:Ext.data.Store, alias:'store.faq', model:'Admin.model.faq.Category', proxy:{type:'api', url:'~api/faq/faq'}});
 Ext.define('Admin.store.log.LogStore', {extend:Ext.data.Store, alias:'store.logStore', model:'Admin.model.log.LogModel', proxy:{type:'ajax', url:'log/findAll.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
 Ext.define('Admin.store.notice.NoticeStore', {extend:Ext.data.Store, alias:'store.noticeStore', model:'Admin.model.notice.NoticeModel', proxy:{type:'ajax', url:'notice/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'noticeId'}});
+Ext.define('Admin.store.notice.NoticeWatchStore', {extend:Ext.data.Store, alias:'store.noticeWatchStore', model:'Admin.model.notice.NoticeModel', proxy:{type:'ajax', url:'notice/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:7, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'noticeId'}});
 Ext.define('Admin.store.order.OrderStore', {extend:Ext.data.Store, alias:'store.orderStore', model:'Admin.model.order.OrderModel', proxy:{type:'ajax', url:'order/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
 Ext.define('Admin.store.resources.ResourcesStore', {extend:Ext.data.Store, alias:'store.resourcesStore', proxy:{type:'ajax', url:'resources/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'resId'}});
 Ext.define('Admin.store.role.RoleStore', {extend:Ext.data.Store, alias:'store.roleStore', model:'Admin.model.role.RoleModel', proxy:{type:'ajax', url:'role/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'roleId'}});
@@ -101871,7 +101872,202 @@ Ext.define('Admin.view.forms.WizardFormController', {extend:Ext.app.ViewControll
 Ext.define('Admin.view.forms.WizardOne', {extend:Ext.panel.Panel, alias:'widget.formswizardone', cls:'wizardone shadow', plugins:{responsive:true}, responsiveConfig:{'width \x3e\x3d 1000':{layout:{type:'box', align:'stretch', vertical:false}}, 'width \x3c 1000':{layout:{type:'box', align:'stretch', vertical:true}}}, items:[{xtype:'specialoffer', plugins:{responsive:true}, height:338, responsiveConfig:{'width \x3c 1000':{flex:null}, 'width \x3e\x3d 1000':{flex:1}}}, {xtype:'wizardform', cls:'wizardone', 
 colorScheme:'blue', flex:1}]});
 Ext.define('Admin.view.forms.Wizards', {extend:Ext.container.Container, xtype:'forms', cls:'wizards', defaultFocus:'wizardform', layout:'responsivecolumn', items:[{xtype:'formswizardone', userCls:'big-100'}, {xtype:'wizardform', cls:'wizardtwo shadow', colorScheme:'soft-purple', userCls:'big-50 small-100'}, {xtype:'wizardform', cls:'wizardthree shadow', colorScheme:'soft-green', userCls:'big-50 small-100'}]});
-Ext.define('Admin.view.homePage.HomePage', {extend:Ext.container.Container, xtype:'homePage', layout:'responsivecolumn', items:[{xtype:'postGrid', userCls:'big-50 small-100'}, {userCls:'big-50 small-100'}, {xtype:'noticeGrid', userCls:'big-50 small-100'}]});
+Ext.define('Admin.view.homePage.HomePage', {
+    extend: 'Ext.container.Container',
+    xtype: 'homePage',
+	height:Ext.Element.getViewportHeight()-1000,//必须设置高，否则无法使用border布局	
+	viewModel : {type: 'homePageViewModel'},   
+	requires: [
+        'Ext.layout.container.Border',
+    ],
+	layout:'border',
+	//cls:'x-body-new',
+	margin: '30 30 30 30',
+        items: [{
+			//title: '今日安排',
+			region:'north',
+			height: '10%',
+			margin: '0px 0px 10px 0px',
+			bodyStyle: 'background:#f6f6f6;',
+			body:{
+				cls:'x-body-new'
+			},
+			xtype: 'panel',
+			layout:{
+				type:'hbox',
+				align: 'stretch'
+			},
+			items: [{
+				xtype:'button',
+				width:'25%',
+				ui:'',
+				text: '<div style="color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/待审核流程个数.jpg);">'+
+				                   '<span style="padding-left:60px">个待审核流程</span></div>',
+				margin: '0px 10px 0px 0px',
+			// listeners:{
+						// click:function(){
+							// document.location.href="#notice";  
+						// }
+					// }
+			},{	xtype:'button',
+				width:'25%',
+				ui:'',
+				text: '<div style="color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/待做任务个数.jpg);">'+
+				                   '<span style="padding-left:60px">个待完成任务</span></div>',
+				margin: '0px 10px 0px 0px',
+			},{
+				xtype:'button',
+				width:'25%',
+				ui:'',
+				text: '<div style="color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/申请中流程个数.jpg);">'+
+				                   '<span style="padding-left:60px">个流程申请中</span></div>',
+				margin: '0px 10px 0px 0px',
+			},{
+				xtype:'button',
+				width:'25%',
+				ui:'',
+				text: '<div style="color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/紧急通知.jpg);">'+
+				                   '<span style="padding-left:60px">紧急通知</span></div>',
+				margin: '0px 0px 0px 0px',
+			}]
+		},
+		// {
+		// region:'center',
+		// margin: '0px 5px 5px 0px',
+		// layout:{
+			// type:'vbox',
+			// align: 'stretch'
+		// },
+		// bodyStyle: 'background:#f6f6f6;',
+		// items: [{
+			// xtype: 'panel',
+			// margin: '0px 0px 5px 0px',
+			// height:'45%',
+			// },{
+			// xtype: 'panel',//快捷通道
+			// margin: '0px 0px 0px 0px',
+			// height:'50%',
+			// layout:{
+				// type:'hbox',
+				// align: 'stretch'
+			// },
+			// items: [{
+					// xtype: 'button', //或者xtype: 'component',				
+					// text: '<div style="background:url(resources/images/flow.jpg); width:152px;height:134px;"></div>',
+					// ui:'',
+					// listeners:{
+						// click:function(){
+							// document.location.href="#notice";  
+						// }
+					// }
+				// }, {
+					// xtype: 'component', //或者xtype: 'component',  
+					// width: 152, //图片宽度  
+					// height: 134,
+					// autoEl: {  
+						// tag: 'img',    //指定为img标签  
+						// src: 'resources/images/flow.jpg'    //指定url路径  
+					// }	 
+				// },{
+				// xtype: 'panel',
+				// width:'20%',
+				// margin: '0px 5px 0px 5px',
+			// }, {
+				// xtype: 'panel',
+				// width:'20%',
+				// margin: '0px 5px 0px 5px',
+			// }, {
+				// xtype: 'panel',
+				// width:'20%',
+				// margin: '0px 10px 0px 5px',
+			// }]
+			// },		
+			
+			// ]
+		// }
+		,{
+		//title: '今日安排',
+		region:'east',
+		width: '30%',
+		margin: '10px 0x 0px 0px',
+		xtype: 'panel',
+	},{
+		region:'center',
+		margin: '10px 20px 0px 0px',
+		xtype: 'panel',
+		bodyStyle: 'background:#f6f6f6;',
+		layout:{
+			type:'vbox',
+			align: 'stretch'
+		},
+		items:[{
+			xtype: 'panel',
+			title: '<div style="font-size:16px;color:#6F6F6F"><b>| 快捷通道</b></div>',
+			header:{
+			cls:'x-panel-header-new'
+			},		
+			margin: '0px 0px 10px 0px',
+			height:'30%',
+			layout:{
+				type:'hbox',
+				align: 'stretch'
+			},
+			items: [{
+					xtype: 'button', //或者xtype: 'component',				
+					text: '<div style="background:url(resources/images/flow.jpg); width:118px;height:110px;"></div>',
+					width:'16%',
+					margin: '0px 0px 0px 0px',
+					ui:'',
+					listeners:{
+						click:function(){
+							document.location.href="#notice";  
+						}
+					}
+			}, {
+				xtype: 'button', //或者xtype: 'component',				
+					text: '<div style="background:url(resources/images/flow.jpg); width:118px;height:110px;"></div>',
+					width:'16%',
+					margin: '0px 0px 0px 0px',
+					ui:'',
+					listeners:{
+						click:function(){
+							document.location.href="#notice";  
+						}
+					}
+			}, {
+				xtype: 'panel',
+				width:'16%',
+				margin: '0px 0px 0px 0px',
+			},{
+				xtype: 'panel',
+				width:'16%',
+				margin: '0px 0px 0px 0px',
+			},{
+				xtype: 'panel',
+				width:'16%',
+				margin: '0px 0px 0px 0px',
+			},{
+				xtype: 'panel',
+				width:'16%',
+				margin: '0px 0px 0px 0px',
+			}]
+		},{
+			title: '<div style="font-size:16px;color:#6F6F6F;"><b>| 公告通知</b></div>',
+			header:{
+			cls:'x-panel-header-new'
+			},
+			height:'48%',
+			margin: '10px 0px 0px 0px',
+			xtype: 'noticeWatchGrid',
+		}]
+	}
+
+	]
+});
+Ext.define('Admin.view.homePage.NoticeWatchGrid', {extend:Ext.grid.Panel, xtype:'noticeWatchGrid', bind:'{noticeWatchLists}', id:'noticeWatchGrid', listeners:{cellclick:function(grid, td, cellIndex, record, tr, rowIndex) {
+  var orderWindow = Ext.widget('orderWindow', {title:'查看公告', html:'\x3ch1 align\x3d"center"\x3e' + grid.getStore().getAt(rowIndex).data.noticeName + '\x3c/h1\x3e' + '\x3cp\x3e' + grid.getStore().getAt(rowIndex).data.noticeText + '\x3c/p\x3e'});
+}}, columns:[{sortable:true, dataIndex:'noticeId', hidden:true}, {dataIndex:'noticeName', flex:1}, {sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}]});
+Ext.define('Admin.view.homePage.HomePageViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.homePageViewModel', stores:{noticeWatchLists:{type:'noticeWatchStore', autoLoad:true}}});
 Ext.define('Admin.view.log.Log', {extend:Ext.container.Container, xtype:'log', controller:'logViewController', viewModel:{type:'logViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'logGrid'}]});
 Ext.define('Admin.view.log.LogGrid', {extend:Ext.grid.Panel, xtype:'logGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{logLists}', id:'logGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'操作时间', sortable:true, dataIndex:'createDate', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'操作类型', sortable:true, dataIndex:'operation', width:100}, {text:'操作人用户名', sortable:true, dataIndex:'userName', width:100}, {text:'操作人姓名', sortable:true, dataIndex:'realName', 
 width:100}, {text:'具体操作', sortable:true, dataIndex:'content', flex:1}], tbar:Ext.create('Ext.Toolbar', {id:'logCondition', items:[{xtype:'tbtext', text:'用户名：'}, {xtype:'textfield', width:100, itemsId:'userName'}, {xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:100, itemsId:'realName'}, {xtype:'tbtext', text:'操作类型：'}, {xtype:'textfield', width:100, itemsId:'operation'}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, 
