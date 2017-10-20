@@ -106,8 +106,8 @@ public class StaffService implements IStaffService {
 		PostUserDTO.dtoToEntity(dto, entity);
 		if(entity.getUserId() == null || "".equals(entity.getUserId())) {
 			String userId = UUID.randomUUID().toString().replaceAll("-", "");
-			System.out.println(userId);
 			entity.setUserId(userId);
+			entity.setPictureFileName("default.png");
 		}
 		staffDao.save(entity);
 		
@@ -172,6 +172,11 @@ public class StaffService implements IStaffService {
 			}
 		}
 		return dtoList;
+	}
+
+	@Override
+	public void updatePictureFileName(String userId, String pictureFileName) {
+		staffDao.updatePictureFileName(userId, pictureFileName);
 	}
 
 

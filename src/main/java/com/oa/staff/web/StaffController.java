@@ -1,7 +1,12 @@
 package com.oa.staff.web;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.oa.staff.entity.dto.PostUserDTO;
 import com.oa.staff.entity.dto.TaskUserDTO;
@@ -101,6 +107,24 @@ public class StaffController {
 	@RequestMapping("/findUserByUserId")
 	public @ResponseBody PostUserDTO findUserByUserId(String userId) {
 		return staffService.findUserByUserId(userId);
+	}
+
+	@RequestMapping("/updatePicture")
+	public @ResponseBody ExtjsAjaxResult updatePicture(MultipartFile pictureFile, String userId, HttpServletRequest request) {
+		try {
+			
+			String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+			String newFileName = date.trim()+userId;
+			String filePath = request.getSession().getServletContext().getRealPath("/resources/images/user-profile");
+		
+			pictureFile.transferTo(new File(filePath+newFileName));
+			staffService.updatePictureFileName(userId, newFileName);
+
+			return new ExtjsAjaxResult(true,"操作成功！");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ExtjsAjaxResult(false,"操作失败！");
+		}
 	}
 	
 }

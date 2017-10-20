@@ -13,6 +13,7 @@
 			var loginUserId = '<%=session.getAttribute("userId")%>';
 			var loginUserRoleLevel = '<%=session.getAttribute("roleLevel")%>';
 			var loginUserModules = '<%=session.getAttribute("userModules")%>';
+			var pictureFileName = '<%=session.getAttribute("pictureFileName")%>';
 			var loadFlag = 0;
 	</script>
 

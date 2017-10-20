@@ -39,6 +39,7 @@ public class AuthorityContrller {
 				session.setAttribute("realName", user.getRealName());
 				session.setAttribute("userId", user.getUserId());
 				session.setAttribute("roleLevel", user.getRole().getRoleLevel());
+				session.setAttribute("pictureFileName", user.getPictureFileName());
 				
 				JSONArray json = new JSONArray();
 	            for(Module m : user.getRole().getModules()){
