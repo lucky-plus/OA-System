@@ -33,11 +33,6 @@ Ext.define('Admin.view.profile.FileUploadForm', {
         name:'userId',
         value: loginUserId
     },{
-        id:'imageFile',
-        xtype:'textfield',
-        fieldLabel: '文件名称',
-        name:'imageFile',
-    },{
         xtype: 'fileuploadfield',
         fieldLabel: '图片名',
     },,{
