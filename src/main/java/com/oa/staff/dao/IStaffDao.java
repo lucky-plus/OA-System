@@ -42,6 +42,7 @@ public interface IStaffDao extends PagingAndSortingRepository<UserInfornation, S
 	public UserInfornation findUserByUserId(String userId);
 	
 	@Modifying
+	@Transactional
 	@Query("update UserInfornation u set u.pictureFileName = ?2 where u.userId = ?1")
 	public void updatePictureFileName(String userId, String pictureFileName);
 	

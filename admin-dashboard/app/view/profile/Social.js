@@ -22,8 +22,7 @@ Ext.define('Admin.view.profile.Social', {
             height: 120,
             width: 120,
             alt: 'profile-picture',
-            // src: 'resources/images/user-profile/'+pictureFileName
-            src: 'resources/images/user-profile/20.png'
+            src: 'resources/images/user-profile/'+pictureFileName
         },
         {
             xtype: 'component',
