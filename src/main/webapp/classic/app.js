@@ -101366,8 +101366,8 @@ padding:'0 0 12 0'}, {xtype:'container', flex:1, cls:'about-me-wrap', html:'\x3c
 Ext.define('Admin.view.profile.Notifications', {extend:Ext.DataView, xtype:'profilenotifications', cls:'user-notifications', scrollable:false, bind:{store:'{userSharedItems}'}, itemSelector:'div.timeline-item', itemTpl:["\x3cdiv class\x3d'comments {[values._id !\x3d\x3d values.parent_id ? 'sub-comments' : '']}'\x3e", "\x3cimg src\x3d'resources/images/user-profile/15.png' alt\x3d'Smiley face' class\x3d'profile-icon'\x3e", "\x3cdiv class\x3d'content-wrap'\x3e", '\x3cdiv\x3e', "\x3ch4 class\x3d'profilenotifications-username'\x3e{name}\x3cspan class\x3d'x-fa fa-mobile'\x3e\x3c/span\x3e\x3c/h4\x3e", 
 "\x3cspan class\x3d'from-now'\x3e\x3cspan class\x3d'x-fa fa-clock-o'\x3e\x3c/span\x3e3 Hours Ago\x3c/span\x3e", '\x3c/div\x3e', "\x3cdiv class\x3d'content'\x3e{content}\x3c/div\x3e", "\x3cdiv class\x3d'like-comment-btn-wrap'\x3e", "\x3cbutton type\x3d'button' class\x3d'x-fa fa-thumbs-up' onclick\x3d''\x3e\x3c/button\x3e", "\x3cbutton type\x3d'button' class\x3d'x-fa fa-thumbs-down' onclick\x3d''\x3e\x3c/button\x3e", "\x3cbutton type\x3d'button' onclick\x3d'' class\x3d'x-fa fa-comments'\x3e\x3c/button\x3e", 
 '\x3c/div\x3e', '\x3c/div\x3e', '\x3c/div\x3e']});
-Ext.define('Admin.view.profile.Social', {extend:Ext.panel.Panel, xtype:'profilesocial', layout:{type:'vbox', align:'middle'}, cls:'timeline-items-wrap user-profile-desc', height:320, bodyPadding:20, items:[{xtype:'image', cls:'userProfilePic', height:120, width:120, alt:'profile-picture', src:'resources/images/user-profile/'+pictureFileName}, {xtype:'component', cls:'userProfileName', html:loginUserRealName}, {xtype:'component', cls:'userProfileDesc', html:loginUserDeptName}, {xtype:'component', padding:'0 0 12 0', 
-html:loginUserPostName}, {xtype:'button', renderTO:Ext.getBody(), width:200, text:'头像上传', listeners:{click:'showFileUploadFormWindow'}}]});
+Ext.define('Admin.view.profile.Social', {extend:Ext.panel.Panel, xtype:'profilesocial', layout:{type:'vbox', align:'middle'}, cls:'timeline-items-wrap user-profile-desc', height:320, bodyPadding:20, items:[{xtype:'image', cls:'userProfilePic', height:120, width:120, alt:'profile-picture', src:'resources/images/user-profile/' + pictureFileName}, {xtype:'component', cls:'userProfileName', html:loginUserRealName}, {xtype:'component', cls:'userProfileDesc', html:loginUserDeptName}, {xtype:'component', 
+padding:'0 0 12 0', html:loginUserPostName}, {xtype:'button', renderTO:Ext.getBody(), width:200, text:'头像上传', listeners:{click:'showFileUploadFormWindow'}}]});
 Ext.define('Admin.view.profile.Timeline', {extend:Ext.DataView, xtype:'profiletimeline', cls:'timeline-items-wrap', scrollable:false, bind:'{userTimeline}', itemSelector:'.timeline-item', itemTpl:['\x3cdiv class\x3d"timeline-item{userId:this.cls(values,parent[xindex-2],xindex-1,xcount)}"\x3e' + '{date:this.epoch(values,parent[xindex-2],xindex-1,xcount)}' + '\x3cdiv class\x3d"profile-pic-wrap"\x3e' + '\x3cimg src\x3d"resources/images/user-profile/{userId}.png" alt\x3d"Smiley face"\x3e' + '\x3cdiv\x3e{date:this.elapsed} ago\x3c/div\x3e' + 
 '\x3c/div\x3e' + '\x3ctpl if\x3d"notificationType \x3d\x3d \'image_sharing\'"\x3e' + '\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + '\x3cdiv class\x3d"shared-by"\x3e\x3ca href\x3d"#"\x3e{name}\x3c/a\x3e shared an image\x3c/div\x3e' + '\x3cimg src\x3d"resources/images/img2.jpg" class\x3d"shared-img" alt\x3d"Smiley face"\x3e' + '\x3c/div\x3e' + '\x3c/div\x3e' + '\x3ctpl elseif\x3d"notificationType \x3d\x3d \'job_meeting\'"\x3e' + '\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + 
 '\x3cdiv class\x3d"job-meeting"\x3e\x3ca href\x3d"#"\x3eJob Meeting\x3c/a\x3e\x3c/div\x3e' + '\x3cdiv\x3e{content}\x3c/div\x3e' + '\x3c/div\x3e' + '\x3c/div\x3e' + '\x3ctpl elseif\x3d"notificationType \x3d\x3d \'comment_reply\'"\x3e' + '\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + '\x3cdiv class\x3d"shared-by"\x3e\x3ca href\x3d"#"\x3e{name}\x3c/a\x3e commented on The Article\x3c/div\x3e' + '\x3cdiv class\x3d"article-comment"\x3e\x3cspan class\x3d"x-fa fa-quote-left"\x3e\x3c/span\x3e{content}\x3c/div\x3e' + 
@@ -101440,9 +101440,8 @@ Ext.define('Admin.view.profile.UserProfileModel', {extend:Ext.app.ViewModel, ali
 url:'~api/usertimeline'}}}});
 Ext.define('Admin.view.main.Main', {extend:Ext.container.Viewport, controller:'main', viewModel:'main', cls:'sencha-dash-viewport', itemId:'mainView', layout:{type:'vbox', align:'stretch'}, listeners:{render:'onMainViewRender'}, items:[{xtype:'toolbar', cls:'sencha-dash-dash-headerbar shadow', height:64, itemId:'headerBar', items:[{xtype:'component', reference:'senchaLogo', cls:'sencha-logo', html:'\x3cdiv class\x3d"main-logo"\x3e\x3cimg src\x3d"resources/images/company-logo.png"\x3eSencha\x3c/div\x3e', 
 width:250}, {margin:'0 0 0 8', ui:'header', iconCls:'x-fa fa-navicon', id:'main-navigation-btn', handler:'onToggleNavigationSize'}, '-\x3e', {xtype:'segmentedbutton', margin:'0 16 0 0', platformConfig:{ie9m:{hidden:true}}, items:[{iconCls:'x-fa fa-desktop', pressed:true}, {iconCls:'x-fa fa-tablet', handler:'onSwitchToModern', tooltip:'Switch to modern toolkit'}]}, {iconCls:'x-fa fa-search', ui:'header', href:'#searchresults', hrefTarget:'_self', tooltip:'See latest search'}, {iconCls:'x-fa fa-envelope', 
-ui:'header', href:'#email', hrefTarget:'_self', tooltip:'Check your email'}, {iconCls:'x-fa fa-question', ui:'header', href:'#faq', hrefTarget:'_self', tooltip:"Help / FAQ's"}, {iconCls:'x-fa fa-th-large', ui:'header', href:'#profile', hrefTarget:'_self', tooltip:'See your profile'}, {xtype:'tbtext', text:loginUser, cls:'top-user-name'}, {xtype:'image', cls:'header-right-profile-image', height:35, width:35, alt:'current user image', src:'resources/images/user-profile/2.png'}, {xtype:'button', reference:'logoutButton', 
-scale:'small', ui:'soft-blue', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'注销', formBind:true, listeners:{click:'onLogoutButton'}}]}, {xtype:'maincontainerwrap', id:'main-view-detail-wrap', reference:'mainContainerWrap', flex:1, items:[{xtype:'treelist', reference:'navigationTreeList', itemId:'navigationTreeList', ui:'nav', store:'NavigationTree', width:250, expanderFirst:false, expanderOnly:false, listeners:{selectionchange:'onNavigationTreeSelectionChange'}}, {xtype:'container', flex:1, 
-reference:'mainCardPanel', cls:'sencha-dash-right-main-container', itemId:'contentPanel', layout:{type:'card', anchor:'100%'}}]}]});
+ui:'header', href:'#email', hrefTarget:'_self', tooltip:'Check your email'}, {iconCls:'x-fa fa-question', ui:'header', href:'#faq', hrefTarget:'_self', tooltip:"Help / FAQ's"}, {iconCls:'x-fa fa-th-large', ui:'header', href:'#profile', hrefTarget:'_self', tooltip:'See your profile'}, {xtype:'tbtext', text:loginUser, cls:'top-user-name'}, {xtype:'button', reference:'logoutButton', scale:'small', ui:'soft-blue', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'注销', formBind:true, listeners:{click:'onLogoutButton'}}]}, 
+{xtype:'maincontainerwrap', id:'main-view-detail-wrap', reference:'mainContainerWrap', flex:1, items:[{xtype:'treelist', reference:'navigationTreeList', itemId:'navigationTreeList', ui:'nav', store:'NavigationTree', width:250, expanderFirst:false, expanderOnly:false, listeners:{selectionchange:'onNavigationTreeSelectionChange'}}, {xtype:'container', flex:1, reference:'mainCardPanel', cls:'sencha-dash-right-main-container', itemId:'contentPanel', layout:{type:'card', anchor:'100%'}}]}]});
 Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', stores:['NavigationTree'], defaultToken:'login', mainView:'Admin.view.main.Main', onAppUpdate:function() {
   Ext.Msg.confirm('Application Update', 'This application has an update, reload?', function(choice) {
     if (choice === 'yes') {
@@ -101659,66 +101658,21 @@ Ext.define('Admin.view.authority.Authority', {extend:Ext.container.Container, xt
 Ext.define('Admin.view.authority.AuthorityGrid', {extend:Ext.grid.Panel, xtype:'authorityGrid', title:'\x3cb\x3e权限设置\x3c/b\x3e', bind:'{userRoleLists}', id:'authorityGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'userId', sortable:true, dataIndex:'userId', hidden:true}, {text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'用户名', sortable:true, dataIndex:'userName', width:100}, {text:'姓名名', sortable:true, dataIndex:'realName', width:100}, {text:'角色名称', 
 sortable:true, dataIndex:'roleName', width:100}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {id:'authorityCondition', items:[{text:'修改权限', iconCls:'x-fa fa-edit', ui:'soft-blue', handler:'roleGridEdit'}, '-', {xtype:'tbtext', text:'用户名：'}, {xtype:'textfield', width:100, itemsId:'userName'}, {xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:100, itemsId:'realName'}, {xtype:'tbtext', text:'角色名称：'}, {xtype:'textfield', width:100, itemsId:'roleName'}, 
 {text:'查找', handler:'authorityGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{userRoleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
-Ext.define('Admin.view.profile.ProfileForm', {extend:Ext.form.Panel, xtype:'profileForm', id:'proForm', controller:'profileViewController', viewModel:{type:'profileViewModel'}, fieldDefaults:{labelAlign:'right', labelWidth:90, msgTarget:Ext.supports.Touch ? 'side' : 'qtip'}, defaults:{border:false, xtype:'panel', layout:'anchor'}, bodyPadding:5, defaultType:'textfield', items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'hidden', fieldLabel:'postId', name:'postId'}, {xtype:'hidden', 
-fieldLabel:'roleId', name:'roleId'}, {xtype:'fieldcontainer', margin:'30 0 10 0', fieldLabel:'名字', layout:'hbox', combineErrors:true, defaultType:'textfield', defaults:{submitEmptyText:false, margin:'0 30 0 0', hideLabel:'true', anchor:'90%'}, items:[{fieldLabel:'名字', emptyText:'Name', flex:1, allowBlank:false, name:'realName'}]}, {fieldLabel:'性别', xtype:'fieldcontainer', margin:'0 0 30 0', cls:'wizard-form-break', xtype:'radiogroup', defaults:{flex:1}, layout:'hbox', name:'sex', editable:false, 
-allowBlank:false, value:'男', items:[{boxLabel:'男', name:'sex', inputValue:'男'}, {boxLabel:'女', name:'sex', inputValue:'女'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'70%'}, items:[{fieldLabel:'密码', anchor:'100%', emptyText:'Enter a password', inputType:'password', name:'password', cls:'wizard-form-break'}, {fieldLabel:'再输入一次', anchor:'100%', emptyText:'Passwords must match', name:'rePassword', inputType:'password'}]}, 
-{xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'邮箱', emptyText:'Email Address', name:'mail', vtype:'email', allowBlank:false}, {fieldLabel:'手机', name:'mobilePhone', emptyText:'xxx-xxx-xxxx', maskRe:/[\d\-]/, regex:/^\d{3}-\d{3}-\d{4}$/, regexText:'Must be in the format xxx-xxx-xxxx'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, 
-submitEmptyText:false, flex:1}, items:[{fieldLabel:'身份证类型', xtype:'combobox', name:'idType', store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'大陆', 'name':'大陆'}, {'value':'港澳', 'name':'港澳'}, {'value':'国外', 'name':'国外'}]}), value:'大陆', queryMode:'local', displayField:'name', valueField:'value'}, {fieldLabel:'身份证号码', name:'idNumber'}]}, {xtype:'container', layout:'hbox', defaultType:'datefield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, 
-items:[{fieldLabel:'生日', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, name:'birthday'}, {fieldLabel:'入职时间', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', name:'onDutDate'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'家庭住址', name:'home', emptyText:'Address'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', 
-defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'籍贯', name:'nativePlace', emptyText:'City'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'微信号码', emptyText:'WeChat Number', vtype:'email', name:'wechatNumber'}, {fieldLabel:'QQ号码', emptyText:'QQ Number', vtype:'email', name:'qq_number'}]}], buttons:['-\x3e', {text:'保存', listeners:{click:'saveInfomationSubmit'}}], 
-on:function() {
-  Ext.Ajax.request({url:'staff/findUserByUserId.json?userId\x3d' + loginUserId, method:'post', success:function(response) {
-    var profile = Ext.util.JSON.decode(response.responseText);
-    var proform = Ext.getCmp('proForm');
-    proform.items.getAt(0).setValue(profile.userId);
-    proform.items.getAt(1).setValue(profile.postId);
-    proform.items.getAt(2).setValue(profile.roleId);
-    proform.items.getAt(3).items.getAt(0).setValue(profile.realName);
-    proform.items.getAt(4).setValue(profile.sex);
-    proform.items.getAt(5).items.getAt(0).setValue(profile.password);
-    proform.items.getAt(6).items.getAt(0).setValue(profile.mail);
-    proform.items.getAt(6).items.getAt(1).setValue(profile.mobilePhone);
-    proform.items.getAt(7).items.getAt(0).setValue(profile.idType);
-    proform.items.getAt(7).items.getAt(1).setValue(profile.idNumber);
-    proform.items.getAt(8).items.getAt(0).setValue(profile.birthday);
-    proform.items.getAt(8).items.getAt(1).setValue(profile.onDutDate);
-    proform.items.getAt(9).items.getAt(0).setValue(profile.home);
-    proform.items.getAt(10).items.getAt(0).setValue(profile.nativePlace);
-    proform.items.getAt(11).items.getAt(0).setValue(profile.wechatNumber);
-    proform.items.getAt(11).items.getAt(1).setValue(profile.qq_number);
+Ext.define('Admin.view.authority.AuthorityGridForm', {extend:Ext.form.Panel, alias:'widget.authorityGridForm', id:'authorityGridForm', controller:'AuthorityViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'用户名称', name:'userName', readOnly:true}, {xtype:'radiogroup', id:'radiogroupOperation', fieldLabel:'角色名称', columns:5, vertical:true, 
+listeners:{render:function() {
+  Ext.Ajax.request({url:'role/findRoleByLevel.json?roleLevel\x3d' + loginUserRoleLevel, async:false, success:function(response) {
+    var data = eval('(' + response.responseText + ')');
+    var len = data.length;
+    if (data == null || len == 0) {
+      return;
+    }
+    var radiogroup = Ext.getCmp('radiogroupOperation');
+    for (var i = 0; i < len; i++) {
+      var radiobox = new Ext.form.Radio({boxLabel:data[i].roleName, name:'roleId', inputValue:data[i].roleId, checked:false});
+      radiogroup.items.add(radiobox);
+    }
   }});
-}});
-Ext.define('Admin.view.profile.ProfileForm', {extend:Ext.form.Panel, xtype:'profileForm', id:'proForm', controller:'profileViewController', viewModel:{type:'profileViewModel'}, fieldDefaults:{labelAlign:'right', labelWidth:90, msgTarget:Ext.supports.Touch ? 'side' : 'qtip'}, defaults:{border:false, xtype:'panel', layout:'anchor'}, bodyPadding:5, defaultType:'textfield', items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'hidden', fieldLabel:'postId', name:'postId'}, {xtype:'hidden', 
-fieldLabel:'roleId', name:'roleId'}, {xtype:'fieldcontainer', margin:'30 0 10 0', fieldLabel:'名字', layout:'hbox', combineErrors:true, defaultType:'textfield', defaults:{submitEmptyText:false, margin:'0 30 0 0', hideLabel:'true', anchor:'90%'}, items:[{fieldLabel:'名字', emptyText:'Name', flex:1, allowBlank:false, name:'realName'}]}, {fieldLabel:'性别', xtype:'fieldcontainer', margin:'0 0 30 0', cls:'wizard-form-break', xtype:'radiogroup', defaults:{flex:1}, layout:'hbox', name:'sex', editable:false, 
-allowBlank:false, items:[{boxLabel:'男', name:'sex', inputValue:'男'}, {boxLabel:'女', name:'sex', inputValue:'女'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'70%'}, items:[{fieldLabel:'密码', anchor:'100%', emptyText:'Enter a password', inputType:'password', name:'password', cls:'wizard-form-break'}, {fieldLabel:'再输入一次', anchor:'100%', emptyText:'Passwords must match', name:'rePassword', inputType:'password'}]}, 
-{xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'邮箱', emptyText:'Email Address', name:'mail', vtype:'email', allowBlank:false}, {fieldLabel:'手机', name:'mobilePhone'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'身份证类型', xtype:'combobox', name:'idType', store:Ext.create('Ext.data.Store', 
-{fields:['value', 'name'], data:[{'value':'大陆', 'name':'大陆'}, {'value':'港澳', 'name':'港澳'}, {'value':'国外', 'name':'国外'}]}), value:'大陆', queryMode:'local', displayField:'name', valueField:'value'}, {fieldLabel:'身份证号码', name:'idNumber'}]}, {xtype:'container', layout:'hbox', defaultType:'datefield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'生日', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, name:'birthday'}, {fieldLabel:'入职时间', xtype:'datefield', 
-format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', name:'onDutDate'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'家庭住址', name:'home', emptyText:'Address'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'籍贯', name:'nativePlace', emptyText:'City'}]}, {xtype:'container', 
-layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'微信号码', emptyText:'WeChat Number', name:'wechatNumber'}, {fieldLabel:'QQ号码', emptyText:'QQ Number', name:'qq_number'}]}, {xtype:'hidden', fieldLabel:'userName', name:'userName'}], buttons:['-\x3e', {text:'保存', listeners:{click:'saveInfomationSubmit'}}, {text:'上传头像', listeners:{click:'showFileUploadFormWindow'}}], on:function() {
-  Ext.Ajax.request({url:'staff/findUserByUserId.json?userId\x3d' + loginUserId, method:'post', success:function(response) {
-    var profile = Ext.util.JSON.decode(response.responseText);
-    var proform = Ext.getCmp('proForm');
-    proform.items.getAt(0).setValue(profile.userId);
-    proform.items.getAt(1).setValue(profile.postId);
-    proform.items.getAt(2).setValue(profile.roleId);
-    proform.items.getAt(3).items.getAt(0).setValue(profile.realName);
-    proform.items.getAt(4).items.getAt(0).setValue(profile.sex);
-    proform.items.getAt(5).items.getAt(0).setValue(profile.password);
-    proform.items.getAt(6).items.getAt(0).setValue(profile.mail);
-    proform.items.getAt(6).items.getAt(1).setValue(profile.mobilePhone);
-    proform.items.getAt(7).items.getAt(0).setValue(profile.idType);
-    proform.items.getAt(7).items.getAt(1).setValue(profile.idNumber);
-    var birthday = profile.birthday;
-    proform.items.getAt(8).items.getAt(0).setValue(birthday.replace(/-/g, '/'));
-    var onDutDate = profile.onDutDate;
-    proform.items.getAt(8).items.getAt(1).setValue(onDutDate.replace(/-/g, '/'));
-    proform.items.getAt(9).items.getAt(0).setValue(profile.home);
-    proform.items.getAt(10).items.getAt(0).setValue(profile.nativePlace);
-    proform.items.getAt(11).items.getAt(0).setValue(profile.wechatNumber);
-    proform.items.getAt(11).items.getAt(1).setValue(profile.qq_number);
-    proform.items.getAt(12).setValue(profile.userName);
-  }});
-}});
+}}}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'authorityGridFormSubmit'}, {xtype:'button', text:'取消', handler:'authorityGridWindowClose'}]}});
 Ext.define('Admin.view.authority.AuthorityGridWindow', {extend:Ext.window.Window, alias:'widget.authorityGridWindow', autoShow:true, modal:true, layout:'fit', afterRender:function() {
   var me = this;
   me.callParent(arguments);
@@ -102522,6 +102476,39 @@ Ext.define('Admin.view.profile.FileUploadFormWindow', {extend:Ext.window.Window,
   var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
   this.setSize(Math.floor(width * 0.5), Math.floor(height * 0.5));
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
+Ext.define('Admin.view.profile.ProfileForm', {extend:Ext.form.Panel, xtype:'profileForm', id:'proForm', controller:'profileViewController', viewModel:{type:'profileViewModel'}, fieldDefaults:{labelAlign:'right', labelWidth:90, msgTarget:Ext.supports.Touch ? 'side' : 'qtip'}, defaults:{border:false, xtype:'panel', layout:'anchor'}, bodyPadding:5, defaultType:'textfield', items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'hidden', fieldLabel:'postId', name:'postId'}, {xtype:'hidden', 
+fieldLabel:'roleId', name:'roleId'}, {xtype:'fieldcontainer', margin:'30 0 10 0', fieldLabel:'名字', layout:'hbox', combineErrors:true, defaultType:'textfield', defaults:{submitEmptyText:false, margin:'0 30 0 0', hideLabel:'true', anchor:'90%'}, items:[{fieldLabel:'名字', emptyText:'Name', flex:1, allowBlank:false, name:'realName'}]}, {fieldLabel:'性别', xtype:'fieldcontainer', margin:'0 0 30 0', cls:'wizard-form-break', xtype:'radiogroup', defaults:{flex:1}, layout:'hbox', name:'sex', editable:false, 
+allowBlank:false, items:[{boxLabel:'男', name:'sex', inputValue:'男'}, {boxLabel:'女', name:'sex', inputValue:'女'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'70%'}, items:[{fieldLabel:'密码', anchor:'100%', emptyText:'Enter a password', inputType:'password', name:'password', cls:'wizard-form-break'}, {fieldLabel:'再输入一次', anchor:'100%', emptyText:'Passwords must match', name:'rePassword', inputType:'password'}]}, 
+{xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'邮箱', emptyText:'Email Address', name:'mail', vtype:'email', allowBlank:false}, {fieldLabel:'手机', name:'mobilePhone'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'身份证类型', xtype:'combobox', name:'idType', store:Ext.create('Ext.data.Store', 
+{fields:['value', 'name'], data:[{'value':'大陆', 'name':'大陆'}, {'value':'港澳', 'name':'港澳'}, {'value':'国外', 'name':'国外'}]}), value:'大陆', queryMode:'local', displayField:'name', valueField:'value'}, {fieldLabel:'身份证号码', name:'idNumber'}]}, {xtype:'container', layout:'hbox', defaultType:'datefield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'生日', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, name:'birthday'}, {fieldLabel:'入职时间', xtype:'datefield', 
+format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', name:'onDutDate'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'家庭住址', name:'home', emptyText:'Address'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'籍贯', name:'nativePlace', emptyText:'City'}]}, {xtype:'container', 
+layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'微信号码', emptyText:'WeChat Number', name:'wechatNumber'}, {fieldLabel:'QQ号码', emptyText:'QQ Number', name:'qq_number'}]}, {xtype:'hidden', fieldLabel:'userName', name:'userName'}, {xtype:'hidden', fieldLabel:'pictureFileName', name:'pictureFileName'}], buttons:['-\x3e', {text:'保存', listeners:{click:'saveInfomationSubmit'}}, {text:'上传头像', listeners:{click:'showFileUploadFormWindow'}}], 
+on:function() {
+  Ext.Ajax.request({url:'staff/findUserByUserId.json?userId\x3d' + loginUserId, method:'post', success:function(response) {
+    var profile = Ext.util.JSON.decode(response.responseText);
+    var proform = Ext.getCmp('proForm');
+    proform.items.getAt(0).setValue(profile.userId);
+    proform.items.getAt(1).setValue(profile.postId);
+    proform.items.getAt(2).setValue(profile.roleId);
+    proform.items.getAt(3).items.getAt(0).setValue(profile.realName);
+    proform.items.getAt(4).items.getAt(0).setValue(profile.sex);
+    proform.items.getAt(5).items.getAt(0).setValue(profile.password);
+    proform.items.getAt(6).items.getAt(0).setValue(profile.mail);
+    proform.items.getAt(6).items.getAt(1).setValue(profile.mobilePhone);
+    proform.items.getAt(7).items.getAt(0).setValue(profile.idType);
+    proform.items.getAt(7).items.getAt(1).setValue(profile.idNumber);
+    var birthday = profile.birthday;
+    proform.items.getAt(8).items.getAt(0).setValue(birthday.replace(/-/g, '/'));
+    var onDutDate = profile.onDutDate;
+    proform.items.getAt(8).items.getAt(1).setValue(onDutDate.replace(/-/g, '/'));
+    proform.items.getAt(9).items.getAt(0).setValue(profile.home);
+    proform.items.getAt(10).items.getAt(0).setValue(profile.nativePlace);
+    proform.items.getAt(11).items.getAt(0).setValue(profile.wechatNumber);
+    proform.items.getAt(11).items.getAt(1).setValue(profile.qq_number);
+    proform.items.getAt(12).setValue(profile.userName);
+    proform.items.getAt(13).setValue(profile.pictureFileName);
+  }});
 }});
 Ext.define('Admin.view.profile.ProfileViewController', {extend:Ext.app.ViewController, alias:'controller.profileViewController', showFileUploadFormWindow:function() {
   Ext.widget('fileUploadFormWindow', {title:'上传图片', items:[{xtype:'fileUploadForm'}]});

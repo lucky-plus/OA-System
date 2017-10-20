@@ -83,7 +83,6 @@ Ext.define('Admin.view.profile.ProfileForm', {
                 name:'sex',
                 editable : false,// 是否允许输入
                 allowBlank : false,// 不允许为空
-                value : '男',
                 items:[
                     { boxLabel: '男',   name: 'sex', inputValue: '男' },
                     { boxLabel: '女', name: 'sex', inputValue: '女' }
@@ -134,10 +133,6 @@ Ext.define('Admin.view.profile.ProfileForm', {
         },{
             fieldLabel: '手机',
             name: 'mobilePhone',
-            emptyText: 'xxx-xxx-xxxx',
-            maskRe: /[\d\-]/,
-            regex: /^\d{3}-\d{3}-\d{4}$/,
-            regexText: 'Must be in the format xxx-xxx-xxxx'
         }]
     },{
             xtype: 'container',
@@ -239,15 +234,21 @@ Ext.define('Admin.view.profile.ProfileForm', {
             items:[{
                     fieldLabel: '微信号码',
                     emptyText:'WeChat Number',
-                    vtype:'email',
                     name:'wechatNumber'
                 },
                 {
                     fieldLabel: 'QQ号码',
                     emptyText:'QQ Number',
-                    vtype:'email',
                     name:'qq_number'
                 }]
+    },{
+          xtype: 'hidden',
+          fieldLabel: 'userName',
+            name:'userName'
+    },{
+          xtype: 'hidden',
+          fieldLabel: 'pictureFileName',
+            name:'pictureFileName'
     }
     ],
 
@@ -255,6 +256,12 @@ Ext.define('Admin.view.profile.ProfileForm', {
         text: '保存',
         listeners: {
             click: 'saveInfomationSubmit'
+        }
+    }, {
+        text: '上传头像',
+        //hanlder:
+        listeners: {
+            click: 'showFileUploadFormWindow'
         }
     }],
       on: function() {
@@ -268,18 +275,22 @@ Ext.define('Admin.view.profile.ProfileForm', {
                 proform.items.getAt(1).setValue(profile.postId);
                 proform.items.getAt(2).setValue(profile.roleId);
                 proform.items.getAt(3).items.getAt(0).setValue(profile.realName);
-                proform.items.getAt(4).setValue(profile.sex);
+                proform.items.getAt(4).items.getAt(0).setValue(profile.sex);
                 proform.items.getAt(5).items.getAt(0).setValue(profile.password);
                 proform.items.getAt(6).items.getAt(0).setValue(profile.mail);
                 proform.items.getAt(6).items.getAt(1).setValue(profile.mobilePhone);
                 proform.items.getAt(7).items.getAt(0).setValue(profile.idType);
                 proform.items.getAt(7).items.getAt(1).setValue(profile.idNumber);
-                proform.items.getAt(8).items.getAt(0).setValue(profile.birthday);
-                proform.items.getAt(8).items.getAt(1).setValue(profile.onDutDate);
+                var birthday = profile.birthday;
+                proform.items.getAt(8).items.getAt(0).setValue(birthday.replace(/-/g,"/"));
+                var onDutDate = profile.onDutDate;
+                proform.items.getAt(8).items.getAt(1).setValue(onDutDate.replace(/-/g,"/"));
                 proform.items.getAt(9).items.getAt(0).setValue(profile.home);
                 proform.items.getAt(10).items.getAt(0).setValue(profile.nativePlace);
                 proform.items.getAt(11).items.getAt(0).setValue(profile.wechatNumber);
                 proform.items.getAt(11).items.getAt(1).setValue(profile.qq_number);
+                proform.items.getAt(12).setValue(profile.userName);
+                proform.items.getAt(13).setValue(profile.pictureFileName);
             }
         });
     }
