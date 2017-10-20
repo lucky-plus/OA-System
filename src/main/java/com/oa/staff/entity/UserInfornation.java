@@ -45,6 +45,7 @@ public class UserInfornation {
 	private String home;
 	private String realName;
 	private int qq_number;
+	private String pictureFileName;
 	
 	private Post post;
 	private Role role;
@@ -98,6 +99,9 @@ public class UserInfornation {
 	public int getQq_number() {
 		return qq_number;
 	}
+	public String getPictureFileName() {
+		return pictureFileName;
+	}
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="roleId")
 	public Role getRole() {
@@ -109,6 +113,9 @@ public class UserInfornation {
 		return post;
 	}
 	
+	public void setPictureFileName(String pictureFileName) {
+		this.pictureFileName = pictureFileName;
+	}
 	public void setPost(Post post) {
 		this.post = post;
 	}

@@ -37,4 +37,7 @@ public interface IStaffService {
 
 	public List<TaskUserDTO> findAllTaskUser();
 	
+	//修改用户头像
+	public void updatePictureFileName(String userId, String pictureFileName);
+	
 }
