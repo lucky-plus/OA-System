@@ -25,7 +25,7 @@ Ext.define('Admin.view.authentication.AuthenticationController', {
             success: function(response, options) {
                 var json = Ext.util.JSON.decode(response.responseText);
                 if(json.success){
-                    me.redirectTo('pageblank', true);
+                    me.redirectTo('dashboard', true);
                     window.location.reload();
                 }else{
                     Ext.Msg.alert('登录失败', json.msg);
