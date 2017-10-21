@@ -4,7 +4,7 @@ Ext.define('Admin.view.notice.NoticeViewController', {
 
     noticeGridAdd: function(bt) {
 		var cfg = Ext.apply({
-			xtype:'orderWindow'
+			xtype:'noticeWindow'
 		},{
 			title:'新建公告',
 			items:[Ext.apply({xtype:'noticeCompose'})]
@@ -34,22 +34,22 @@ Ext.define('Admin.view.notice.NoticeViewController', {
    
       noticeGridOpenEditWindow:function(grid, rowIndex, colIndex){
 			var record = grid.getStore().getAt(rowIndex);
-		   var orderWindow = Ext.widget('orderWindow',{
+		   var noticeWindow = Ext.widget('noticeWindow',{
 				title:'修改公告',
 				items: [{xtype: 'noticeCompose'}]
 			});
 		   		//让form加载选中记录
-           orderWindow.down("form").getForm().loadRecord(record);
+           noticeWindow.down("form").getForm().loadRecord(record);
 	},
    
       noticeGridWatchWindow:function(grid, rowIndex, colIndex){
 			var record = grid.getStore().getAt(rowIndex);
-		   var orderWindow = Ext.widget('orderWindow',{
+		   var noticeWindow = Ext.widget('noticeWindow',{
 				title:'查看公告',
 				items: [{xtype: 'noticeText'}]
 			});
 		   		//让form加载选中记录
-           orderWindow.down("form").getForm().loadRecord(record);
+           noticeWindow.down("form").getForm().loadRecord(record);
 	},
    
    noticeGridDeleteOne:function(grid, rowIndex, colIndex){
