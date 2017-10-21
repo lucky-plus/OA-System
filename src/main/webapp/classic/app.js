@@ -62777,6 +62777,48 @@ Ext.define('Ext.form.field.VTypes', function() {
     return alphanum.test(value);
   }, alphanumText:'This field should only contain letters, numbers and _', alphanumMask:/[a-z0-9_]/i};
 });
+Ext.define('Admin.view.assets.AdvancedVType', {override:'Ext.form.field.VTypes', daterange:function(val, field) {
+  var date = field.parseDate(val);
+  if (!date) {
+    return false;
+  }
+  if (field.startDateField && (!this.dateRangeMax || date.getTime() != this.dateRangeMax.getTime())) {
+    var start = field.up('form').down('#' + field.startDateField);
+    start.setMaxValue(date);
+    start.validate();
+    this.dateRangeMax = date;
+  } else {
+    if (field.endDateField && (!this.dateRangeMin || date.getTime() != this.dateRangeMin.getTime())) {
+      var end = field.up('form').down('#' + field.endDateField);
+      end.setMinValue(date);
+      end.validate();
+      this.dateRangeMin = date;
+    }
+  }
+  return true;
+}, daterangeText:'Start date must be less than end date', password:function(val, field) {
+  if (field.initialPassField) {
+    var pwd = field.up('form').down('#' + field.initialPassField);
+    return val == pwd.getValue();
+  }
+  return true;
+}, passwordText:'密码不一致', price:function(val, field) {
+  var price = field.parsePrice(val);
+  if (field.startPriceField) {
+    var start = field.up('form').down('#' + field.startPriceField);
+    start.setMaxValue(price);
+    start.valiprice();
+    this.priceRangeMax = price;
+  } else {
+    if (field.endPriceField) {
+      var end = field.up('form').down('#' + field.endPriceField);
+      end.setMinValue(price);
+      end.valiprice();
+      this.priceRangeMin = price;
+    }
+  }
+  return true;
+}, priceText:'Start price must be less than end price'});
 Ext.define('Ext.form.trigger.Trigger', {alias:'trigger.trigger', mixins:[Ext.mixin.Factoryable], factoryConfig:{defaultType:'trigger'}, repeatClick:false, hidden:false, hideOnReadOnly:undefined, tooltip:null, weight:0, preventMouseDown:true, focusOnMousedown:false, baseCls:Ext.baseCSSPrefix + 'form-trigger', focusCls:Ext.baseCSSPrefix + 'form-trigger-focus', overCls:Ext.baseCSSPrefix + 'form-trigger-over', clickCls:Ext.baseCSSPrefix + 'form-trigger-click', validIdRe:Ext.validIdRe, renderTpl:['\x3cdiv id\x3d"{triggerId}" class\x3d"{baseCls} {baseCls}-{ui} {cls} {cls}-{ui} {extraCls} ', 
 '{childElCls}"\x3ctpl if\x3d"triggerStyle"\x3e style\x3d"{triggerStyle}"\x3c/tpl\x3e', '\x3ctpl if\x3d"ariaRole"\x3e role\x3d"{ariaRole}"\x3ctpl else\x3e role\x3d"presentation"\x3c/tpl\x3e', '\x3e', '{[values.$trigger.renderBody(values)]}', '\x3c/div\x3e'], constructor:function(config) {
   var me = this, cls;
@@ -101500,8 +101542,9 @@ Ext.define('Admin.view.assets.AssetsGridWindow', {extend:Ext.window.Window, alia
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
 Ext.define('Admin.view.assets.AssetsSearchWindow', {extend:Ext.window.Window, alias:'widget.assetsSearchWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, controller:'assetsViewController', title:'查询资产信息', items:[{xtype:'form', layout:{type:'vbox', align:'stretch'}, bodyPadding:20, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, defaultType:'textfield', items:[{name:'assetsName', fieldLabel:'资产名称', reference:'assetsSearchForm-assetsName'}, {xtype:'datefield', 
-fieldLabel:'开始时间', name:'beginDate', format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', reference:'assetsSearchForm-beginDate'}, {xtype:'datefield', fieldLabel:'结束时间', name:'endDate', format:'Y/m/d H:i:s', editable:false, value:'2027-01-01', reference:'assetsSearchForm-endDate'}, {fieldLabel:'起始价格', name:'lowPrice', reference:'assetsSearchForm-lowPrice'}, {fieldLabel:'结束价格', name:'highPrice', reference:'assetsSearchForm-highPrice'}, {xtype:'combobox', name:'assetsType', fieldLabel:'资产类型', 
-store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'电子产品', 'name':'电子产品'}, {'value':'办公用具', 'name':'办公用具'}, {'value':'基本设备', 'name':'基本设备'}, {'value':'交通工具', 'name':'交通工具'}]}), mode:'local', editable:false, allowBlank:false, queryMode:'local', valueField:'value', displayField:'name', reference:'assetsSearchForm-assetsType'}], buttons:[{text:'Search', handler:'assetsSearchFormSubmit'}, {text:'Cancel', handler:function() {
+fieldLabel:'开始时间', name:'beginDate', itemId:'startdt', endDateField:'enddt', format:'Y/m/d H:i:s', editable:false, value:new Date, reference:'assetsSearchForm-beginDate'}, {xtype:'datefield', fieldLabel:'结束时间', name:'endDate', format:'Y/m/d H:i:s', itemId:'enddt', editable:false, value:Ext.util.Format.date(Ext.Date.add(new Date, Ext.Date.MONTH, 1), 'Y/m/d H:i:s'), reference:'assetsSearchForm-endDate'}, {fieldLabel:'起始价格', name:'lowPrice', reference:'assetsSearchForm-lowPrice'}, {fieldLabel:'结束价格', 
+name:'highPrice', reference:'assetsSearchForm-highPrice'}, {xtype:'combobox', name:'assetsType', fieldLabel:'资产类型', store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'电子产品', 'name':'电子产品'}, {'value':'办公用具', 'name':'办公用具'}, {'value':'基本设备', 'name':'基本设备'}, {'value':'交通工具', 'name':'交通工具'}]}), mode:'local', editable:false, allowBlank:false, queryMode:'local', valueField:'value', displayField:'name', reference:'assetsSearchForm-assetsType'}], buttons:[{text:'Search', handler:'assetsSearchFormSubmit'}, 
+{text:'Cancel', handler:function() {
   this.up('form').getForm().reset();
   this.up('window').hide();
 }}]}], afterRender:function() {
@@ -102492,13 +102535,13 @@ Ext.define('Admin.view.profile.FileUploadFormWindow', {extend:Ext.window.Window,
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
 Ext.define('Admin.view.profile.ProfileForm', {extend:Ext.form.Panel, xtype:'profileForm', id:'proForm', controller:'profileViewController', viewModel:{type:'profileViewModel'}, fieldDefaults:{labelAlign:'right', labelWidth:90, msgTarget:Ext.supports.Touch ? 'side' : 'qtip'}, defaults:{border:false, xtype:'panel', layout:'anchor'}, bodyPadding:5, defaultType:'textfield', items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'hidden', fieldLabel:'postId', name:'postId'}, {xtype:'hidden', 
-fieldLabel:'roleId', name:'roleId'}, {xtype:'fieldcontainer', margin:'30 0 10 0', fieldLabel:'名字', layout:'hbox', combineErrors:true, defaultType:'textfield', defaults:{submitEmptyText:false, margin:'0 30 0 0', hideLabel:'true', anchor:'90%'}, items:[{fieldLabel:'名字', emptyText:'Name', flex:1, allowBlank:false, name:'realName'}]}, {fieldLabel:'性别', xtype:'fieldcontainer', margin:'0 0 30 0', cls:'wizard-form-break', xtype:'radiogroup', defaults:{flex:1}, layout:'hbox', name:'sex', editable:false, 
-allowBlank:false, items:[{boxLabel:'男', name:'sex', inputValue:'男'}, {boxLabel:'女', name:'sex', inputValue:'女'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'70%'}, items:[{fieldLabel:'密码', anchor:'100%', emptyText:'Enter a password', inputType:'password', name:'password', cls:'wizard-form-break'}, {fieldLabel:'再输入一次', anchor:'100%', emptyText:'Passwords must match', name:'rePassword', inputType:'password'}]}, 
-{xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'邮箱', emptyText:'Email Address', name:'mail', vtype:'email', allowBlank:false}, {fieldLabel:'手机', name:'mobilePhone'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'身份证类型', xtype:'combobox', name:'idType', store:Ext.create('Ext.data.Store', 
-{fields:['value', 'name'], data:[{'value':'大陆', 'name':'大陆'}, {'value':'港澳', 'name':'港澳'}, {'value':'国外', 'name':'国外'}]}), value:'大陆', queryMode:'local', displayField:'name', valueField:'value'}, {fieldLabel:'身份证号码', name:'idNumber'}]}, {xtype:'container', layout:'hbox', defaultType:'datefield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'生日', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, name:'birthday'}, {fieldLabel:'入职时间', xtype:'datefield', 
-format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', name:'onDutDate'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'家庭住址', name:'home', emptyText:'Address'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'籍贯', name:'nativePlace', emptyText:'City'}]}, {xtype:'container', 
-layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'微信号码', emptyText:'WeChat Number', name:'wechatNumber'}, {fieldLabel:'QQ号码', emptyText:'QQ Number', name:'qq_number'}]}, {xtype:'hidden', fieldLabel:'userName', name:'userName'}, {xtype:'hidden', fieldLabel:'pictureFileName', name:'pictureFileName'}], buttons:['-\x3e', {text:'保存', listeners:{click:'saveInfomationSubmit'}}, {text:'上传头像', listeners:{click:'showFileUploadFormWindow'}}], 
-on:function() {
+fieldLabel:'roleId', name:'roleId'}, {xtype:'fieldcontainer', margin:'30 0 10 0', layout:'hbox', combineErrors:true, defaultType:'textfield', defaults:{submitEmptyText:false, margin:'0 30 0 0', hideLabel:'true', anchor:'90%'}, items:[{fieldLabel:'名字', emptyText:'Name', flex:1, allowBlank:false, name:'realName'}]}, {fieldLabel:'性别', xtype:'fieldcontainer', margin:'0 0 30 0', cls:'wizard-form-break', xtype:'radiogroup', defaults:{flex:1}, layout:'hbox', name:'sex', editable:false, allowBlank:false, 
+items:[{boxLabel:'男', name:'sex', inputValue:'男'}, {boxLabel:'女', name:'sex', inputValue:'女'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'70%'}, items:[{fieldLabel:'密码', anchor:'100%', emptyText:'Enter a password', inputType:'password', name:'password', itemId:'pass', allowBlank:false, cls:'wizard-form-break'}, {fieldLabel:'再输入一次', anchor:'100%', vtype:'password', initialPassField:'pass', emptyText:'Passwords must match', 
+name:'rePassword', inputType:'password'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'邮箱', emptyText:'Email Address', name:'mail', vtype:'email', allowBlank:false}, {fieldLabel:'手机', name:'mobilePhone'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'身份证类型', xtype:'combobox', 
+name:'idType', store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'大陆', 'name':'大陆'}, {'value':'港澳', 'name':'港澳'}, {'value':'国外', 'name':'国外'}]}), value:'大陆', queryMode:'local', displayField:'name', valueField:'value'}, {fieldLabel:'身份证号码', name:'idNumber'}]}, {xtype:'container', layout:'hbox', defaultType:'datefield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'生日', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, 
+name:'birthday'}, {fieldLabel:'入职时间', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', name:'onDutDate'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'家庭住址', name:'home', emptyText:'Address'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'籍贯', 
+name:'nativePlace', emptyText:'City'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'微信号码', emptyText:'WeChat Number', name:'wechatNumber'}, {fieldLabel:'QQ号码', emptyText:'QQ Number', name:'qq_number'}]}, {xtype:'hidden', fieldLabel:'userName', name:'userName'}, {xtype:'hidden', fieldLabel:'pictureFileName', name:'pictureFileName'}], buttons:['-\x3e', {text:'保存', listeners:{click:'saveInfomationSubmit'}}, 
+{text:'上传头像', listeners:{click:'showFileUploadFormWindow'}}], on:function() {
   Ext.Ajax.request({url:'staff/findUserByUserId.json?userId\x3d' + loginUserId, method:'post', success:function(response) {
     var profile = Ext.util.JSON.decode(response.responseText);
     var proform = Ext.getCmp('proForm');

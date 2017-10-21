@@ -18,6 +18,8 @@ Ext.define('Admin.view.profile.ProfileForm', {
 
     controller: 'profileViewController',
     viewModel:{type:'profileViewModel'},
+
+
     fieldDefaults: {
         labelAlign: 'right',
         labelWidth: 90,
@@ -54,7 +56,6 @@ Ext.define('Admin.view.profile.ProfileForm', {
         {
         xtype: 'fieldcontainer',
         margin: '30 0 10 0',
-        fieldLabel: '名字',
         layout:'hbox',
         combineErrors: true,
         defaultType: 'textfield',
@@ -104,11 +105,15 @@ Ext.define('Admin.view.profile.ProfileForm', {
                     emptyText:'Enter a password',
                     inputType:'password',
                     name:'password',
+                    itemId: 'pass',
+                    allowBlank: false,
                     cls:'wizard-form-break'
                 },
                 {
                     fieldLabel: '再输入一次',
                     anchor: '100%',
+                    vtype: 'password',
+                    initialPassField: 'pass',
                     emptyText:'Passwords must match',
                     name:'rePassword',
                     inputType:'password'
