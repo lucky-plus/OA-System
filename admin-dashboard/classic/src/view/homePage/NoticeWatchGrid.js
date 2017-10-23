@@ -9,7 +9,7 @@
       //var record = this.getStore().getAt(rowIndex); 
         var orderWindow = Ext.widget('orderWindow',{
         title:'查看公告',
-        html:'<h1 align="center">'+grid.getStore().getAt(rowIndex).data.noticeName+'</h1>'+'<p>'+grid.getStore().getAt(rowIndex).data.noticeText+'</p>'
+        html:'<h2 align="center">'+grid.getStore().getAt(rowIndex).data.noticeName+'</h2>'+'<p>'+grid.getStore().getAt(rowIndex).data.noticeText+'</p>'
       });
     }
   },

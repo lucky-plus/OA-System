@@ -62777,6 +62777,48 @@ Ext.define('Ext.form.field.VTypes', function() {
     return alphanum.test(value);
   }, alphanumText:'This field should only contain letters, numbers and _', alphanumMask:/[a-z0-9_]/i};
 });
+Ext.define('Admin.view.assets.AdvancedVType', {override:'Ext.form.field.VTypes', daterange:function(val, field) {
+  var date = field.parseDate(val);
+  if (!date) {
+    return false;
+  }
+  if (field.startDateField && (!this.dateRangeMax || date.getTime() != this.dateRangeMax.getTime())) {
+    var start = field.up('form').down('#' + field.startDateField);
+    start.setMaxValue(date);
+    start.validate();
+    this.dateRangeMax = date;
+  } else {
+    if (field.endDateField && (!this.dateRangeMin || date.getTime() != this.dateRangeMin.getTime())) {
+      var end = field.up('form').down('#' + field.endDateField);
+      end.setMinValue(date);
+      end.validate();
+      this.dateRangeMin = date;
+    }
+  }
+  return true;
+}, daterangeText:'Start date must be less than end date', password:function(val, field) {
+  if (field.initialPassField) {
+    var pwd = field.up('form').down('#' + field.initialPassField);
+    return val == pwd.getValue();
+  }
+  return true;
+}, passwordText:'密码不一致', price:function(val, field) {
+  var price = field.parsePrice(val);
+  if (field.startPriceField) {
+    var start = field.up('form').down('#' + field.startPriceField);
+    start.setMaxValue(price);
+    start.valiprice();
+    this.priceRangeMax = price;
+  } else {
+    if (field.endPriceField) {
+      var end = field.up('form').down('#' + field.endPriceField);
+      end.setMinValue(price);
+      end.valiprice();
+      this.priceRangeMin = price;
+    }
+  }
+  return true;
+}, priceText:'Start price must be less than end price'});
 Ext.define('Ext.form.trigger.Trigger', {alias:'trigger.trigger', mixins:[Ext.mixin.Factoryable], factoryConfig:{defaultType:'trigger'}, repeatClick:false, hidden:false, hideOnReadOnly:undefined, tooltip:null, weight:0, preventMouseDown:true, focusOnMousedown:false, baseCls:Ext.baseCSSPrefix + 'form-trigger', focusCls:Ext.baseCSSPrefix + 'form-trigger-focus', overCls:Ext.baseCSSPrefix + 'form-trigger-over', clickCls:Ext.baseCSSPrefix + 'form-trigger-click', validIdRe:Ext.validIdRe, renderTpl:['\x3cdiv id\x3d"{triggerId}" class\x3d"{baseCls} {baseCls}-{ui} {cls} {cls}-{ui} {extraCls} ', 
 '{childElCls}"\x3ctpl if\x3d"triggerStyle"\x3e style\x3d"{triggerStyle}"\x3c/tpl\x3e', '\x3ctpl if\x3d"ariaRole"\x3e role\x3d"{ariaRole}"\x3ctpl else\x3e role\x3d"presentation"\x3c/tpl\x3e', '\x3e', '{[values.$trigger.renderBody(values)]}', '\x3c/div\x3e'], constructor:function(config) {
   var me = this, cls;
@@ -101439,10 +101481,10 @@ Ext.define('Admin.view.profile.Timeline', {extend:Ext.DataView, xtype:'profileti
 Ext.define('Admin.view.profile.UserProfileBase', {extend:Ext.Container, viewModel:{type:'userprofile'}});
 Ext.define('Admin.view.profile.UserProfileModel', {extend:Ext.app.ViewModel, alias:'viewmodel.userprofile', stores:{userSharedItems:{autoLoad:true, fields:[{name:'_id'}, {name:'parent_id'}, {name:'name'}, {name:'source'}, {name:'date'}, {name:'isActive'}, {name:'time'}, {name:'content'}], proxy:{type:'api', url:'~api/usershareditems'}}, userTimeline:{autoLoad:true, fields:[{name:'_id'}, {name:'name'}, {name:'content'}, {name:'date', type:'date'}, {name:'userId'}, {name:'notificationType'}], proxy:{type:'api', 
 url:'~api/usertimeline'}}}});
-Ext.define('Admin.view.main.Main', {extend:Ext.container.Viewport, controller:'main', viewModel:'main', cls:'sencha-dash-viewport', itemId:'mainView', layout:{type:'vbox', align:'stretch'}, listeners:{render:'onMainViewRender'}, items:[{xtype:'toolbar', cls:'sencha-dash-dash-headerbar shadow', height:64, itemId:'headerBar', items:[{xtype:'component', reference:'senchaLogo', cls:'sencha-logo', html:'\x3cdiv class\x3d"main-logo"\x3e\x3cimg src\x3d"resources/images/company-logo.png"\x3eSencha\x3c/div\x3e', 
-width:250}, {margin:'0 0 0 8', ui:'header', iconCls:'x-fa fa-navicon', id:'main-navigation-btn', handler:'onToggleNavigationSize'}, '-\x3e', {xtype:'segmentedbutton', margin:'0 16 0 0', platformConfig:{ie9m:{hidden:true}}, items:[{iconCls:'x-fa fa-desktop', pressed:true}, {iconCls:'x-fa fa-tablet', handler:'onSwitchToModern', tooltip:'Switch to modern toolkit'}]}, {iconCls:'x-fa fa-search', ui:'header', href:'#searchresults', hrefTarget:'_self', tooltip:'See latest search'}, {iconCls:'x-fa fa-envelope', 
-ui:'header', href:'#email', hrefTarget:'_self', tooltip:'Check your email'}, {iconCls:'x-fa fa-question', ui:'header', href:'#faq', hrefTarget:'_self', tooltip:"Help / FAQ's"}, {iconCls:'x-fa fa-th-large', ui:'header', href:'#profile', hrefTarget:'_self', tooltip:'See your profile'}, {xtype:'tbtext', text:loginUser, cls:'top-user-name'}, {xtype:'button', reference:'logoutButton', scale:'small', ui:'soft-blue', iconAlign:'right', iconCls:'x-fa fa-angle-right', text:'注销', formBind:true, listeners:{click:'onLogoutButton'}}]}, 
-{xtype:'maincontainerwrap', id:'main-view-detail-wrap', reference:'mainContainerWrap', flex:1, items:[{xtype:'treelist', reference:'navigationTreeList', itemId:'navigationTreeList', ui:'nav', store:'NavigationTree', width:250, expanderFirst:false, expanderOnly:false, listeners:{selectionchange:'onNavigationTreeSelectionChange'}}, {xtype:'container', flex:1, reference:'mainCardPanel', cls:'sencha-dash-right-main-container', itemId:'contentPanel', layout:{type:'card', anchor:'100%'}}]}]});
+Ext.define('Admin.view.main.Main', {extend:Ext.container.Viewport, controller:'main', viewModel:'main', cls:'sencha-dash-viewport', itemId:'mainView', layout:{type:'vbox', align:'stretch'}, listeners:{render:'onMainViewRender'}, items:[{xtype:'toolbar', cls:'sencha-dash-dash-headerbar shadow', height:64, itemId:'headerBar', bodyStyle:'background:#ccc;', items:[{xtype:'component', reference:'senchaLogo', cls:'sencha-logo', html:'\x3cdiv class\x3d"main-logo"\x3e\x3cimg src\x3d"resources/images/company-logo.png"\x3e卤肉饭\x3c/div\x3e', 
+width:250}, {margin:'0 0 0 8', ui:'header', iconCls:'x-fa fa-navicon', id:'main-navigation-btn', handler:'onToggleNavigationSize'}, {xtype:'displayfield', value:'\x3cdiv style\x3d"color:#888888;font-size:16px;margin-left:20px;line-height:25px"\x3e欢迎使用卤肉饭OA管理系统\x3c/div\x3e'}, '-\x3e', {xtype:'segmentedbutton', margin:'0 16 0 0', platformConfig:{ie9m:{hidden:true}}}, {iconCls:'x-fa fa-th-large', ui:'header', href:'#profile', hrefTarget:'_self', tooltip:'个人中心'}, {xtype:'tbtext', text:loginUser, cls:'top-user-name'}, 
+{xtype:'button', reference:'logoutButton', scale:'small', iconAlign:'right', ui:'', text:'\x3cdiv style\x3d"height:30px;line-height:30pxfont-size:14px;line-height:30px;"\x3e' + '\x3cspan\x3e注销 \x3e\x3c/span\x3e\x3c/div\x3e', formBind:true, listeners:{click:'onLogoutButton'}}]}, {xtype:'maincontainerwrap', id:'main-view-detail-wrap', reference:'mainContainerWrap', flex:1, items:[{xtype:'treelist', reference:'navigationTreeList', itemId:'navigationTreeList', ui:'nav', store:'NavigationTree', width:250, 
+expanderFirst:false, expanderOnly:false, listeners:{selectionchange:'onNavigationTreeSelectionChange'}}, {xtype:'container', flex:1, reference:'mainCardPanel', cls:'sencha-dash-right-main-container', itemId:'contentPanel', layout:{type:'card', anchor:'100%'}}]}]});
 Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', stores:['NavigationTree'], defaultToken:'login', mainView:'Admin.view.main.Main', onAppUpdate:function() {
   Ext.Msg.confirm('Application Update', 'This application has an update, reload?', function(choice) {
     if (choice === 'yes') {
@@ -101500,8 +101542,9 @@ Ext.define('Admin.view.assets.AssetsGridWindow', {extend:Ext.window.Window, alia
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
 Ext.define('Admin.view.assets.AssetsSearchWindow', {extend:Ext.window.Window, alias:'widget.assetsSearchWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, controller:'assetsViewController', title:'查询资产信息', items:[{xtype:'form', layout:{type:'vbox', align:'stretch'}, bodyPadding:20, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, defaultType:'textfield', items:[{name:'assetsName', fieldLabel:'资产名称', reference:'assetsSearchForm-assetsName'}, {xtype:'datefield', 
-fieldLabel:'开始时间', name:'beginDate', format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', reference:'assetsSearchForm-beginDate'}, {xtype:'datefield', fieldLabel:'结束时间', name:'endDate', format:'Y/m/d H:i:s', editable:false, value:'2027-01-01', reference:'assetsSearchForm-endDate'}, {fieldLabel:'起始价格', name:'lowPrice', reference:'assetsSearchForm-lowPrice'}, {fieldLabel:'结束价格', name:'highPrice', reference:'assetsSearchForm-highPrice'}, {xtype:'combobox', name:'assetsType', fieldLabel:'资产类型', 
-store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'电子产品', 'name':'电子产品'}, {'value':'办公用具', 'name':'办公用具'}, {'value':'基本设备', 'name':'基本设备'}, {'value':'交通工具', 'name':'交通工具'}]}), mode:'local', editable:false, allowBlank:false, queryMode:'local', valueField:'value', displayField:'name', reference:'assetsSearchForm-assetsType'}], buttons:[{text:'Search', handler:'assetsSearchFormSubmit'}, {text:'Cancel', handler:function() {
+fieldLabel:'开始时间', name:'beginDate', itemId:'startdt', endDateField:'enddt', format:'Y/m/d H:i:s', editable:false, value:new Date, reference:'assetsSearchForm-beginDate'}, {xtype:'datefield', fieldLabel:'结束时间', name:'endDate', format:'Y/m/d H:i:s', itemId:'enddt', editable:false, value:Ext.util.Format.date(Ext.Date.add(new Date, Ext.Date.MONTH, 1), 'Y/m/d H:i:s'), reference:'assetsSearchForm-endDate'}, {fieldLabel:'起始价格', name:'lowPrice', reference:'assetsSearchForm-lowPrice'}, {fieldLabel:'结束价格', 
+name:'highPrice', reference:'assetsSearchForm-highPrice'}, {xtype:'combobox', name:'assetsType', fieldLabel:'资产类型', store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'电子产品', 'name':'电子产品'}, {'value':'办公用具', 'name':'办公用具'}, {'value':'基本设备', 'name':'基本设备'}, {'value':'交通工具', 'name':'交通工具'}]}), mode:'local', editable:false, allowBlank:false, queryMode:'local', valueField:'value', displayField:'name', reference:'assetsSearchForm-assetsType'}], buttons:[{text:'Search', handler:'assetsSearchFormSubmit'}, 
+{text:'Cancel', handler:function() {
   this.up('form').getForm().reset();
   this.up('window').hide();
 }}]}], afterRender:function() {
@@ -102008,15 +102051,21 @@ colorScheme:'blue', flex:1}]});
 Ext.define('Admin.view.forms.Wizards', {extend:Ext.container.Container, xtype:'forms', cls:'wizards', defaultFocus:'wizardform', layout:'responsivecolumn', items:[{xtype:'formswizardone', userCls:'big-100'}, {xtype:'wizardform', cls:'wizardtwo shadow', colorScheme:'soft-purple', userCls:'big-50 small-100'}, {xtype:'wizardform', cls:'wizardthree shadow', colorScheme:'soft-green', userCls:'big-50 small-100'}]});
 Ext.define('Admin.view.homePage.HomePage', {extend:Ext.container.Container, xtype:'dashboard', height:Ext.Element.getViewportHeight() - 1000, viewModel:{type:'homePageViewModel'}, layout:'border', margin:'30 30 30 30', items:[{region:'north', height:'10%', margin:'0px 0px 10px 0px', bodyStyle:'background:#f6f6f6;', body:{cls:'x-body-new'}, xtype:'panel', layout:{type:'hbox', align:'stretch'}, items:[{xtype:'button', width:'25%', ui:'', text:'\x3cdiv style\x3d"color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/待审核流程个数.jpg);"\x3e' + 
 '\x3cspan style\x3d"padding-left:60px"\x3e个待审核流程\x3c/span\x3e\x3c/div\x3e', margin:'0px 10px 0px 0px'}, {xtype:'button', width:'25%', ui:'', text:'\x3cdiv style\x3d"color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/待做任务个数.jpg);"\x3e' + '\x3cspan style\x3d"padding-left:60px"\x3e个待完成任务\x3c/span\x3e\x3c/div\x3e', margin:'0px 10px 0px 0px'}, {xtype:'button', width:'25%', ui:'', text:'\x3cdiv style\x3d"color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/申请中流程个数.jpg);"\x3e' + 
-'\x3cspan style\x3d"padding-left:60px"\x3e个流程申请中\x3c/span\x3e\x3c/div\x3e', margin:'0px 10px 0px 0px'}, {xtype:'button', width:'25%', ui:'', text:'\x3cdiv style\x3d"color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/紧急通知.jpg);"\x3e' + '\x3cspan style\x3d"padding-left:60px"\x3e紧急通知\x3c/span\x3e\x3c/div\x3e', margin:'0px 0px 0px 0px'}]}, , {region:'east', width:'30%', margin:'10px 0x 0px 0px', xtype:'panel'}, {region:'center', margin:'10px 20px 0px 0px', 
-xtype:'panel', bodyStyle:'background:#f6f6f6;', layout:{type:'vbox', align:'stretch'}, items:[{xtype:'panel', title:'\x3cdiv style\x3d"font-size:16px;color:#6F6F6F"\x3e\x3cb\x3e| 快捷通道\x3c/b\x3e\x3c/div\x3e', header:{cls:'x-panel-header-new'}, margin:'0px 0px 10px 0px', height:'30%', layout:{type:'hbox', align:'stretch'}, items:[{xtype:'button', text:'\x3cdiv style\x3d"background:url(resources/images/flow.jpg); width:118px;height:110px;"\x3e\x3c/div\x3e', width:'16%', margin:'0px 0px 0px 0px', ui:'', 
-listeners:{click:function() {
+'\x3cspan style\x3d"padding-left:60px"\x3e个流程申请中\x3c/span\x3e\x3c/div\x3e', margin:'0px 10px 0px 0px'}, {xtype:'button', width:'25%', ui:'', text:'\x3cdiv style\x3d"color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/紧急通知.jpg);"\x3e' + '\x3cspan style\x3d"padding-left:60px"\x3e紧急通知\x3c/span\x3e\x3c/div\x3e', margin:'0px 0px 0px 0px'}]}, , {region:'east', width:'30%', margin:'10px 0x 0px 0px', xtype:'noticeWatchGrid', title:'\x3cdiv style\x3d"font-size:16px;color:#6F6F6F;"\x3e\x3cb\x3e公告通知\x3c/b\x3e\x3c/div\x3e', 
+header:{cls:'x-panel-header-new'}}, {region:'center', margin:'10px 20px 0px 0px', xtype:'panel', bodyStyle:'background:#f6f6f6;', layout:{type:'vbox', align:'stretch'}, items:[{xtype:'panel', title:'\x3cdiv style\x3d"font-size:16px;color:#6F6F6F"\x3e\x3cb\x3e快捷通道\x3c/b\x3e\x3c/div\x3e', header:{cls:'x-panel-header-new'}, margin:'0px 0px 0px 0px', height:'40%', layout:{type:'hbox', align:'stretch'}, items:[{xtype:'button', text:'\x3cdiv style\x3d"background:url(resources/images/请假申请.jpg); width:195px;height:194px;"\x3e\x3c/div\x3e', 
+width:'25%', margin:'0px 0px 0px 0px', ui:'', listeners:{click:function() {
   document.location.href = '#notice';
-}}}, {xtype:'button', text:'\x3cdiv style\x3d"background:url(resources/images/flow.jpg); width:118px;height:110px;"\x3e\x3c/div\x3e', width:'16%', margin:'0px 0px 0px 0px', ui:'', listeners:{click:function() {
+}}}, {xtype:'button', text:'\x3cdiv style\x3d"background:url(resources/images/加班申请.jpg); width:195px;height:194px;"\x3e\x3c/div\x3e', width:'25%', margin:'0px 0px 0px 0px', ui:'', listeners:{click:function() {
   document.location.href = '#notice';
-}}}, {xtype:'panel', width:'16%', margin:'0px 0px 0px 0px'}, {xtype:'panel', width:'16%', margin:'0px 0px 0px 0px'}, {xtype:'panel', width:'16%', margin:'0px 0px 0px 0px'}, {xtype:'panel', width:'16%', margin:'0px 0px 0px 0px'}]}, {title:'\x3cdiv style\x3d"font-size:16px;color:#6F6F6F;"\x3e\x3cb\x3e| 公告通知\x3c/b\x3e\x3c/div\x3e', header:{cls:'x-panel-header-new'}, height:'49%', margin:'10px 0px 0px 0px', xtype:'noticeWatchGrid'}]}]});
+}}}, {xtype:'button', text:'\x3cdiv style\x3d"background:url(resources/images/我的任务.jpg); width:195px;height:194px;"\x3e\x3c/div\x3e', width:'25%', margin:'0px 0px 0px 0px', ui:'', listeners:{click:function() {
+  document.location.href = '#mytask';
+}}}, {xtype:'button', text:'\x3cdiv style\x3d"background:url(resources/images/通讯录.jpg); width:195px;height:194px;"\x3e\x3c/div\x3e', width:'25%', margin:'0px 0px 0px 0px', ui:'', listeners:{click:function() {
+  document.location.href = '#address';
+}}}]}, {xtype:'panel', margin:'0px 0px 0px 0px', height:'33%', layout:{type:'hbox', align:'stretch'}, items:[{xtype:'button', text:'\x3cdiv style\x3d"background:url(resources/images/个人信息.jpg); width:195px;height:194px;"\x3e\x3c/div\x3e', width:'25%', margin:'0px 0px 0px 0px', ui:'', listeners:{click:function() {
+  document.location.href = '#profile';
+}}}, {xtype:'panel', width:'25%', margin:'0px 0px 0px 0px'}, {xtype:'panel', width:'25%', margin:'0px 0px 0px 0px'}, {xtype:'panel', width:'25%', margin:'0px 0px 0px 0px'}]}]}]});
 Ext.define('Admin.view.homePage.NoticeWatchGrid', {extend:Ext.grid.Panel, xtype:'noticeWatchGrid', bind:'{noticeWatchLists}', id:'noticeWatchGrid', listeners:{cellclick:function(grid, td, cellIndex, record, tr, rowIndex) {
-  var orderWindow = Ext.widget('orderWindow', {title:'查看公告', html:'\x3ch1 align\x3d"center"\x3e' + grid.getStore().getAt(rowIndex).data.noticeName + '\x3c/h1\x3e' + '\x3cp\x3e' + grid.getStore().getAt(rowIndex).data.noticeText + '\x3c/p\x3e'});
+  var orderWindow = Ext.widget('orderWindow', {title:'查看公告', html:'\x3ch2 align\x3d"center"\x3e' + grid.getStore().getAt(rowIndex).data.noticeName + '\x3c/h2\x3e' + '\x3cp\x3e' + grid.getStore().getAt(rowIndex).data.noticeText + '\x3c/p\x3e'});
 }}, columns:[{sortable:true, dataIndex:'noticeId', hidden:true}, {dataIndex:'noticeName', flex:1}, {sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}]});
 Ext.define('Admin.view.homePage.HomePageViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.homePageViewModel', stores:{noticeWatchLists:{type:'noticeWatchStore', autoLoad:true}}});
 Ext.define('Admin.view.log.Log', {extend:Ext.container.Container, xtype:'log', controller:'logViewController', viewModel:{type:'logViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'logGrid'}]});
@@ -102307,7 +102356,7 @@ Ext.define('Admin.view.notice.notice', {extend:Ext.container.Container, xtype:'n
 Ext.define('Admin.view.notice.NoticeCompose', {extend:Ext.form.Panel, alias:'widget.noticeCompose', viewModel:{type:'noticeCompose'}, controller:'NoticeViewController', cls:'noticeCompose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'noticeId', handler:'noticeGridOpenEditWindow'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'标题：', 
 name:'noticeName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'正文：', fontFamilies:['宋体', '隶书', '黑体'], name:'noticeText'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-red', text:'关闭', handler:'noticeGridWindowsClose'}, {xtype:'button', ui:'soft-green', text:'发布', handler:'noticeGridTextSubmit'}]}});
 Ext.define('Admin.view.notice.NoticeGrid', {extend:Ext.grid.Panel, xtype:'noticeGrid', title:'\x3cb\x3e公告列表\x3c/b\x3e', bind:'{noticeLists}', id:'noticeGrid', listeners:{cellclick:function(grid, td, cellIndex, record, tr, rowIndex) {
-  var orderWindow = Ext.widget('orderWindow', {title:'查看公告', html:'\x3ch1 align\x3d"center"\x3e' + grid.getStore().getAt(rowIndex).data.noticeName + '\x3c/h1\x3e' + '\x3cp\x3e' + grid.getStore().getAt(rowIndex).data.noticeText + '\x3c/p\x3e'});
+  var orderWindow = Ext.widget('orderWindow', {title:'查看公告', html:'\x3ch2 align\x3d"center"\x3e' + grid.getStore().getAt(rowIndex).data.noticeName + '\x3c/h2\x3e' + '\x3cp\x3e' + grid.getStore().getAt(rowIndex).data.noticeText + '\x3c/p\x3e'});
 }}, selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1}, {text:'发布时间', sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', id:'noticeUpdateDeleteColum', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', 
 handler:'noticeGridOpenEditWindow'}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'noticeGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {id:'xiaotingzi2', items:[{text:'新增', id:'noticeAddButton', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'删除', id:'noticeDeleteButton', iconCls:'x-fa fa-trash', handler:'noticeGridDeleteDate'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300, itemsId:'searchText'}, {xtype:'tbtext', text:'时间：'}, 
 {xtype:'datefield', itemId:'beginDate', format:'Y-m-d', value:'1972-01-01', editable:false}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', itemId:'endDate', format:'Y-m-d', value:new Date, editable:false, listeners:{focus:function() {
@@ -102329,7 +102378,7 @@ handler:'noticeGridOpenEditWindow'}, '-', {icon:'resources/images/icons/delete.p
 }});
 Ext.define('Admin.view.notcie.NoticeText', {extend:Ext.form.Panel, alias:'widget.noticeText', id:'noticeText', controller:'NoticeViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'displayfield', name:'noticeName'}, {xtype:'displayfield', name:'noticeText'}]});
 Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewController, alias:'controller.NoticeViewController', noticeGridAdd:function(bt) {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'新建公告', items:[Ext.apply({xtype:'noticeCompose'})]});
+  var cfg = Ext.apply({xtype:'noticeWindow'}, {title:'新建公告', items:[Ext.apply({xtype:'noticeCompose'})]});
   Ext.create(cfg);
 }, noticeGridTextSubmit:function(btn) {
   var noticeCompose = btn.up('form').getForm();
@@ -102343,12 +102392,12 @@ Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewControl
   }});
 }, noticeGridOpenEditWindow:function(grid, rowIndex, colIndex) {
   var record = grid.getStore().getAt(rowIndex);
-  var orderWindow = Ext.widget('orderWindow', {title:'修改公告', items:[{xtype:'noticeCompose'}]});
-  orderWindow.down('form').getForm().loadRecord(record);
+  var noticeWindow = Ext.widget('noticeWindow', {title:'修改公告', items:[{xtype:'noticeCompose'}]});
+  noticeWindow.down('form').getForm().loadRecord(record);
 }, noticeGridWatchWindow:function(grid, rowIndex, colIndex) {
   var record = grid.getStore().getAt(rowIndex);
-  var orderWindow = Ext.widget('orderWindow', {title:'查看公告', items:[{xtype:'noticeText'}]});
-  orderWindow.down('form').getForm().loadRecord(record);
+  var noticeWindow = Ext.widget('noticeWindow', {title:'查看公告', items:[{xtype:'noticeText'}]});
+  noticeWindow.down('form').getForm().loadRecord(record);
 }, noticeGridDeleteOne:function(grid, rowIndex, colIndex) {
   Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
     if (button == 'yes') {
@@ -102404,6 +102453,21 @@ Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewControl
   }
 }});
 Ext.define('Admin.view.notice.NoticeViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.noticeViewModel', stores:{noticeLists:{type:'noticeStore', autoLoad:true}}});
+Ext.define('Admin.view.notice.NoticeWindow', {extend:Ext.window.Window, alias:'widget.noticeWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.5), Math.floor(height * 0.8));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
 Ext.define('Admin.view.order.Order', {extend:Ext.container.Container, xtype:'order', controller:'OrderViewController', viewModel:{type:'orderViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'orderGrid'}]});
 Ext.define('Admin.view.order.OrderForm', {extend:Ext.form.Panel, alias:'widget.orderForm', controller:'OrderViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'id', handler:'orderGridEdit'}, {xtype:'textfield', fieldLabel:'订单编号', name:'orderNumber'}, {xtype:'datefield', format:'Y/m/d H:i:s', fieldLabel:'创建时间', name:'createTime'}, {xtype:'combobox', fieldLabel:'优先级', name:'level', 
 store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'HIGH', 'name':'高'}, {'value':'MEDIUM', 'name':'中'}, {'value':'LOW', 'name':'低'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {xtype:'textfield', fieldLabel:'Price', name:'price'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'orderGridFromSubmit'}, {xtype:'button', text:'取消', handler:'orderGridWindowsClose'}]}});
@@ -102505,13 +102569,13 @@ Ext.define('Admin.view.profile.FileUploadFormWindow', {extend:Ext.window.Window,
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
 Ext.define('Admin.view.profile.ProfileForm', {extend:Ext.form.Panel, xtype:'profileForm', id:'proForm', controller:'profileViewController', viewModel:{type:'profileViewModel'}, fieldDefaults:{labelAlign:'right', labelWidth:90, msgTarget:Ext.supports.Touch ? 'side' : 'qtip'}, defaults:{border:false, xtype:'panel', layout:'anchor'}, bodyPadding:5, defaultType:'textfield', items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'hidden', fieldLabel:'postId', name:'postId'}, {xtype:'hidden', 
-fieldLabel:'roleId', name:'roleId'}, {xtype:'fieldcontainer', margin:'30 0 10 0', fieldLabel:'名字', layout:'hbox', combineErrors:true, defaultType:'textfield', defaults:{submitEmptyText:false, margin:'0 30 0 0', hideLabel:'true', anchor:'90%'}, items:[{fieldLabel:'名字', emptyText:'Name', flex:1, allowBlank:false, name:'realName'}]}, {fieldLabel:'性别', xtype:'fieldcontainer', margin:'0 0 30 0', cls:'wizard-form-break', xtype:'radiogroup', defaults:{flex:1}, layout:'hbox', name:'sex', editable:false, 
-allowBlank:false, items:[{boxLabel:'男', name:'sex', inputValue:'男'}, {boxLabel:'女', name:'sex', inputValue:'女'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'70%'}, items:[{fieldLabel:'密码', anchor:'100%', emptyText:'Enter a password', inputType:'password', name:'password', cls:'wizard-form-break'}, {fieldLabel:'再输入一次', anchor:'100%', emptyText:'Passwords must match', name:'rePassword', inputType:'password'}]}, 
-{xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'邮箱', emptyText:'Email Address', name:'mail', vtype:'email', allowBlank:false}, {fieldLabel:'手机', name:'mobilePhone'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'身份证类型', xtype:'combobox', name:'idType', store:Ext.create('Ext.data.Store', 
-{fields:['value', 'name'], data:[{'value':'大陆', 'name':'大陆'}, {'value':'港澳', 'name':'港澳'}, {'value':'国外', 'name':'国外'}]}), value:'大陆', queryMode:'local', displayField:'name', valueField:'value'}, {fieldLabel:'身份证号码', name:'idNumber'}]}, {xtype:'container', layout:'hbox', defaultType:'datefield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'生日', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, name:'birthday'}, {fieldLabel:'入职时间', xtype:'datefield', 
-format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', name:'onDutDate'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'家庭住址', name:'home', emptyText:'Address'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'籍贯', name:'nativePlace', emptyText:'City'}]}, {xtype:'container', 
-layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'微信号码', emptyText:'WeChat Number', name:'wechatNumber'}, {fieldLabel:'QQ号码', emptyText:'QQ Number', name:'qq_number'}]}, {xtype:'hidden', fieldLabel:'userName', name:'userName'}, {xtype:'hidden', fieldLabel:'pictureFileName', name:'pictureFileName'}], buttons:['-\x3e', {text:'保存', listeners:{click:'saveInfomationSubmit'}}, {text:'上传头像', listeners:{click:'showFileUploadFormWindow'}}], 
-on:function() {
+fieldLabel:'roleId', name:'roleId'}, {xtype:'fieldcontainer', margin:'30 0 10 0', layout:'hbox', combineErrors:true, defaultType:'textfield', defaults:{submitEmptyText:false, margin:'0 30 0 0', hideLabel:'true', anchor:'90%'}, items:[{fieldLabel:'名字', emptyText:'Name', flex:1, allowBlank:false, name:'realName'}]}, {fieldLabel:'性别', xtype:'fieldcontainer', margin:'0 0 30 0', cls:'wizard-form-break', xtype:'radiogroup', defaults:{flex:1}, layout:'hbox', name:'sex', editable:false, allowBlank:false, 
+items:[{boxLabel:'男', name:'sex', inputValue:'男'}, {boxLabel:'女', name:'sex', inputValue:'女'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'70%'}, items:[{fieldLabel:'密码', anchor:'100%', emptyText:'Enter a password', inputType:'password', name:'password', itemId:'pass', allowBlank:false, cls:'wizard-form-break'}, {fieldLabel:'再输入一次', anchor:'100%', vtype:'password', initialPassField:'pass', emptyText:'Passwords must match', 
+name:'rePassword', inputType:'password'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'邮箱', emptyText:'Email Address', name:'mail', vtype:'email', allowBlank:false}, {fieldLabel:'手机', name:'mobilePhone'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'身份证类型', xtype:'combobox', 
+name:'idType', store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'大陆', 'name':'大陆'}, {'value':'港澳', 'name':'港澳'}, {'value':'国外', 'name':'国外'}]}), value:'大陆', queryMode:'local', displayField:'name', valueField:'value'}, {fieldLabel:'身份证号码', name:'idNumber'}]}, {xtype:'container', layout:'hbox', defaultType:'datefield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'生日', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, 
+name:'birthday'}, {fieldLabel:'入职时间', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', name:'onDutDate'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'家庭住址', name:'home', emptyText:'Address'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'籍贯', 
+name:'nativePlace', emptyText:'City'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'微信号码', emptyText:'WeChat Number', name:'wechatNumber'}, {fieldLabel:'QQ号码', emptyText:'QQ Number', name:'qq_number'}]}, {xtype:'hidden', fieldLabel:'userName', name:'userName'}, {xtype:'hidden', fieldLabel:'pictureFileName', name:'pictureFileName'}], buttons:['-\x3e', {text:'保存', listeners:{click:'saveInfomationSubmit'}}, 
+{text:'上传头像', listeners:{click:'showFileUploadFormWindow'}}], on:function() {
   Ext.Ajax.request({url:'staff/findUserByUserId.json?userId\x3d' + loginUserId, method:'post', success:function(response) {
     var profile = Ext.util.JSON.decode(response.responseText);
     var proform = Ext.getCmp('proForm');

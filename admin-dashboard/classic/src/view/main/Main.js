@@ -27,12 +27,13 @@ Ext.define('Admin.view.main.Main', {
             cls: 'sencha-dash-dash-headerbar shadow',
             height: 64,
             itemId: 'headerBar',
+			bodyStyle: 'background:#ccc;',
             items: [
                 {
                     xtype: 'component',
                     reference: 'senchaLogo',
                     cls: 'sencha-logo',
-                    html: '<div class="main-logo"><img src="resources/images/company-logo.png">Sencha</div>',
+                    html: '<div class="main-logo"><img src="resources/images/company-logo.png">卤肉饭</div>',
                     width: 250
                 },
                 {
@@ -41,7 +42,10 @@ Ext.define('Admin.view.main.Main', {
                     iconCls:'x-fa fa-navicon',
                     id: 'main-navigation-btn',
                     handler: 'onToggleNavigationSize'
-                },
+                },{
+					xtype: 'displayfield',
+					value:'<div style="color:#888888;font-size:16px;margin-left:20px;line-height:25px">欢迎使用卤肉饭OA管理系统</div>'
+				},
                 '->',
                 {
                     xtype: 'segmentedbutton',
@@ -52,43 +56,13 @@ Ext.define('Admin.view.main.Main', {
                             hidden: true
                         }
                     },
-
-                    items: [{
-                        iconCls: 'x-fa fa-desktop',
-                        pressed: true
-                    }, {
-                        iconCls: 'x-fa fa-tablet',
-                        handler: 'onSwitchToModern',
-                        tooltip: 'Switch to modern toolkit'
-                    }]
-                },
-                {
-                    iconCls:'x-fa fa-search',
-                    ui: 'header',
-                    href: '#searchresults',
-                    hrefTarget: '_self',
-                    tooltip: 'See latest search'
-                },
-                {
-                    iconCls:'x-fa fa-envelope',
-                    ui: 'header',
-                    href: '#email',
-                    hrefTarget: '_self',
-                    tooltip: 'Check your email'
-                },
-                {
-                    iconCls:'x-fa fa-question',
-                    ui: 'header',
-                    href: '#faq',
-                    hrefTarget: '_self',
-                    tooltip: 'Help / FAQ\'s'
-                },
+                },   
                 {
                     iconCls:'x-fa fa-th-large',
                     ui: 'header',
                     href: '#profile',
                     hrefTarget: '_self',
-                    tooltip: 'See your profile'
+                    tooltip: '个人中心'
                 },
                 {
                     xtype: 'tbtext',
@@ -99,11 +73,12 @@ Ext.define('Admin.view.main.Main', {
                     xtype: 'button',
                     reference: 'logoutButton',
                     scale: 'small',
-                    ui: 'soft-blue',
                     iconAlign: 'right',
-                    iconCls: 'x-fa fa-angle-right',
-                    text: '注销',
-                    formBind: true,
+					ui:'',
+                    //iconCls: 'x-fa fa-angle-right',
+                    text:'<div style="height:30px;line-height:30pxfont-size:14px;line-height:30px;">'+
+				                   '<span>注销 ></span></div>',
+					formBind: true,
                     listeners: {
                         click: 'onLogoutButton'
                     }
