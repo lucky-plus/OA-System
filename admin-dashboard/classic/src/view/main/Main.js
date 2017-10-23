@@ -32,7 +32,7 @@ Ext.define('Admin.view.main.Main', {
                     xtype: 'component',
                     reference: 'senchaLogo',
                     cls: 'sencha-logo',
-                    html: '<div class="main-logo"><img src="resources/images/company-logo.png">Sencha</div>',
+                    html: '<div class="main-logo"><img src="resources/images/company-logo.png">OA_System</div>',
                     width: 250
                 },
                 {
@@ -44,69 +44,46 @@ Ext.define('Admin.view.main.Main', {
                 },
                 '->',
                 {
-                    xtype: 'segmentedbutton',
-                    margin: '0 16 0 0',
-
-                    platformConfig: {
-                        ie9m: {
-                            hidden: true
-                        }
-                    },
-
-                    items: [{
-                        iconCls: 'x-fa fa-desktop',
-                        pressed: true
-                    }, {
-                        iconCls: 'x-fa fa-tablet',
-                        handler: 'onSwitchToModern',
-                        tooltip: 'Switch to modern toolkit'
-                    }]
+                    iconCls: 'x-fa fa-leanpub',
+                    ui: 'header',
+                    href: '#notice',
+                    hrefTarget: '_self',
+                    tooltip: '查看公告'
                 },
                 {
-                    iconCls:'x-fa fa-search',
+                    iconCls: 'x-fa fa-tasks',
                     ui: 'header',
-                    href: '#searchresults',
+                    href: '#mytask',
                     hrefTarget: '_self',
-                    tooltip: 'See latest search'
+                    tooltip: '查看任务'
                 },
                 {
-                    iconCls:'x-fa fa-envelope',
+                    iconCls: 'x-fa fa-paper-plane',
                     ui: 'header',
-                    href: '#email',
+                    href: '#log',
                     hrefTarget: '_self',
-                    tooltip: 'Check your email'
-                },
-                {
-                    iconCls:'x-fa fa-question',
-                    ui: 'header',
-                    href: '#faq',
-                    hrefTarget: '_self',
-                    tooltip: 'Help / FAQ\'s'
+                    tooltip: '查看日志'
                 },
                 {
                     iconCls:'x-fa fa-th-large',
                     ui: 'header',
                     href: '#profile',
                     hrefTarget: '_self',
-                    tooltip: 'See your profile'
+                    tooltip: '查看个人中心'
                 },
                 {
                     xtype: 'tbtext',
                     text: loginUser,
+                    ui: 'header',
                     cls: 'top-user-name'
                 },
                 {
-                    xtype: 'button',
-                    reference: 'logoutButton',
-                    scale: 'small',
-                    ui: 'soft-blue',
-                    iconAlign: 'right',
-                    iconCls: 'x-fa fa-angle-right',
-                    text: '注销',
-                    formBind: true,
-                    listeners: {
-                        click: 'onLogoutButton'
-                    }
+                	ui:'header',
+                	reference:'logoutButton',
+                	hrefTarget: '_self',
+                	tooltip:'注销',
+                	iconCls:'x-fa fa-sign-out',
+                	listeners:{click:'onLogoutButton'}
                 }
             ]
         },
