@@ -59,7 +59,7 @@
 					value:new Date(),
 					listeners: {  
 					focus: function(){
-						var cc = Ext.getCmp('logCondition').items.getAt(5).getValue();
+						var cc = Ext.getCmp('logCondition').items.getAt(7).getValue();
 						this.setMinValue(cc);
 						}  	
 					}

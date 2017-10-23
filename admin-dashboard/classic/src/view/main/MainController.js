@@ -158,35 +158,70 @@ Ext.define('Admin.view.main.MainController', {
 
             var modules = eval(loginUserModules);
 
-            rootTree.on(
-              "load",function(){
-                this.getRoot().appendChild(
-                  {
-                      text: '个人中心',
-                      iconCls: 'x-fa fa-user',
-                      expanded: false,
-                      selectable: false,
-                      children: [
-                          {
-                              text: '资产列表',
-                              iconCls: 'x-fa fa-money',
-                              viewType: 'assets',
-                              leaf: true
-                          },{
-                              text: '我的资产',
-                              iconCls: 'x-fa fa-gg',
-                              viewType: 'myAssets',
-                              leaf: true
-                          },{
-                              text: '个人信息',
-                              iconCls: 'x-fa fa-user-circle',
-                              viewType: 'profile',
-                              leaf: true
-                          }]
-                  }
-                );
-              }
-            );
+            var profileFlag = 1;
+            for (var i = 0; i < modules.length; i++) {
+                if(modules[i].modelName == "个人中心--资产列表") {
+                  profileFlag = 2;
+                  
+                }
+            }
+            if(profileFlag == 2) {
+              rootTree.on(
+                "load",function(){
+                  this.getRoot().appendChild(
+                    {
+                        text: '个人中心',
+                        iconCls: 'x-fa fa-user',
+                        expanded: false,
+                        selectable: false,
+                        children: [
+                            {
+                                text: '资产列表',
+                                iconCls: 'x-fa fa-money',
+                                viewType: 'assets',
+                                leaf: true
+                            },{
+                                text: '我的资产',
+                                iconCls: 'x-fa fa-gg',
+                                viewType: 'myAssets',
+                                leaf: true
+                            },{
+                                text: '个人信息',
+                                iconCls: 'x-fa fa-user-circle',
+                                viewType: 'profile',
+                                leaf: true
+                            }]
+                    }
+                  );
+                }
+              );
+            } else {
+              rootTree.on(
+                "load",function(){
+                  this.getRoot().appendChild(
+                    {
+                        text: '个人中心',
+                        iconCls: 'x-fa fa-user',
+                        expanded: false,
+                        selectable: false,
+                        children: [
+                            {
+                                text: '我的资产',
+                                iconCls: 'x-fa fa-gg',
+                                viewType: 'myAssets',
+                                leaf: true
+                            },{
+                                text: '个人信息',
+                                iconCls: 'x-fa fa-user-circle',
+                                viewType: 'profile',
+                                leaf: true
+                            }]
+                    }
+                  );
+                }
+              );
+            }
+            
 
             // rootTree.on(
             //   "load",function(){
@@ -387,7 +422,7 @@ Ext.define('Admin.view.main.MainController', {
 
         for(var i = 0; i < modules.length; i++) {
           var module3 = modules[i];
-          if(module3.modelName == "人事--员工管理、人事记录") {
+          if(module3.modelName == "人事--员工管理&人事记录") {
 			rootTree.on(
               "load",function(){
                 this.getRoot().appendChild(
@@ -417,7 +452,7 @@ Ext.define('Admin.view.main.MainController', {
                 );
               }
             );
-          } else if(module3.modelName == "人事--员工管理、人事记录、部门管理") {
+          } else if(module3.modelName == "人事--员工管理&人事记录&部门管理") {
 			rootTree.on(
               "load",function(){
                 this.getRoot().appendChild(
