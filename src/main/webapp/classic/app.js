@@ -102072,23 +102072,24 @@ Ext.define('Admin.view.log.Log', {extend:Ext.container.Container, xtype:'log', c
 Ext.define('Admin.view.log.LogGrid', {extend:Ext.grid.Panel, xtype:'logGrid', title:'\x3cb\x3e日志记录\x3c/b\x3e', bind:'{logLists}', id:'logGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'操作时间', sortable:true, dataIndex:'createDate', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'操作类型', sortable:true, dataIndex:'operation', width:100}, {text:'操作人用户名', sortable:true, dataIndex:'userName', width:100}, {text:'操作人姓名', sortable:true, dataIndex:'realName', 
 width:100}, {text:'具体操作', sortable:true, dataIndex:'content', flex:1}], tbar:Ext.create('Ext.Toolbar', {id:'logCondition', items:[{xtype:'tbtext', text:'用户名：'}, {xtype:'textfield', width:100, itemsId:'userName'}, {xtype:'tbtext', text:'姓名：'}, {xtype:'textfield', width:100, itemsId:'realName'}, {xtype:'tbtext', text:'操作类型：'}, {xtype:'textfield', width:100, itemsId:'operation'}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, 
 {xtype:'tbtext', text:'至：'}, {xtype:'datefield', editable:false, itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
-  var cc = Ext.getCmp('logCondition').items.getAt(5).getValue();
+  var cc = Ext.getCmp('logCondition').items.getAt(7).getValue();
   this.setMinValue(cc);
 }}}, {text:'查找', handler:'logGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
 Ext.define('Admin.view.log.LogViewController', {extend:Ext.app.ViewController, alias:'controller.logViewController', logGridFind:function(btn) {
   var grid = btn.up('gridpanel');
   var record = grid.getStore();
   var userName = Ext.getCmp('logCondition').items.getAt(1).getValue();
-  var operation = Ext.getCmp('logCondition').items.getAt(3).getValue();
+  var realName = Ext.getCmp('logCondition').items.getAt(3).getValue();
+  var operation = Ext.getCmp('logCondition').items.getAt(5).getValue();
   var beginTime = null;
   var endTime = null;
-  beginTime = Ext.getCmp('logCondition').items.getAt(5).getValue();
+  beginTime = Ext.getCmp('logCondition').items.getAt(7).getValue();
   if (beginTime && beginTime.length != 0) {
-    endTime = Ext.Date.add(Ext.getCmp('logCondition').items.getAt(7).getValue(), Ext.Date.DAY, 1);
+    endTime = Ext.Date.add(Ext.getCmp('logCondition').items.getAt(9).getValue(), Ext.Date.DAY, 1);
   } else {
-    endTime = Ext.getCmp('logCondition').items.getAt(7).getValue();
+    endTime = Ext.getCmp('logCondition').items.getAt(9).getValue();
   }
-  Ext.Ajax.request({url:'log/findByCondition.json', params:{userName:userName, operation:operation, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
+  Ext.Ajax.request({url:'log/findByCondition.json', params:{userName:userName, realName:realName, operation:operation, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     grid.getStore().loadData(tnpdata.content, false);
   }});
@@ -102170,9 +102171,21 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
     if (loadFlag == 0) {
       var rootTree = Ext.data.StoreManager.lookup('NavigationTree');
       var modules = eval(loginUserModules);
-      rootTree.on('load', function() {
-        this.getRoot().appendChild({text:'个人中心', iconCls:'x-fa fa-user', expanded:false, selectable:false, children:[{text:'资产列表', iconCls:'x-fa fa-money', viewType:'assets', leaf:true}, {text:'我的资产', iconCls:'x-fa fa-gg', viewType:'myAssets', leaf:true}, {text:'个人信息', iconCls:'x-fa fa-user-circle', viewType:'profile', leaf:true}]});
-      });
+      var profileFlag = 1;
+      for (var i = 0; i < modules.length; i++) {
+        if (modules[i].modelName == '个人中心--资产列表') {
+          profileFlag = 2;
+        }
+      }
+      if (profileFlag == 2) {
+        rootTree.on('load', function() {
+          this.getRoot().appendChild({text:'个人中心', iconCls:'x-fa fa-user', expanded:false, selectable:false, children:[{text:'资产列表', iconCls:'x-fa fa-money', viewType:'assets', leaf:true}, {text:'我的资产', iconCls:'x-fa fa-gg', viewType:'myAssets', leaf:true}, {text:'个人信息', iconCls:'x-fa fa-user-circle', viewType:'profile', leaf:true}]});
+        });
+      } else {
+        rootTree.on('load', function() {
+          this.getRoot().appendChild({text:'个人中心', iconCls:'x-fa fa-user', expanded:false, selectable:false, children:[{text:'我的资产', iconCls:'x-fa fa-gg', viewType:'myAssets', leaf:true}, {text:'个人信息', iconCls:'x-fa fa-user-circle', viewType:'profile', leaf:true}]});
+        });
+      }
       rootTree.on('load', function() {
         this.getRoot().appendChild({text:'信息中心', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'公告中心', iconCls:'x-fa fa-file-o', viewType:'notice', leaf:true}, {text:'资源下载', iconCls:'x-fa  fa-arrow-circle-o-down', viewType:'resources', leaf:true}, {text:'通讯录', iconCls:'x-fa fa-book ', viewType:'address', leaf:true}]});
       });
@@ -102228,12 +102241,12 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
       }
       for (var i = 0; i < modules.length; i++) {
         var module3 = modules[i];
-        if (module3.modelName == '人事--员工管理、人事记录') {
+        if (module3.modelName == '人事--员工管理\x26人事记录') {
           rootTree.on('load', function() {
             this.getRoot().appendChild({text:'人事管理', iconCls:'x-fa fa-bar-chart', expanded:false, selectable:false, children:[{text:'员工管理', iconCls:'x-fa fa-address-book', viewType:'staff', leaf:true}, {text:'人事记录', iconCls:'x-fa  fa-pencil ', viewType:'records', leaf:true}]});
           });
         } else {
-          if (module3.modelName == '人事--员工管理、人事记录、部门管理') {
+          if (module3.modelName == '人事--员工管理\x26人事记录\x26部门管理') {
             rootTree.on('load', function() {
               this.getRoot().appendChild({text:'人事管理', iconCls:'x-fa fa-bar-chart', expanded:false, selectable:false, children:[{text:'员工管理', iconCls:'x-fa fa-address-book', viewType:'staff', leaf:true}, {text:'部门管理', iconCls:'x-fa  fa-group', viewType:'department', leaf:true}, {text:'人事记录', iconCls:'x-fa  fa-pencil ', viewType:'records', leaf:true}]});
             });
@@ -102754,8 +102767,10 @@ Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewC
 }});
 Ext.define('Admin.view.resources.ResourcesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.resourcesViewModel', stores:{resourcesLists:{type:'resourcesStore', autoLoad:true}}});
 Ext.define('Admin.view.role.Role', {extend:Ext.container.Container, xtype:'role', controller:'roleViewController', viewModel:{type:'roleViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'roleGrid'}]});
-Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:130}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:80}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', 
-id:'roleAddButton', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', id:'roleUpdateButton', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', id:'roleDeleteButton', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'}), on:function() {
+Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', listeners:{cellclick:function(btn, td, cellIndex, record, tr, rowIndex) {
+  btn.up('panel').roleSelect = record;
+}}, id:'roleGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'roleId', sortable:true, dataIndex:'roleId', hidden:true}, {text:'角色名称', sortable:true, dataIndex:'roleName', width:130}, {text:'角色等级', sortable:true, dataIndex:'roleLevel', width:80}, {text:'所拥有的权限', sortable:true, dataIndex:'modulesText', flex:1}], tbar:Ext.create('Ext.Toolbar', {items:[{text:'添加角色', id:'roleAddButton', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'roleGridAdd'}}, '-', {text:'修改', 
+id:'roleUpdateButton', iconCls:'x-fa fa-edit', handler:'roleGridEdit'}, '-', {text:'删除', id:'roleDeleteButton', iconCls:'x-fa fa-trash', handler:'roleGridDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'}), on:function() {
   Ext.getCmp('roleAddButton').hide();
   Ext.getCmp('roleUpdateButton').hide();
   Ext.getCmp('roleDeleteButton').hide();
@@ -102770,7 +102785,7 @@ id:'roleAddButton', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'ro
   }
 }});
 Ext.define('Admin.view.role.RoleGridForm', {extend:Ext.form.Panel, alias:'widget.roleGridForm', id:'roleGridForm', controller:'roleViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'roleId'}, {xtype:'textfield', fieldLabel:'角色名称', name:'roleName'}, {xtype:'textfield', fieldLabel:'角色等级', name:'roleLevel'}, {xtype:'checkboxgroup', id:'checkboxgroupOperation', fieldLabel:'用户权限', 
-columns:4, vertical:true, listeners:{render:function() {
+columns:4, vertical:true, listeners:{render:function(btn) {
   Ext.Ajax.request({url:'module/findAll.json', async:false, success:function(response) {
     var data = eval('(' + response.responseText + ')');
     var len = data.length;
@@ -102808,7 +102823,18 @@ Ext.define('Admin.view.role.RoleViewController', {extend:Ext.app.ViewController,
   if (selModel.hasSelection()) {
     var record = selModel.getSelection()[0];
     var orderWindow = Ext.widget('roleGridWindow', {title:'修改订单', items:[{xtype:'roleGridForm'}]});
+    var record = btn.up('panel').roleSelect;
     orderWindow.down('form').getForm().loadRecord(record);
+    var modules = record.get('modulesText').split('、');
+    var itemsSize = orderWindow.down('form').items.getAt(3).items.length;
+    for (var j = 0; j < itemsSize; j++) {
+      var itemName = orderWindow.down('form').items.getAt(3).items.get(j).boxLabel;
+      for (var i = 0; i < modules.length; i++) {
+        if (itemName == modules[i]) {
+          orderWindow.down('form').items.getAt(3).items.getAt(j).setValue(true);
+        }
+      }
+    }
   } else {
     Ext.Msg.alert('提示', '请选择一行数据进行编辑!');
   }
