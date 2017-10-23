@@ -32,7 +32,7 @@ Ext.define('Admin.view.main.Main', {
                     xtype: 'component',
                     reference: 'senchaLogo',
                     cls: 'sencha-logo',
-                    html: '<div class="main-logo"><img src="resources/images/company-logo.png">OA_System</div>',
+                    html: '<div class="main-logo"><img src="resources/images/company-logo.png">卤肉饭</div>',
                     width: 250
                 },
                 {
@@ -41,6 +41,9 @@ Ext.define('Admin.view.main.Main', {
                     iconCls:'x-fa fa-navicon',
                     id: 'main-navigation-btn',
                     handler: 'onToggleNavigationSize'
+                },{
+                    xtype: 'displayfield',
+                    value:'<div style="color:#888888;font-size:16px;margin-left:20px;line-height:25px">欢迎使用卤肉饭OA管理系统</div>'
                 },
                 '->',
                 {

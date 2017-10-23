@@ -14,19 +14,31 @@ Ext.define('Admin.view.role.RoleViewController', {
     },
 	
 	roleGridEdit: function(btn) {
-		var grid = btn.up('gridpanel');//获取Grid视图
-		var selModel = grid.getSelectionModel();//获取Grid的SelectionModel
+    var grid = btn.up('gridpanel');//获取Grid视图
+    var selModel = grid.getSelectionModel();//获取Grid的SelectionModel
         if (selModel.hasSelection()) {//判断是否选中记录
            var record = selModel.getSelection()[0];//获取选中的第一条记录
            //创建修改window和form
-		   var orderWindow = Ext.widget('roleGridWindow',{
-				title:'修改订单',
-				items: [{xtype: 'roleGridForm'}]
-			});
-		   		//让form加载选中记录
-           orderWindow.down("form").getForm().loadRecord(record);
+       var orderWindow = Ext.widget('roleGridWindow',{
+        title:'修改订单',
+        items: [{xtype: 'roleGridForm'}]
+      });
+      var record=btn.up('panel').roleSelect;
+        //让form加载选中记录
+            orderWindow.down("form").getForm().loadRecord(record);
+        	var modules = record.get('modulesText').split('、');
+		    var itemsSize = orderWindow.down('form').items.getAt(3).items.length;
+		    for (var j = 0; j < itemsSize; j++) {
+		      var itemName = orderWindow.down('form').items.getAt(3).items.get(j).boxLabel;
+		      for (var i = 0; i < modules.length; i++) {
+		        if (itemName == modules[i]) {
+		          orderWindow.down('form').items.getAt(3).items.getAt(j).setValue(true);
+		        }
+		      }
+		    }
+            
         }else{
-        	Ext.Msg.alert('提示',"请选择一行数据进行编辑!");
+          Ext.Msg.alert('提示',"请选择一行数据进行编辑!");
         }
 
    },

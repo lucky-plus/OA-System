@@ -29,7 +29,14 @@ Ext.define('Admin.view.role.RoleGridForm', {
         labelWidth: 60,
         labelSeparator: ''
     },
-    items: [{
+    items: [
+ //    {
+	// 	xtype: 'hidden',
+	// 	fieldLabel: 'modulesText',
+	// 	//allowBlank: false,
+	// 	name:'modulesText'
+	// },
+	{
 		xtype: 'hidden',
 		fieldLabel: 'Id',
 		//allowBlank: false,
@@ -62,7 +69,7 @@ Ext.define('Admin.view.role.RoleGridForm', {
 		// 	{ boxLabel: '3-2', name: 'moduleIds', inputValue: '10' }
 		// ]
 		listeners: {
-	      render: function () {
+	      render: function (btn) {
 	        //通过extjs的ajax获取
 	        Ext.Ajax.request({
 	            url: 'module/findAll.json',
@@ -74,16 +81,34 @@ Ext.define('Admin.view.role.RoleGridForm', {
 	                if (data == null || len == 0) {
 	                    return;
 	                }
-
+	                // var modulesText = Ext.getCmp("roleGridForm").items.getAt(0).getValue();
+	                // Ext.Msg.alert(modulesText);
+	                // var modules = modulesText.split("、");
 	                var checkboxgroup = Ext.getCmp("checkboxgroupOperation");
 	                for (var i = 0; i < len; i++) {
-	                    var checkbox = new Ext.form.Checkbox(
-	                      {
-	                          boxLabel: data[i].modelName,
-	                          name: 'moduleIds',
-	                          inputValue: data[i].moduleId,
-	                          checked: false
-	                      });
+	                // 	var moduleFlag = 0;
+	                // 	for (var j = 0; j < modules.length; j++) {
+                 //        	if(data[i].modelName == modules[j].modelName) {
+                 //        		moduleFlag = 1;
+                 //        	}
+		               //  }
+		               //  if(moduleFlag == 1) {
+	                    // 	var checkbox = new Ext.form.Checkbox(
+	                    //     {
+	                    //         boxLabel: data[i].modelName,
+	                    //         name: 'moduleIds',
+	                    //         inputValue: data[i].moduleId,
+	                    //         checked: true
+	                    //     });
+	                    // } else {
+	                    	var checkbox = new Ext.form.Checkbox(
+	                        {
+	                            boxLabel: data[i].modelName,
+	                            name: 'moduleIds',
+	                            inputValue: data[i].moduleId,
+	                            checked: false
+	                        });
+	                    // }
 	                    checkboxgroup.items.add(checkbox);
 	                }
 	                //重新调整版面布局

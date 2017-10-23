@@ -116,7 +116,11 @@ Ext.define('Admin.view.homePage.HomePage', {
 		region:'east',
 		width: '30%',
 		margin: '10px 0x 0px 0px',
-		xtype: 'panel',
+		xtype: 'noticeWatchGrid',
+		title: '<div style="font-size:16px;color:#6F6F6F;"><b>公告通知</b></div>',
+			header:{
+			cls:'x-panel-header-new'
+		},
 	},{
 		region:'center',
 		margin: '10px 20px 0px 0px',
@@ -128,20 +132,20 @@ Ext.define('Admin.view.homePage.HomePage', {
 		},
 		items:[{
 			xtype: 'panel',
-			title: '<div style="font-size:16px;color:#6F6F6F"><b>| 快捷通道</b></div>',
+			title: '<div style="font-size:16px;color:#6F6F6F"><b>快捷通道</b></div>',
 			header:{
 			cls:'x-panel-header-new'
 			},		
-			margin: '0px 0px 10px 0px',
-			height:'30%',
+			margin: '0px 0px 0px 0px',
+			height:'40%',
 			layout:{
 				type:'hbox',
 				align: 'stretch'
 			},
 			items: [{
 					xtype: 'button', //或者xtype: 'component',				
-					text: '<div style="background:url(resources/images/flow.jpg); width:118px;height:110px;"></div>',
-					width:'16%',
+					text: '<div style="background:url(resources/images/请假申请.jpg); width:195px;height:194px;"></div>',
+					width:'25%',
 					margin: '0px 0px 0px 0px',
 					ui:'',
 					listeners:{
@@ -151,40 +155,71 @@ Ext.define('Admin.view.homePage.HomePage', {
 					}
 			}, {
 				xtype: 'button', //或者xtype: 'component',				
-					text: '<div style="background:url(resources/images/flow.jpg); width:118px;height:110px;"></div>',
-					width:'16%',
+				text: '<div style="background:url(resources/images/加班申请.jpg); width:195px;height:194px;"></div>',
+				width:'25%',
+				margin: '0px 0px 0px 0px',
+				ui:'',
+				listeners:{
+					click:function(){
+						document.location.href="#notice";  
+					}
+				}
+			}, {
+				xtype: 'button', //或者xtype: 'component',				
+				text: '<div style="background:url(resources/images/我的任务.jpg); width:195px;height:194px;"></div>',
+				width:'25%',
+				margin: '0px 0px 0px 0px',
+				ui:'',
+				listeners:{
+					click:function(){
+						document.location.href="#mytask";  
+					}
+				}
+			},{
+				xtype: 'button', //或者xtype: 'component',				
+				text: '<div style="background:url(resources/images/通讯录.jpg); width:195px;height:194px;"></div>',
+				width:'25%',
+				margin: '0px 0px 0px 0px',
+				ui:'',
+				listeners:{
+					click:function(){
+						document.location.href="#address";  
+					}
+				}
+			}]
+		},{
+			xtype: 'panel',
+			margin: '0px 0px 0px 0px',
+			height:'33%',
+			layout:{
+				type:'hbox',
+				align: 'stretch'
+			},
+			items: [{
+					xtype: 'button', //或者xtype: 'component',				
+					text: '<div style="background:url(resources/images/个人信息.jpg); width:195px;height:194px;"></div>',
+					width:'25%',
 					margin: '0px 0px 0px 0px',
 					ui:'',
 					listeners:{
 						click:function(){
-							document.location.href="#notice";  
+							document.location.href="#profile";  
 						}
 					}
 			}, {
 				xtype: 'panel',
-				width:'16%',
+				width:'25%',
+				margin: '0px 0px 0px 0px',
+			}, {
+				xtype: 'panel',
+				width:'25%',
 				margin: '0px 0px 0px 0px',
 			},{
 				xtype: 'panel',
-				width:'16%',
-				margin: '0px 0px 0px 0px',
-			},{
-				xtype: 'panel',
-				width:'16%',
-				margin: '0px 0px 0px 0px',
-			},{
-				xtype: 'panel',
-				width:'16%',
+				width:'25%',
 				margin: '0px 0px 0px 0px',
 			}]
-		},{
-			title: '<div style="font-size:16px;color:#6F6F6F;"><b>| 公告通知</b></div>',
-			header:{
-			cls:'x-panel-header-new'
-			},
-			height:'49%',
-			margin: '10px 0px 0px 0px',
-			xtype: 'noticeWatchGrid',
+		
 		}]
 	}
 
