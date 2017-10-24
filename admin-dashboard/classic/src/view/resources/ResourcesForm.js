@@ -66,7 +66,7 @@ Ext.define('Admin.view.resources.ResourcesForm', {
 			xtype: 'button',
 			//ui: 'gray',
 			text: '取消',
-			handler: 'orderGridWindowsClose'
+			handler: 'resourcesGridWindowsClose'
 		}]
     }
 });

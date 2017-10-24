@@ -36,7 +36,7 @@
 				ui:'soft-blue',
 				handler:function(){
 						var cfg = Ext.apply({
-							xtype:'orderWindow'
+							xtype:'resourcesWindow'
 						},
 						{
 							title:'资料上传',

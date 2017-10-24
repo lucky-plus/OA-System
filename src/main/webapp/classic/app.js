@@ -102101,7 +102101,7 @@ Ext.define('Admin.view.contract.ContractViewController', {extend:Ext.app.ViewCon
     if (button == 'yes') {
       var record = grid.getStore().getAt(rowIndex);
       var contractId = record.data.contractId;
-      Ext.Ajax.request({url:'contract/deleteone', method:'post', params:{id:contractId}});
+      Ext.Ajax.request({url:'contract/delete', method:'post', params:{ids:contractId}});
       Ext.getCmp('contractGrid').store.reload();
     }
   });
@@ -102787,7 +102787,9 @@ Ext.define('Admin.view.notice.notice', {extend:Ext.container.Container, xtype:'n
 Ext.define('Admin.view.notice.NoticeCompose', {extend:Ext.form.Panel, alias:'widget.noticeCompose', viewModel:{type:'noticeCompose'}, controller:'NoticeViewController', cls:'noticeCompose', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'noticeId', handler:'noticeGridOpenEditWindow'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'标题：', 
 name:'noticeName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'正文：', fontFamilies:['宋体', '隶书', '黑体'], name:'noticeText'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-red', text:'关闭', handler:'noticeGridWindowsClose'}, {xtype:'button', ui:'soft-green', text:'发布', handler:'noticeGridTextSubmit'}]}});
 Ext.define('Admin.view.notice.NoticeGrid', {extend:Ext.grid.Panel, xtype:'noticeGrid', title:'\x3cb\x3e公告列表\x3c/b\x3e', bind:'{noticeLists}', id:'noticeGrid', listeners:{cellclick:function(grid, td, cellIndex, record, tr, rowIndex) {
-  var orderWindow = Ext.widget('orderWindow', {title:'查看公告', html:'\x3ch2 align\x3d"center"\x3e' + grid.getStore().getAt(rowIndex).data.noticeName + '\x3c/h2\x3e' + '\x3cp\x3e' + grid.getStore().getAt(rowIndex).data.noticeText + '\x3c/p\x3e'});
+  if (cellIndex > 0 && cellIndex < 5) {
+    var noticeWindow = Ext.widget('noticeWindow', {title:'查看公告', html:'\x3ch2 align\x3d"center"\x3e' + grid.getStore().getAt(rowIndex).data.noticeName + '\x3c/h2\x3e' + '\x3cp\x3e' + grid.getStore().getAt(rowIndex).data.noticeText + '\x3c/p\x3e' + '\x3cp align\x3d"right"\x3e\x3cb\x3e' + grid.getStore().getAt(rowIndex).data.userName + '\x3c/b\x3e\x3c/p\x3e' + '\x3cp align\x3d"right"\x3e\x3cb\x3e' + Ext.util.Format.date(grid.getStore().getAt(rowIndex).data.noticeTime, 'Y-m-d H:i:s') + '\x3c/b\x3e\x3c/p\x3e'});
+  }
 }}, selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1}, {text:'发布时间', sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', id:'noticeUpdateDeleteColum', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:'noticeGridOpenEditWindow'}, 
 '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'noticeGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {id:'xiaotingzi2', items:[{text:'新增', id:'noticeAddButton', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'删除', id:'noticeDeleteButton', iconCls:'x-fa fa-trash', handler:'noticeGridDeleteDate'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300, itemsId:'searchText'}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', itemId:'beginDate', 
 format:'Y-m-d', value:'1972-01-01', editable:false}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', itemId:'endDate', format:'Y-m-d', value:new Date, editable:false, listeners:{focus:function() {
@@ -102834,8 +102836,8 @@ Ext.define('Admin.view.notice.NoticeViewController', {extend:Ext.app.ViewControl
     if (button == 'yes') {
       var record = grid.getStore().getAt(rowIndex);
       var noticeId = record.data.noticeId;
-      Ext.Ajax.request({url:'notice/deleteone', method:'post', params:{id:noticeId}});
-      grid.getStore().reload();
+      Ext.Ajax.request({url:'notice/delete', method:'post', params:{ids:noticeId}});
+      Ext.getCmp('noticeGrid').store.reload();
     }
   });
 }, noticeGridFind:function(btn) {
@@ -103100,10 +103102,10 @@ listeners:{'render':function(f) {
 Ext.define('Admin.view.profile.UserProfile', {extend:Admin.view.profile.UserProfileBase, xtype:'profile', cls:'userProfile-container', layout:'responsivecolumn', controller:'profileViewController', items:[{xtype:'profilesocial', userCls:'big-40 small-100 shadow'}, {xtype:'profileForm', userCls:'big-60 small-100 shadow'}]});
 Ext.define('Admin.view.resources.resources', {extend:Ext.container.Container, xtype:'resources', controller:'resourcesViewController', viewModel:{type:'resourcesViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'resourcesGrid'}]});
 Ext.define('Admin.view.resources.ResourcesForm', {extend:Ext.form.Panel, alias:'widget.resourcesForm', controller:'resourcesViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'resId'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'资料名称', name:'resName'}, {xtype:'fileuploadfield', fieldLabel:'文件(限制50M以内)'}], bbar:{overflowHandler:'menu', 
-items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'上传', handler:'fileUpload'}, {xtype:'button', text:'取消', handler:'orderGridWindowsClose'}]}});
+items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'上传', handler:'fileUpload'}, {xtype:'button', text:'取消', handler:'resourcesGridWindowsClose'}]}});
 Ext.define('Admin.view.resources.ResourcesGrid', {extend:Ext.grid.Panel, xtype:'resourcesGrid', title:'\x3cb\x3e资料中心\x3c/b\x3e', bind:'{resourcesLists}', id:'resourcesGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'资料编号', dataIndex:'resId', hidden:true}, {text:'资料名称', dataIndex:'resName', flex:1}, {text:'发布时间', sortable:true, dataIndex:'resDate', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', 
 text:'操作', width:150, tdCls:'action', items:['-', {icon:'resources/images/icons/dowanload.png', tooltip:'下载', handler:'resourcesGridDownloadOne'}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'resourcesGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {id:'resources2', items:[{text:'上传', id:'resourceUploadButton', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:function() {
-  var cfg = Ext.apply({xtype:'orderWindow'}, {title:'资料上传', items:[Ext.apply({xtype:'resourcesForm'})]});
+  var cfg = Ext.apply({xtype:'resourcesWindow'}, {title:'资料上传', items:[Ext.apply({xtype:'resourcesForm'})]});
   Ext.create(cfg);
 }}, '-', {text:'批量下载', iconCls:'x-fa fa-arrow-circle-o-down', handler:'resourcesGridDownloadMany'}, '-', {text:'批量删除', id:'resourceDeleteButton', iconCls:'x-fa fa-trash', handler:'resourcesGridDelete'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:150}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', format:'Y-m-d', value:'1972-01-01', editable:false}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', format:'Y-m-d', value:new Date, editable:false, listeners:{focus:function() {
   var cc = Ext.getCmp('resources2').items.getAt(9).getValue();
@@ -103181,11 +103183,11 @@ Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewC
     if (button == 'yes') {
       var record = grid.getStore().getAt(rowIndex);
       var resId = record.data.resId;
-      Ext.Ajax.request({url:'resources/deleteone', method:'post', params:{id:resId}});
-      grid.getStore().reload();
+      Ext.Ajax.request({url:'resources/delete', method:'post', params:{ids:resId}});
+      Ext.getCmp('resourcesGrid').store.reload();
     }
   });
-}, orderGridWindowsClose:function(btn) {
+}, resourcesGridWindowsClose:function(btn) {
   var win = btn.up('window');
   if (win) {
     win.close();
@@ -103215,6 +103217,21 @@ Ext.define('Admin.view.resources.ResourcesViewController', {extend:Ext.app.ViewC
   }
 }});
 Ext.define('Admin.view.resources.ResourcesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.resourcesViewModel', stores:{resourcesLists:{type:'resourcesStore', autoLoad:true}}});
+Ext.define('Admin.view.resources.ResourcesWindow', {extend:Ext.window.Window, alias:'widget.resourcesWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.3), Math.floor(height * 0.3));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
 Ext.define('Admin.view.role.Role', {extend:Ext.container.Container, xtype:'role', controller:'roleViewController', viewModel:{type:'roleViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'roleGrid'}]});
 Ext.define('Admin.view.role.RoleGrid', {extend:Ext.grid.Panel, xtype:'roleGrid', title:'\x3cb\x3e角色列表\x3c/b\x3e', bind:'{roleLists}', listeners:{cellclick:function(btn, td, cellIndex, record, tr, rowIndex) {
   btn.up('panel').roleSelect = record;

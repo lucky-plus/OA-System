@@ -7,12 +7,15 @@
   id:'noticeGrid',
   listeners:{
     cellclick:function(grid,td, cellIndex, record, tr, rowIndex){
+		if(cellIndex>0&&cellIndex<5){
       //var record = this.getStore().getAt(rowIndex); 
-        var orderWindow = Ext.widget('orderWindow',{
+        var noticeWindow = Ext.widget('noticeWindow',{
         title:'查看公告',
         html:'<h2 align="center">'+grid.getStore().getAt(rowIndex).data.noticeName+'</h2>'+'<p>'+grid.getStore().getAt(rowIndex).data.noticeText+'</p>'
+			+'<p align="right"><b>'+grid.getStore().getAt(rowIndex).data.userName+'</b></p>'+'<p align="right"><b>'+Ext.util.Format.date(grid.getStore().getAt(rowIndex).data.noticeTime, "Y-m-d H:i:s")+'</b></p>'
       });
     }
+	}
   },
   selModel: Ext.create('Ext.selection.CheckboxModel'),
   columns: [
@@ -65,10 +68,10 @@
         text:'时间：'
       },{
          xtype:'datefield',  
-                    itemId:'beginDate',  
-                    format:'Y-m-d',  
-          value:'1972-01-01',
-		  editable:false
+         itemId:'beginDate',  
+         format:'Y-m-d',  
+         value:'1972-01-01',
+		 editable:false
           
       
       },{xtype:'tbtext',

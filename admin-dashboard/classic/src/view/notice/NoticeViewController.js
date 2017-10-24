@@ -58,14 +58,14 @@ Ext.define('Admin.view.notice.NoticeViewController', {
 	   var record = grid.getStore().getAt(rowIndex);
 	   var noticeId=record.data.noticeId;
 	   Ext.Ajax.request({ 
-			url : 'notice/deleteone', 
+			url : 'notice/delete', 
 			method : 'post', 
 			params : { 
-					id:noticeId
+					ids:noticeId
 			},  
 			
 	   });
-	   grid.getStore().reload();
+	   Ext.getCmp('noticeGrid').store.reload();
 		}
 	   })
    },

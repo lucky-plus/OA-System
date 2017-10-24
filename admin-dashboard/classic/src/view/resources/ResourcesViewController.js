@@ -104,19 +104,19 @@ Ext.define('Admin.view.resources.ResourcesViewController', {
 	   var record = grid.getStore().getAt(rowIndex);
 	   var resId=record.data.resId;
 	   Ext.Ajax.request({ 
-			url : 'resources/deleteone', 
+			url : 'resources/delete', 
 			method : 'post', 
 			params : { 
-					id:resId
+					ids:resId
 			}
 			
 	   });
-	   grid.getStore().reload();
+	    Ext.getCmp('resourcesGrid').store.reload();
 		}
 	   })
    },
    
-   orderGridWindowsClose:function(btn) {
+   resourcesGridWindowsClose:function(btn) {
 		var win = btn.up('window');
 		if (win) {
 			win.close();

@@ -40,10 +40,10 @@ Ext.define('Admin.view.contract.ContractViewController', {
 	   var record = grid.getStore().getAt(rowIndex);
 	   var contractId=record.data.contractId;
 	   Ext.Ajax.request({ 
-			url : 'contract/deleteone', 
+			url : 'contract/delete', 
 			method : 'post', 
 			params : { 
-					id:contractId
+					ids:contractId
 			}
 			
 	   });
