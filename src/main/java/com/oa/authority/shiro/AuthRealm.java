@@ -15,6 +15,8 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.oa.staff.service.IStaffService;
+import com.oa.authority.entity.Module;
+import com.oa.authority.entity.Role;
 import com.oa.staff.entity.UserInfornation;
 
 /**
@@ -28,21 +30,44 @@ public class AuthRealm extends AuthorizingRealm {
 	
 	//授权   当jsp页面出现Shiro标签时，就会执行授权方法
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection pc) {
-//		System.out.println("授权");
-//		CrmStaff staff = (CrmStaff) pc.fromRealm(this.getName()).iterator().next();//根据realm的名字去找对应的realm
-//		
-//		List<Role> roles = staff.getRoles();//对象导航
-//		List<String> permissions = new ArrayList<String>();
-//		for(Role role :roles){
-//			//遍历每个角色 
-//			List<Module> modules = role.getModules();//得到每个角色下的模块列表
-//			for(Module m :modules){
-//				permissions.add(m.getModelName());
-//			}
-//		}
-//		
+		System.out.println("授权");
+		UserInfornation user = (UserInfornation) pc.fromRealm(this.getName()).iterator().next();//根据realm的名字去找对应的realm
+		
+		List<String> permissions = new ArrayList<String>();
+		List<Module> modules = user.getRole().getModules();//得到每个角色下的模块列表
+		
+		for(Module m :modules){
+			if("用户管理".equals(m.getModelName())) {
+				permissions.add("role");
+			}
+			if("角色--添加修改删除".equals(m.getModelName())) {
+				permissions.add("roleSaveOrAdd");
+				permissions.add("roleDelte");
+			}
+			if("公告--添加修改删除".equals(m.getModelName())) {
+				permissions.add("noticSaveOrAdd");
+				permissions.add("noticDelete");
+			}
+			if("日志中心".equals(m.getModelName())) {
+				permissions.add("logFind");
+			}
+			if("资源--上传删除".equals(m.getModelName())) {
+				permissions.add("resourcesUpload");
+			}
+			if("人事--员工管理&人事记录".equals(m.getModelName())) {
+				permissions.add("personal");
+			} else if("人事--员工管理&人事记录&部门管理".equals(m.getModelName())) {
+				permissions.add("personal");
+			}
+			if("任务--发布任务".equals(m.getModelName())) {
+				permissions.add("task");
+			}
+			if("资产列表".equals(m.getModelName())) {
+				permissions.add("assets");
+			}
+		}
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-//		info.addStringPermissions(permissions);//添加用户的模块（权限）
+		info.addStringPermissions(permissions);//添加用户的模块（权限）
 		return info;
 	}
 	

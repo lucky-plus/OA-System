@@ -174,7 +174,7 @@ Ext.define('Admin.view.main.MainController', {
 
             var profileFlag = 1;
             for (var i = 0; i < modules.length; i++) {
-                if(modules[i].modelName == "个人中心--资产列表") {
+                if(modules[i].modelName == "资产列表") {
                   profileFlag = 2;
                   
                 }
