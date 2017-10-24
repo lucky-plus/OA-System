@@ -57,6 +57,7 @@ Ext.define('Admin.view.profile.ProfileForm', {
         xtype: 'fieldcontainer',
         margin: '30 0 10 0',
         layout:'hbox',
+        fieldLabel: '姓名',
         combineErrors: true,
         defaultType: 'textfield',
 
@@ -67,7 +68,7 @@ Ext.define('Admin.view.profile.ProfileForm', {
             anchor:'90%'
           },
         items: [{
-            fieldLabel: '名字',
+            fieldLabel: '姓名',
             emptyText:'Name',
             flex:1,
             allowBlank: false,
@@ -249,11 +250,11 @@ Ext.define('Admin.view.profile.ProfileForm', {
     },{
           xtype: 'hidden',
           fieldLabel: 'userName',
-            name:'userName'
+          name:'userName'
     },{
           xtype: 'hidden',
           fieldLabel: 'pictureFileName',
-            name:'pictureFileName'
+          name:'pictureFileName'
     }
     ],
 
@@ -261,12 +262,6 @@ Ext.define('Admin.view.profile.ProfileForm', {
         text: '保存',
         listeners: {
             click: 'saveInfomationSubmit'
-        }
-    }, {
-        text: '上传头像',
-        //hanlder:
-        listeners: {
-            click: 'showFileUploadFormWindow'
         }
     }],
       on: function() {

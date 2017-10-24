@@ -61,7 +61,7 @@
 				text:'标题：'
 			},{
 				xtype:'textfield',
-				width:300
+				width:150
 			},{
 				xtype:'tbtext',
 				text:'时间：'

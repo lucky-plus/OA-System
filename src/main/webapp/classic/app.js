@@ -86957,6 +86957,251 @@ Ext.define('Ext.tree.Panel', {extend:Ext.panel.Table, alias:'widget.treepanel', 
 }, selectPath:function(path, field, separator, callback, scope) {
   this.ensureVisible(path, {field:field, separator:separator, select:true, callback:callback, scope:scope});
 }});
+Ext.define('Ext.window.Toast', {extend:Ext.window.Window, xtype:'toast', isToast:true, cls:Ext.baseCSSPrefix + 'toast', bodyPadding:10, autoClose:true, plain:false, draggable:false, resizable:false, shadow:false, focus:Ext.emptyFn, anchor:null, useXAxis:false, align:'t', alwaysOnTop:true, spacing:6, paddingX:30, paddingY:10, slideInAnimation:'easeIn', slideBackAnimation:'bounceOut', slideInDuration:500, slideBackDuration:500, hideDuration:500, autoCloseDelay:3000, stickOnClick:false, stickWhileHover:true, 
+closeOnMouseDown:false, closable:false, minHeight:1, focusable:false, isHiding:false, isFading:false, destroyAfterHide:false, closeOnMouseOut:false, xPos:0, yPos:0, constructor:function(config) {
+  config = config || {};
+  if (config.animate === undefined) {
+    config.animate = Ext.isBoolean(this.animate) ? this.animate : Ext.enableFx;
+  }
+  this.enableAnimations = config.animate;
+  delete config.animate;
+  this.callParent([config]);
+}, initComponent:function() {
+  var me = this;
+  if (me.autoClose && me.closable == null) {
+    me.closable = false;
+  }
+  me.updateAlignment(me.align);
+  me.setAnchor(me.anchor);
+  me.callParent();
+}, onRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.el.hover(me.onMouseEnter, me.onMouseLeave, me);
+  if (me.closeOnMouseDown) {
+    Ext.getDoc().on('mousedown', me.onDocumentMousedown, me);
+  }
+}, alignmentProps:{br:{paddingFactorX:-1, paddingFactorY:-1, siblingAlignment:'br-br', anchorAlign:'tr-br'}, bl:{paddingFactorX:1, paddingFactorY:-1, siblingAlignment:'bl-bl', anchorAlign:'tl-bl'}, tr:{paddingFactorX:-1, paddingFactorY:1, siblingAlignment:'tr-tr', anchorAlign:'br-tr'}, tl:{paddingFactorX:1, paddingFactorY:1, siblingAlignment:'tl-tl', anchorAlign:'bl-tl'}, b:{paddingFactorX:0, paddingFactorY:-1, siblingAlignment:'b-b', useXAxis:0, anchorAlign:'t-b'}, t:{paddingFactorX:0, paddingFactorY:1, 
+siblingAlignment:'t-t', useXAxis:0, anchorAlign:'b-t'}, l:{paddingFactorX:1, paddingFactorY:0, siblingAlignment:'l-l', useXAxis:1, anchorAlign:'r-l'}, r:{paddingFactorX:-1, paddingFactorY:0, siblingAlignment:'r-r', useXAxis:1, anchorAlign:'l-r'}, x:{br:{anchorAlign:'bl-br'}, bl:{anchorAlign:'br-bl'}, tr:{anchorAlign:'tl-tr'}, tl:{anchorAlign:'tr-tl'}}}, updateAlignment:function(align) {
+  var me = this, alignmentProps = me.alignmentProps, props = alignmentProps[align], xprops = alignmentProps.x[align];
+  if (xprops && me.useXAxis) {
+    Ext.applyIf(me, xprops);
+  }
+  Ext.applyIf(me, props);
+}, getXposAlignedToAnchor:function() {
+  var me = this, align = me.align, anchor = me.anchor, anchorEl = anchor && anchor.el, el = me.el, xPos = 0;
+  if (anchorEl && anchorEl.dom) {
+    if (!me.useXAxis) {
+      xPos = el.getLeft();
+    } else {
+      if (align === 'br' || align === 'tr' || align === 'r') {
+        xPos += anchorEl.getAnchorXY('r')[0];
+        xPos -= el.getWidth() + me.paddingX;
+      } else {
+        xPos += anchorEl.getAnchorXY('l')[0];
+        xPos += me.paddingX;
+      }
+    }
+  }
+  return xPos;
+}, getYposAlignedToAnchor:function() {
+  var me = this, align = me.align, anchor = me.anchor, anchorEl = anchor && anchor.el, el = me.el, yPos = 0;
+  if (anchorEl && anchorEl.dom) {
+    if (me.useXAxis) {
+      yPos = el.getTop();
+    } else {
+      if (align === 'br' || align === 'bl' || align === 'b') {
+        yPos += anchorEl.getAnchorXY('b')[1];
+        yPos -= el.getHeight() + me.paddingY;
+      } else {
+        yPos += anchorEl.getAnchorXY('t')[1];
+        yPos += me.paddingY;
+      }
+    }
+  }
+  return yPos;
+}, getXposAlignedToSibling:function(sibling) {
+  var me = this, align = me.align, el = me.el, xPos;
+  if (!me.useXAxis) {
+    xPos = el.getLeft();
+  } else {
+    if (align === 'tl' || align === 'bl' || align === 'l') {
+      xPos = sibling.xPos + sibling.el.getWidth() + sibling.spacing;
+    } else {
+      xPos = sibling.xPos - el.getWidth() - me.spacing;
+    }
+  }
+  return xPos;
+}, getYposAlignedToSibling:function(sibling) {
+  var me = this, align = me.align, el = me.el, yPos;
+  if (me.useXAxis) {
+    yPos = el.getTop();
+  } else {
+    if (align === 'tr' || align === 'tl' || align === 't') {
+      yPos = sibling.yPos + sibling.el.getHeight() + sibling.spacing;
+    } else {
+      yPos = sibling.yPos - el.getHeight() - sibling.spacing;
+    }
+  }
+  return yPos;
+}, getToasts:function() {
+  var anchor = this.anchor, alignment = this.anchorAlign, activeToasts = anchor.activeToasts || (anchor.activeToasts = {});
+  return activeToasts[alignment] || (activeToasts[alignment] = []);
+}, setAnchor:function(anchor) {
+  var me = this, Toast;
+  me.anchor = anchor = typeof anchor === 'string' ? Ext.getCmp(anchor) : anchor;
+  if (!anchor) {
+    Toast = Ext.window.Toast;
+    me.anchor = Toast.bodyAnchor || (Toast.bodyAnchor = {el:Ext.getBody()});
+  }
+}, beforeShow:function() {
+  var me = this;
+  if (me.stickOnClick) {
+    me.body.on('click', function() {
+      me.cancelAutoClose();
+    });
+  }
+  if (me.autoClose) {
+    if (!me.closeTask) {
+      me.closeTask = new Ext.util.DelayedTask(me.doAutoClose, me);
+    }
+  }
+  me.el.setX(-10000);
+  me.el.setOpacity(1);
+}, afterShow:function() {
+  var me = this, el = me.el, activeToasts, sibling, length, xy;
+  me.callParent(arguments);
+  activeToasts = me.getToasts();
+  length = activeToasts.length;
+  sibling = length && activeToasts[length - 1];
+  if (sibling) {
+    el.alignTo(sibling.el, me.siblingAlignment, [0, 0]);
+    me.xPos = me.getXposAlignedToSibling(sibling);
+    me.yPos = me.getYposAlignedToSibling(sibling);
+  } else {
+    el.alignTo(me.anchor.el, me.anchorAlign, [me.paddingX * me.paddingFactorX, me.paddingY * me.paddingFactorY], false);
+    me.xPos = me.getXposAlignedToAnchor();
+    me.yPos = me.getYposAlignedToAnchor();
+  }
+  Ext.Array.include(activeToasts, me);
+  if (me.enableAnimations) {
+    xy = el.getXY();
+    el.animate({from:{x:xy[0], y:xy[1]}, to:{x:me.xPos, y:me.yPos, opacity:1}, easing:me.slideInAnimation, duration:me.slideInDuration, dynamic:true, callback:me.afterPositioned, scope:me});
+  } else {
+    me.setLocalXY(me.xPos, me.yPos);
+    me.afterPositioned();
+  }
+}, afterPositioned:function() {
+  var me = this;
+  if (!me.destroying && !me.destroyed && me.autoClose) {
+    me.closeTask.delay(me.autoCloseDelay);
+  }
+}, onDocumentMousedown:function(e) {
+  if (this.isVisible() && !this.owns(e.getTarget())) {
+    this.hide();
+  }
+}, slideBack:function() {
+  var me = this, anchor = me.anchor, anchorEl = anchor && anchor.el, el = me.el, activeToasts = me.getToasts(), index = Ext.Array.indexOf(activeToasts, me);
+  if (!me.isHiding && el && el.dom && anchorEl && anchorEl.isVisible()) {
+    if (index) {
+      me.xPos = me.getXposAlignedToSibling(activeToasts[index - 1]);
+      me.yPos = me.getYposAlignedToSibling(activeToasts[index - 1]);
+    } else {
+      me.xPos = me.getXposAlignedToAnchor();
+      me.yPos = me.getYposAlignedToAnchor();
+    }
+    me.stopAnimation();
+    if (me.enableAnimations) {
+      el.animate({to:{x:me.xPos, y:me.yPos}, easing:me.slideBackAnimation, duration:me.slideBackDuration, dynamic:true});
+    }
+  }
+}, update:function() {
+  var me = this;
+  if (me.isVisible()) {
+    me.isHiding = true;
+    me.hide();
+  }
+  me.callParent(arguments);
+  me.show();
+}, cancelAutoClose:function() {
+  var closeTask = this.closeTask;
+  if (closeTask) {
+    closeTask.cancel();
+  }
+}, doAutoClose:function() {
+  var me = this;
+  if (!(me.stickWhileHover && me.mouseIsOver)) {
+    me.close();
+  } else {
+    me.closeOnMouseOut = true;
+  }
+}, doDestroy:function() {
+  this.removeFromAnchor();
+  this.cancelAutoClose();
+  this.callParent();
+}, onMouseEnter:function() {
+  this.mouseIsOver = true;
+}, onMouseLeave:function() {
+  var me = this;
+  me.mouseIsOver = false;
+  if (me.closeOnMouseOut) {
+    me.closeOnMouseOut = false;
+    me.close();
+  }
+}, removeFromAnchor:function() {
+  var me = this, activeToasts, index;
+  if (me.anchor) {
+    activeToasts = me.getToasts();
+    index = Ext.Array.indexOf(activeToasts, me);
+    if (index !== -1) {
+      Ext.Array.erase(activeToasts, index, 1);
+      for (; index < activeToasts.length; index++) {
+        activeToasts[index].slideBack();
+      }
+    }
+  }
+}, getFocusEl:Ext.emptyFn, hide:function() {
+  var me = this, el = me.el;
+  me.cancelAutoClose();
+  if (me.isHiding) {
+    if (!me.isFading) {
+      me.callParent(arguments);
+      me.isHiding = false;
+    }
+  } else {
+    me.isHiding = true;
+    me.isFading = true;
+    me.cancelAutoClose();
+    if (el) {
+      if (me.enableAnimations && !me.destroying && !me.destroyed) {
+        el.fadeOut({opacity:0, easing:'easeIn', duration:me.hideDuration, listeners:{scope:me, afteranimate:function() {
+          var me = this;
+          me.isFading = false;
+          if (!me.destroying && !me.destroyed) {
+            me.hide(me.animateTarget, me.doClose, me);
+          }
+        }}});
+      } else {
+        me.isFading = false;
+        me.hide(me.animateTarget, me.doClose, me);
+      }
+    }
+  }
+  return me;
+}}, function(Toast) {
+  Ext.toast = function(message, title, align, iconCls) {
+    var config = message, toast;
+    if (Ext.isString(message)) {
+      config = {title:title, html:message, iconCls:iconCls};
+      if (align) {
+        config.align = align;
+      }
+    }
+    toast = new Toast(config);
+    toast.show();
+    return toast;
+  };
+});
 Ext.define('Ext.draw.ContainerBase', {extend:Ext.panel.Panel, previewTitleText:'Chart Preview', previewAltText:'Chart preview', layout:'container', addElementListener:function() {
   var me = this, args = arguments;
   if (me.rendered) {
@@ -101304,6 +101549,7 @@ Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:
 Ext.define('Admin.model.assets.AssetsModel', {extend:Admin.model.Base, fields:[{name:'assetsId', type:'int'}, {name:'assetsNumber', type:'string'}, {name:'assetsUsedTime', type:'date'}, {name:'beginDate', type:'date'}, {name:'endDate', type:'date'}, {name:'assetsName', type:'string'}, {name:'assetsPrice', type:'float'}, {name:'highPrice', type:'float'}, {name:'lowPrice', type:'float'}, {name:'assetsType', type:'string'}, {name:'userId', type:'string'}, {name:'realName', type:'string'}]});
 Ext.define('Admin.model.assets.MyAssetsModel', {extend:Admin.model.Base, fields:[{name:'assetsId', type:'int'}, {name:'assetsNumber', type:'string'}, {name:'assetsUsedTime', type:'date'}, {name:'beginDate', type:'date'}, {name:'endDate', type:'date'}, {name:'assetsName', type:'string'}, {name:'assetsPrice', type:'float'}, {name:'highPrice', type:'float'}, {name:'lowPrice', type:'float'}, {name:'assetsType', type:'string'}, {name:'userId', type:'string'}, {name:'realName', type:'string'}]});
 Ext.define('Admin.model.authority.AuthorityModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'roleId', type:'int'}, {name:'userName', type:'string'}, {name:'realName', type:'string'}, {name:'roleName', type:'string'}, {name:'modulesText', type:'string'}]});
+Ext.define('Admin.model.business.ContractModel', {extend:Admin.model.Base, fields:[{name:'contractId', type:'int'}, {name:'contractNum', type:'string'}, {name:'contractName', type:'string'}, {name:'Company', type:'string'}, {name:'contractFile', type:'string'}, {name:'contractDate', type:'date'}, {name:'contractState', type:'string'}, {name:'userId', type:'string'}]});
 Ext.define('Admin.model.department.DepartmentModel', {extend:Admin.model.Base, fields:[{name:'deptId', type:'int'}, {name:'deptName', type:'string'}, {name:'parentId', type:'int'}]});
 Ext.define('Admin.model.department.PostModel', {extend:Admin.model.Base, fields:[{name:'postId', type:'int'}, {name:'postName', type:'string'}, {name:'deptName', type:'string'}, {name:'postDescribe', type:'string'}]});
 Ext.define('Admin.model.email.Email', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {name:'read'}, {type:'string', name:'title'}, {name:'user_id'}, {type:'string', name:'contents'}, {type:'string', name:'from'}, {name:'has_attachments'}, {name:'attachments'}, {name:'received_on', type:'date'}, {name:'favorite'}]});
@@ -101324,11 +101570,12 @@ Ext.define('Admin.model.staff.StaffModel', {extend:Admin.model.Base, fields:[{na
 Ext.define('Admin.model.task.TaskModel', {extend:Admin.model.Base, fields:[{name:'taskId', type:'int'}, {name:'createId', type:'int'}, {name:'userId', type:'int'}, {name:'taskName', type:'string'}, {name:'taskText', type:'string'}, {name:'createDate', type:'date'}, {name:'completeDate', type:'string'}, {name:'taskState', type:'string'}, {name:'createName', type:'string'}, {name:'userName', type:'string'}, {name:'realName', type:'string'}]});
 Ext.define('Admin.proxy.API', {extend:Ext.data.proxy.Ajax, alias:'proxy.api', reader:{type:'json', rootProperty:'data'}});
 Ext.define('Admin.store.myAssets.MyAssetsStore', {extend:Ext.data.Store, alias:'store.myAssetsStore', model:'Admin.model.assets.AssetsModel', proxy:{type:'ajax', url:'assets/findAssetsByUserId.json?userId\x3d' + loginUserId, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'assetsId'}});
-Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'系统首页', iconCls:'x-fa  fa-home', viewType:'dashboard', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', 
-viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}]}});
+Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'系统首页', iconCls:'x-fa  fa-home', viewType:'dashboard', leaf:true}, {text:'合同管理', iconCls:'x-fa  fa-home', viewType:'contract', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', 
+viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}]}});
 Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.assets.AssetsStore', {extend:Ext.data.Store, alias:'store.assetsStore', model:'Admin.model.assets.AssetsModel', proxy:{type:'ajax', url:'assets/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'assetsId'}});
 Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json?roleLevel\x3d' + loginUserRoleLevel, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
+Ext.define('Admin.store.business.ContractStore', {extend:Ext.data.Store, alias:'store.contractStore', model:'Admin.model.business.ContractModel', proxy:{type:'ajax', url:'contract/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'contractId'}});
 Ext.define('Admin.store.department.DepartmentStore', {extend:Ext.data.TreeStore, alias:'store.departmentStore', id:'departmentStore', proxy:{type:'ajax', url:'dept/findNodes', reader:{type:'json'}}, root:{text:'组织架构', expanded:true}});
 Ext.define('Admin.store.department.PostStore', {extend:Ext.data.Store, alias:'store.postStore', model:'Admin.model.department.PostModel', proxy:{type:'ajax', url:'post/findPostsByDeptId.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'postId'}});
 Ext.define('Admin.store.email.Friends', {extend:Ext.data.Store, alias:'store.emailfriends', model:'Admin.model.email.Friend', autoLoad:true, proxy:{type:'api', url:'~api/email/friends'}, sorters:{direction:'DESC', property:'online'}});
@@ -101409,7 +101656,7 @@ padding:'0 0 12 0'}, {xtype:'container', flex:1, cls:'about-me-wrap', html:'\x3c
 Ext.define('Admin.view.profile.Notifications', {extend:Ext.DataView, xtype:'profilenotifications', cls:'user-notifications', scrollable:false, bind:{store:'{userSharedItems}'}, itemSelector:'div.timeline-item', itemTpl:["\x3cdiv class\x3d'comments {[values._id !\x3d\x3d values.parent_id ? 'sub-comments' : '']}'\x3e", "\x3cimg src\x3d'resources/images/user-profile/15.png' alt\x3d'Smiley face' class\x3d'profile-icon'\x3e", "\x3cdiv class\x3d'content-wrap'\x3e", '\x3cdiv\x3e', "\x3ch4 class\x3d'profilenotifications-username'\x3e{name}\x3cspan class\x3d'x-fa fa-mobile'\x3e\x3c/span\x3e\x3c/h4\x3e", 
 "\x3cspan class\x3d'from-now'\x3e\x3cspan class\x3d'x-fa fa-clock-o'\x3e\x3c/span\x3e3 Hours Ago\x3c/span\x3e", '\x3c/div\x3e', "\x3cdiv class\x3d'content'\x3e{content}\x3c/div\x3e", "\x3cdiv class\x3d'like-comment-btn-wrap'\x3e", "\x3cbutton type\x3d'button' class\x3d'x-fa fa-thumbs-up' onclick\x3d''\x3e\x3c/button\x3e", "\x3cbutton type\x3d'button' class\x3d'x-fa fa-thumbs-down' onclick\x3d''\x3e\x3c/button\x3e", "\x3cbutton type\x3d'button' onclick\x3d'' class\x3d'x-fa fa-comments'\x3e\x3c/button\x3e", 
 '\x3c/div\x3e', '\x3c/div\x3e', '\x3c/div\x3e']});
-Ext.define('Admin.view.profile.Social', {extend:Ext.panel.Panel, xtype:'profilesocial', layout:{type:'vbox', align:'middle'}, cls:'timeline-items-wrap user-profile-desc', height:320, bodyPadding:20, items:[{xtype:'image', cls:'userProfilePic', height:120, width:120, alt:'profile-picture', src:'resources/images/user-profile/' + pictureFileName}, {xtype:'component', cls:'userProfileName', html:loginUserRealName}, {xtype:'component', cls:'userProfileDesc', html:loginUserDeptName}, {xtype:'component', 
+Ext.define('Admin.view.profile.Social', {extend:Ext.panel.Panel, xtype:'profilesocial', id:'socialCard', layout:{type:'vbox', align:'middle'}, cls:'timeline-items-wrap user-profile-desc', height:320, bodyPadding:20, items:[{xtype:'image', cls:'userProfilePic', height:120, width:120, alt:'profile-picture', src:'resources/images/user-profile/' + pictureFileName}, {xtype:'component', cls:'userProfileName', html:loginUserRealName}, {xtype:'component', cls:'userProfileDesc', html:loginUserDeptName}, {xtype:'component', 
 padding:'0 0 12 0', html:loginUserPostName}, {xtype:'button', renderTO:Ext.getBody(), width:200, text:'头像上传', listeners:{click:'showFileUploadFormWindow'}}]});
 Ext.define('Admin.view.profile.Timeline', {extend:Ext.DataView, xtype:'profiletimeline', cls:'timeline-items-wrap', scrollable:false, bind:'{userTimeline}', itemSelector:'.timeline-item', itemTpl:['\x3cdiv class\x3d"timeline-item{userId:this.cls(values,parent[xindex-2],xindex-1,xcount)}"\x3e' + '{date:this.epoch(values,parent[xindex-2],xindex-1,xcount)}' + '\x3cdiv class\x3d"profile-pic-wrap"\x3e' + '\x3cimg src\x3d"resources/images/user-profile/{userId}.png" alt\x3d"Smiley face"\x3e' + '\x3cdiv\x3e{date:this.elapsed} ago\x3c/div\x3e' + 
 '\x3c/div\x3e' + '\x3ctpl if\x3d"notificationType \x3d\x3d \'image_sharing\'"\x3e' + '\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + '\x3cdiv class\x3d"shared-by"\x3e\x3ca href\x3d"#"\x3e{name}\x3c/a\x3e shared an image\x3c/div\x3e' + '\x3cimg src\x3d"resources/images/img2.jpg" class\x3d"shared-img" alt\x3d"Smiley face"\x3e' + '\x3c/div\x3e' + '\x3c/div\x3e' + '\x3ctpl elseif\x3d"notificationType \x3d\x3d \'job_meeting\'"\x3e' + '\x3cdiv class\x3d"line-wrap"\x3e' + '\x3cdiv class\x3d"contents-wrap"\x3e' + 
@@ -101481,10 +101728,10 @@ Ext.define('Admin.view.profile.Timeline', {extend:Ext.DataView, xtype:'profileti
 Ext.define('Admin.view.profile.UserProfileBase', {extend:Ext.Container, viewModel:{type:'userprofile'}});
 Ext.define('Admin.view.profile.UserProfileModel', {extend:Ext.app.ViewModel, alias:'viewmodel.userprofile', stores:{userSharedItems:{autoLoad:true, fields:[{name:'_id'}, {name:'parent_id'}, {name:'name'}, {name:'source'}, {name:'date'}, {name:'isActive'}, {name:'time'}, {name:'content'}], proxy:{type:'api', url:'~api/usershareditems'}}, userTimeline:{autoLoad:true, fields:[{name:'_id'}, {name:'name'}, {name:'content'}, {name:'date', type:'date'}, {name:'userId'}, {name:'notificationType'}], proxy:{type:'api', 
 url:'~api/usertimeline'}}}});
-Ext.define('Admin.view.main.Main', {extend:Ext.container.Viewport, controller:'main', viewModel:'main', cls:'sencha-dash-viewport', itemId:'mainView', layout:{type:'vbox', align:'stretch'}, listeners:{render:'onMainViewRender'}, items:[{xtype:'toolbar', cls:'sencha-dash-dash-headerbar shadow', height:64, itemId:'headerBar', bodyStyle:'background:#ccc;', items:[{xtype:'component', reference:'senchaLogo', cls:'sencha-logo', html:'\x3cdiv class\x3d"main-logo"\x3e\x3cimg src\x3d"resources/images/company-logo.png"\x3e卤肉饭\x3c/div\x3e', 
-width:250}, {margin:'0 0 0 8', ui:'header', iconCls:'x-fa fa-navicon', id:'main-navigation-btn', handler:'onToggleNavigationSize'}, {xtype:'displayfield', value:'\x3cdiv style\x3d"color:#888888;font-size:16px;margin-left:20px;line-height:25px"\x3e欢迎使用卤肉饭OA管理系统\x3c/div\x3e'}, '-\x3e', {xtype:'segmentedbutton', margin:'0 16 0 0', platformConfig:{ie9m:{hidden:true}}}, {iconCls:'x-fa fa-th-large', ui:'header', href:'#profile', hrefTarget:'_self', tooltip:'个人中心'}, {xtype:'tbtext', text:loginUser, cls:'top-user-name'}, 
-{xtype:'button', reference:'logoutButton', scale:'small', iconAlign:'right', ui:'', text:'\x3cdiv style\x3d"height:30px;line-height:30pxfont-size:14px;line-height:30px;"\x3e' + '\x3cspan\x3e注销 \x3e\x3c/span\x3e\x3c/div\x3e', formBind:true, listeners:{click:'onLogoutButton'}}]}, {xtype:'maincontainerwrap', id:'main-view-detail-wrap', reference:'mainContainerWrap', flex:1, items:[{xtype:'treelist', reference:'navigationTreeList', itemId:'navigationTreeList', ui:'nav', store:'NavigationTree', width:250, 
-expanderFirst:false, expanderOnly:false, listeners:{selectionchange:'onNavigationTreeSelectionChange'}}, {xtype:'container', flex:1, reference:'mainCardPanel', cls:'sencha-dash-right-main-container', itemId:'contentPanel', layout:{type:'card', anchor:'100%'}}]}]});
+Ext.define('Admin.view.main.Main', {extend:Ext.container.Viewport, controller:'main', viewModel:'main', cls:'sencha-dash-viewport', itemId:'mainView', layout:{type:'vbox', align:'stretch'}, listeners:{render:'onMainViewRender'}, items:[{xtype:'toolbar', cls:'sencha-dash-dash-headerbar shadow', height:64, itemId:'headerBar', items:[{xtype:'component', reference:'senchaLogo', cls:'sencha-logo', html:'\x3cdiv class\x3d"main-logo"\x3e\x3cimg src\x3d"resources/images/company-logo.png"\x3e卤肉饭\x3c/div\x3e', 
+width:250}, {margin:'0 0 0 8', ui:'header', iconCls:'x-fa fa-navicon', id:'main-navigation-btn', handler:'onToggleNavigationSize'}, {xtype:'displayfield', value:'\x3cdiv style\x3d"color:#888888;font-size:16px;margin-left:20px;line-height:25px"\x3e欢迎使用卤肉饭OA管理系统\x3c/div\x3e'}, '-\x3e', {iconCls:'x-fa fa-leanpub', ui:'header', href:'#notice', hrefTarget:'_self', tooltip:'查看公告'}, {iconCls:'x-fa fa-tasks', ui:'header', href:'#mytask', hrefTarget:'_self', tooltip:'查看任务'}, {iconCls:'x-fa fa-paper-plane', 
+ui:'header', href:'#log', hrefTarget:'_self', tooltip:'查看日志'}, {iconCls:'x-fa fa-th-large', ui:'header', href:'#profile', hrefTarget:'_self', tooltip:'查看个人中心'}, {xtype:'tbtext', text:loginUser, ui:'header', cls:'top-user-name'}, {ui:'header', reference:'logoutButton', hrefTarget:'_self', tooltip:'注销', iconCls:'x-fa fa-sign-out', listeners:{click:'onLogoutButton'}}]}, {xtype:'maincontainerwrap', id:'main-view-detail-wrap', reference:'mainContainerWrap', flex:1, items:[{xtype:'treelist', reference:'navigationTreeList', 
+itemId:'navigationTreeList', ui:'nav', store:'NavigationTree', width:250, expanderFirst:false, expanderOnly:false, listeners:{selectionchange:'onNavigationTreeSelectionChange'}}, {xtype:'container', flex:1, reference:'mainCardPanel', cls:'sencha-dash-right-main-container', itemId:'contentPanel', layout:{type:'card', anchor:'100%'}}]}]});
 Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', stores:['NavigationTree'], defaultToken:'login', mainView:'Admin.view.main.Main', onAppUpdate:function() {
   Ext.Msg.confirm('Application Update', 'This application has an update, reload?', function(choice) {
     if (choice === 'yes') {
@@ -101769,6 +102016,190 @@ Ext.define('Admin.view.authority.AuthorityViewController', {extend:Ext.app.ViewC
   }
 }});
 Ext.define('Admin.view.authority.AuthorityViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.authorityViewModel', stores:{userRoleLists:{type:'authorityStore', autoLoad:true}}});
+Ext.define('Admin.view.business.Contract', {extend:Ext.container.Container, xtype:'contract', layout:'fit', viewModel:{type:'contractViewModel'}, margin:'20 20 20 20', items:[{xtype:'contractGrid'}]});
+Ext.define('Admin.view.business.ContractEditWindow', {extend:Ext.window.Window, alias:'widget.contractEditWindow', autoShow:true, modal:true, formWin:false, layout:'fit', formParamNum:1, scrollable:true, width:200, height:200, afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  if (!this.formWin) {
+    this.setSize(Math.floor(width * 0.5), Math.floor(height * 0.5));
+    this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+  } else {
+    var fWidth = 400;
+    var formFitHeight = this.formParamNum * 65;
+    fHeight = formFitHeight < 700 ? formFitHeight : 700 < Math.floor(width * 0.9) ? 700 : Math.floor(width * 0.9);
+    alert(fHeight);
+    this.setSize(Math.floor(fWidth), Math.floor(fHeight));
+    this.setXY([Math.floor((width - fWidth) * 0.5), Math.floor((height - fHeight) * 0.5)]);
+  }
+}});
+Ext.define('Admin.view.contract.ContractForm', {extend:Ext.form.Panel, alias:'widget.contractForm', controller:'contractViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'contractId', name:'contractId'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'合作单位', name:'company'}, {xtype:'textfield', fieldLabel:'合同名称', name:'contractName'}, 
+{xtype:'textfield', fieldLabel:'合同编号', name:'contractNum'}, {xtype:'datefield', fieldLabel:'日期', name:'contractDate'}, {xtype:'fileuploadfield', fieldLabel:'合同照片（格式为：jpg/jpeg/png）'}, {xtype:'hidden', fieldLabel:'pictureFileName', name:'pictureFileName'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'上传', handler:'fileUpload'}, {xtype:'button', text:'取消', handler:'contractWindowsClose'}]}});
+Ext.define('Admin.view.business.ContractGrid', {extend:Ext.grid.Panel, xtype:'contractGrid', id:'contractGrid', bind:'{contractLists}', title:'\x3cb\x3e合同管理\x3c/b\x3e', controller:'contractViewController', selModel:Ext.create('Ext.selection.CheckboxModel'), listeners:{cellclick:function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+  if (cellIndex > 0 && cellIndex < 8) {
+    var cfg = Ext.apply({xtype:'contractWindow', controller:'contractViewController', items:[Ext.create('Ext.panel.Panel', {rrdata:record, scrollable:true, items:[{xtype:'panel', height:620, scrollable:true, picSize:100, html:'\x3cimg width\x3d"100%" src\x3d"' + grid.getStore().getAt(rowIndex).data.pictureFileName + '"\x3e'}, {xtype:'toolbar', width:1200, items:[{text:'放大 +', handler:function(btn) {
+      var tmpPic = btn.up('panel').items.getAt(0);
+      if (tmpPic.picSize) {
+        if (tmpPic.picSize >= 50) {
+          btn.up('panel').items.getAt(1).items.getAt(1).setDisabled(false);
+        }
+        tmpPic.picSize += 5;
+        var newHtml = '\x3cimg width\x3d"' + tmpPic.picSize + '%" src\x3d"' + grid.getStore().getAt(rowIndex).data.pictureFileName + '"/\x3e';
+        tmpPic.setHtml(newHtml);
+      }
+    }}, {text:'缩小 -', handler:function(btn) {
+      var tmpPic = btn.up('panel').items.getAt(0);
+      if (tmpPic.picSize && tmpPic.picSize > 50) {
+        tmpPic.picSize -= 5;
+        var newHtml = '\x3cimg width\x3d"' + tmpPic.picSize + '%" src\x3d"' + grid.getStore().getAt(rowIndex).data.pictureFileName + '"/\x3e';
+        tmpPic.setHtml(newHtml);
+      } else {
+        Ext.toast({html:'图片已经缩小到最小比例50%\x3cbr\x3e缩小功能现已经禁用', width:200, align:'b'});
+        btn.setDisabled(true);
+      }
+    }}]}]})]}, {title:'Compose Message'});
+    Ext.create(cfg);
+  }
+}}, columns:[{text:'合同ID', sortable:true, dataIndex:'contractId', hidden:true}, {text:'合同编号', sortable:true, dataIndex:'contractNum', width:200}, {text:'合同名称', sortable:true, dataIndex:'contractName', width:300}, {text:'合作单位', sortable:true, dataIndex:'company', width:300}, {text:'日期', sortable:true, dataIndex:'contractDate', width:100, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'发布者', sortable:true, dataIndex:'userName', width:100}, {xtype:'actioncolumn', text:'操作', flex:1, tdCls:'action', 
+items:['-', {icon:'resources/images/icons/dowanload.png', tooltip:'下载', handler:'contractGridDownloadOne'}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'contractGridDeleteOne'}]}], dockedItems:[Ext.create('Ext.Toolbar', {id:'contractBar', items:[{xtype:'tbtext', text:'合作单位：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', format:'Y-m-d', value:'1972-01-01', editable:false}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', format:'Y-m-d', 
+value:new Date, editable:false, listeners:{focus:function() {
+  var cc = Ext.getCmp('contractBar').items.getAt(9).getValue();
+  this.setMinValue(cc);
+}}}, {text:'查找', handler:'contractGridFind'}]}), Ext.create('Ext.Toolbar', {items:[{text:'上传', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:function() {
+  var cfg = Ext.apply({xtype:'contractEditWindow'}, {title:'合同上传', items:[Ext.apply({xtype:'contractForm'})]});
+  Ext.create(cfg);
+}}, '-', {text:'下载', iconCls:'x-fa fa-arrow-circle-o-down', handler:'contractGridDownloadMany'}, '-', {text:'批量删除', iconCls:'x-fa fa-trash', handler:'contractGridDelete'}]})], bbar:Ext.create('Ext.PagingToolbar', {bind:'{contractLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
+Ext.define('Admin.view.contract.ContractViewController', {extend:Ext.app.ViewController, alias:'controller.contractViewController', fileUpload:function(btn) {
+  var contractForm = btn.up('form').getForm();
+  var win = btn.up('window');
+  contractForm.submit({url:'contract/upload', method:'post', enctype:'multipart/form-dat', success:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+    win.close();
+    Ext.getCmp('contractGrid').store.reload();
+  }, failure:function(form, action) {
+    Ext.Msg.alert('提示', action.result.msg);
+  }});
+}, contractGridDownloadOne:function(grid, rowIndex, colIndex) {
+  Ext.Msg.confirm('提示', '确定要下载吗？', function(button) {
+    if (button == 'yes') {
+      var record = grid.getStore().getAt(rowIndex);
+      var contractId = record.data.contractId;
+      var file = 'contract/downloadone/' + contractId;
+      location.href = file;
+    }
+  });
+}, contractGridDeleteOne:function(grid, rowIndex, colIndex) {
+  Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+    if (button == 'yes') {
+      var record = grid.getStore().getAt(rowIndex);
+      var contractId = record.data.contractId;
+      Ext.Ajax.request({url:'contract/deleteone', method:'post', params:{id:contractId}});
+      Ext.getCmp('contractGrid').store.reload();
+    }
+  });
+}, contractGridDownloadMany:function(btn) {
+  Ext.Msg.confirm('提示', '确定要下载吗？', function(button) {
+    if (button == 'yes') {
+      var grid = btn.up('gridpanel');
+      var selModel = grid.getSelectionModel();
+      if (selModel.hasSelection()) {
+        var selected = selModel.getSelection();
+        var selectIds = [];
+        Ext.each(selected, function(record) {
+          selectIds.push(record.data.contractId);
+        });
+        for (var i = 0; i < selectIds.length; i++) {
+          var file = 'contract/downloadone/' + selectIds[i];
+          var elemIF = document.createElement('iframe');
+          elemIF.src = file;
+          elemIF.style.display = 'none';
+          document.body.appendChild(elemIF);
+        }
+      }
+    }
+  });
+}, contractGridFind:function(btn) {
+  var grid = btn.up('gridpanel');
+  var record = grid.getStore();
+  var searchText = Ext.getCmp('contractBar').items.getAt(1).getValue();
+  var beginTime = null;
+  var endTime = null;
+  beginTime = Ext.getCmp('contractBar').items.getAt(3).getValue();
+  if (beginTime && beginTime.length != 0) {
+    endTime = Ext.Date.add(Ext.getCmp('contractBar').items.getAt(5).getValue(), Ext.Date.DAY, 1);
+  } else {
+    endTime = Ext.getCmp('contractBar').items.getAt(5).getValue();
+  }
+  Ext.Ajax.request({url:'contract/findByCondition', params:{company:searchText, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:25, sort:'contractId', dir:'DESC'}, success:function(response, options) {
+    var tnpdata = Ext.util.JSON.decode(response.responseText);
+    grid.getStore().loadData(tnpdata.content, false);
+  }});
+}, contracGridOpenEditWindow:function(grid, rowIndex, colIndex) {
+  var record = grid.getStore().getAt(rowIndex);
+  var noticeWindow = Ext.widget('contractEditWindow', {title:'合同修改', items:[{xtype:'contractForm'}]});
+  noticeWindow.down('form').getForm().loadRecord(record);
+}, contractWindowsClose:function(btn) {
+  var win = btn.up('window');
+  if (win) {
+    win.close();
+  }
+}, contractGridDelete:function(btn) {
+  var grid = btn.up('gridpanel');
+  var selModel = grid.getSelectionModel();
+  if (selModel.hasSelection()) {
+    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+      if (button == 'yes') {
+        var selected = selModel.getSelection();
+        var selectIds = [];
+        Ext.each(selected, function(record) {
+          selectIds.push(record.data.contractId);
+        });
+        Ext.Ajax.request({url:'contract/delete', method:'post', params:{ids:selectIds}, success:function(response, options) {
+          var json = Ext.util.JSON.decode(response.responseText);
+          if (json.success) {
+            Ext.Msg.alert('操作成功', json.msg);
+            grid.getStore().reload();
+          } else {
+            Ext.Msg.alert('操作失败', json.msg);
+          }
+        }});
+      }
+    });
+  }
+}});
+Ext.define('Admin.view.business.ContractViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.contractViewModel', stores:{contractLists:{type:'contractStore', autoLoad:true}}});
+Ext.define('Admin.view.business.ContractWindow', {extend:Ext.window.Window, alias:'widget.contractWindow', autoShow:true, modal:true, formWin:false, layout:'fit', formParamNum:1, scrollable:true, width:200, height:200, afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  if (!this.formWin) {
+    this.setSize(Math.floor(width * 0.9), Math.floor(height * 0.9));
+    this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+  } else {
+    var fWidth = 400;
+    var formFitHeight = this.formParamNum * 65;
+    fHeight = formFitHeight < 700 ? formFitHeight : 700 < Math.floor(width * 0.9) ? 700 : Math.floor(width * 0.9);
+    alert(fHeight);
+    this.setSize(Math.floor(fWidth), Math.floor(fHeight));
+    this.setXY([Math.floor((width - fWidth) * 0.5), Math.floor((height - fHeight) * 0.5)]);
+  }
+}});
 Ext.define('Admin.view.charts.Charts', {extend:Ext.container.Container, xtype:'charts', viewModel:{type:'charts'}, layout:'responsivecolumn', defaults:{defaults:{animation:!Ext.isIE9m && Ext.os.is.Desktop}}, items:[{xtype:'chartsareapanel', userCls:'big-50 small-100'}, {xtype:'chartspie3dpanel', userCls:'big-50 small-100'}, {xtype:'chartspolarpanel', userCls:'big-50 small-100'}, {xtype:'chartsstackedpanel', userCls:'big-50 small-100'}, {xtype:'chartsbarpanel', userCls:'big-50 small-100'}, {xtype:'chartsgaugepanel', 
 userCls:'big-50 small-100'}]});
 Ext.define('Admin.view.dashboard.Dashboard', {extend:Ext.container.Container, xtype:'admindashboard', controller:'dashboard', viewModel:{type:'dashboard'}, layout:'responsivecolumn', listeners:{hide:'onHideView'}, items:[{xtype:'network', userCls:'big-60 small-100'}, {xtype:'hddusage', userCls:'big-20 small-50'}, {xtype:'earnings', userCls:'big-20 small-50'}, {xtype:'sales', userCls:'big-20 small-50'}, {xtype:'topmovies', userCls:'big-20 small-50'}, {xtype:'weather', cls:'weather-panel shadow', userCls:'big-40 small-100'}, 
@@ -102360,9 +102791,9 @@ Ext.define('Admin.view.notice.NoticeCompose', {extend:Ext.form.Panel, alias:'wid
 name:'noticeName'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'正文：', fontFamilies:['宋体', '隶书', '黑体'], name:'noticeText'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-red', text:'关闭', handler:'noticeGridWindowsClose'}, {xtype:'button', ui:'soft-green', text:'发布', handler:'noticeGridTextSubmit'}]}});
 Ext.define('Admin.view.notice.NoticeGrid', {extend:Ext.grid.Panel, xtype:'noticeGrid', title:'\x3cb\x3e公告列表\x3c/b\x3e', bind:'{noticeLists}', id:'noticeGrid', listeners:{cellclick:function(grid, td, cellIndex, record, tr, rowIndex) {
   var orderWindow = Ext.widget('orderWindow', {title:'查看公告', html:'\x3ch2 align\x3d"center"\x3e' + grid.getStore().getAt(rowIndex).data.noticeName + '\x3c/h2\x3e' + '\x3cp\x3e' + grid.getStore().getAt(rowIndex).data.noticeText + '\x3c/p\x3e'});
-}}, selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1}, {text:'发布时间', sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', id:'noticeUpdateDeleteColum', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', 
-handler:'noticeGridOpenEditWindow'}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'noticeGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {id:'xiaotingzi2', items:[{text:'新增', id:'noticeAddButton', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'删除', id:'noticeDeleteButton', iconCls:'x-fa fa-trash', handler:'noticeGridDeleteDate'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300, itemsId:'searchText'}, {xtype:'tbtext', text:'时间：'}, 
-{xtype:'datefield', itemId:'beginDate', format:'Y-m-d', value:'1972-01-01', editable:false}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', itemId:'endDate', format:'Y-m-d', value:new Date, editable:false, listeners:{focus:function() {
+}}, selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'公告编号', sortable:true, dataIndex:'noticeId', hidden:true}, {text:'标题', dataIndex:'noticeName', flex:1}, {text:'发布时间', sortable:true, dataIndex:'noticeTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', id:'noticeUpdateDeleteColum', items:['-', {icon:'resources/images/icons/editor.png', tooltip:'编辑', handler:'noticeGridOpenEditWindow'}, 
+'-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'noticeGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {id:'xiaotingzi2', items:[{text:'新增', id:'noticeAddButton', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'noticeGridAdd'}, '-', {text:'删除', id:'noticeDeleteButton', iconCls:'x-fa fa-trash', handler:'noticeGridDeleteDate'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300, itemsId:'searchText'}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', itemId:'beginDate', 
+format:'Y-m-d', value:'1972-01-01', editable:false}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', itemId:'endDate', format:'Y-m-d', value:new Date, editable:false, listeners:{focus:function() {
   var cc = Ext.getCmp('xiaotingzi2').items.getAt(7).getValue();
   this.setMinValue(cc);
 }}}, {text:'查找', handler:'noticeGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{noticeLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'}), on:function() {
@@ -102554,9 +102985,28 @@ title:'FAQs', bodyPadding:15, items:[{xtype:'panel', cls:'FAQPanel', layout:'acc
 items:[{title:'How can I access high resolution images?', iconCls:'x-fa fa-caret-down'}, {title:'Can I download the application on my PC?', iconCls:'x-fa fa-caret-down'}, {title:'How often does the database get updated?', iconCls:'x-fa fa-caret-down'}, {title:'Can I use the downloaded images on a commercial website?', iconCls:'x-fa fa-caret-down'}]}, {xtype:'panel', cls:'FAQPanel', layout:'accordion', title:'Account', height:340, bodyPadding:10, ui:'light', defaults:{html:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}, 
 items:[{title:'What are the different membership plans?', iconCls:'x-fa fa-caret-down'}, {title:'Can I change my plan in between?', iconCls:'x-fa fa-caret-down'}, {title:'How can I deactivate my account?', iconCls:'x-fa fa-caret-down'}, {title:'Can I transfer my account to another user?', iconCls:'x-fa fa-caret-down'}]}, {xtype:'panel', cls:'FAQPanel', layout:'accordion', title:'Payment', height:300, bodyPadding:10, ui:'light', defaults:{html:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}, 
 items:[{title:'What are the payment methods you accept?', iconCls:'x-fa fa-caret-down'}, {title:'What is the refund policy?', iconCls:'x-fa fa-caret-down'}, {title:'How long does it take to process my payment?', iconCls:'x-fa fa-caret-down'}]}]}]});
-Ext.define('Admin.view.profile.FileUploadForm', {extend:Ext.form.Panel, alias:'widget.fileUploadForm', id:'fileUploadForm', controller:'profileViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'fileuploadfield', fieldLabel:'图片名'}, {xtype:'component', id:'browseImage', fieldLabel:'预览图片', autoEl:{width:'100%', height:300, tag:'img', 
-src:Ext.BLANK_IMAGE_URL, id:'imageBrowse'}}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'上传', handler:'imageFileUpload'}, {xtype:'button', text:'取消', handler:'profileGridWindowClose'}]}});
-Ext.define('Admin.view.profile.FileUploadFormWindow', {extend:Ext.window.Window, alias:'widget.fileUploadFormWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
+Ext.define('Admin.view.profile.FileUploadForm', {extend:Ext.form.Panel, alias:'widget.fileUploadForm', imageWidth:300, notice:'', initComponent:function() {
+  var me = this;
+  Ext.apply(this, {items:[{xtype:'box', width:me.imageWidth, maxWidth:300, reference:'imageShow', autoEl:{tag:'img'}}, {xtype:'filefield', buttonOnly:true, buttonText:'选择图片', listeners:{change:me.changeSelect}}, {xtype:'component', html:me.notice}, {xtype:'hiddenfield', name:me.name}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}]});
+  this.callParent();
+}, changeSelect:function(fileFiled, value, eOpts) {
+  var me = this;
+  var image = me.up().down('box').getEl().dom;
+  var hidden = me.up().down('hiddenfield');
+  var file = fileFiled.fileInputEl.dom.files.item(0);
+  var fileReader = new FileReader(value);
+  fileReader.readAsDataURL(file);
+  fileReader.onload = function(e) {
+    image.src = e.target.result;
+    hidden.setValue(e.target.result);
+  };
+  me.value = '';
+}, getValue:function() {
+  var me = this;
+  var hidden = me.up().down('hiddenfield');
+  return hidden.getValue();
+}, bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'上传', handler:'imageFileUpload'}, {xtype:'button', text:'取消', handler:'profileGridWindowClose'}]}});
+Ext.define('Admin.view.profile.FileUploadFormWindow', {extend:Ext.window.Window, alias:'widget.fileUploadFormWindow', autoShow:true, modal:true, layout:'fit', controller:'profileViewController', view:'fileUploadContainer', afterRender:function() {
   var me = this;
   me.callParent(arguments);
   me.syncSize();
@@ -102572,13 +103022,13 @@ Ext.define('Admin.view.profile.FileUploadFormWindow', {extend:Ext.window.Window,
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
 Ext.define('Admin.view.profile.ProfileForm', {extend:Ext.form.Panel, xtype:'profileForm', id:'proForm', controller:'profileViewController', viewModel:{type:'profileViewModel'}, fieldDefaults:{labelAlign:'right', labelWidth:90, msgTarget:Ext.supports.Touch ? 'side' : 'qtip'}, defaults:{border:false, xtype:'panel', layout:'anchor'}, bodyPadding:5, defaultType:'textfield', items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'hidden', fieldLabel:'postId', name:'postId'}, {xtype:'hidden', 
-fieldLabel:'roleId', name:'roleId'}, {xtype:'fieldcontainer', margin:'30 0 10 0', layout:'hbox', combineErrors:true, defaultType:'textfield', defaults:{submitEmptyText:false, margin:'0 30 0 0', hideLabel:'true', anchor:'90%'}, items:[{fieldLabel:'名字', emptyText:'Name', flex:1, allowBlank:false, name:'realName'}]}, {fieldLabel:'性别', xtype:'fieldcontainer', margin:'0 0 30 0', cls:'wizard-form-break', xtype:'radiogroup', defaults:{flex:1}, layout:'hbox', name:'sex', editable:false, allowBlank:false, 
-items:[{boxLabel:'男', name:'sex', inputValue:'男'}, {boxLabel:'女', name:'sex', inputValue:'女'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'70%'}, items:[{fieldLabel:'密码', anchor:'100%', emptyText:'Enter a password', inputType:'password', name:'password', itemId:'pass', allowBlank:false, cls:'wizard-form-break'}, {fieldLabel:'再输入一次', anchor:'100%', vtype:'password', initialPassField:'pass', emptyText:'Passwords must match', 
-name:'rePassword', inputType:'password'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'邮箱', emptyText:'Email Address', name:'mail', vtype:'email', allowBlank:false}, {fieldLabel:'手机', name:'mobilePhone'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'身份证类型', xtype:'combobox', 
-name:'idType', store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'大陆', 'name':'大陆'}, {'value':'港澳', 'name':'港澳'}, {'value':'国外', 'name':'国外'}]}), value:'大陆', queryMode:'local', displayField:'name', valueField:'value'}, {fieldLabel:'身份证号码', name:'idNumber'}]}, {xtype:'container', layout:'hbox', defaultType:'datefield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'生日', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, 
-name:'birthday'}, {fieldLabel:'入职时间', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', name:'onDutDate'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'家庭住址', name:'home', emptyText:'Address'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'籍贯', 
-name:'nativePlace', emptyText:'City'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'微信号码', emptyText:'WeChat Number', name:'wechatNumber'}, {fieldLabel:'QQ号码', emptyText:'QQ Number', name:'qq_number'}]}, {xtype:'hidden', fieldLabel:'userName', name:'userName'}, {xtype:'hidden', fieldLabel:'pictureFileName', name:'pictureFileName'}], buttons:['-\x3e', {text:'保存', listeners:{click:'saveInfomationSubmit'}}, 
-{text:'上传头像', listeners:{click:'showFileUploadFormWindow'}}], on:function() {
+fieldLabel:'roleId', name:'roleId'}, {xtype:'fieldcontainer', margin:'30 0 10 0', layout:'hbox', fieldLabel:'姓名', combineErrors:true, defaultType:'textfield', defaults:{submitEmptyText:false, margin:'0 30 0 0', hideLabel:'true', anchor:'90%'}, items:[{fieldLabel:'姓名', emptyText:'Name', flex:1, allowBlank:false, name:'realName'}]}, {fieldLabel:'性别', xtype:'fieldcontainer', margin:'0 0 30 0', cls:'wizard-form-break', xtype:'radiogroup', defaults:{flex:1}, layout:'hbox', name:'sex', editable:false, 
+allowBlank:false, items:[{boxLabel:'男', name:'sex', inputValue:'男'}, {boxLabel:'女', name:'sex', inputValue:'女'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'70%'}, items:[{fieldLabel:'密码', anchor:'100%', emptyText:'Enter a password', inputType:'password', name:'password', itemId:'pass', allowBlank:false, cls:'wizard-form-break'}, {fieldLabel:'再输入一次', anchor:'100%', vtype:'password', initialPassField:'pass', 
+emptyText:'Passwords must match', name:'rePassword', inputType:'password'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'邮箱', emptyText:'Email Address', name:'mail', vtype:'email', allowBlank:false}, {fieldLabel:'手机', name:'mobilePhone'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, 
+items:[{fieldLabel:'身份证类型', xtype:'combobox', name:'idType', store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'大陆', 'name':'大陆'}, {'value':'港澳', 'name':'港澳'}, {'value':'国外', 'name':'国外'}]}), value:'大陆', queryMode:'local', displayField:'name', valueField:'value'}, {fieldLabel:'身份证号码', name:'idNumber'}]}, {xtype:'container', layout:'hbox', defaultType:'datefield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'生日', xtype:'datefield', 
+format:'Y/m/d H:i:s', editable:false, name:'birthday'}, {fieldLabel:'入职时间', xtype:'datefield', format:'Y/m/d H:i:s', editable:false, value:'2017-01-01', name:'onDutDate'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1, anchor:'95%'}, items:[{fieldLabel:'家庭住址', name:'home', emptyText:'Address'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, 
+flex:1}, items:[{fieldLabel:'籍贯', name:'nativePlace', emptyText:'City'}]}, {xtype:'container', layout:'hbox', defaultType:'textfield', margin:'0 0 30 0', defaults:{labelWidth:90, submitEmptyText:false, flex:1}, items:[{fieldLabel:'微信号码', emptyText:'WeChat Number', name:'wechatNumber'}, {fieldLabel:'QQ号码', emptyText:'QQ Number', name:'qq_number'}]}, {xtype:'hidden', fieldLabel:'userName', name:'userName'}, {xtype:'hidden', fieldLabel:'pictureFileName', name:'pictureFileName'}], buttons:['-\x3e', {text:'保存', 
+listeners:{click:'saveInfomationSubmit'}}], on:function() {
   Ext.Ajax.request({url:'staff/findUserByUserId.json?userId\x3d' + loginUserId, method:'post', success:function(response) {
     var profile = Ext.util.JSON.decode(response.responseText);
     var proform = Ext.getCmp('proForm');
@@ -102621,7 +103071,7 @@ Ext.define('Admin.view.profile.ProfileViewController', {extend:Ext.app.ViewContr
   fileUploadForm.submit({url:'staff/updatePicture', method:'post', enctype:'multipart/form-dat', success:function(form, action) {
     Ext.Msg.alert('提示', action.result.msg);
     win.close();
-    Ext.getCmp('resourcesGrid').store.reload();
+    Ext.getCmp('socialCard').store.reload();
   }, failure:function(form, action) {
     Ext.Msg.alert('提示', action.result.msg);
   }});
@@ -102632,7 +103082,6 @@ Ext.define('Admin.view.profile.ProfileViewController', {extend:Ext.app.ViewContr
   }
 }});
 Ext.define('Admin.view.profile.ProfileViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.profileViewModel', stores:{profileLists:{type:'profileStore', autoLoad:true}}});
-Ext.define('Admin.view.profile.ShareUpdate', {extend:Ext.panel.Panel, xtype:'profileshare', bodyPadding:10, layout:'fit', cls:'share-panel', items:[{xtype:'textareafield', emptyText:"What's on your mind?"}], bbar:{defaults:{margin:'0 10 5 0'}, items:[{ui:'header', iconCls:'x-fa fa-video-camera'}, {ui:'header', iconCls:'x-fa fa-camera'}, {ui:'header', iconCls:'x-fa fa-file'}, '-\x3e', {text:'Share', ui:'soft-blue'}]}});
 var img_reg = /\.([jJ][pP][gG]){1}$|\.([jJ][pP][eE][gG]){1}$|\.([gG][iI][fF]){1}$|\.([pP][nN][gG]){1}$|\.([bB][mM][pP]){1}$/;
 Ext.define('Admin.view.profile.UpLoadFile', {extend:Ext.form.Panel, title:'', renderTo:'fileUpload', fileUpload:true, layout:'form', id:'fileUploadForm', items:[{id:'upload', name:'upload', inputType:'file', fieldLabel:'上传图片', xtype:'textfield', anchor:'40%'}, {xtype:'box', id:'browseImage', fieldLabel:'预览图片', autoEl:{width:300, height:350, tag:'img', src:Ext.BLANK_IMAGE_URL, style:'filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod\x3dscale);', complete:'off', id:'imageBrowse'}}], 
 listeners:{'render':function(f) {
@@ -102653,13 +103102,13 @@ listeners:{'render':function(f) {
 }}});
 Ext.define('Admin.view.profile.UserProfile', {extend:Admin.view.profile.UserProfileBase, xtype:'profile', cls:'userProfile-container', layout:'responsivecolumn', controller:'profileViewController', items:[{xtype:'profilesocial', userCls:'big-40 small-100 shadow'}, {xtype:'profileForm', userCls:'big-60 small-100 shadow'}]});
 Ext.define('Admin.view.resources.resources', {extend:Ext.container.Container, xtype:'resources', controller:'resourcesViewController', viewModel:{type:'resourcesViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'resourcesGrid'}]});
-Ext.define('Admin.view.resources.ResourcesForm', {extend:Ext.form.Panel, alias:'widget.resourcesForm', controller:'resourcesViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'resId'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'文件名称(限制50M以内)', name:'resName'}, {xtype:'fileuploadfield', fieldLabel:'文件名'}], bbar:{overflowHandler:'menu', 
+Ext.define('Admin.view.resources.ResourcesForm', {extend:Ext.form.Panel, alias:'widget.resourcesForm', controller:'resourcesViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'Id', name:'resId'}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}, {xtype:'textfield', fieldLabel:'资料名称', name:'resName'}, {xtype:'fileuploadfield', fieldLabel:'文件(限制50M以内)'}], bbar:{overflowHandler:'menu', 
 items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'上传', handler:'fileUpload'}, {xtype:'button', text:'取消', handler:'orderGridWindowsClose'}]}});
 Ext.define('Admin.view.resources.ResourcesGrid', {extend:Ext.grid.Panel, xtype:'resourcesGrid', title:'\x3cb\x3e资料中心\x3c/b\x3e', bind:'{resourcesLists}', id:'resourcesGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'资料编号', dataIndex:'resId', hidden:true}, {text:'资料名称', dataIndex:'resName', flex:1}, {text:'发布时间', sortable:true, dataIndex:'resDate', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'发布者', dataIndex:'userName', width:150}, {xtype:'actioncolumn', 
 text:'操作', width:150, tdCls:'action', items:['-', {icon:'resources/images/icons/dowanload.png', tooltip:'下载', handler:'resourcesGridDownloadOne'}, '-', {icon:'resources/images/icons/delete.png', tooltip:'删除', handler:'resourcesGridDeleteOne'}]}], tbar:Ext.create('Ext.Toolbar', {id:'resources2', items:[{text:'上传', id:'resourceUploadButton', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:function() {
   var cfg = Ext.apply({xtype:'orderWindow'}, {title:'资料上传', items:[Ext.apply({xtype:'resourcesForm'})]});
   Ext.create(cfg);
-}}, '-', {text:'批量下载', iconCls:'x-fa fa-arrow-circle-o-down', handler:'resourcesGridDownloadMany'}, '-', {text:'批量删除', id:'resourceDeleteButton', iconCls:'x-fa fa-trash', handler:'resourcesGridDelete'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:300}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', format:'Y-m-d', value:'1972-01-01', editable:false}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', format:'Y-m-d', value:new Date, editable:false, listeners:{focus:function() {
+}}, '-', {text:'批量下载', iconCls:'x-fa fa-arrow-circle-o-down', handler:'resourcesGridDownloadMany'}, '-', {text:'批量删除', id:'resourceDeleteButton', iconCls:'x-fa fa-trash', handler:'resourcesGridDelete'}, '-', {xtype:'tbtext', text:'标题：'}, {xtype:'textfield', width:150}, {xtype:'tbtext', text:'时间：'}, {xtype:'datefield', format:'Y-m-d', value:'1972-01-01', editable:false}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', format:'Y-m-d', value:new Date, editable:false, listeners:{focus:function() {
   var cc = Ext.getCmp('resources2').items.getAt(9).getValue();
   this.setMinValue(cc);
 }}}, {text:'查找', handler:'resourcesGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{resourcesLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'}), on:function() {

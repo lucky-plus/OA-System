@@ -27,7 +27,6 @@ Ext.define('Admin.view.main.Main', {
             cls: 'sencha-dash-dash-headerbar shadow',
             height: 64,
             itemId: 'headerBar',
-			bodyStyle: 'background:#ccc;',
             items: [
                 {
                     xtype: 'component',
@@ -43,45 +42,51 @@ Ext.define('Admin.view.main.Main', {
                     id: 'main-navigation-btn',
                     handler: 'onToggleNavigationSize'
                 },{
-					xtype: 'displayfield',
-					value:'<div style="color:#888888;font-size:16px;margin-left:20px;line-height:25px">欢迎使用卤肉饭OA管理系统</div>'
-				},
+                    xtype: 'displayfield',
+                    value:'<div style="color:#888888;font-size:16px;margin-left:20px;line-height:25px">欢迎使用卤肉饭OA管理系统</div>'
+                },
                 '->',
                 {
-                    xtype: 'segmentedbutton',
-                    margin: '0 16 0 0',
-
-                    platformConfig: {
-                        ie9m: {
-                            hidden: true
-                        }
-                    },
-                },   
+                    iconCls: 'x-fa fa-leanpub',
+                    ui: 'header',
+                    href: '#notice',
+                    hrefTarget: '_self',
+                    tooltip: '查看公告'
+                },
+                {
+                    iconCls: 'x-fa fa-tasks',
+                    ui: 'header',
+                    href: '#mytask',
+                    hrefTarget: '_self',
+                    tooltip: '查看任务'
+                },
+                {
+                    iconCls: 'x-fa fa-paper-plane',
+                    ui: 'header',
+                    href: '#log',
+                    hrefTarget: '_self',
+                    tooltip: '查看日志'
+                },
                 {
                     iconCls:'x-fa fa-th-large',
                     ui: 'header',
                     href: '#profile',
                     hrefTarget: '_self',
-                    tooltip: '个人中心'
+                    tooltip: '查看个人中心'
                 },
                 {
                     xtype: 'tbtext',
                     text: loginUser,
+                    ui: 'header',
                     cls: 'top-user-name'
                 },
                 {
-                    xtype: 'button',
-                    reference: 'logoutButton',
-                    scale: 'small',
-                    iconAlign: 'right',
-					ui:'',
-                    //iconCls: 'x-fa fa-angle-right',
-                    text:'<div style="height:30px;line-height:30pxfont-size:14px;line-height:30px;">'+
-				                   '<span>注销 ></span></div>',
-					formBind: true,
-                    listeners: {
-                        click: 'onLogoutButton'
-                    }
+                	ui:'header',
+                	reference:'logoutButton',
+                	hrefTarget: '_self',
+                	tooltip:'注销',
+                	iconCls:'x-fa fa-sign-out',
+                	listeners:{click:'onLogoutButton'}
                 }
             ]
         },

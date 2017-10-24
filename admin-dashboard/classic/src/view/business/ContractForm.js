@@ -1,6 +1,6 @@
-Ext.define('Admin.view.resources.ResourcesForm', {
+Ext.define('Admin.view.contract.ContractForm', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.resourcesForm',
+    alias: 'widget.contractForm',
     requires: [
         'Ext.button.Button',
         'Ext.form.field.Text',
@@ -16,7 +16,7 @@ Ext.define('Admin.view.resources.ResourcesForm', {
 	
     //viewModel: {type: 'emailcompose'},
     //cls: 'email-compose',
-	controller: 'resourcesViewController',
+	controller: 'contractViewController',
     layout: {
         type:'vbox',
         align:'stretch'
@@ -31,28 +31,38 @@ Ext.define('Admin.view.resources.ResourcesForm', {
     },
     items: [{
 		xtype: 'hidden',
-		fieldLabel: 'Id',
+		fieldLabel: 'contractId',
 		//allowBlank: false,
-		name:'resId',
+		name:'contractId',
 		//handler:'orderGridEdit'
 	},{xtype:'hidden', 
 		fieldLabel:'userId', 
 		name:'userId', 
-		value:loginUserId}
-	,{
+		value:loginUserId
+	},{
 		xtype:'textfield',
-		fieldLabel: '资料名称',
-		//allowBlank: false,
-		name:'resName',
-		//handler:'orderGridEdit'
+		fieldLabel: '合作单位',
+		name:'company',
+	},{
+		xtype:'textfield',
+		fieldLabel: '合同名称',
+		name:'contractName',
+	},{
+		xtype:'textfield',
+		fieldLabel: '合同编号',
+		name:'contractNum',
+	},{
+		xtype:'datefield',
+		fieldLabel: '日期',
+		name:'contractDate',
 	},{
 		xtype: 'fileuploadfield',  
-		fieldLabel: '文件(限制50M以内)',   
-		
-		
-
-
-	}],
+		fieldLabel: '合同照片（格式为：jpg/jpeg/png）',   
+	},{
+          xtype: 'hidden',
+          fieldLabel: 'pictureFileName',
+            name:'pictureFileName'
+    }],
 
     bbar: {
         overflowHandler: 'menu',
@@ -66,7 +76,7 @@ Ext.define('Admin.view.resources.ResourcesForm', {
 			xtype: 'button',
 			//ui: 'gray',
 			text: '取消',
-			handler: 'orderGridWindowsClose'
+			handler: 'contractWindowsClose'
 		}]
     }
 });

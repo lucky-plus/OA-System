@@ -15,7 +15,7 @@ public class Post {
 
 	private Integer postId;
 	private String postName;
-	private String postDescribe;;			
+	private String postDescribe;			
 	private Department department;
 	
 	@Id
