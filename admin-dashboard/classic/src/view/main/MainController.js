@@ -158,6 +158,20 @@ Ext.define('Admin.view.main.MainController', {
 
             var modules = eval(loginUserModules);
 
+
+            rootTree.on(
+              "load",function(){
+                this.getRoot().appendChild(
+                	{
+	                    text: '个人信息',
+	                    iconCls: 'x-fa fa-user-circle',
+	                    viewType: 'profile',
+	                    leaf: true
+	                }
+                );
+              }
+            );
+
             var profileFlag = 1;
             for (var i = 0; i < modules.length; i++) {
                 if(modules[i].modelName == "个人中心--资产列表") {
@@ -170,8 +184,8 @@ Ext.define('Admin.view.main.MainController', {
                 "load",function(){
                   this.getRoot().appendChild(
                     {
-                        text: '个人中心',
-                        iconCls: 'x-fa fa-user',
+                        text: '资产管理',
+                        iconCls: 'x-fa fa-random',
                         expanded: false,
                         selectable: false,
                         children: [
@@ -185,11 +199,6 @@ Ext.define('Admin.view.main.MainController', {
                                 iconCls: 'x-fa fa-gg',
                                 viewType: 'myAssets',
                                 leaf: true
-                            },{
-                                text: '个人信息',
-                                iconCls: 'x-fa fa-user-circle',
-                                viewType: 'profile',
-                                leaf: true
                             }]
                     }
                   );
@@ -200,8 +209,8 @@ Ext.define('Admin.view.main.MainController', {
                 "load",function(){
                   this.getRoot().appendChild(
                     {
-                        text: '个人中心',
-                        iconCls: 'x-fa fa-user',
+                        text: '资产管理',
+                        iconCls: 'x-fa fa-random',
                         expanded: false,
                         selectable: false,
                         children: [
@@ -209,11 +218,6 @@ Ext.define('Admin.view.main.MainController', {
                                 text: '我的资产',
                                 iconCls: 'x-fa fa-gg',
                                 viewType: 'myAssets',
-                                leaf: true
-                            },{
-                                text: '个人信息',
-                                iconCls: 'x-fa fa-user-circle',
-                                viewType: 'profile',
                                 leaf: true
                             }]
                     }
@@ -223,18 +227,6 @@ Ext.define('Admin.view.main.MainController', {
             }
             
 
-            // rootTree.on(
-            //   "load",function(){
-            //     this.getRoot().appendChild(
-            //       {
-            //           text: '资产列表',
-            //           iconCls: 'x-fa fa-money',
-            //           viewType: 'assets',
-            //           leaf: true
-            //       }
-            //     );
-            //   }
-            // );
 
             rootTree.on(
               "load",function(){
