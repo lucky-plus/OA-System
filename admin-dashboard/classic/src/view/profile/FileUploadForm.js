@@ -34,6 +34,12 @@ Ext.define('Admin.view.profile.FileUploadForm', {
                 {
                     xtype:'hiddenfield',
                     name: me.name
+                },
+                {
+                    xtype: 'hidden',
+                    fieldLabel: 'userId',
+                    name:'userId',
+                    value: loginUserId
                 }
             ]
         });
@@ -50,7 +56,6 @@ Ext.define('Admin.view.profile.FileUploadForm', {
             image.src = e.target.result;
             hidden.setValue(e.target.result);
         }
-
         me.value = '';
     },
     getValue:function(){
@@ -58,7 +63,6 @@ Ext.define('Admin.view.profile.FileUploadForm', {
         var hidden = me.up().down('hiddenfield');
         return hidden.getValue();
     },
-
     bbar: {
     overflowHandler: 'menu',
     items: ['->',{

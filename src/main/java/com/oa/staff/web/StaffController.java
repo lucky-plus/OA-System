@@ -154,6 +154,7 @@ public class StaffController {
 	                	String filePath = request.getSession().getServletContext().getRealPath("/resources/images/user-profile");;
 	                	String newFileName = UUID.randomUUID().toString().replaceAll("-", "") + ".png";
 	        			System.out.println(newFileName);
+	        			System.out.println(userId);
 	                    File targetFile = new File(filePath, newFileName);
 	                    
 	                    //上传
