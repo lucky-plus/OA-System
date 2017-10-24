@@ -43,7 +43,7 @@ public class RoleController {
 		}
 	}
 	
-	@PostMapping("/delete")
+	@RequestMapping("/delete")
 	public @ResponseBody ExtjsAjaxResult deleteAuthority(Integer[] ids)
 	{
 		try {
@@ -53,6 +53,11 @@ public class RoleController {
 			 e.printStackTrace();
 			 return new ExtjsAjaxResult(false,"操作失败！");
 		}
+	}
+	
+	@RequestMapping("/unauthorized")
+	public @ResponseBody ExtjsAjaxResult unauthorized() {
+		return new ExtjsAjaxResult(false, "操作失败！没有该权限");
 	}
 	
 }

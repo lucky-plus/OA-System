@@ -102602,19 +102602,22 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
     if (loadFlag == 0) {
       var rootTree = Ext.data.StoreManager.lookup('NavigationTree');
       var modules = eval(loginUserModules);
+      rootTree.on('load', function() {
+        this.getRoot().appendChild({text:'个人信息', iconCls:'x-fa fa-user-circle', viewType:'profile', leaf:true});
+      });
       var profileFlag = 1;
       for (var i = 0; i < modules.length; i++) {
-        if (modules[i].modelName == '个人中心--资产列表') {
+        if (modules[i].modelName == '资产列表') {
           profileFlag = 2;
         }
       }
       if (profileFlag == 2) {
         rootTree.on('load', function() {
-          this.getRoot().appendChild({text:'个人中心', iconCls:'x-fa fa-user', expanded:false, selectable:false, children:[{text:'资产列表', iconCls:'x-fa fa-money', viewType:'assets', leaf:true}, {text:'我的资产', iconCls:'x-fa fa-gg', viewType:'myAssets', leaf:true}, {text:'个人信息', iconCls:'x-fa fa-user-circle', viewType:'profile', leaf:true}]});
+          this.getRoot().appendChild({text:'资产管理', iconCls:'x-fa fa-random', expanded:false, selectable:false, children:[{text:'资产列表', iconCls:'x-fa fa-money', viewType:'assets', leaf:true}, {text:'我的资产', iconCls:'x-fa fa-gg', viewType:'myAssets', leaf:true}]});
         });
       } else {
         rootTree.on('load', function() {
-          this.getRoot().appendChild({text:'个人中心', iconCls:'x-fa fa-user', expanded:false, selectable:false, children:[{text:'我的资产', iconCls:'x-fa fa-gg', viewType:'myAssets', leaf:true}, {text:'个人信息', iconCls:'x-fa fa-user-circle', viewType:'profile', leaf:true}]});
+          this.getRoot().appendChild({text:'资产管理', iconCls:'x-fa fa-random', expanded:false, selectable:false, children:[{text:'我的资产', iconCls:'x-fa fa-gg', viewType:'myAssets', leaf:true}]});
         });
       }
       rootTree.on('load', function() {

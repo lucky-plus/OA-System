@@ -22,7 +22,7 @@
         <property name="securityManager" ref="securityManager" />  
         <property name="loginUrl" value="/" />  
         <property name="successUrl" value="/" />  
-        <property name="unauthorizedUrl" value="/" />  
+        <property name="unauthorizedUrl" value="/role/unauthorized" />  
         <property name="filterChainDefinitions">  
             <value>
             	/classic/** = anon
@@ -37,8 +37,34 @@
             	/index.jsp = anon
             	/modeler.html = anon
             	/loginAction = anon
+            	
+            	/module/findAll = perms["role"]
+            	
+            	/role/findRoleByLevel = perms["role"]
+            	/role/saveOrUpdate = perms["roleSaveOrAdd"]
+            	/role/delete = perms["roleDelte"]
+            	
+            	/notice/saveOrUpdate = perms["noticSaveOrAdd"]
+            	/notice/delete = perms["noticDelete"]
+            	
+            	/log/findAll = perms["logFind"]
+            	/log/findByCondition = perms["logFind"]
+            	
+            	/resources/upload = perms["resourcesUpload"]
+            	
+            	/post/** = perms["personal"]
+            	/dept/** = perms["personal"]
+            	
+            	/task/saveOrUpdate = perms["task"]
+            	/task/delete = perms["task"]
+            	
+            	/assets/delete = perms["saveOrUpdate"]
+            	/assets/delete = perms["assets"]
+            	
                 /** = authc
                 /*.* = authc
+                
+            	
             </value>
         </property>  
     </bean>  
