@@ -1,11 +1,26 @@
 Ext.define('Admin.view.profile.FileUploadFormWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'widget.fileUploadFormWindow',
+
+    requires: [
+        'Ext.button.Button',
+        'Ext.form.field.Text',
+        'Ext.form.field.File',
+        'Ext.form.field.HtmlEditor',
+        'Ext.form.field.TextArea',
+        'Ext.form.field.Time',
+        'Ext.form.field.ComboBox',
+        'Ext.form.field.Date',
+        'Ext.form.field.Radio',
+        'Ext.form.field.Hidden'
+    ],
+
 	autoShow: true,
 	modal: true,
 	layout: 'fit',
-	width: 200,
-	height: 200,
+	controller: 'profileViewController',
+	view:'fileUploadContainer',
+
 
 
 	afterRender: function () {

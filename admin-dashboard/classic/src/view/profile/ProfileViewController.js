@@ -36,7 +36,7 @@ Ext.define('Admin.view.profile.ProfileViewController', {
 			success : function(form, action) {
 				Ext.Msg.alert("提示",action.result.msg);
 				win.close();
-				Ext.getCmp('resourcesGrid').store.reload();
+				Ext.getCmp('socialCard').store.reload();
 			},
 			failure : function(form, action) {
 				Ext.Msg.alert("提示",action.result.msg);

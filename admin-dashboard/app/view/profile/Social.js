@@ -1,6 +1,7 @@
 Ext.define('Admin.view.profile.Social', {
     extend: 'Ext.panel.Panel',
     xtype: 'profilesocial',
+    id:'socialCard',
 
     requires: [
         'Ext.Button',
