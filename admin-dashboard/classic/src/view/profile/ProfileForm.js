@@ -249,11 +249,11 @@ Ext.define('Admin.view.profile.ProfileForm', {
     },{
           xtype: 'hidden',
           fieldLabel: 'userName',
-            name:'userName'
+          name:'userName'
     },{
           xtype: 'hidden',
           fieldLabel: 'pictureFileName',
-            name:'pictureFileName'
+          name:'pictureFileName'
     }
     ],
 

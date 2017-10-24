@@ -19,4 +19,5 @@ public interface IContractService {
 	public List<ContractDTO> findAll();
 	public Page<ContractDTO> findAll(Pageable pageable);
 	public Page<ContractDTO> findAll(Specification<Contract> spec, Pageable pageable);
+	public void updatePictureFileName(Integer id, String pictureFileName);
 }

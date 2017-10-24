@@ -16,6 +16,12 @@ Ext.define('Admin.store.NavigationTree', {
                 viewType: 'dashboard',
                 leaf: true
 			},
+			{
+				text: '合同管理',
+                iconCls: 'x-fa  fa-home',
+                viewType: 'contract',
+                leaf: true
+			},
             {
                 text: 'Pages',
                 iconCls: 'x-fa fa-leanpub',

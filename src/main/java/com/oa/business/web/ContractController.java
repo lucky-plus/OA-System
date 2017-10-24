@@ -7,10 +7,17 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -54,8 +61,25 @@ public class ContractController {
 		}
 	}
 	
+	
+	
+	@PostMapping("/deleteone")
+	public @ResponseBody ExtjsAjaxResult delete(Integer id)
+	{
+		try {
+			
+			File file = new File(contractService.findOne(id).getContractFile());
+			file.delete();
+			contractService.delete(id);
+			 return new ExtjsAjaxResult(true,"操作成功！");
+		} catch (Exception e) {
+			 e.printStackTrace();
+			 return new ExtjsAjaxResult(false,"操作失败！");
+		}
+	}
+	
 	@RequestMapping("/upload")
-	public @ResponseBody ExtjsAjaxResult springUpload(HttpServletRequest request,ContractDTO contractDTO) throws IllegalStateException, IOException
+	public @ResponseBody ExtjsAjaxResult springUpload(HttpServletRequest request,ContractDTO contractDTO,Integer contractId) throws IllegalStateException, IOException
     {
 		try {
          //将当前上下文初始化给  CommonsMutipartResolver （多部分解析器）
@@ -75,17 +99,29 @@ public class ContractController {
                 MultipartFile file=multiRequest.getFile(iter.next().toString());
                 if(file!=null)
                 {
-                	String filePath=request.getSession().getServletContext().getRealPath("/fileDir");
+                	String filePath=request.getSession().getServletContext().getRealPath("/contract");
                     String fileName=file.getOriginalFilename();
+                    // System.out.println(fileName);
+					int index=fileName.lastIndexOf("."); 
+                    String type = fileName.substring(index + 1); 
+                    String pictureUrl="contract\\"+fileName;
+                    System.out.println(pictureUrl);
+                    if(type.equals("jpg")||type.equals("jpeg")||type.equals("png")) {
                     File targetFile = new File(filePath,fileName);
                     //上传
-                    file.transferTo(targetFile); 
+                    file.transferTo(targetFile);
+                    contractDTO.setPictureFileName(pictureUrl);
                     contractDTO.setContractFile(targetFile.getAbsolutePath());
+                    }else {
+                    	return  new ExtjsAjaxResult(false,"格式不正确");
+                    }
                 }
                  
             }
            
         }
+        
+
 		contractService.save(contractDTO);
 		return  new ExtjsAjaxResult(true,"success");
 		}
@@ -96,4 +132,23 @@ public class ContractController {
         
     }
 	
+	
+	@RequestMapping("/downloadone/{pathId}")
+    public ResponseEntity<byte[]> download(@PathVariable Integer pathId)throws IOException {
+       //下载文件路径
+       File file = new File(contractService.findOne(pathId).getContractFile());
+       String FileName = new String(file.getName().getBytes("utf-8"),"ISO-8859-1");
+       HttpHeaders headers = new HttpHeaders();  
+       headers.setContentDispositionFormData("attachment", FileName); 
+       //application/octet-stream ： 二进制流数据（最常见的文件下载）。
+       headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+       return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),headers, HttpStatus.CREATED);  
+    }
+	
+    
+    @RequestMapping("/findByCondition")
+   	public @ResponseBody Page<ContractDTO> findByCondition(ContractDTO contractDTO, ExtjsPageable pageable)
+   	{
+   		return contractService.findAll(ContractDTO.getWhereClause(contractDTO), pageable.getPageable());
+   	}
 }

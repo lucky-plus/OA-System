@@ -13,15 +13,17 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oa.staff.entity.UserInfornation;
 
 @Entity
-@Table(name="t_contrac")
+@Table(name="t_contract")
 public class Contract {
 	private Integer contractId;
+	private String contractName;//合同名称
 	private String Company;//合作公司
 	private String contractFile;//合同文件
 	private Date contractDate;//合同日期
 	private String contractNum;//合同编号
 	private String contractState;//合同状态
 	private UserInfornation user;		//发布者姓名
+	private String pictureFileName;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -48,7 +50,12 @@ public class Contract {
 	public UserInfornation getUser() {
 		return user;
 	}
-	
+	public String getContractName() {
+		return contractName;
+	}
+	public String getPictureFileName() {
+		return pictureFileName;
+	}
 	public void setContractId(Integer contractId) {
 		this.contractId = contractId;
 	}
@@ -69,6 +76,12 @@ public class Contract {
 	}
 	public void setUser(UserInfornation user) {
 		this.user = user;
+	}
+	public void setContractName(String contractName) {
+		this.contractName = contractName;
+	}
+	public void setPictureFileName(String pictureFileName) {
+		this.pictureFileName = pictureFileName;
 	}
 
 	
