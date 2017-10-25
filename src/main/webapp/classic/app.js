@@ -103372,6 +103372,21 @@ reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName
   var dept = Ext.getCmp('deptComBoBox');
   Ext.getCmp('postComBoBox').getStore().load({params:{deptId:dept.getValue()}});
 }}}, {xtype:'combobox', id:'postComBoBox', queryMode:'remote', name:'postId', async:false, fieldLabel:'职位', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'post/findPostsByDeptId'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'postName', valueField:'postId'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'staffGridEditSubmit'}, {xtype:'button', text:'取消', handler:'staffGridWindowsClose'}]}});
+Ext.define('Admin.view.staff.StaffEditWindow', {extend:Ext.window.Window, alias:'widget.staffEditWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.3), Math.floor(height * 0.3));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
 Ext.define('Admin.view.staff.StaffForm', {extend:Ext.form.Panel, alias:'widget.staffForm', controller:'StaffViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'姓名', name:'realName'}, {xtype:'textfield', fieldLabel:'用户名', name:'userName'}, {xtype:'textfield', fieldLabel:'初始密码', name:'password'}, {xtype:'datefield', format:'Y/m/d H:i:s', 
 fieldLabel:'入职时间', name:'onDutDate', value:new Date}, {xtype:'combobox', id:'deptComBoBox', name:'deptId', fieldLabel:'部门', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId', listConfig:{maxHeight:200}, listeners:{select:function() {
   var dept = Ext.getCmp('deptComBoBox');
@@ -103399,7 +103414,7 @@ Ext.define('Admin.view.staff.StaffViewController', {extend:Ext.app.ViewControlle
   Ext.create(cfg);
 }, staffGridOpenEditWindow:function(grid, rowIndex, colIndex) {
   var record = grid.getStore().getAt(rowIndex);
-  var staffWindow = Ext.widget('staffWindow', {title:'修改部门', items:[{xtype:'staffEditForm'}]});
+  var staffWindow = Ext.widget('staffEditWindow', {title:'修改部门', items:[{xtype:'staffEditForm'}]});
   staffWindow.down('form').getForm().loadRecord(record);
 }, staffGridDelete:function(btn) {
   var grid = btn.up('gridpanel');
