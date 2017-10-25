@@ -4,7 +4,7 @@ Ext.define('Admin.store.address.AddressStore', {
 	model: 'Admin.model.address.AddressModel',
 	proxy: {
 		type: 'ajax',
-		url: 'staff/findPage.json',	//后台OrderController中的接口url地址
+		url: 'staff/findAddress.json',	//后台OrderController中的接口url地址
 		reader: {
 			type:'json', 
 			rootProperty: 'content',		//结果集名字的属性

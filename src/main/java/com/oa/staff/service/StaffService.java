@@ -65,9 +65,9 @@ public class StaffService implements IStaffService {
 	
 
 	//通讯录、员工管理
-	public Page<PostUserDTO> findAll(Pageable pageable) {
+	public Page<PostUserDTO> findAll(Integer roleLevel, Pageable pageable) {
 
-		Page<UserInfornation>list=staffDao.findAll(pageable);
+		Page<UserInfornation>list=staffDao.findUserRole(roleLevel, pageable);
 		List<PostUserDTO> dtoList=new ArrayList<PostUserDTO>();
 		for(UserInfornation user : list.getContent()) {
 			PostUserDTO dto = new PostUserDTO();
@@ -177,6 +177,21 @@ public class StaffService implements IStaffService {
 	@Override
 	public void updatePictureFileName(String userId, String pictureFileName) {
 		staffDao.updatePictureFileName(userId, pictureFileName);
+	}
+
+	@Override
+	public Page<PostUserDTO> findAddress(Integer roleLevel, Pageable pageable) {
+		Page<UserInfornation> userPage = staffDao.findAddress(roleLevel, pageable);
+		List<PostUserDTO> dtoList = new ArrayList<PostUserDTO>();
+		if(userPage != null) {
+			for(UserInfornation user : userPage.getContent()) {
+				PostUserDTO dto = new PostUserDTO();
+				PostUserDTO.entityToDto(user, dto);
+				dtoList.add(dto);
+			}
+		}
+		PageImpl<PostUserDTO> page = new PageImpl<PostUserDTO>(dtoList, pageable, dtoList.size());
+		return page;
 	}
 
 

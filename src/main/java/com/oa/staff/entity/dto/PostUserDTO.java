@@ -38,14 +38,7 @@ public class PostUserDTO {
 	
 	private Integer deptId;
 	private Integer roleId;
-	
-	public Integer getDeptId() {
-		return deptId;
-	}
-
-	public void setDeptId(Integer deptId) {
-		this.deptId = deptId;
-	}
+	private Integer roleLevel;
 
 	private String deptName;
 	
@@ -158,7 +151,19 @@ public class PostUserDTO {
 	public String getPictureFileName() {
 		return pictureFileName;
 	}
+	public Integer getDeptId() {
+		return deptId;
+	}
+	public Integer getRoleLevel() {
+		return roleLevel;
+	}
 
+	public void setRoleLevel(Integer roleLevel) {
+		this.roleLevel = roleLevel;
+	}
+	public void setDeptId(Integer deptId) {
+		this.deptId = deptId;
+	}
 	public void setPictureFileName(String pictureFileName) {
 		this.pictureFileName = pictureFileName;
 	}
@@ -231,6 +236,10 @@ public class PostUserDTO {
 				}
 				if(userPostDTO.getDeptName()!=null && userPostDTO.getDeptName().trim().length()>0) {
 					Predicate p2 = cb.like(root.get("post").get("department").get("deptName").as(String.class) , "%"+userPostDTO.getDeptName()+"%");
+					predicate.add(p2);
+				}
+				if(userPostDTO.getRoleLevel()!=null && !"".equals(userPostDTO.getRoleLevel().toString())) {
+					Predicate p2 = cb.lessThan(root.get("role").get("roleLevel").as(Integer.class) , userPostDTO.getRoleLevel());
 					predicate.add(p2);
 				}
 				 return cb.and(predicate.toArray(new Predicate[predicate.size()]));

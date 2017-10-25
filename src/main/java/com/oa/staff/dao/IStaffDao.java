@@ -45,5 +45,8 @@ public interface IStaffDao extends PagingAndSortingRepository<UserInfornation, S
 	@Transactional
 	@Query("update UserInfornation u set u.pictureFileName = ?2 where u.userId = ?1")
 	public void updatePictureFileName(String userId, String pictureFileName);
+
+	@Query("from UserInfornation u where u.role.roleLevel <= ?1")
+	public Page<UserInfornation> findAddress(Integer roleLevel, Pageable pageable);
 	
 }

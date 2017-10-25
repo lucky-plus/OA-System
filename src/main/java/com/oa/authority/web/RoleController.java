@@ -2,6 +2,8 @@ package com.oa.authority.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -28,7 +30,8 @@ public class RoleController {
 	}
 	
 	@RequestMapping("/findRoleByLevel")
-	public @ResponseBody List<RoleDTO> findRoleByLevel(Integer roleLevel) {
+	public @ResponseBody List<RoleDTO> findRoleByLevel(HttpSession session) {
+		Integer roleLevel = (Integer) session.getAttribute("roleLevel");
 		return roleService.findRoleByLevel(roleLevel);
 	}
 	

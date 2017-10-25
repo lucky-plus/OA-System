@@ -1,5 +1,7 @@
 package com.oa.business.web;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -50,6 +52,20 @@ public class TaskController {
 	
 	@RequestMapping("/findByCondition")
 	public @ResponseBody Page<TaskDTO> findByCondition(TaskDTO taskDTO, ExtjsPageable pageable) {
+		return taskService.findAll(TaskDTO.getWhereClause(taskDTO), pageable.getPageable());
+	}
+
+	@RequestMapping("/findMyTastByCondition")
+	public @ResponseBody Page<TaskDTO> findMyTastByCondition(HttpSession session, TaskDTO taskDTO, ExtjsPageable pageable) {
+		String userId = (String) session.getAttribute("userId");
+		taskDTO.setUserId(userId);
+		return taskService.findAll(TaskDTO.getWhereClause(taskDTO), pageable.getPageable());
+	}
+
+	@RequestMapping("/findReleaseTaskByCondition")
+	public @ResponseBody Page<TaskDTO> findReleaseTaskByCondition(HttpSession session, TaskDTO taskDTO, ExtjsPageable pageable) {
+		String userId = (String) session.getAttribute("userId");
+		taskDTO.setCreateId(userId);
 		return taskService.findAll(TaskDTO.getWhereClause(taskDTO), pageable.getPageable());
 	}
 	
