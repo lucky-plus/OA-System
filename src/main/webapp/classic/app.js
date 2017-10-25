@@ -101572,7 +101572,7 @@ Ext.define('Admin.proxy.API', {extend:Ext.data.proxy.Ajax, alias:'proxy.api', re
 Ext.define('Admin.store.myAssets.MyAssetsStore', {extend:Ext.data.Store, alias:'store.myAssetsStore', model:'Admin.model.assets.AssetsModel', proxy:{type:'ajax', url:'assets/findAssetsByUserId.json?userId\x3d' + loginUserId, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'assetsId'}});
 Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'系统首页', iconCls:'x-fa  fa-home', viewType:'dashboard', leaf:true}, {text:'合同管理', iconCls:'x-fa  fa-home', viewType:'contract', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', 
 viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}]}});
-Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
+Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findAddress.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.assets.AssetsStore', {extend:Ext.data.Store, alias:'store.assetsStore', model:'Admin.model.assets.AssetsModel', proxy:{type:'ajax', url:'assets/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'assetsId'}});
 Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json?roleLevel\x3d' + loginUserRoleLevel, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.business.ContractStore', {extend:Ext.data.Store, alias:'store.contractStore', model:'Admin.model.business.ContractModel', proxy:{type:'ajax', url:'contract/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'contractId'}});
@@ -101592,8 +101592,8 @@ Ext.define('Admin.store.search.Results', {extend:Ext.data.Store, alias:'store.se
 Ext.define('Admin.store.search.Users', {extend:Ext.data.Store, alias:'store.searchusers', model:'Admin.model.search.User', proxy:{type:'api', url:'~api/search/users'}, autoLoad:'true', sorters:{direction:'ASC', property:'fullname'}});
 Ext.define('Admin.store.staff.StaffStore', {extend:Ext.data.Store, alias:'store.staffStore', model:'Admin.model.staff.StaffModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.task.AllTaskStore', {extend:Ext.data.Store, alias:'store.allTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findByCondition.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
-Ext.define('Admin.store.task.MyTaskStore', {extend:Ext.data.Store, alias:'store.myTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findByCondition.json?userId\x3d' + loginUserId, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
-Ext.define('Admin.store.task.ReleaseTaskStore', {extend:Ext.data.Store, alias:'store.releaseTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findByCondition.json?createId\x3d' + loginUserId, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
+Ext.define('Admin.store.task.MyTaskStore', {extend:Ext.data.Store, alias:'store.myTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findMyTastByCondition.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
+Ext.define('Admin.store.task.ReleaseTaskStore', {extend:Ext.data.Store, alias:'store.releaseTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findReleaseTaskByCondition.json?', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
 Ext.define('Admin.view.chart.Bounces', {extend:Ext.chart.CartesianChart, xtype:'chartbounces', animation:!Ext.isIE9m && Ext.os.is.Desktop, height:22, background:'rgba(255, 255, 255, 1)', colors:['rgba(250,222,225, 0.8)'], insetPadding:{top:0, left:0, right:0, bottom:0}, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y2value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'area', xField:'xvalue', yField:['y2value']}], 
 interactions:[{type:'panzoom'}]});
 Ext.define('Admin.view.chart.Network', {extend:Ext.chart.CartesianChart, xtype:'chartnetwork', animation:!Ext.isIE9m && Ext.os.is.Desktop, insetPadding:0, axes:[{type:'category', fields:['xvalue'], hidden:true, position:'bottom'}, {type:'numeric', fields:['y1value', 'y2value'], grid:{odd:{fill:'#e8e8e8'}}, hidden:true, position:'left'}], series:[{type:'line', colors:['rgba(103, 144, 199, 0.6)'], useDarkerStrokeColor:false, xField:'xvalue', yField:'y1value', fill:true, smooth:true}, {type:'line', 
@@ -101951,7 +101951,7 @@ sortable:true, dataIndex:'roleName', width:100}, {text:'所拥有的权限', sor
 {text:'查找', handler:'authorityGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{userRoleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
 Ext.define('Admin.view.authority.AuthorityGridForm', {extend:Ext.form.Panel, alias:'widget.authorityGridForm', id:'authorityGridForm', controller:'AuthorityViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'用户名称', name:'userName', readOnly:true}, {xtype:'radiogroup', id:'radiogroupOperation', fieldLabel:'角色名称', columns:5, vertical:true, 
 listeners:{render:function() {
-  Ext.Ajax.request({url:'role/findRoleByLevel.json?roleLevel\x3d' + loginUserRoleLevel, async:false, success:function(response) {
+  Ext.Ajax.request({url:'role/findRoleByLevel.json?', async:false, success:function(response) {
     var data = eval('(' + response.responseText + ')');
     var len = data.length;
     if (data == null || len == 0) {
@@ -103372,6 +103372,21 @@ reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName
   var dept = Ext.getCmp('deptComBoBox');
   Ext.getCmp('postComBoBox').getStore().load({params:{deptId:dept.getValue()}});
 }}}, {xtype:'combobox', id:'postComBoBox', queryMode:'remote', name:'postId', async:false, fieldLabel:'职位', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'post/findPostsByDeptId'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'postName', valueField:'postId'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', ui:'soft-blue', text:'保存', handler:'staffGridEditSubmit'}, {xtype:'button', text:'取消', handler:'staffGridWindowsClose'}]}});
+Ext.define('Admin.view.staff.StaffEditWindow', {extend:Ext.window.Window, alias:'widget.staffEditWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.3), Math.floor(height * 0.3));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
+}});
 Ext.define('Admin.view.staff.StaffForm', {extend:Ext.form.Panel, alias:'widget.staffForm', controller:'StaffViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:100, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'userId', name:'userId'}, {xtype:'textfield', fieldLabel:'姓名', name:'realName'}, {xtype:'textfield', fieldLabel:'用户名', name:'userName'}, {xtype:'textfield', fieldLabel:'初始密码', name:'password'}, {xtype:'datefield', format:'Y/m/d H:i:s', 
 fieldLabel:'入职时间', name:'onDutDate', value:new Date}, {xtype:'combobox', id:'deptComBoBox', name:'deptId', fieldLabel:'部门', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'dept/findDepts'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'deptName', valueField:'deptId', listConfig:{maxHeight:200}, listeners:{select:function() {
   var dept = Ext.getCmp('deptComBoBox');
@@ -103399,7 +103414,7 @@ Ext.define('Admin.view.staff.StaffViewController', {extend:Ext.app.ViewControlle
   Ext.create(cfg);
 }, staffGridOpenEditWindow:function(grid, rowIndex, colIndex) {
   var record = grid.getStore().getAt(rowIndex);
-  var staffWindow = Ext.widget('staffWindow', {title:'修改部门', items:[{xtype:'staffEditForm'}]});
+  var staffWindow = Ext.widget('staffEditWindow', {title:'修改部门', items:[{xtype:'staffEditForm'}]});
   staffWindow.down('form').getForm().loadRecord(record);
 }, staffGridDelete:function(btn) {
   var grid = btn.up('gridpanel');
@@ -103613,7 +103628,7 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
   } else {
     endTime = Ext.getCmp('myTaskCondition').items.getAt(7).getValue();
   }
-  Ext.Ajax.request({url:'task/findByCondition.json', params:{userId:loginUserId, createName:createName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
+  Ext.Ajax.request({url:'task/findMyTastByCondition.json', params:{createName:createName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     grid.getStore().loadData(tnpdata.content, false);
   }});
@@ -103630,7 +103645,7 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
   } else {
     endTime = Ext.getCmp('releaseTaskCondition').items.getAt(7).getValue();
   }
-  Ext.Ajax.request({url:'task/findByCondition.json', params:{createId:loginUserId, realName:realName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
+  Ext.Ajax.request({url:'task/findReleaseTaskByCondition.json', params:{realName:realName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     grid.getStore().loadData(tnpdata.content, false);
   }});

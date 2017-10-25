@@ -20,7 +20,7 @@ public interface IStaffService {
 	public void delete(String[] ids);
 	public UserInfornation findByUserName(String userName);
 	public List<PostUserDTO> findAll();
-	public Page<PostUserDTO> findAll(Pageable pageable);
+	public Page<PostUserDTO> findAll(Integer roleLevel, Pageable pageable);
 	public Page<PostUserDTO> findAll(Specification<UserInfornation> spec, Pageable pageable);
 	
 	public Page<UserRoleDTO> findUserRole(Integer roleLevel, Pageable pageable); 
@@ -39,5 +39,7 @@ public interface IStaffService {
 	
 	//修改用户头像
 	public void updatePictureFileName(String userId, String pictureFileName);
+	
+	public Page<PostUserDTO> findAddress(Integer roleLevel, Pageable pageable);
 	
 }

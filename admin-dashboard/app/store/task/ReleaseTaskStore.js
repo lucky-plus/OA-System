@@ -4,7 +4,7 @@ Ext.define('Admin.store.task.ReleaseTaskStore', {
     model: 'Admin.model.task.TaskModel',//2.设置model的全路径
   	proxy: {
 		type: 'ajax',
-		url: 'task/findByCondition.json?createId='+loginUserId,
+		url: 'task/findReleaseTaskByCondition.json?',
 		reader: {
 			type:'json', 
 			rootProperty: 'content',		//结果集名字的属性

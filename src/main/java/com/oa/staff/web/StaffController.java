@@ -62,14 +62,24 @@ public class StaffController {
 	}
 	
 	@RequestMapping("/findPage")
-	public @ResponseBody Page<PostUserDTO> findAll(ExtjsPageable pageable)
+	public @ResponseBody Page<PostUserDTO> findAll(HttpSession session, ExtjsPageable pageable)
 	{
+		Integer roleLevel = (Integer) session.getAttribute("roleLevel");
 		pageable.setSort("userId");
-		return staffService.findAll(pageable.getPageable());
+		return staffService.findAll(roleLevel, pageable.getPageable());
+	}
+	
+	@RequestMapping("/findAddress")
+	public @ResponseBody Page<PostUserDTO> findAddress(HttpSession session, ExtjsPageable pageable)
+	{	
+		Integer roleLevel = (Integer) session.getAttribute("roleLevel");
+		return staffService.findAddress(roleLevel, pageable.getPageable());
 	}
 	
 	@RequestMapping("/findByPage")
-	public @ResponseBody Page<PostUserDTO> findAll(PostUserDTO  userPostDTO ,ExtjsPageable pageable){
+	public @ResponseBody Page<PostUserDTO> findAll(HttpSession session, PostUserDTO  userPostDTO ,ExtjsPageable pageable){
+		Integer roleLevel = (Integer) session.getAttribute("roleLevel");
+		userPostDTO.setRoleLevel(roleLevel);
 		return staffService.findAll(PostUserDTO.getWhereClause(userPostDTO), pageable.getPageable());
 	}
 	
