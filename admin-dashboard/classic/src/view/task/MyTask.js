@@ -4,8 +4,8 @@
     xtype: 'mytask',
 
     controller: 'taskViewController',			//视图绑定viewController
-    viewModel : {type: 'myTaskViewModel'},	//视图绑定viewModel
-    
+    //viewModel : {type: 'myTaskViewModel'},	//视图绑定viewModel
+    viewModel : {type: 'allTaskViewModel'}, 
     layout:'fit',
     margin: '20 20 20 20',
     items: [{

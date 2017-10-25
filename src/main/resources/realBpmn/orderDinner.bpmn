@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="orderDinner" name="Order Dinner" isExecutable="true">
+    <userTask id="orderRequest" name="Order Request" activiti:assignee="upSender">
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="assigneeList" activiti:elementVariable="assignee">
+        <completionCondition>${result}</completionCondition>
+      </multiInstanceLoopCharacteristics>
+    </userTask>
+    <userTask id="deptManagerApprove" name="Dept Manager Approve" activiti:assignee="DeptManager"></userTask>
+    <sequenceFlow id="flow2" sourceRef="orderRequest" targetRef="deptManagerApprove"></sequenceFlow>
+    <serviceTask id="mailtask1" name="Notict Task" activiti:type="mail">
+      <extensionElements>
+        <activiti:field name="to">
+          <activiti:string><![CDATA[934789892@qq.com]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="from">
+          <activiti:string><![CDATA[2651416933@qq.com]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="subject">
+          <activiti:string><![CDATA[测试报餐]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="html">
+          <activiti:string><![CDATA[the wind flows in winter,take car to that place with your clothes,i will meet you in some day later.]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow3" sourceRef="deptManagerApprove" targetRef="mailtask1"></sequenceFlow>
+    <serviceTask id="servicetask1" name="Service Task" activiti:class="org.activiti.explorer.conf.changeData"></serviceTask>
+    <sequenceFlow id="flow4" sourceRef="mailtask1" targetRef="servicetask1"></sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow5" sourceRef="servicetask1" targetRef="endevent1"></sequenceFlow>
+    <boundaryEvent id="boundarytimer1" name="Timer" attachedToRef="orderRequest" cancelActivity="true">
+      <timerEventDefinition>
+        <timeDuration>PT2S</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="flow6" sourceRef="boundarytimer1" targetRef="deptManagerApprove"></sequenceFlow>
+    <userTask id="dinnerLaunch" name="Dinner Launch" activiti:assignee="user"></userTask>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <sequenceFlow id="flow7" sourceRef="startevent1" targetRef="dinnerLaunch"></sequenceFlow>
+    <sequenceFlow id="flow8" sourceRef="dinnerLaunch" targetRef="orderRequest"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_orderDinner">
+    <bpmndi:BPMNPlane bpmnElement="orderDinner" id="BPMNPlane_orderDinner">
+      <bpmndi:BPMNShape bpmnElement="orderRequest" id="BPMNShape_orderRequest">
+        <omgdc:Bounds height="55.0" width="105.0" x="170.0" y="400.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="boundarytimer1" id="BPMNShape_boundarytimer1">
+        <omgdc:Bounds height="30.0" width="30.0" x="261.0" y="414.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="deptManagerApprove" id="BPMNShape_deptManagerApprove">
+        <omgdc:Bounds height="55.0" width="165.0" x="325.0" y="400.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="mailtask1" id="BPMNShape_mailtask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="355.0" y="260.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="355.0" y="102.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="210.0" y="112.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="dinnerLaunch" id="BPMNShape_dinnerLaunch">
+        <omgdc:Bounds height="55.0" width="105.0" x="170.0" y="260.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="205.0" y="180.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="222.0" y="400.0"></omgdi:waypoint>
+        <omgdi:waypoint x="299.0" y="382.0"></omgdi:waypoint>
+        <omgdi:waypoint x="407.0" y="400.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="407.0" y="400.0"></omgdi:waypoint>
+        <omgdi:waypoint x="407.0" y="315.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="407.0" y="260.0"></omgdi:waypoint>
+        <omgdi:waypoint x="407.0" y="157.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="355.0" y="129.0"></omgdi:waypoint>
+        <omgdi:waypoint x="245.0" y="129.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="291.0" y="429.0"></omgdi:waypoint>
+        <omgdi:waypoint x="325.0" y="427.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="222.0" y="215.0"></omgdi:waypoint>
+        <omgdi:waypoint x="222.0" y="260.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="222.0" y="315.0"></omgdi:waypoint>
+        <omgdi:waypoint x="222.0" y="400.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

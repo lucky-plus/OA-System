@@ -9,6 +9,10 @@ Ext.define('Admin.view.task.AllTaskViewModel', {
         taskLists: {
             type: 'allTaskStore',//Store reference ==Store的属性 alias: 'store.orderStore',		
             autoLoad: true //Auto load
-        }
+        },
+		activitiTaskLists: {
+			type: 'AllActivitiTaskStore',
+			autoLoad: true
+		}
     }
 });

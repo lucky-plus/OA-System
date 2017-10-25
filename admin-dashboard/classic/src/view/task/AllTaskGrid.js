@@ -3,20 +3,29 @@
   //3.重写继承组件的属性：
   xtype: 'allTaskGrid',
   title:'<b>所有任务</b>',
-  bind:'{taskLists}',
+  bind:'{activitiTaskLists}',
   selModel: Ext.create('Ext.selection.CheckboxModel'),
-  columns: [
-    {text: 'taskId' ,sortable:false ,dataIndex:'taskId',hidden:true},
-    {text: 'createId' ,sortable:false ,dataIndex:'createId',hidden:true},
-    {text: 'userId' ,sortable:false ,dataIndex:'userId',hidden:true},
-    {text: '任务名称', sortable:false ,dataIndex:'taskName' ,width:150},
-    {text: '任务发布时间' ,sortable:true ,dataIndex:'createDate' ,width:200,
-     renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
-    {text: '任务完成时间' ,sortable:true ,dataIndex:'completeDate' ,width:200},
-    {text: '接收者', sortable:false ,dataIndex:'realName' ,width:120},
-    {text: '发布者', sortable:false ,dataIndex:'createName' ,width:120},
-    {text: '状态'  ,sortable:false ,dataIndex:'taskState'  ,flex:120},
-    {
+      // {text: 'taskId' ,sortable:false ,dataIndex:'taskId',hidden:true},
+    // {text: 'createId' ,sortable:false ,dataIndex:'createId',hidden:true},
+    // {text: 'userId' ,sortable:false ,dataIndex:'userId',hidden:true},
+    // {text: '任务名称', sortable:false ,dataIndex:'taskName' ,width:150},
+    // {text: '任务发布时间' ,sortable:true ,dataIndex:'createDate' ,width:200,
+     // renderer: Ext.util.Format.dateRenderer('Y/m/d H:i:s')},
+    // {text: '任务完成时间' ,sortable:true ,dataIndex:'completeDate' ,width:200},
+    // {text: '接收者', sortable:false ,dataIndex:'realName' ,width:120},
+    // {text: '发布者', sortable:false ,dataIndex:'createName' ,width:120},
+    // {text: '状态'  ,sortable:false ,dataIndex:'taskState'  ,flex:120},
+	columns: [
+	{text: 'id'  ,sortable:false ,dataIndex:'id', type: 'string', hidden:true ,width:120},
+	{text: '委托人'  ,sortable:false ,dataIndex:'assignee'  ,type: 'string',width:120},
+	{text: '创建时间'  ,sortable:false ,dataIndex:'createTime' , type: 'date',renderer:new Ext.util.Format.dateRenderer('Y-m-d') ,width:120},
+	{text: '任务状态'  ,sortable:false ,dataIndex:'delegationState' ,type: 'string' ,width:120},
+	{text: '描述'  ,sortable:false ,dataIndex:'description'  ,flex:1,type: 'string'},
+	{text: '名字'  ,sortable:false ,dataIndex:'name' ,type: 'string' ,width:120},
+	{text: '是否暂停'  ,sortable:false ,dataIndex:'suspended',type: 'string'  ,width:120},
+	{text: '任务定义关键字'  ,sortable:false ,dataIndex:'taskDefinitionKey' ,type: 'string' ,width:120},
+	{text: '发布者'  ,sortable:false ,dataIndex:'owner' ,type: 'string' ,width:120},
+	{
       xtype: 'actioncolumn',
       text: '查看详情',
       width: 100,
@@ -29,76 +38,74 @@
     }
   ], 
 
-  tbar: Ext.create('Ext.Toolbar', {
-      id: 'allTaskCondition',
-        items:[{xtype:'tbtext',
-          text:'接收者：'
-        },{
-          xtype:'textfield',
-          width:90,
-          itemsId:'realName'
+  // tbar: Ext.create('Ext.Toolbar', {
+      // id: 'allTaskCondition',
+        // items:[{xtype:'tbtext',
+          // text:'接收者：'
+        // },{
+          // xtype:'textfield',
+          // width:90,
+          // itemsId:'realName'
           
-        },{xtype:'tbtext',
-          text:'发布者：'
-        },{
-          xtype:'textfield',
-          width:90,
-          itemsId:'createName'
+        // },{xtype:'tbtext',
+          // text:'发布者：'
+        // },{
+          // xtype:'textfield',
+          // width:90,
+          // itemsId:'createName'
           
-        },{xtype:'tbtext',
-           text:'状态:'
-        },{
-          xtype: 'combobox',
-          name:'taskState',
-          width:100,
-          store:  Ext.create('Ext.data.Store', {
-            fields: ['value', 'name'],
-            data : [
-              {"value":"未完成",   "name":"未完成"},
-              {"value":"已完成",  "name":"已完成"},
-              {"value":"已终止",   "name":"已终止"}
-            ]
-          }),
-          queryMode:    'local',
-          displayField: 'name',
-          valueField:   'value'
-        },
-        {xtype:'tbtext',
-          text:'发布时间：'
-        },{
-           xtype:'datefield',  
-           width:125,
-            editable:false,
-                      itemId:'beginDate',  
-                      format:'Y-m-d',  
-            value:'2017-01-01'
+        // },{xtype:'tbtext',
+           // text:'状态:'
+        // },{
+          // xtype: 'combobox',
+          // name:'taskState',
+          // width:100,
+          // store:  Ext.create('Ext.data.Store', {
+            // fields: ['value', 'name'],
+            // data : [
+              // {"value":"未完成",   "name":"未完成"},
+              // {"value":"已完成",  "name":"已完成"},
+              // {"value":"已终止",   "name":"已终止"}
+            // ]
+          // }),
+          // queryMode:    'local',
+          // displayField: 'name',
+          // valueField:   'value'
+        // },
+        // {xtype:'tbtext',
+          // text:'发布时间：'
+        // },{
+           // xtype:'datefield',  
+           // width:125,
+            // editable:false,
+                      // itemId:'beginDate',  
+                      // format:'Y-m-d',  
+            // value:'2017-01-01'
             
         
-        },{xtype:'tbtext',
-          text:'至：'
-        },{
-          xtype:'datefield',  
-          width:125,
-            editable:false,  
-                      itemId:'endDate',  
-                      format:'Y-m-d',  
-            value:new Date(),
-            listeners: {  
-            focus: function(){
-              var cc = Ext.getCmp('allTaskCondition').items.getAt(7).getValue();
-              this.setMinValue(cc);
-              }   
-            }
-        },{
-          text: '查找',
-          handler:'allTaskGridFind'
-        }]
-  }),
-  
-  
+        // },{xtype:'tbtext',
+          // text:'至：'
+        // },{
+          // xtype:'datefield',  
+          // width:125,
+            // editable:false,  
+                      // itemId:'endDate',  
+                      // format:'Y-m-d',  
+            // value:new Date(),
+            // listeners: {  
+            // focus: function(){
+              // var cc = Ext.getCmp('allTaskCondition').items.getAt(7).getValue();
+              // this.setMinValue(cc);
+              // }   
+            // }
+        // },{
+          // text: '查找',
+          // handler:'allTaskGridFind'
+        // }]
+  // }),
   
   bbar: Ext.create('Ext.PagingToolbar', {
-    bind:'{roleLists}',
+    bind:'{activitiTaskLists}',
     displayInfo: true,
     displayMsg: '第 {0} - {1}条， 共 {2}条',
     emptyMsg: "暂无数据",

@@ -108,8 +108,9 @@ Ext.define('Admin.view.task.TaskViewController', {
 			endTime=Ext.getCmp('myTaskCondition').items.getAt(7).getValue();
 	   }
 	   Ext.Ajax.request({ 
-			url : 'task/findMyTastByCondition.json', 
+			url : 'task/findByCondition.json', 
 			params : { 
+					userId: loginUserId,
                     createName:createName,
                     taskState:taskState,
 					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),
@@ -142,8 +143,9 @@ Ext.define('Admin.view.task.TaskViewController', {
 			endTime=Ext.getCmp('releaseTaskCondition').items.getAt(7).getValue();
 	   }
 	   Ext.Ajax.request({ 
-			url : 'task/findReleaseTaskByCondition.json', 
+			url : 'task/findByCondition.json', 
 			params : {
+					createId: loginUserId,
                     realName:realName,
                     taskState:taskState,
 					beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'),
@@ -221,9 +223,150 @@ Ext.define('Admin.view.task.TaskViewController', {
 			}
 	    	})
 		}
-   },
+	},
 	
-   setStateStop: function(grid, rowIndex, colIndex) {
+	askToShowForm : function(grid, rowIndex, colIndex){
+		var recordID = grid.getStore().getAt(rowIndex).getId();
+		var tmpFormItemsArr = new Array();
+		var tmpObj = {
+				xtype:'form',
+				items:tmpFormItemsArr,
+				layout: {
+					type:'vbox',
+					align:'stretch'
+				},
+				bodyPadding: 10,
+				scrollable: true,
+				bbar: {
+					overflowHandler: 'menu',
+					items: ['->',{
+						xtype: 'button',
+						text: '提交',
+						handler: function(btn){
+							var taskSubmitForm = this.up('form').getForm();
+							var taskSubmitObject = taskSubmitForm.getValues();
+							var taskSubmitArr = new Array();
+							for(var k in taskSubmitObject){
+								taskSubmitArr.push({
+									id:k,
+									value:taskSubmitObject[k]
+								});
+							}
+							if(taskSubmitForm.isValid())
+								Ext.Ajax.request({
+									headers : {
+										'Content-Type':'application/json'
+									},
+									url: 'form/form-data',
+									method: 'POST',
+									params: Ext.encode({
+										taskId:recordID,
+										properties:taskSubmitArr
+									}),
+									success:function(){
+										Ext.toast('你的表单提交成功');
+									},
+									failure:function(){
+										Ext.toast('你的表单提交失败了');
+									}
+								});
+						}
+					},{
+						xtype: 'button',
+						text: '取消',
+						handler: function(btn){
+							var win = btn.up('window');
+							if(win){
+								win.close();
+							}
+						}
+					}]
+				}
+				
+		};
+		Ext.Ajax.request({
+			url: 'form/form-data?taskId='+recordID,
+			success: function(response, opts) {
+				//Ext.toast(''+response.responseText);
+				//Ext.toast('tmpFormItemsArr:'+tmpFormItemsArr.length);
+				var respon = Ext.decode(response.responseText);
+				var objArr = respon.formProperties;
+				if(objArr.length>0){
+					for(fieldInd in objArr){
+					var fieldTypeN = objArr[fieldInd].type;
+					switch(fieldTypeN){
+						case('string'):
+							tmpObj.items.push({
+								xtype: 'textfield',
+								margin : '10 0 10 40',
+								fieldLabel:objArr[fieldInd].name,
+								name:objArr[fieldInd].id,
+							});	
+							break;
+						case('long'):
+							tmpObj.items.push({
+								xtype: 'numberfield',
+								margin : '10 0 10 40',
+								fieldLabel:objArr[fieldInd].name,
+								name:objArr[fieldInd].id,
+							});							
+							break;
+						case('boolean'):
+							tmpObj.items.push({
+								xtype:'checkboxfield',
+								boxLabel  : objArr[fieldInd].name,
+								name      : objArr[fieldInd].id,
+								inputValue: true,
+								id        : objArr[fieldInd].id								
+							});								
+							break;
+						default:
+							tmpObj.items.push({
+								xtype: 'textfield',
+								margin : '10 0 10 40',
+								fieldLabel:objArr[fieldInd].name,
+								name:objArr[fieldInd].id,
+							});								
+						}
+					}
+				}else{
+					tmpObj.items.push({
+						xtype:'displayfield',
+						fieldLabel:'你的任务表单要么没有要么迷失了',
+						width: 700,
+				
+					});
+				}
+				//Ext.toast('长度为:'+tmpObj.items.length);
+				var cfg = Ext.apply({
+					title:'任务表单',
+					xtype:'taskGridWindow'
+				},{
+					items:[
+						tmpObj
+					]
+				});
+					Ext.create(cfg);				
+			},
+			failure:function(){
+				tmpObj.items.push({
+					xtype:'displayfield',
+					text:'你的任务表单要么没有要么迷失了'
+				});
+				var cfg = Ext.apply({
+					title:'任务表单',
+					xtype:'taskGridWindow'
+				},{
+					items:[
+						tmpObj
+					]
+				});
+				Ext.create(cfg);
+			}
+		});
+	},
+	
+	setStateStop: function(grid, rowIndex, colIndex) {
 	    var record = grid.getStore().getAt(rowIndex);
 	    var taskId=record.data.taskId;
 	    var taskName=record.data.taskName;

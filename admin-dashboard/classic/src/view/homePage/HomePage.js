@@ -1,7 +1,11 @@
 Ext.define('Admin.view.homePage.HomePage', {
     extend: 'Ext.container.Container',
     xtype: 'dashboard',
-	height:Ext.Element.getViewportHeight()-1000,//必须设置高，否则无法使用border布局	
+	width: 1100,
+	maxWidth: 1100,
+	height: 600,	
+	maxHeight:600,//必须设置高，否则无法使用border布局	
+	//height:Ext.Element.getViewportHeight()-1000,//必须设置高，否则无法使用border布局	
 	viewModel : {type: 'homePageViewModel'},   
 	requires: [
         'Ext.layout.container.Border',
