@@ -112,4 +112,9 @@ public class PostService implements IPostService {
 		postDao.updateUserPost(userId, postId);
 	}
 
+	@Override
+	public Post findPostNameByPostId(Integer postId) {
+		return postDao.findPostNameByPostId(postId);
+	}
+
 }

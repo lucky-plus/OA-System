@@ -22,4 +22,6 @@ public interface IPostService {
 	public List<PostDTO> findPostsByDeptId(Integer deptId);
 	public void updateUserPost(String userId, Integer postId);
 	
+	public Post findPostNameByPostId(Integer postId);
+	
 }
