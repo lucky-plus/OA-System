@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.oa.activiti.entity.formParamList;
 import com.oa.authority.entity.Role;
 import com.oa.authority.entity.dto.RoleDTO;
 import com.oa.business.entity.dto.TaskDTO;
@@ -224,6 +225,15 @@ public class LogAspect {
 			log.setContent(content.toString());
 			logService.save(log);
 			
+		} else if(param.contains("formParamList")) {
+			Object[] params = joinPoint.getArgs();
+			formParamList fpl = (formParamList) params[0];
+			operation = "添加";
+			log.setOperation(operation);
+			content.append(operation+"了表单，表单Id为："+fpl.getFormId());
+			log.setContent(content.toString());
+			logService.save(log);
+			
 		}
 		
 	}
@@ -246,6 +256,8 @@ public class LogAspect {
 			content.append(operation+"了任务,所删任务ID为:");
 		} else if(className.contains("Asset")) {
 			content.append(operation+"了资产,所删资产ID为:");
+		} else if(className.contains("FormParam")) {
+			content.append(operation+"了表单,所表单ID为:");
 		}
 		if(className.contains("Staff")) {
 			Object[] params = joinPoint.getArgs();
@@ -253,6 +265,10 @@ public class LogAspect {
 			for(String id : ids) {
 				content.append(id+"、");
 			}
+		} else if(className.contains("FormParam")) {
+			Object[] params = joinPoint.getArgs();
+			formParamList form = (formParamList) params[0];
+			content.append(String.valueOf(form.getFormId()));
 		} else {
 			Object[] params = joinPoint.getArgs();
 			Integer[] ids = (Integer[]) params[0];
