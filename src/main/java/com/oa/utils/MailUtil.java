@@ -66,7 +66,7 @@ public class MailUtil {
         message.saveChanges();
 
         Transport transport = session.getTransport("smtp");
-        transport.connect("smtp.qq.com","2651416933@qq.com","cgrdwatucmofdjbf");
+        transport.connect("smtp.qq.com","2651416933@qq.com","blcnnkopjlnbdhji");
         transport.sendMessage(message, message.getAllRecipients());
         transport.close();
 	}
