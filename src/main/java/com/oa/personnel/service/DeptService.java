@@ -9,14 +9,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.oa.personnel.dao.IDeptDao;
+import com.oa.personnel.dao.IPostDao;
 import com.oa.personnel.entity.Department;
+import com.oa.personnel.entity.Post;
 import com.oa.personnel.web.TreeNode;
 
 @Service
 public class DeptService implements IDeptService {
 
 	@Autowired
-	private IDeptDao deptDao;
+	private IDeptDao deptDao;	
+	
+
 	
 	@Override
 	public void save(Department dept) {

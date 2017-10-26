@@ -14,6 +14,7 @@ Ext.define('Admin.view.staff.StaffViewController', {
     },
 	
 	staffGridOpenEditWindow:function(grid, rowIndex, colIndex){
+		
 			var record = grid.getStore().getAt(rowIndex);
 		   var staffWindow = Ext.widget('staffEditWindow',{
 				title:'修改部门',
@@ -21,6 +22,7 @@ Ext.define('Admin.view.staff.StaffViewController', {
 			});
 		   		//让form加载选中记录
            staffWindow.down("form").getForm().loadRecord(record);
+		   	staffWindow.down("form").items.getAt(3).setValue(record.get('postName'));
 	},
    
 	staffGridDelete: function(btn) {
@@ -113,8 +115,7 @@ Ext.define('Admin.view.staff.StaffViewController', {
 				Ext.getCmp('staffGrid').store.reload();
 			}, 
 			failure : function(form, action) { 
-				Ext.Msg.alert("提示",action.result.msg); 
-				
+				Ext.toast('请填写正确信息'); 
 			} 
 		}); 
 

@@ -40,6 +40,7 @@ Ext.define('Admin.view.department.PostForm', {
 	{
 		xtype: 'combobox',
 		fieldLabel: '所属部门',
+		allowBlank: false,
 		name:'deptId',			
 		store:  new Ext.data.Store( {
 				proxy : new Ext.data.HttpProxy( {

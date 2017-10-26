@@ -38,14 +38,17 @@ Ext.define('Admin.view.staff.StaffForm', {
 	},{
 		xtype: 'textfield',
 		fieldLabel: '姓名',
+		allowBlank: false,
 		name:'realName'
 	},{
 		xtype: 'textfield',
 		fieldLabel: '用户名',
+		allowBlank: false,
 		name:'userName'
 	},{
 		xtype: 'textfield',
 		fieldLabel: '初始密码',
+		allowBlank: false,
 		name:'password'
 	},{
 		xtype: 'datefield',
@@ -58,6 +61,7 @@ Ext.define('Admin.view.staff.StaffForm', {
 		id: 'deptComBoBox',
 		name:'deptId',
 		fieldLabel: '部门',
+		allowBlank: false,
 		store : 
 		new Ext.data.Store( {
 			proxy : new Ext.data.HttpProxy( {
@@ -99,6 +103,7 @@ Ext.define('Admin.view.staff.StaffForm', {
 			queryMode: 'remote',
 			name:'postId',
 			async : false,
+			allowBlank: false,
 			fieldLabel: '职位',
 			store : new Ext.data.Store( {
 					proxy : new Ext.data.HttpProxy( {
