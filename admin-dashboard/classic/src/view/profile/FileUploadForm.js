@@ -34,12 +34,6 @@ Ext.define('Admin.view.profile.FileUploadForm', {
                 {
                     xtype:'hiddenfield',
                     name: me.name
-                },
-                {
-                    xtype: 'hidden',
-                    fieldLabel: 'userId',
-                    name:'userId',
-                    value: loginUserId
                 }
             ]
         });

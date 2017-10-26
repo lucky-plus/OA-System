@@ -128,7 +128,7 @@ public class StaffController {
 	}
 
 	@RequestMapping("/updatePicture")
-	public @ResponseBody ExtjsAjaxResult updatePicture(String userId, HttpServletRequest request) {
+	public @ResponseBody ExtjsAjaxResult updatePicture(HttpServletRequest request) {
 //		try {
 //			
 //			String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -147,6 +147,10 @@ public class StaffController {
 //		}
 		try {
 			HttpSession session = request.getSession();
+			
+			//拿到userId
+			String userId = (String) session.getAttribute("userId");
+			
 	         //将当前上下文初始化给  CommonsMutipartResolver （多部分解析器）
 	        CommonsMultipartResolver multipartResolver=new CommonsMultipartResolver(
 	                request.getSession().getServletContext());
@@ -164,19 +168,29 @@ public class StaffController {
 	                MultipartFile file=multiRequest.getFile(iter.next().toString());
 	                if(file!=null)
 	                {
-	                	String filePath = request.getSession().getServletContext().getRealPath("/resources/images/user-profile");;
-	                	String newFileName = UUID.randomUUID().toString().replaceAll("-", "") + ".png";
-	        			System.out.println(newFileName);
-	        			System.out.println(userId);
-	                    File targetFile = new File(filePath, newFileName);
+	                	String fileName=file.getOriginalFilename();
+	                    // System.out.println(fileName);
+						int index=fileName.lastIndexOf("."); 
+	                    String type = fileName.substring(index + 1);
+	                    if(type.equals("jpg")||type.equals("jpeg")||type.equals("png")) {
+	                	
+		                	String filePath = request.getSession().getServletContext().getRealPath("/resources/images/user-profile");;
+		                	String newFileName = UUID.randomUUID().toString().replaceAll("-", "") + type;
+		        			System.out.println(newFileName);
+		        			System.out.println(userId);
+		                    File targetFile = new File(filePath, newFileName);
+		                    
+		                    //上传
+		                    file.transferTo(targetFile); 
+		                    
+		                    staffService.updatePictureFileName(userId, newFileName);
+		                    
+		                    session.removeAttribute("pictureFileName");
+		                    session.setAttribute("pictureFileName", newFileName);
 	                    
-	                    //上传
-	                    file.transferTo(targetFile); 
-	                    
-	                    staffService.updatePictureFileName(userId, newFileName);
-	                    
-	                    session.removeAttribute("pictureFileName");
-	                    session.setAttribute("pictureFileName", newFileName);
+	                    } else {
+	                    	return  new ExtjsAjaxResult(false,"请上传正确格式的图片！");
+	                    }
 	                }
 	                 
 	            }

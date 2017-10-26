@@ -103146,7 +103146,7 @@ items:[{title:'What are the different membership plans?', iconCls:'x-fa fa-caret
 items:[{title:'What are the payment methods you accept?', iconCls:'x-fa fa-caret-down'}, {title:'What is the refund policy?', iconCls:'x-fa fa-caret-down'}, {title:'How long does it take to process my payment?', iconCls:'x-fa fa-caret-down'}]}]}]});
 Ext.define('Admin.view.profile.FileUploadForm', {extend:Ext.form.Panel, alias:'widget.fileUploadForm', imageWidth:300, notice:'', initComponent:function() {
   var me = this;
-  Ext.apply(this, {items:[{xtype:'box', width:me.imageWidth, maxWidth:300, reference:'imageShow', autoEl:{tag:'img'}}, {xtype:'filefield', buttonOnly:true, buttonText:'选择图片', listeners:{change:me.changeSelect}}, {xtype:'component', html:me.notice}, {xtype:'hiddenfield', name:me.name}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}]});
+  Ext.apply(this, {items:[{xtype:'box', width:me.imageWidth, maxWidth:300, reference:'imageShow', autoEl:{tag:'img'}}, {xtype:'filefield', buttonOnly:true, buttonText:'选择图片', listeners:{change:me.changeSelect}}, {xtype:'component', html:me.notice}, {xtype:'hiddenfield', name:me.name}]});
   this.callParent();
 }, changeSelect:function(fileFiled, value, eOpts) {
   var me = this;
