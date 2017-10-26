@@ -101554,6 +101554,13 @@ Ext.define('Admin.model.PanelSetting', {extend:Admin.model.Base, fields:[{name:'
 Ext.define('Admin.model.PersonalInfo', {extend:Admin.model.Base, fields:[{name:'name'}, {name:'status'}, {name:'icon'}]});
 Ext.define('Admin.model.Subscription', {extend:Admin.model.Base, fields:[{type:'int', name:'id'}, {type:'string', name:'name'}, {type:'string', name:'subscription'}]});
 Ext.define('Admin.model.YearwiseData', {extend:Admin.model.Base, fields:[{name:'year'}, {name:'data'}]});
+Ext.define('Admin.model.activiti.AllActivitiTaskStoreModel', {extend:Admin.model.Base, fields:[{name:'assignee', type:'string'}, {name:'createTime', type:'date'}, {name:'delegationState', type:'string'}, {name:'description', type:'string'}, {name:'dueDate', type:'date'}, {name:'id', type:'string'}, {name:'name', type:'string'}, {name:'suspended', type:'boolean'}, {name:'taskDefinitionKey', type:'string'}, {name:'owner', type:'string'}]});
+Ext.define('Admin.model.activiti.activitiDeploymentStoreModel', {extend:Admin.model.Base, fields:[{name:'id', type:'string'}, {name:'name', type:'string'}, {name:'key', type:'string'}, {name:'deploymentTime', type:'date'}, {name:'description', type:'string'}]});
+Ext.define('Admin.model.activiti.activitiModelerModel', {extend:Admin.model.Base, fields:[{name:'id', type:'string'}, {name:'name', type:'string'}, {name:'key', type:'string'}, {name:'category', type:'string'}, {name:'version', type:'int'}, {name:'metaInfo', type:'string'}, {name:'deploymentId', type:'string'}, {name:'createTime', type:'date'}, {name:'lastUpdateTime', type:'date'}]});
+Ext.define('Admin.model.activiti.activitiProcessFormDataModel', {extend:Admin.model.Base, fields:[{name:'id', type:'string'}, {name:'version', type:'int'}, {name:'suspended', type:'boolean'}, {name:'key', type:'string'}, {name:'name', type:'string'}, {name:'description', type:'string'}]});
+Ext.define('Admin.model.activiti.activitiProcessInstanceStoreModel', {extend:Admin.model.Base, fields:[{name:'id', type:'string'}, {name:'processDefinitionKey', type:'string'}, {name:'name', type:'string'}, {name:'businessKey', type:'string'}, {name:'suspended', type:'boolean'}, {name:'completed', type:'boolean'}]});
+Ext.define('Admin.model.activiti.activitiProcessStoreModel', {extend:Admin.model.Base, fields:[{name:'id', type:'string'}, {name:'name', type:'string'}, {name:'suspended', type:'boolean'}, {name:'key', type:'string'}, {name:'deploymentTime', type:'date'}, {name:'description', type:'string'}]});
+Ext.define('Admin.model.activiti.activitiTasksStoreModel', {extend:Admin.model.Base, fields:[{name:'id', type:'string'}, {name:'name', type:'string'}, {name:'suspended', type:'boolean'}, {name:'delegationState', type:'string'}, {name:'createTime', type:'date'}, {name:'description', type:'string'}]});
 Ext.define('Admin.model.address.AddressModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'realName', type:'string'}, {name:'deptName', type:'string'}, {name:'postName', type:'string'}, {name:'mobilePhone', type:'string'}, {name:'mail', type:'string'}, {name:'qq_number', type:'int'}]});
 Ext.define('Admin.model.assets.AssetsModel', {extend:Admin.model.Base, fields:[{name:'assetsId', type:'int'}, {name:'assetsNumber', type:'string'}, {name:'assetsUsedTime', type:'date'}, {name:'beginDate', type:'date'}, {name:'endDate', type:'date'}, {name:'assetsName', type:'string'}, {name:'assetsPrice', type:'float'}, {name:'highPrice', type:'float'}, {name:'lowPrice', type:'float'}, {name:'assetsType', type:'string'}, {name:'userId', type:'string'}, {name:'realName', type:'string'}]});
 Ext.define('Admin.model.assets.MyAssetsModel', {extend:Admin.model.Base, fields:[{name:'assetsId', type:'int'}, {name:'assetsNumber', type:'string'}, {name:'assetsUsedTime', type:'date'}, {name:'beginDate', type:'date'}, {name:'endDate', type:'date'}, {name:'assetsName', type:'string'}, {name:'assetsPrice', type:'float'}, {name:'highPrice', type:'float'}, {name:'lowPrice', type:'float'}, {name:'assetsType', type:'string'}, {name:'userId', type:'string'}, {name:'realName', type:'string'}]});
@@ -101578,12 +101585,17 @@ Ext.define('Admin.model.search.User', {extend:Admin.model.Base, fields:[{type:'i
 Ext.define('Admin.model.staff.StaffModel', {extend:Admin.model.Base, fields:[{name:'userId', type:'string'}, {name:'realName', type:'string'}, {name:'sex', type:'string'}, {name:'nativePlace', type:'string'}, {name:'birthday', type:'date'}, {name:'onDutDate', type:'date'}, {name:'dept', type:'string'}, {name:'mobilePhone', type:'string'}]});
 Ext.define('Admin.model.task.TaskModel', {extend:Admin.model.Base, fields:[{name:'taskId', type:'int'}, {name:'createId', type:'int'}, {name:'userId', type:'int'}, {name:'taskName', type:'string'}, {name:'taskText', type:'string'}, {name:'createDate', type:'date'}, {name:'completeDate', type:'string'}, {name:'taskState', type:'string'}, {name:'createName', type:'string'}, {name:'userName', type:'string'}, {name:'realName', type:'string'}]});
 Ext.define('Admin.proxy.API', {extend:Ext.data.proxy.Ajax, alias:'proxy.api', reader:{type:'json', rootProperty:'data'}});
-Ext.define('Admin.store.myAssets.MyAssetsStore', {extend:Ext.data.Store, alias:'store.myAssetsStore', model:'Admin.model.assets.AssetsModel', proxy:{type:'ajax', url:'assets/findAssetsByUserId.json?userId\x3d' + loginUserId, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'assetsId'}});
+Ext.define('Admin.store.myAssets.MyAssetsStore', {extend:Ext.data.Store, alias:'store.myAssetsStore', model:'Admin.model.assets.AssetsModel', proxy:{type:'ajax', url:'assets/findAssetsByUserId.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'assetsId'}});
 Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'系统首页', iconCls:'x-fa  fa-home', viewType:'dashboard', leaf:true}, {text:'合同管理', iconCls:'x-fa  fa-home', viewType:'contract', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', 
 viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}]}});
+Ext.define('Admin.store.activiti.activitiDeploymentStore', {extend:Ext.data.Store, alias:'store.activitiDeploymentStore', model:'Admin.model.activiti.activitiDeploymentStoreModel', proxy:{type:'ajax', url:'repository/deployments', reader:{type:'json', rootProperty:'data', totalProperty:'total'}, extraParams:{size:15}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
+Ext.define('Admin.store.activiti.activitiModelerStore', {extend:Ext.data.Store, alias:'store.activitiModelerStore', model:'Admin.model.activiti.activitiModelerModel', proxy:{type:'ajax', url:'repository/models', reader:{type:'json', rootProperty:'data', totalProperty:'total'}, extraParams:{size:15}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createTime'}});
+Ext.define('Admin.store.activiti.activitiProcessInstanceStore', {extend:Ext.data.Store, alias:'store.activitiProcessInstanceStore', model:'Admin.model.activiti.activitiProcessInstanceStoreModel', proxy:{type:'ajax', url:'runtime/process-instances', reader:{type:'json', rootProperty:'data', totalProperty:'total'}, extraParams:{size:15}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
+Ext.define('Admin.store.activiti.activitiProcessStore', {extend:Ext.data.Store, alias:'store.activitiProcessStore', model:'Admin.model.activiti.activitiProcessStoreModel', proxy:{type:'ajax', url:'repository/process-definitions', reader:{type:'json', rootProperty:'data', totalProperty:'total'}, extraParams:{size:15}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
+Ext.define('Admin.store.activiti.activitiTasksStore', {extend:Ext.data.Store, alias:'store.activitiTasksStore', model:'Admin.model.activiti.activitiTasksStoreModel', proxy:{type:'ajax', url:'runtime/tasks', reader:{type:'json', rootProperty:'data', totalProperty:'total'}, extraParams:{size:15}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
 Ext.define('Admin.store.address.AddressStore', {extend:Ext.data.Store, alias:'store.addressStore', model:'Admin.model.address.AddressModel', proxy:{type:'ajax', url:'staff/findAddress.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.assets.AssetsStore', {extend:Ext.data.Store, alias:'store.assetsStore', model:'Admin.model.assets.AssetsModel', proxy:{type:'ajax', url:'assets/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'assetsId'}});
-Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json?roleLevel\x3d' + loginUserRoleLevel, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
+Ext.define('Admin.store.authority.AuthorityStore', {extend:Ext.data.Store, alias:'store.authorityStore', model:'Admin.model.authority.AuthorityModel', proxy:{type:'ajax', url:'staff/findUserRole.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
 Ext.define('Admin.store.business.ContractStore', {extend:Ext.data.Store, alias:'store.contractStore', model:'Admin.model.business.ContractModel', proxy:{type:'ajax', url:'contract/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'contractId'}});
 Ext.define('Admin.store.department.DepartmentStore', {extend:Ext.data.TreeStore, alias:'store.departmentStore', id:'departmentStore', proxy:{type:'ajax', url:'dept/findNodes', reader:{type:'json'}}, root:{text:'组织架构', expanded:true}});
 Ext.define('Admin.store.department.PostStore', {extend:Ext.data.Store, alias:'store.postStore', model:'Admin.model.department.PostModel', proxy:{type:'ajax', url:'post/findPostsByDeptId.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'postId'}});
@@ -101594,12 +101606,13 @@ Ext.define('Admin.store.log.LogStore', {extend:Ext.data.Store, alias:'store.logS
 Ext.define('Admin.store.notice.NoticeStore', {extend:Ext.data.Store, alias:'store.noticeStore', model:'Admin.model.notice.NoticeModel', proxy:{type:'ajax', url:'notice/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'noticeId'}});
 Ext.define('Admin.store.notice.NoticeWatchStore', {extend:Ext.data.Store, alias:'store.noticeWatchStore', model:'Admin.model.notice.NoticeModel', proxy:{type:'ajax', url:'notice/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:7, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'noticeId'}});
 Ext.define('Admin.store.order.OrderStore', {extend:Ext.data.Store, alias:'store.orderStore', model:'Admin.model.order.OrderModel', proxy:{type:'ajax', url:'order/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
-Ext.define('Admin.view.profile.ProfileStore', {extend:Ext.data.Store, alias:'store.profileStore', model:'Admin.model.profile.ProfileModel', proxy:{type:'ajax', url:'staff/findUserByUserId.json?userId\x3d' + loginUserId, reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}}});
+Ext.define('Admin.view.profile.ProfileStore', {extend:Ext.data.Store, alias:'store.profileStore', model:'Admin.model.profile.ProfileModel', proxy:{type:'ajax', url:'staff/findUserByUserId.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}}});
 Ext.define('Admin.store.resources.ResourcesStore', {extend:Ext.data.Store, alias:'store.resourcesStore', proxy:{type:'ajax', url:'resources/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'resId'}});
 Ext.define('Admin.store.role.RoleStore', {extend:Ext.data.Store, alias:'store.roleStore', model:'Admin.model.role.RoleModel', proxy:{type:'ajax', url:'role/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'roleId'}});
 Ext.define('Admin.store.search.Results', {extend:Ext.data.Store, alias:'store.searchresults', model:'Admin.model.search.Result', proxy:{type:'api', url:'~api/search/results'}, autoLoad:'true', sorters:{direction:'ASC', property:'title'}});
 Ext.define('Admin.store.search.Users', {extend:Ext.data.Store, alias:'store.searchusers', model:'Admin.model.search.User', proxy:{type:'api', url:'~api/search/users'}, autoLoad:'true', sorters:{direction:'ASC', property:'fullname'}});
 Ext.define('Admin.store.staff.StaffStore', {extend:Ext.data.Store, alias:'store.staffStore', model:'Admin.model.staff.StaffModel', proxy:{type:'ajax', url:'staff/findPage.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:25, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'userId'}});
+Ext.define('Admin.store.task.AllActivitiTaskStore', {extend:Ext.data.Store, alias:'store.AllActivitiTaskStore', model:'Admin.model.activiti.AllActivitiTaskStoreModel', proxy:{type:'ajax', url:'runtime/tasks', reader:{type:'json', rootProperty:'data', totalProperty:'total'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createTime'}});
 Ext.define('Admin.store.task.AllTaskStore', {extend:Ext.data.Store, alias:'store.allTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findByCondition.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
 Ext.define('Admin.store.task.MyTaskStore', {extend:Ext.data.Store, alias:'store.myTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findMyTastByCondition.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
 Ext.define('Admin.store.task.ReleaseTaskStore', {extend:Ext.data.Store, alias:'store.releaseTaskStore', model:'Admin.model.task.TaskModel', proxy:{type:'ajax', url:'task/findReleaseTaskByCondition.json?', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createDate'}});
@@ -101747,6 +101760,136 @@ Ext.define('Admin.Application', {extend:Ext.app.Application, name:'Admin', store
       window.location.reload();
     }
   });
+}});
+Ext.define('Admin.view.activiti.activitiDeployment', {extend:Ext.container.Container, xtype:'activitiDeployment', controller:'activitiDeploymentGridViewController', viewModel:{type:'activitiDeploymentGridViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'activitiDeploymentGrid'}]});
+Ext.define('Admin.view.activiti.activitiDeploymentGrid', {extend:Ext.grid.Panel, xtype:'activitiDeploymentGrid', title:'\x3cb\x3e流程部署\x3c/b\x3e', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{dataIndex:'id', text:'部署Id', sortable:true, type:'string', hidden:true}, {dataIndex:'name', text:'名字', sortable:true, type:'string', width:130}, {dataIndex:'key', text:'关键字', sortable:true, type:'string', width:120}, {dataIndex:'deploymentTime', text:'部署时间', sortable:true, type:'string', renderer:new Ext.util.Format.dateRenderer('Y-m-d'), 
+width:200}, {dataIndex:'description', text:'描述', sortable:true, type:'string', flex:1}], bind:'{deploymentLists}', tbar:Ext.create('Ext.Toolbar', {items:[{text:'新增部署', iconCls:'x-fa fa-plus', ui:'soft-blue', listeners:{click:'activitiDeploymentAdd'}}, '-', {text:'删除部署', iconCls:'x-fa fa-trash', handler:'activitiDeploymentDelete'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{deploymentLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.activiti.activitiDeploymentGridViewController', {extend:Ext.app.ViewController, alias:'controller.activitiDeploymentGridViewController', activitiDeploymentAdd:function(bt) {
+  var cfg = Ext.apply({xtype:'activitiWindow'}, {title:'新增部署', items:[Ext.apply({xtype:'activitiDeploymentSubmitForm'})]});
+  Ext.create(cfg);
+}, activitiDeploymentDelete:function(btn) {
+  var grid = btn.up('gridpanel');
+  var selModel = grid.getSelectionModel();
+  if (selModel.hasSelection()) {
+    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
+      if (button == 'yes') {
+        var selected = selModel.getSelection();
+        var selectIds = [];
+        Ext.each(selected, function(record) {
+          Ext.Ajax.request({url:'repository/deployments/' + record.data.id, method:'delete', success:function(response, options) {
+            var json = Ext.util.JSON.decode(response.responseText);
+            if (json.success) {
+              Ext.toast('操作成功');
+              grid.getStore().reload();
+            } else {
+              Ext.toast('操作失败');
+            }
+          }});
+        });
+      }
+    });
+  }
+}, activitiDeploymentSubmit:function(_this) {
+  var form = _this.up('form').getForm();
+  if (form.isValid()) {
+    form.submit({url:'repository/deployments', waitMsg:'正在努力上传中', success:function(fp, o) {
+      Ext.toast('"' + o.result.name + '"部署成功.', 2000);
+    }});
+  }
+}, activitiDeploymentSubmitClose:function(btn) {
+  var win = btn.up('window');
+  if (win) {
+    win.close();
+  }
+}});
+Ext.define('Admin.view.activiti.activitiDeploymentGridViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.activitiDeploymentGridViewModel', stores:{deploymentLists:{type:'activitiDeploymentStore', autoLoad:true}}});
+Ext.define('Admin.view.activiti.activitiDeploymentSubmitForm', {extend:Ext.form.Panel, alias:'widget.activitiDeploymentSubmitForm', controller:'activitiDeploymentGridViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, items:[{xtype:'filefield', name:'bushuwenjian', fieldLabel:'bushuwenjian', labelWidth:50, msgTarget:'side', allowBlank:false, buttonText:'选择一个部署文件...'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'activitiDeploymentSubmit'}, 
+{xtype:'button', text:'取消', handler:'activitiDeploymentSubmitClose'}]}});
+Ext.define('Admin.view.activiti.activitiProcess', {extend:Ext.container.Container, xtype:'activitiProcess', controller:'activitiProcessGridViewController', viewModel:{type:'activitiProcessGridViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'activitiProcessGrid'}]});
+Ext.define('Admin.view.activiti.activitiProcessDetailForm', {extend:Ext.form.Panel, alias:'widget.activitiProcessDetailForm', controller:'activitiProcessGridViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, items:[{fieldLabel:'定义ID', xtype:'textfield', name:'id', disabled:false}, {fieldLabel:'版本', xtype:'numberfield', name:'version', disabled:false}, {fieldLabel:'关键字', xtype:'textfield', name:'key', disabled:false}, {fieldLabel:'暂停状态', xtype:'radiofield', name:'suspended', 
+disabled:false}, {fieldLabel:'定义名字', xtype:'textfield', name:'name', disabled:false}, {fieldLabel:'描述', xtype:'textareafield', name:'description', disabled:false}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'Cancel', handler:'closeWindow'}]}});
+Ext.define('Admin.view.activiti.activitiProcessGrid', {extend:Ext.grid.Panel, xtype:'activitiProcessGrid', title:'\x3cb\x3e流程定义\x3c/b\x3e', id:'processGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{dataIndex:'id', text:'流程定义Id', sortable:true, type:'string', hidden:true}, {dataIndex:'name', text:'名字', sortable:true, type:'string', width:130}, {dataIndex:'suspended', text:'是否暂停', sortable:true, type:'boolean', width:80}, {dataIndex:'key', text:'关键字', sortable:true, type:'string', 
+width:180}, {dataIndex:'deploymentTime', text:'开启时间', sortable:true, type:'date', renderer:new Ext.util.Format.dateRenderer('Y-m-d'), width:200}, {dataIndex:'description', text:'描述', sortable:true, type:'string', flex:1}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', items:['-', {icon:'resources/images/icons/start-processInstance.png', tooltip:'开始', handler:'startProcessInstance'}, '-', {icon:'resources/images/icons/激活.png', tooltip:'激活', handler:'activateProcess'}, '-', {icon:'resources/images/icons/详情.png', 
+tooltip:'详情', handler:'showDetails'}], width:180}], bind:'{processLists}', bbar:Ext.create('Ext.PagingToolbar', {bind:'{processLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.activiti.activitiProcessGridViewController', {extend:Ext.app.ViewController, alias:'controller.activitiProcessGridViewController', startProcessInstance:function(grid, rowIndex, colIndex) {
+  var recordId = grid.getStore().getAt(rowIndex).getId();
+  var arr = new Array;
+  arr.push({name:'userId', value:loginUserId});
+  var Mdata = {processDefinitionId:recordId, businessKey:'myBusinessKey', variables:arr};
+  Ext.Ajax.request({url:'runtime/process-instances', method:'POST', params:Ext.encode(Mdata), headers:{'Content-Type':'application/json'}, success:function(response) {
+    Ext.toast('开启实例成功');
+  }, failure:function(response) {
+    Ext.toast('失败了~');
+  }});
+}, activateProcess:function(grid, rowIndex, colIndex) {
+  var recordId = grid.getStore().getAt(rowIndex).getId();
+  var Mdata = {action:'suspend'};
+  Ext.Ajax.request({url:'repository/process-definitions/' + recordId, method:'PUT', params:Ext.encode(Mdata), headers:{'Content-Type':'application/json'}, success:function(response) {
+    Ext.toast('激活成功');
+  }, failure:function(response) {
+    Ext.toast('传火失败');
+  }});
+}, showDetails:function(grid, rowIndex, colIndex) {
+  var recordId = grid.getStore().getAt(rowIndex).getId();
+  var detail = undefined;
+  Ext.Ajax.request({url:'repository/process-definitions/' + recordId, method:'GET', success:function(response) {
+    detail = Ext.util.JSON.decode(response.responseText);
+    if (detail != undefined) {
+      var cfg = Ext.widget('activitiWindow', {title:'流程定义详情', items:[Ext.apply({xtype:'activitiProcessDetailForm'})]});
+      cfg.down('form').items.getAt(0).setValue(detail.id);
+      cfg.down('form').items.getAt(1).setValue(detail.version);
+      cfg.down('form').items.getAt(2).setValue(detail.key);
+      cfg.down('form').items.getAt(3).setValue(detail.suspended);
+      cfg.down('form').items.getAt(4).setValue(detail.name);
+      cfg.down('form').items.getAt(5).setValue(detail.description);
+    }
+  }, failure:function(response) {
+    Ext.toast('加载失败');
+  }});
+}, closeWindow:function(btn) {
+  var win = btn.up('window');
+  if (!win) {
+    win.close();
+  }
+}});
+Ext.define('Admin.view.activiti.activitiProcessGridViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.activitiProcessGridViewModel', stores:{processLists:{type:'activitiProcessStore', autoLoad:true}}});
+Ext.define('Admin.view.activiti.activitiProcessInstance', {extend:Ext.container.Container, xtype:'activitiProcessInstance', viewModel:{type:'activitiProcessInstanceGridViewModel'}, controller:'activitiProcessInstanceGridViewController', layout:'fit', margin:'20 20 20 20', items:[{xtype:'activitiProcessInstanceGrid'}]});
+Ext.define('Admin.view.activiti.activitiProcessInstanceGrid', {extend:Ext.grid.Panel, xtype:'activitiProcessInstanceGrid', title:'\x3cb\x3e流程实例\x3c/b\x3e', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{dataIndex:'id', text:'实例Id', sortable:true, type:'string', hidden:true}, {dataIndex:'processDefinitionKey', text:'流程定义Key', sortable:true, type:'string', flex:1}, {dataIndex:'name', text:'名字', sortable:true, type:'string', width:200}, {dataIndex:'businessKey', text:'业务关键字', sortable:true, 
+type:'string', width:200}, {dataIndex:'suspended', text:'是否暂定', sortable:true, type:'boolean', width:80}, {dataIndex:'completed', text:'是否完成', sortable:true, type:'string', width:80}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', items:['-', {icon:'resources/images/icons/start-processInstance.png', tooltip:'查看进度', handler:'searchWhereToBe'}, '-', {icon:'resources/images/icons/激活.png', tooltip:'暂停', handler:'searchWhereToBe'}, '-', {icon:'resources/images/icons/详情.png', tooltip:'详情', 
+handler:'searchWhereToBe'}], width:180}], bind:'{processInstanceLists}', bbar:Ext.create('Ext.PagingToolbar', {bind:'{processInstanceLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.activiti.activitiProcessInstanceGridViewController', {extend:Ext.app.ViewController, alias:'controller.activitiProcessInstanceGridViewController', searchWhereToBe:function(grid, rowIndex, colIndex) {
+  var prefix_url = 'runtime/process-instances/';
+  var subfix_url = '/diagram';
+  var cfg = Ext.apply({xtype:'activitiWindow', minHeight:500, minWidth:500, scrollable:true}, {title:'流程实例进度', items:[Ext.apply({xtype:'panel', html:'\x3ciframe width\x3d1200 height\x3d800 src\x3d"' + prefix_url + grid.getStore().getAt(rowIndex).getId() + subfix_url + '"\x3e\x3c/iframe\x3e'})]});
+  Ext.create(cfg);
+}, stopInstance:function() {
+}, showDetail:function() {
+}});
+Ext.define('Admin.view.activiti.activitiProcessInstanceGridViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.activitiProcessInstanceGridViewModel', stores:{processInstanceLists:{type:'activitiProcessInstanceStore', autoLoad:true}}});
+Ext.define('Admin.view.activiti.activitiProcessModoler', {extend:Ext.container.Container, xtype:'activitiProcessModoler', controller:'activitiProcessModolerPanelViewController', viewModel:{type:'activitiProcessModolerPanelViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'activitiProcessModolerPanel'}]});
+Ext.define('Admin.view.activiti.activitiProcessModolerPanel', {extend:Ext.grid.Panel, xtype:'activitiProcessModolerPanel', title:'\x3cb\x3e流程模型\x3c/b\x3e', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{dataIndex:'id', text:'id', sortable:true, width:180, type:'string', hidden:true}, {dataIndex:'name', text:'模型名字', sortable:true, flex:1, type:'string'}, {dataIndex:'key', text:'关键字', sortable:true, type:'string', width:130, hidden:true}, {dataIndex:'category', text:'分类', sortable:true, 
+type:'string', width:80, hidden:true}, {dataIndex:'version', text:'版本', sortable:true, type:'int', width:180}, {dataIndex:'metaInfo', text:'元信息', sortable:true, type:'string', width:180, hidden:true}, {dataIndex:'deploymentId', text:'部署Id', sortable:true, type:'string', width:180, hidden:true}, {dataIndex:'createTime', text:'创建时间', sortable:true, type:'date', renderer:new Ext.util.Format.dateRenderer('Y-m-d'), width:200}, {dataIndex:'lastUpdateTime', text:'上次更新时间', sortable:true, type:'date', renderer:new Ext.util.Format.dateRenderer('Y-m-d'), 
+width:200}, {xtype:'actioncolumn', text:'操作', width:100, tdCls:'action', items:['-', {icon:'resources/images/icons/start-processInstance.png', tooltip:'继续编辑', handler:'showModelerEditor'}], width:180}], bind:'{modelLists}', bbar:Ext.create('Ext.PagingToolbar', {bind:'{modelLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.activiti.activitiProcessModolerPanelViewController', {extend:Ext.app.ViewController, alias:'controller.activitiProcessModolerPanelViewController', showModelerEditor:function(grid, rowIndex, colIndex) {
+  var prefix_url = 'modeler.html?modelId\x3d';
+  var cfg = Ext.apply({xtype:'activitiWindow', minHeight:700, minWidth:1100, scrollable:true}, {title:'编辑模型界面', items:[Ext.apply({xtype:'panel', html:'\x3ciframe width\x3d1200 height\x3d800 src\x3d"' + prefix_url + grid.getStore().getAt(rowIndex).getId() + '"\x3e\x3c/iframe\x3e'})]});
+  Ext.create(cfg);
+}});
+Ext.define('Admin.view.activiti.activitiProcessModolerPanelViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.activitiProcessModolerPanelViewModel', stores:{modelLists:{type:'activitiModelerStore', autoLoad:true}}});
+Ext.define('Admin.view.activiti.activitiWindow', {extend:Ext.window.Window, alias:'widget.activitiWindow', autoShow:true, modal:true, layout:'fit', afterRender:function() {
+  var me = this;
+  me.callParent(arguments);
+  me.syncSize();
+  Ext.on(me.resizeListeners = {resize:me.onViewportResize, scope:me, buffer:50});
+}, doDestroy:function() {
+  Ext.un(this.resizeListeners);
+  this.callParent();
+}, onViewportResize:function() {
+  this.syncSize();
+}, syncSize:function() {
+  var width = Ext.Element.getViewportWidth(), height = Ext.Element.getViewportHeight();
+  this.setSize(Math.floor(width * 0.6), Math.floor(height * 0.6));
+  this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
 Ext.define('Admin.view.address.address', {extend:Ext.container.Container, xtype:'address', controller:'addressViewController', viewModel:{type:'addressViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'addressGrid'}]});
 Ext.define('Admin.view.address.AddressGrid', {extend:Ext.grid.Panel, xtype:'addressGrid', title:'\x3cb\x3e通讯中心\x3c/b\x3e', bind:'{addressLists}', id:'addressGrid', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'编号', dataIndex:'userId', hidden:true}, {text:'联系人', dataIndex:'realName', flex:1}, {text:'所属部门', dataIndex:'deptName', width:188}, {text:'职位', dataIndex:'postName', width:188}, {text:'联系电话', dataIndex:'mobilePhone', width:188}, {text:'联系邮箱', dataIndex:'mail', width:188}, 
@@ -102209,6 +102352,14 @@ Ext.define('Admin.view.business.ContractWindow', {extend:Ext.window.Window, alia
     this.setXY([Math.floor((width - fWidth) * 0.5), Math.floor((height - fHeight) * 0.5)]);
   }
 }});
+Ext.define('Admin.view.business.formDesign', {extend:Ext.container.Container, xtype:'formDesign', layout:'fit', items:[{xtype:'formPanel'}]});
+Ext.define('Admin.view.business.formPanel', {extend:Ext.panel.Panel, xtype:'formPanel', title:'表单设计', layout:'fit', html:'\x3ciframe width\x3d1200 height\x3d800 src\x3d"formDesign2.html"\x3e\x3c/iframe\x3e'});
+Ext.define('Admin.view.business.formUpload', {extend:Ext.container.Container, xtype:'formUpload', layout:'fit', items:[{xtype:'formUploadPanel'}]});
+Ext.define('Admin.view.business.formUploadPanel', {extend:Ext.grid.Panel, xtype:'formUploadPanel', title:'\x3cb\x3e表单填写\x3c/b\x3e', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{dataIndex:'id', text:'流程定义Id', sortable:true, type:'string', hidden:true}, {dataIndex:'name', text:'名字', sortable:true, type:'string', width:130}, {dataIndex:'suspended', text:'是否暂停', sortable:true, type:'boolean', width:80}, {dataIndex:'key', text:'关键字', sortable:true, type:'string', width:180}, {dataIndex:'deploymentTime', 
+text:'开启时间', sortable:true, type:'date', renderer:new Ext.util.Format.dateRenderer('Y-m-d'), width:200}, {dataIndex:'description', text:'描述', sortable:true, type:'string', flex:1}]});
+Ext.define('Admin.view.business.myFormGrid', {extend:Ext.grid.Panel, xtype:'myFormGrid', title:'\x3cb\x3e表单填写\x3c/b\x3e', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{dataIndex:'id', text:'流程定义Id', sortable:true, type:'string', hidden:true}, {dataIndex:'name', text:'名字', sortable:true, type:'string', width:130}, {dataIndex:'suspended', text:'是否暂停', sortable:true, type:'boolean', width:80}, {dataIndex:'key', text:'关键字', sortable:true, type:'string', width:180}, {dataIndex:'deploymentTime', 
+text:'开启时间', sortable:true, type:'date', renderer:new Ext.util.Format.dateRenderer('Y-m-d'), width:200}, {dataIndex:'description', text:'描述', sortable:true, type:'string', flex:1}], bind:'{activitiTaskLists}', bbar:Ext.create('Ext.PagingToolbar', {bind:'{activitiTaskLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.business.myFormPanel', {extend:Ext.container.Container, xtype:'myFormPanel', layout:'fit', items:[{xtype:'myFormGrid'}]});
 Ext.define('Admin.view.charts.Charts', {extend:Ext.container.Container, xtype:'charts', viewModel:{type:'charts'}, layout:'responsivecolumn', defaults:{defaults:{animation:!Ext.isIE9m && Ext.os.is.Desktop}}, items:[{xtype:'chartsareapanel', userCls:'big-50 small-100'}, {xtype:'chartspie3dpanel', userCls:'big-50 small-100'}, {xtype:'chartspolarpanel', userCls:'big-50 small-100'}, {xtype:'chartsstackedpanel', userCls:'big-50 small-100'}, {xtype:'chartsbarpanel', userCls:'big-50 small-100'}, {xtype:'chartsgaugepanel', 
 userCls:'big-50 small-100'}]});
 Ext.define('Admin.view.dashboard.Dashboard', {extend:Ext.container.Container, xtype:'admindashboard', controller:'dashboard', viewModel:{type:'dashboard'}, layout:'responsivecolumn', listeners:{hide:'onHideView'}, items:[{xtype:'network', userCls:'big-60 small-100'}, {xtype:'hddusage', userCls:'big-20 small-50'}, {xtype:'earnings', userCls:'big-20 small-50'}, {xtype:'sales', userCls:'big-20 small-50'}, {xtype:'topmovies', userCls:'big-20 small-50'}, {xtype:'weather', cls:'weather-panel shadow', userCls:'big-40 small-100'}, 
@@ -102493,7 +102644,7 @@ Ext.define('Admin.view.forms.WizardFormController', {extend:Ext.app.ViewControll
 Ext.define('Admin.view.forms.WizardOne', {extend:Ext.panel.Panel, alias:'widget.formswizardone', cls:'wizardone shadow', plugins:{responsive:true}, responsiveConfig:{'width \x3e\x3d 1000':{layout:{type:'box', align:'stretch', vertical:false}}, 'width \x3c 1000':{layout:{type:'box', align:'stretch', vertical:true}}}, items:[{xtype:'specialoffer', plugins:{responsive:true}, height:338, responsiveConfig:{'width \x3c 1000':{flex:null}, 'width \x3e\x3d 1000':{flex:1}}}, {xtype:'wizardform', cls:'wizardone', 
 colorScheme:'blue', flex:1}]});
 Ext.define('Admin.view.forms.Wizards', {extend:Ext.container.Container, xtype:'forms', cls:'wizards', defaultFocus:'wizardform', layout:'responsivecolumn', items:[{xtype:'formswizardone', userCls:'big-100'}, {xtype:'wizardform', cls:'wizardtwo shadow', colorScheme:'soft-purple', userCls:'big-50 small-100'}, {xtype:'wizardform', cls:'wizardthree shadow', colorScheme:'soft-green', userCls:'big-50 small-100'}]});
-Ext.define('Admin.view.homePage.HomePage', {extend:Ext.container.Container, xtype:'dashboard', height:Ext.Element.getViewportHeight() - 1000, viewModel:{type:'homePageViewModel'}, layout:'border', margin:'30 30 30 30', items:[{region:'north', height:'10%', margin:'0px 0px 10px 0px', bodyStyle:'background:#f6f6f6;', body:{cls:'x-body-new'}, xtype:'panel', layout:{type:'hbox', align:'stretch'}, items:[{xtype:'button', width:'25%', ui:'', text:'\x3cdiv style\x3d"color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/待审核流程个数.jpg);"\x3e' + 
+Ext.define('Admin.view.homePage.HomePage', {extend:Ext.container.Container, xtype:'dashboard', width:1100, maxWidth:1100, height:600, maxHeight:600, viewModel:{type:'homePageViewModel'}, layout:'border', margin:'30 30 30 30', items:[{region:'north', height:'10%', margin:'0px 0px 10px 0px', bodyStyle:'background:#f6f6f6;', body:{cls:'x-body-new'}, xtype:'panel', layout:{type:'hbox', align:'stretch'}, items:[{xtype:'button', width:'25%', ui:'', text:'\x3cdiv style\x3d"color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/待审核流程个数.jpg);"\x3e' + 
 '\x3cspan style\x3d"padding-left:60px"\x3e个待审核流程\x3c/span\x3e\x3c/div\x3e', margin:'0px 10px 0px 0px'}, {xtype:'button', width:'25%', ui:'', text:'\x3cdiv style\x3d"color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/待做任务个数.jpg);"\x3e' + '\x3cspan style\x3d"padding-left:60px"\x3e个待完成任务\x3c/span\x3e\x3c/div\x3e', margin:'0px 10px 0px 0px'}, {xtype:'button', width:'25%', ui:'', text:'\x3cdiv style\x3d"color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/申请中流程个数.jpg);"\x3e' + 
 '\x3cspan style\x3d"padding-left:60px"\x3e个流程申请中\x3c/span\x3e\x3c/div\x3e', margin:'0px 10px 0px 0px'}, {xtype:'button', width:'25%', ui:'', text:'\x3cdiv style\x3d"color:white;font-size:14px;width:268px;height:98px;line-height:100px; background:url(resources/images/紧急通知.jpg);"\x3e' + '\x3cspan style\x3d"padding-left:60px"\x3e紧急通知\x3c/span\x3e\x3c/div\x3e', margin:'0px 0px 0px 0px'}]}, , {region:'east', width:'30%', margin:'10px 0x 0px 0px', xtype:'noticeWatchGrid', title:'\x3cdiv style\x3d"font-size:16px;color:#6F6F6F;"\x3e\x3cb\x3e公告通知\x3c/b\x3e\x3c/div\x3e', 
 header:{cls:'x-panel-header-new'}}, {region:'center', margin:'10px 20px 0px 0px', xtype:'panel', bodyStyle:'background:#f6f6f6;', layout:{type:'vbox', align:'stretch'}, items:[{xtype:'panel', title:'\x3cdiv style\x3d"font-size:16px;color:#6F6F6F"\x3e\x3cb\x3e快捷通道\x3c/b\x3e\x3c/div\x3e', header:{cls:'x-panel-header-new'}, margin:'0px 0px 0px 0px', height:'40%', layout:{type:'hbox', align:'stretch'}, items:[{xtype:'button', text:'\x3cdiv style\x3d"background:url(resources/images/请假申请.jpg); width:195px;height:194px;"\x3e\x3c/div\x3e', 
@@ -102617,6 +102768,12 @@ Ext.define('Admin.view.main.MainController', {extend:Ext.app.ViewController, ali
       var modules = eval(loginUserModules);
       rootTree.on('load', function() {
         this.getRoot().appendChild({text:'个人信息', iconCls:'x-fa fa-user-circle', viewType:'profile', leaf:true});
+      });
+      rootTree.on('load', function() {
+        this.getRoot().appendChild({text:'表单管理', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'表单设计', iconCls:'x-fa fa-file-o', viewType:'formDesign', leaf:true}, {text:'表单填写', iconCls:'x-fa fa-file-o', viewType:'formUpload', leaf:true}, {text:'我的表单', iconCls:'x-fa fa-file-o', viewType:'myFormGrid', leaf:true}]});
+      });
+      rootTree.on('load', function() {
+        this.getRoot().appendChild({text:'流程管理', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'流程部署', iconCls:'x-fa fa-file-o', viewType:'activitiDeployment', leaf:true}, {text:'流程定义', iconCls:'x-fa fa-file-o', viewType:'activitiProcess', leaf:true}, {text:'流程实例', iconCls:'x-fa fa-file-o', viewType:'activitiProcessInstance', leaf:true}, {text:'流程模型', iconCls:'x-fa fa-file-o', viewType:'activitiProcessModoler', leaf:true}]});
       });
       var profileFlag = 1;
       for (var i = 0; i < modules.length; i++) {
@@ -103002,7 +103159,7 @@ items:[{title:'What are the different membership plans?', iconCls:'x-fa fa-caret
 items:[{title:'What are the payment methods you accept?', iconCls:'x-fa fa-caret-down'}, {title:'What is the refund policy?', iconCls:'x-fa fa-caret-down'}, {title:'How long does it take to process my payment?', iconCls:'x-fa fa-caret-down'}]}]}]});
 Ext.define('Admin.view.profile.FileUploadForm', {extend:Ext.form.Panel, alias:'widget.fileUploadForm', imageWidth:300, notice:'', initComponent:function() {
   var me = this;
-  Ext.apply(this, {items:[{xtype:'box', width:me.imageWidth, maxWidth:300, reference:'imageShow', autoEl:{tag:'img'}}, {xtype:'filefield', buttonOnly:true, buttonText:'选择图片', listeners:{change:me.changeSelect}}, {xtype:'component', html:me.notice}, {xtype:'hiddenfield', name:me.name}, {xtype:'hidden', fieldLabel:'userId', name:'userId', value:loginUserId}]});
+  Ext.apply(this, {items:[{xtype:'box', width:me.imageWidth, maxWidth:300, reference:'imageShow', autoEl:{tag:'img'}}, {xtype:'filefield', buttonOnly:true, buttonText:'选择图片', listeners:{change:me.changeSelect}}, {xtype:'component', html:me.notice}, {xtype:'hiddenfield', name:me.name}]});
   this.callParent();
 }, changeSelect:function(fileFiled, value, eOpts) {
   var me = this;
@@ -103514,25 +103671,21 @@ Ext.define('Admin.view.staff.StaffWindow', {extend:Ext.window.Window, alias:'wid
   this.setXY([Math.floor(width * 0.05), Math.floor(height * 0.05)]);
 }});
 Ext.define('Admin.view.role.AddTaskGridForm', {extend:Ext.form.Panel, alias:'widget.addTaskGridForm', id:'addTaskGridForm', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'createId', name:'createId', value:loginUserId}, {xtype:'hidden', fieldLabel:'createName', name:'createName', value:loginUserRealName}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, 
-{xtype:'combobox', fieldLabel:'接收者', name:'userId', id:'taskcombobox', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'staff/findTaskUser.json?roleLevel\x3d' + loginUserRoleLevel}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'realName', valueField:'userId'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', 
-fieldLabel:'taskState', name:'taskState'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
+{xtype:'combobox', fieldLabel:'接收者', name:'userId', id:'taskcombobox', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'staff/findTaskUser.json'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'realName', valueField:'userId'}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', fieldLabel:'taskState', name:'taskState'}], 
+bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
 Ext.define('Admin.view.task.AllTask', {extend:Ext.container.Container, xtype:'alltasks', controller:'taskViewController', viewModel:{type:'allTaskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'allTaskGrid'}]});
-Ext.define('Admin.view.task.AllTaskGrid', {extend:Ext.grid.Panel, xtype:'allTaskGrid', title:'\x3cb\x3e所有任务\x3c/b\x3e', bind:'{taskLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'taskId', sortable:false, dataIndex:'taskId', hidden:true}, {text:'createId', sortable:false, dataIndex:'createId', hidden:true}, {text:'userId', sortable:false, dataIndex:'userId', hidden:true}, {text:'任务名称', sortable:false, dataIndex:'taskName', width:150}, {text:'任务发布时间', sortable:true, dataIndex:'createDate', 
-width:200, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'任务完成时间', sortable:true, dataIndex:'completeDate', width:200}, {text:'接收者', sortable:false, dataIndex:'realName', width:120}, {text:'发布者', sortable:false, dataIndex:'createName', width:120}, {text:'状态', sortable:false, dataIndex:'taskState', flex:120}, {xtype:'actioncolumn', text:'查看详情', width:100, tdCls:'action', items:[{icon:'resources/images/icons/search.png', tooltip:'查看详情', handler:'showTaskText'}]}], tbar:Ext.create('Ext.Toolbar', 
-{id:'allTaskCondition', items:[{xtype:'tbtext', text:'接收者：'}, {xtype:'textfield', width:90, itemsId:'realName'}, {xtype:'tbtext', text:'发布者：'}, {xtype:'textfield', width:90, itemsId:'createName'}, {xtype:'tbtext', text:'状态:'}, {xtype:'combobox', name:'taskState', width:100, store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'未完成', 'name':'未完成'}, {'value':'已完成', 'name':'已完成'}, {'value':'已终止', 'name':'已终止'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {xtype:'tbtext', 
-text:'发布时间：'}, {xtype:'datefield', width:125, editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', width:125, editable:false, itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
-  var cc = Ext.getCmp('allTaskCondition').items.getAt(7).getValue();
-  this.setMinValue(cc);
-}}}, {text:'查找', handler:'allTaskGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
-Ext.define('Admin.view.task.AllTaskViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.allTaskViewModel', stores:{taskLists:{type:'allTaskStore', autoLoad:true}}});
-Ext.define('Admin.view.task.MyTask', {extend:Ext.container.Container, xtype:'mytask', controller:'taskViewController', viewModel:{type:'myTaskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'myTaskGrid'}]});
-Ext.define('Admin.view.task.MyTaskGrid', {extend:Ext.grid.Panel, xtype:'myTaskGrid', title:'\x3cb\x3e我的任务\x3c/b\x3e', bind:'{taskLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'taskId', sortable:false, dataIndex:'taskId', hidden:true}, {text:'createId', sortable:false, dataIndex:'createId', hidden:true}, {text:'userId', sortable:false, dataIndex:'userId', hidden:true}, {text:'任务名称', sortable:false, dataIndex:'taskName', width:150}, {text:'任务发布时间', sortable:true, dataIndex:'createDate', 
-width:200, renderer:Ext.util.Format.dateRenderer('Y/m/d H:i:s')}, {text:'任务完成时间', sortable:true, dataIndex:'completeDate', width:200}, {text:'接收者', sortable:false, dataIndex:'realName', width:120}, {text:'发布者', sortable:false, dataIndex:'createName', width:120}, {text:'状态', sortable:false, dataIndex:'taskState', flex:120}, {xtype:'actioncolumn', text:'标记任务完成', width:100, tdCls:'action', items:[{icon:'resources/images/icons/complete.png', tooltip:'标记完成', handler:'setStateComplete'}]}, {xtype:'actioncolumn', 
-text:'查看详情', width:100, tdCls:'action', items:[{icon:'resources/images/icons/search.png', tooltip:'查看详情', handler:'showTaskText'}]}], tbar:Ext.create('Ext.Toolbar', {id:'myTaskCondition', items:[{xtype:'tbtext', text:'发布者：'}, {xtype:'textfield', width:90, itemsId:'createName'}, {xtype:'tbtext', text:'状态:'}, {xtype:'combobox', name:'taskState', width:100, store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'未完成', 'name':'未完成'}, {'value':'已完成', 'name':'已完成'}, {'value':'已终止', 
-'name':'已终止'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {xtype:'tbtext', text:'发布时间：'}, {xtype:'datefield', width:125, editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', width:125, editable:false, itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
+Ext.define('Admin.view.task.AllTaskGrid', {extend:Ext.grid.Panel, xtype:'allTaskGrid', title:'\x3cb\x3e所有任务\x3c/b\x3e', bind:'{activitiTaskLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'id', sortable:false, dataIndex:'id', type:'string', hidden:true, width:120}, {text:'委托人', sortable:false, dataIndex:'assignee', type:'string', width:120}, {text:'创建时间', sortable:false, dataIndex:'createTime', type:'date', renderer:new Ext.util.Format.dateRenderer('Y-m-d'), width:120}, 
+{text:'任务状态', sortable:false, dataIndex:'delegationState', type:'string', width:120}, {text:'描述', sortable:false, dataIndex:'description', flex:1, type:'string'}, {text:'名字', sortable:false, dataIndex:'name', type:'string', width:120}, {text:'是否暂停', sortable:false, dataIndex:'suspended', type:'string', width:120}, {text:'任务定义关键字', sortable:false, dataIndex:'taskDefinitionKey', type:'string', width:120}, {text:'发布者', sortable:false, dataIndex:'owner', type:'string', width:120}, {xtype:'actioncolumn', 
+text:'查看详情', width:100, tdCls:'action', items:[{icon:'resources/images/icons/search.png', tooltip:'查看详情', handler:'showTaskText'}]}], bbar:Ext.create('Ext.PagingToolbar', {bind:'{activitiTaskLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+Ext.define('Admin.view.task.AllTaskViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.allTaskViewModel', stores:{taskLists:{type:'allTaskStore', autoLoad:true}, activitiTaskLists:{type:'AllActivitiTaskStore', autoLoad:true}}});
+Ext.define('Admin.view.task.MyTask', {extend:Ext.container.Container, xtype:'mytask', controller:'taskViewController', viewModel:{type:'allTaskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'myTaskGrid'}]});
+Ext.define('Admin.view.task.MyTaskGrid', {extend:Ext.grid.Panel, xtype:'myTaskGrid', title:'\x3cb\x3e我的任务\x3c/b\x3e', bind:'{activitiTaskLists}', selModel:Ext.create('Ext.selection.CheckboxModel'), columns:[{text:'id', sortable:false, dataIndex:'id', type:'string', hidden:true, width:120}, {text:'委托人', sortable:false, dataIndex:'assignee', type:'string', width:120}, {text:'创建时间', sortable:false, dataIndex:'createTime', type:'date', renderer:new Ext.util.Format.dateRenderer('Y-m-d'), width:120}, {text:'任务状态', 
+sortable:false, dataIndex:'delegationState', type:'string', width:120}, {text:'描述', sortable:false, dataIndex:'description', flex:1, type:'string'}, {text:'名字', sortable:false, dataIndex:'name', type:'string', width:120}, {text:'是否暂停', sortable:false, dataIndex:'suspended', type:'string', width:120}, {text:'任务定义关键字', sortable:false, dataIndex:'taskDefinitionKey', type:'string', width:120}, {text:'发布者', sortable:false, dataIndex:'owner', type:'string', width:120}, {xtype:'actioncolumn', width:100, 
+text:'表单填写', tdCls:'action', items:[{icon:'resources/images/icons/complete.png', tooltip:'表单填写', handler:'askToShowForm'}]}, {xtype:'actioncolumn', text:'查看详情', width:100, tdCls:'action', items:[{icon:'resources/images/icons/search.png', tooltip:'查看详情', handler:'showTaskText'}]}], tbar:Ext.create('Ext.Toolbar', {id:'myTaskCondition', items:[{xtype:'tbtext', text:'发布者：'}, {xtype:'textfield', width:90, itemsId:'createName'}, {xtype:'tbtext', text:'状态:'}, {xtype:'combobox', name:'taskState', width:100, 
+store:Ext.create('Ext.data.Store', {fields:['value', 'name'], data:[{'value':'未完成', 'name':'未完成'}, {'value':'已完成', 'name':'已完成'}, {'value':'已终止', 'name':'已终止'}]}), queryMode:'local', displayField:'name', valueField:'value'}, {xtype:'tbtext', text:'发布时间：'}, {xtype:'datefield', width:125, editable:false, itemId:'beginDate', format:'Y-m-d', value:'2017-01-01'}, {xtype:'tbtext', text:'至：'}, {xtype:'datefield', width:125, editable:false, itemId:'endDate', format:'Y-m-d', value:new Date, listeners:{focus:function() {
   var cc = Ext.getCmp('myTaskCondition').items.getAt(5).getValue();
   this.setMinValue(cc);
-}}}, {text:'查找', handler:'myTaskGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{roleLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
+}}}, {text:'查找', handler:'myTaskGridFind'}]}), bbar:Ext.create('Ext.PagingToolbar', {bind:'{activitiTaskLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'暂无数据'})});
 Ext.define('Admin.view.task.MyTaskViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.myTaskViewModel', stores:{taskLists:{type:'myTaskStore', autoLoad:true}}});
 Ext.define('Admin.view.task.ReleaseTask', {extend:Ext.container.Container, xtype:'releasetask', controller:'taskViewController', viewModel:{type:'releaseTaskViewModel'}, layout:'fit', margin:'20 20 20 20', items:[{xtype:'releaseTaskGrid'}]});
 Ext.define('Admin.view.task.ReleaseTaskGrid', {extend:Ext.grid.Panel, xtype:'releaseTaskGrid', id:'releaseTaskGrid', title:'\x3cb\x3e发布任务\x3c/b\x3e', bind:'{taskLists}', listeners:{cellclick:function(btn, td, cellIndex, record, tr, rowIndex) {
@@ -103642,7 +103795,7 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
   } else {
     endTime = Ext.getCmp('myTaskCondition').items.getAt(7).getValue();
   }
-  Ext.Ajax.request({url:'task/findMyTastByCondition.json', params:{createName:createName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
+  Ext.Ajax.request({url:'task/findByCondition.json', params:{userId:loginUserId, createName:createName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     grid.getStore().loadData(tnpdata.content, false);
   }});
@@ -103659,7 +103812,7 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
   } else {
     endTime = Ext.getCmp('releaseTaskCondition').items.getAt(7).getValue();
   }
-  Ext.Ajax.request({url:'task/findReleaseTaskByCondition.json', params:{realName:realName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
+  Ext.Ajax.request({url:'task/findByCondition.json', params:{createId:loginUserId, realName:realName, taskState:taskState, beginDate:Ext.util.Format.date(beginTime, 'Y/m/d H:i:s'), endDate:Ext.util.Format.date(endTime, 'Y/m/d H:i:s'), page:1, start:0, limit:15, sort:'createDate', dir:'DESC'}, success:function(response, options) {
     var tnpdata = Ext.util.JSON.decode(response.responseText);
     grid.getStore().loadData(tnpdata.content, false);
   }});
@@ -103700,6 +103853,59 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
       });
     }
   }
+}, askToShowForm:function(grid, rowIndex, colIndex) {
+  var recordID = grid.getStore().getAt(rowIndex).getId();
+  var tmpFormItemsArr = new Array;
+  var tmpObj = {xtype:'form', items:tmpFormItemsArr, layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:function(btn) {
+    var taskSubmitForm = this.up('form').getForm();
+    var taskSubmitObject = taskSubmitForm.getValues();
+    var taskSubmitArr = new Array;
+    for (var k in taskSubmitObject) {
+      taskSubmitArr.push({id:k, value:taskSubmitObject[k]});
+    }
+    if (taskSubmitForm.isValid()) {
+      Ext.Ajax.request({headers:{'Content-Type':'application/json'}, url:'form/form-data', method:'POST', params:Ext.encode({taskId:recordID, properties:taskSubmitArr}), success:function() {
+        Ext.toast('你的表单提交成功');
+      }, failure:function() {
+        Ext.toast('你的表单提交失败了');
+      }});
+    }
+  }}, {xtype:'button', text:'取消', handler:function(btn) {
+    var win = btn.up('window');
+    if (win) {
+      win.close();
+    }
+  }}]}};
+  Ext.Ajax.request({url:'form/form-data?taskId\x3d' + recordID, success:function(response, opts) {
+    var respon = Ext.decode(response.responseText);
+    var objArr = respon.formProperties;
+    if (objArr.length > 0) {
+      for (fieldInd in objArr) {
+        var fieldTypeN = objArr[fieldInd].type;
+        switch(fieldTypeN) {
+          case 'string':
+            tmpObj.items.push({xtype:'textfield', margin:'10 0 10 40', fieldLabel:objArr[fieldInd].name, name:objArr[fieldInd].id});
+            break;
+          case 'long':
+            tmpObj.items.push({xtype:'numberfield', margin:'10 0 10 40', fieldLabel:objArr[fieldInd].name, name:objArr[fieldInd].id});
+            break;
+          case 'boolean':
+            tmpObj.items.push({xtype:'checkboxfield', boxLabel:objArr[fieldInd].name, name:objArr[fieldInd].id, inputValue:true, id:objArr[fieldInd].id});
+            break;
+          default:
+            tmpObj.items.push({xtype:'textfield', margin:'10 0 10 40', fieldLabel:objArr[fieldInd].name, name:objArr[fieldInd].id});
+        }
+      }
+    } else {
+      tmpObj.items.push({xtype:'displayfield', fieldLabel:'你的任务表单要么没有要么迷失了', width:700});
+    }
+    var cfg = Ext.apply({title:'任务表单', xtype:'taskGridWindow'}, {items:[tmpObj]});
+    Ext.create(cfg);
+  }, failure:function() {
+    tmpObj.items.push({xtype:'displayfield', text:'你的任务表单要么没有要么迷失了'});
+    var cfg = Ext.apply({title:'任务表单', xtype:'taskGridWindow'}, {items:[tmpObj]});
+    Ext.create(cfg);
+  }});
 }, setStateStop:function(grid, rowIndex, colIndex) {
   var record = grid.getStore().getAt(rowIndex);
   var taskId = record.data.taskId;
@@ -103722,7 +103928,7 @@ Ext.define('Admin.view.task.TaskViewController', {extend:Ext.app.ViewController,
   var taskWindow = Ext.widget('showTaskTextWindow', {title:'任务详情', html:'\x3ch1 align\x3d"center"\x3e' + taskName + '\x3c/h1\x3e' + '\x3cp\x3e' + taskText + '\x3c/p\x3e'});
 }});
 Ext.define('Admin.view.role.UpdateTaskGridForm', {extend:Ext.form.Panel, alias:'widget.editTaskGridForm', id:'editTaskGridForm', controller:'taskViewController', layout:{type:'vbox', align:'stretch'}, bodyPadding:10, scrollable:true, defaults:{labelWidth:60, labelSeparator:''}, items:[{xtype:'hidden', fieldLabel:'taskId', name:'taskId'}, {xtype:'hidden', fieldLabel:'createId', name:'createId'}, {xtype:'hidden', fieldLabel:'createDate', name:'createDate'}, {xtype:'hidden', fieldLabel:'completeDate', 
-name:'completeDate'}, {xtype:'hidden', fieldLabel:'createName', name:'createName'}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, {xtype:'combobox', fieldLabel:'接收者', name:'userId', id:'taskcombobox', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'staff/findTaskUser.json?roleLevel\x3d' + loginUserRoleLevel}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'realName', valueField:'userId', listConfig:{maxHeight:170, getInnerTpl:function() {
+name:'completeDate'}, {xtype:'hidden', fieldLabel:'createName', name:'createName'}, {xtype:'textfield', fieldLabel:'任务名称', name:'taskName'}, {xtype:'combobox', fieldLabel:'接收者', name:'userId', id:'taskcombobox', store:new Ext.data.Store({proxy:new Ext.data.HttpProxy({url:'staff/findTaskUser.json'}), reader:{type:'json'}, autoLoad:true}), queryMode:'local', displayField:'realName', valueField:'userId', listConfig:{maxHeight:170, getInnerTpl:function() {
   return '\x3cdiv data-qtip\x3d"{userId}"\x3e{realName}\x3c/div\x3e';
 }}}, {xtype:'htmleditor', buttonDefaults:{tooltip:{align:'t-b', anchor:true}}, flex:1, minHeight:100, labelAlign:'top', fieldLabel:'任务内容：', fontFamilies:['宋体', '隶书', '黑体'], name:'taskText'}, {xtype:'hidden', fieldLabel:'taskState', name:'taskState'}], bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'提交', handler:'taskGridFormSubmit'}, {xtype:'button', text:'取消', handler:'taskGridWindowClose'}]}});
 Ext.define('Admin.view.widgets.WidgetA', {extend:Ext.panel.Panel, xtype:'widget-a', cls:'admin-widget shadow', items:[{xtype:'image', cls:'widget-top-container-first-img', height:66, width:66, alt:'profile-image', src:'resources/images/user-profile/3.png'}, {xtype:'component', cls:'widget-top-first-container postion-class', height:135}, {xtype:'container', cls:'widget-bottom-first-container postion-class', height:135, padding:'30 0 0 0', layout:{type:'vbox', align:'center'}, items:[{xtype:'label', 

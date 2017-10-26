@@ -130,7 +130,18 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.version}</version>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver</artifactId>
+			<version>3.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.5.0</version>
+		</dependency>
+		
 		<!-- c3p0数据源 -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -272,7 +283,13 @@
 			<artifactId>activiti-simple-workflow</artifactId>
 			<version>${activiti.version}</version>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/org.activiti/activiti-rest -->
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-rest</artifactId>
+			<version>${activiti.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>

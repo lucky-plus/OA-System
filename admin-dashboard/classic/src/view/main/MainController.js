@@ -171,7 +171,77 @@ Ext.define('Admin.view.main.MainController', {
                 );
               }
             );
-
+			rootTree.on(
+              "load",function(){
+                this.getRoot().appendChild(
+					{
+						text: '表单管理',
+						iconCls: 'x-fa fa-leanpub',
+						expanded: false,
+						selectable: false,
+						children: [
+							{
+								text: '表单设计',
+								iconCls: 'x-fa fa-file-o',
+								viewType: 'formDesign',
+								leaf: true
+							},
+							{
+								text: '表单填写',
+								iconCls: 'x-fa fa-file-o',
+								viewType: 'formUpload',
+								leaf: true
+							},
+							{
+								text: '我的表单',
+								iconCls: 'x-fa fa-file-o',
+								viewType: 'myFormGrid',
+								leaf: true
+							}
+						]
+					}
+                );
+              }
+            );
+			
+			rootTree.on(
+              "load",function(){
+                this.getRoot().appendChild(
+					{
+						text: '流程管理',
+						iconCls: 'x-fa fa-leanpub',
+						expanded: false,
+						selectable: false,
+						children: [
+							{
+								text: '流程部署',
+								iconCls: 'x-fa fa-file-o',
+								viewType: 'activitiDeployment',
+								leaf: true
+							},
+							{
+								text: '流程定义',
+								iconCls: 'x-fa fa-file-o',
+								viewType: 'activitiProcess',
+								leaf: true
+							},
+							{
+								text: '流程实例',
+								iconCls: 'x-fa fa-file-o',
+								viewType: 'activitiProcessInstance',
+								leaf: true
+							},
+							{
+								text: '流程模型',
+								iconCls: 'x-fa fa-file-o',
+								viewType: 'activitiProcessModoler',
+								leaf: true
+							}
+						]
+					}
+                );
+              }
+            );
             var profileFlag = 1;
             for (var i = 0; i < modules.length; i++) {
                 if(modules[i].modelName == "资产列表") {

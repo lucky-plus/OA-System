@@ -25,6 +25,11 @@
         <property name="unauthorizedUrl" value="/role/unauthorized" />  
         <property name="filterChainDefinitions">  
             <value>
+                /service/** = anon
+            	/repository/** = anon
+            	/runtime/** = anon
+            	/ui/** = anon
+            	/assets/** = anon
             	/classic/** = anon
             	/diagram-viewer/** = anon
             	/editor-app/** =anon

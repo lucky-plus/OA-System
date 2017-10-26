@@ -10,7 +10,12 @@
     
     <!-- @Controller注解扫描 -->
     <context:component-scan base-package="com.oa.*.web"></context:component-scan>
-    
+        
+    <context:component-scan base-package="org.activiti.rest.editor.model.*,org.activiti.rest.editor.main.*"></context:component-scan>
+	<context:component-scan base-package="org.activiti.rest.diagram"></context:component-scan>
+	<!-- 上下文配置 与 映射配置的区别 这里用于配置 rest API -->
+	<context:component-scan
+		base-package="org.activiti.rest.*,org.activiti.rest.service.api.*"></context:component-scan>
     <mvc:annotation-driven enable-matrix-variables="true">
     	<mvc:message-converters register-defaults="true">
     		<bean class="org.springframework.http.converter.StringHttpMessageConverter">

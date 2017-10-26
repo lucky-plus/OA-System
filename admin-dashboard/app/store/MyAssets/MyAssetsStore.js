@@ -4,7 +4,7 @@ Ext.define('Admin.store.myAssets.MyAssetsStore', {
     model: 'Admin.model.assets.AssetsModel',//2.设置model的全路径
     proxy: {
       type: 'ajax',
-		url: 'assets/findAssetsByUserId.json?userId='+loginUserId,	//后台AssetsController中的接口url地址
+		url: 'assets/findAssetsByUserId.json',	//后台AssetsController中的接口url地址
 		reader: {
 			type:'json',
 			rootProperty: 'content',		//结果集名字的属性
