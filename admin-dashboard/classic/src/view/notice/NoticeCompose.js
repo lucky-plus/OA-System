@@ -75,15 +75,14 @@ Ext.define('Admin.view.notice.NoticeCompose', {
             '->',
             {
                 xtype: 'button',
-                ui: 'soft-red',
-                text: '关闭',
-                handler: 'noticeGridWindowsClose'
-            },
-            {
-                xtype: 'button',
                 ui: 'soft-green',
                 text: '发布',
 				handler:'noticeGridTextSubmit'
+            },{
+                xtype: 'button',
+                ui: 'soft-red',
+                text: '关闭',
+                handler: 'noticeGridWindowsClose'
             }
         ]
     }
