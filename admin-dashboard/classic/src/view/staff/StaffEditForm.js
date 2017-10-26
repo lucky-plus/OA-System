@@ -85,7 +85,7 @@ Ext.define('Admin.view.staff.StaffEditForm', {
 			xtype: 'combobox',
 			id: 'postComBoBox',
 			queryMode: 'remote',
-			name:'postId',
+			name:'postName',
 			async : false,
 			fieldLabel: '职位',
 			store : new Ext.data.Store( {

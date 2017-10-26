@@ -11,24 +11,26 @@ Ext.define('Admin.view.dept.DepartmentViewController', {
 
 	
 	deptGridDeleteOne:function(tree,rowIndex, colIndex){
-	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
-		if (button == "yes"&&tree.up('panel').deptment!=undefined) {
-			   var record=tree.up('panel').getStore().getAt(tree.up('panel').deptment).get('id');
-			   Ext.Ajax.request({ 
-					url : 'dept/delete', 
-					method : 'post', 
-					params : { 
-							deptId:record
-					},  
-				
-		   });
-		tree.up('panel').getStore().reload();
-		tree.up('panel').deptment=undefined;
-		Ext.getCmp("postForm").items.getAt(1).store.reload();
+		if(Ext.getCmp('postGrid').getStore().getAt(0)==null){
+		   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+			if (button == "yes"&&tree.up('panel').deptment!=undefined) {
+				   var record=tree.up('panel').getStore().getAt(tree.up('panel').deptment).get('id');
+				   Ext.Ajax.request({ 
+						url : 'dept/delete', 
+						method : 'post', 
+						params : { 
+								deptId:record
+						},  
+					
+			   });
+			tree.up('panel').getStore().reload();
+			tree.up('panel').deptment=undefined;
+			Ext.getCmp("postForm").store.reload();
+			}
+			})
 		}else{
-			Ext.Msg.alert('警告','请选择一行数据进行编辑')
+			Ext.Msg.alert('提示','该部门有职位使用中');
 		}
-	   })
    },
 	  
 	  deptGridOpenEditWindow:function(tree, rowIndex, colIndex){
@@ -43,10 +45,11 @@ Ext.define('Admin.view.dept.DepartmentViewController', {
 			});
 		  //让form加载选中记录
 		  deptWindow.down("form").items.getAt(0).setValue(record.get('id'));
-		  deptWindow.down("form").getForm().loadRecord(parentId);
+		  alert(parentId.get('leaf'));
+		  if(parentId.get('leaf')!=false){
+			  deptWindow.down("form").getForm().loadRecord(parentId);
+		  };
           deptWindow.down("form").items.getAt(2).setValue(record.get('text'));
-		  }else{
-			  Ext.Msg.alert('警告','请选择一行数据进行编辑')
 		  }
 	},
 	

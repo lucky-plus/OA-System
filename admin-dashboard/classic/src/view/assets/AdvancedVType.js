@@ -56,7 +56,21 @@ Ext.define('Admin.view.assets.AdvancedVType', {
         }
         return true;
 	},
-
 	priceText: 'Start price must be less than end price',
+
+    mobilephone:function(val,field)
+      {
+            try
+            {
+                if(/(^0?[1][35][0-9]{9}$)/.test(val))
+                    return true;
+                return false;
+            }
+            catch(e)
+            {
+                return false;
+            }
+      },
+      mobilephoneText:'请输入正确的手机号码'
 
 });

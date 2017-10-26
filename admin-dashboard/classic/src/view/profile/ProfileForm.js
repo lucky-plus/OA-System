@@ -139,6 +139,7 @@ Ext.define('Admin.view.profile.ProfileForm', {
         },{
             fieldLabel: '手机',
             name: 'mobilePhone',
+            vtype: 'mobilephone'
         }]
     },{
             xtype: 'container',
@@ -169,6 +170,7 @@ Ext.define('Admin.view.profile.ProfileForm', {
                 },
                 {
                     fieldLabel: '身份证号码',
+                    vtype : 'alphanum',
                     name:'idNumber'
                 }]
     },{
@@ -210,6 +212,7 @@ Ext.define('Admin.view.profile.ProfileForm', {
         items: [{
                     fieldLabel:'家庭住址',
                     name:'home',
+                    //vtype: 'chinese',
                     emptyText:'Address'
                 }]
     },{
@@ -225,6 +228,7 @@ Ext.define('Admin.view.profile.ProfileForm', {
             items:[{
                     fieldLabel:'籍贯',
                     name:'nativePlace',
+                    //vtype: 'chinese',
                     emptyText:'City'
                 }]
     },{
@@ -239,22 +243,24 @@ Ext.define('Admin.view.profile.ProfileForm', {
                 },
             items:[{
                     fieldLabel: '微信号码',
-                    emptyText:'WeChat Number',
+                    emptyText:'WeChatNumber',
+                    vtype : 'alphanum',
                     name:'wechatNumber'
                 },
                 {
                     fieldLabel: 'QQ号码',
                     emptyText:'QQ Number',
+                    vtype : 'alphanum',
                     name:'qq_number'
                 }]
     },{
           xtype: 'hidden',
           fieldLabel: 'userName',
-          name:'userName'
+            name:'userName'
     },{
           xtype: 'hidden',
           fieldLabel: 'pictureFileName',
-          name:'pictureFileName'
+            name:'pictureFileName'
     }
     ],
 
