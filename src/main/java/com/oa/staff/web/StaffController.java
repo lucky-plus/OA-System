@@ -41,7 +41,8 @@ public class StaffController {
 	private IStaffService staffService;
 	
 	@RequestMapping("/findUserRole")
-	public @ResponseBody Page<UserRoleDTO> findUserRole(Integer roleLevel, ExtjsPageable pageable) {
+	public @ResponseBody Page<UserRoleDTO> findUserRole(HttpSession session, ExtjsPageable pageable) {
+		Integer roleLevel = (Integer) session.getAttribute("roleLevel");
 		return staffService.findUserRole(roleLevel, pageable.getPageable());
 	}
 	
@@ -110,7 +111,8 @@ public class StaffController {
 	}
 	
 	@RequestMapping("/findTaskUser")
-	public @ResponseBody List<TaskUserDTO> findTaskUser(Integer roleLevel) {
+	public @ResponseBody List<TaskUserDTO> findTaskUser(HttpSession session) {
+		Integer roleLevel = (Integer) session.getAttribute("roleLevel");
 		return staffService.findTaskUser(roleLevel);
 	}
 	
@@ -120,7 +122,8 @@ public class StaffController {
 	}
 	
 	@RequestMapping("/findUserByUserId")
-	public @ResponseBody PostUserDTO findUserByUserId(String userId) {
+	public @ResponseBody PostUserDTO findUserByUserId(HttpSession session) {
+		String userId = (String) session.getAttribute("userId");
 		return staffService.findUserByUserId(userId);
 	}
 

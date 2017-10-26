@@ -2,6 +2,8 @@ package com.oa.staff.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -67,7 +69,8 @@ public class AssetsController {
 	
 	//根据UserId查询所拥有的资产
 	@RequestMapping("/findAssetsByUserId")
-	public @ResponseBody List<AssetsDTO> findAssetsByUserId(String userId) {
+	public @ResponseBody List<AssetsDTO> findAssetsByUserId(HttpSession session) {
+		String userId = (String) session.getAttribute("userId");
 		return assetsService.findAssetsByUserId(userId);
 	}
 

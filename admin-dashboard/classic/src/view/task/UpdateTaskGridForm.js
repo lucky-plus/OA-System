@@ -64,7 +64,7 @@ Ext.define('Admin.view.role.UpdateTaskGridForm', {
       	store : 
       	new Ext.data.Store( {
         	proxy : new Ext.data.HttpProxy( {
-              url : 'staff/findTaskUser.json?roleLevel='+loginUserRoleLevel //提交到某action的某方法
+              url : 'staff/findTaskUser.json' //提交到某action的某方法
             }),
         reader : {type:'json'},//需要显示的数据实体字段
         autoLoad : true
