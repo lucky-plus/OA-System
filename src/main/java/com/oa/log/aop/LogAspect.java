@@ -28,10 +28,13 @@ import com.oa.log.service.ILogService;
 import com.oa.message.entity.dto.NoticeDTO;
 import com.oa.message.entity.dto.ResourcesDTO;
 import com.oa.personnel.entity.Department;
+import com.oa.personnel.entity.Post;
 import com.oa.personnel.entity.dto.PostDTO;
+import com.oa.personnel.service.IPostService;
 import com.oa.staff.entity.UserInfornation;
 import com.oa.staff.entity.dto.AssetsDTO;
 import com.oa.staff.entity.dto.PostUserDTO;
+import com.oa.staff.service.IStaffService;
 
 @Component
 @Aspect
@@ -42,6 +45,10 @@ public class LogAspect {
 	private ILogService logService;
 	@Autowired
 	private ITaskService taskService;
+	@Autowired
+	private IStaffService staffService;
+	@Autowired
+	private IPostService postService;
 	
 	//声明切入点
 	@Pointcut("execution(* com.oa.*.service.*.*(..))")
@@ -119,6 +126,21 @@ public class LogAspect {
 			} else if("已完成".equals(taskState)) {
 				content.append("完成了任务："+taskName);
 			}
+			log.setContent(content.toString());
+			logService.save(log);
+			
+		} else if(methodName.contains("updateUserPost")) {
+
+			//记录操作类型
+			String operation = "修改";
+			log.setOperation(operation);
+			
+			Object[] params = joinPoint.getArgs();
+			String userId1 = (String) params[0];
+			Integer postId = (Integer) params[1];
+			PostUserDTO findUser = staffService.findUserByUserId(userId1);
+			Post post = postService.findPostNameByPostId(postId);
+			content.append("修改了用户:"+findUser.getUserName()+"("+findUser.getRealName()+")的职位,修改后的职位为:"+post.getPostName()+"("+post.getDepartment().getDeptName()+")");
 			log.setContent(content.toString());
 			logService.save(log);
 			

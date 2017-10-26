@@ -16,6 +16,8 @@
 			var pictureFileName = '<%=session.getAttribute("pictureFileName")%>';
 			var loginUserDeptName = '<%=session.getAttribute("deptName")%>';
 			var loginUserPostName = '<%=session.getAttribute("postName")%>';
+			var loginUserDeptId = '<%=session.getAttribute("deptId")%>';
+			var loginUserPostId = '<%=session.getAttribute("postId")%>';
 			var loadFlag = 0;
 	</script>
 

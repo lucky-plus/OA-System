@@ -19,4 +19,7 @@ public interface IPostDao extends PagingAndSortingRepository<Post, Integer>, Jpa
 	@Transactional
 	@Query("update UserInfornation u set u.post.postId = ?2 where u.userId = ?1")
 	public void updateUserPost(String userId, Integer postId);
+
+	@Query("from Post p where postId = ?1")
+	public Post findPostNameByPostId(Integer postId);
 }
