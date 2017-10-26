@@ -43,6 +43,7 @@ public class PersonelNotesController {
 	
 	@RequestMapping("/findAll")
 	public @ResponseBody Page<PersonelNotes> findAll(ExtjsPageable pageable) {
+		pageable.setSort("notesId");
 		return personelNotesService.findAll(pageable.getPageable());
 	}
 	

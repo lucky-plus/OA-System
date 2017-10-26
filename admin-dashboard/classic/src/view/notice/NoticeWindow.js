@@ -3,9 +3,8 @@ Ext.define('Admin.view.notice.NoticeWindow', {
     alias: 'widget.noticeWindow',
     autoShow: true,
     modal: true,
-
     layout: 'fit',
-
+	autoScroll: true,
     width: 200,
     height: 200,
 
