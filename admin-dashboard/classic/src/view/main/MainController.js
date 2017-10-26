@@ -542,7 +542,7 @@ Ext.define('Admin.view.main.MainController', {
                         {
                             text: '人事记录',
                             iconCls: 'x-fa  fa-pencil ',
-                            viewType: 'records',
+                            viewType: 'personalNotes',
                             leaf: true
                         }
                       ]
