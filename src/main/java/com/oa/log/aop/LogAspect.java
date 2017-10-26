@@ -275,8 +275,11 @@ public class LogAspect {
 			for(Integer id : ids) {
 				content.append(id.toString()+"、");
 			}
+		} 
+		
+		if(!className.contains("PersonelNotes")) {
+			log.setContent(content.toString());
+			logService.save(log);
 		}
-		log.setContent(content.toString());
-		logService.save(log);
 	}
 }
