@@ -101587,8 +101587,87 @@ Ext.define('Admin.model.staff.StaffModel', {extend:Admin.model.Base, fields:[{na
 Ext.define('Admin.model.task.TaskModel', {extend:Admin.model.Base, fields:[{name:'taskId', type:'int'}, {name:'createId', type:'int'}, {name:'userId', type:'int'}, {name:'taskName', type:'string'}, {name:'taskText', type:'string'}, {name:'createDate', type:'date'}, {name:'completeDate', type:'string'}, {name:'taskState', type:'string'}, {name:'createName', type:'string'}, {name:'userName', type:'string'}, {name:'realName', type:'string'}]});
 Ext.define('Admin.proxy.API', {extend:Ext.data.proxy.Ajax, alias:'proxy.api', reader:{type:'json', rootProperty:'data'}});
 Ext.define('Admin.store.myAssets.MyAssetsStore', {extend:Ext.data.Store, alias:'store.myAssetsStore', model:'Admin.model.assets.AssetsModel', proxy:{type:'ajax', url:'assets/findAssetsByUserId.json', reader:{type:'json', rootProperty:'content', totalProperty:'totalElements'}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'assetsId'}});
-Ext.define('Admin.store.NavigationTree', {extend:Ext.data.TreeStore, storeId:'NavigationTree', fields:[{name:'text'}], root:{expanded:true, children:[{text:'系统首页', iconCls:'x-fa  fa-home', viewType:'dashboard', leaf:true}, {text:'合同管理', iconCls:'x-fa  fa-home', viewType:'contract', leaf:true}, {text:'Pages', iconCls:'x-fa fa-leanpub', expanded:false, selectable:false, children:[{text:'Blank Page', iconCls:'x-fa fa-file-o', viewType:'pageblank', leaf:true}, {text:'404 Error', iconCls:'x-fa fa-exclamation-triangle', 
-viewType:'page404', leaf:true}, {text:'500 Error', iconCls:'x-fa fa-times-circle', viewType:'page500', leaf:true}, {text:'Lock Screen', iconCls:'x-fa fa-lock', viewType:'lockscreen', leaf:true}, {text:'Login', iconCls:'x-fa fa-check', viewType:'login', leaf:true}, {text:'Register', iconCls:'x-fa fa-pencil-square-o', viewType:'register', leaf:true}, {text:'Password Reset', iconCls:'x-fa fa-lightbulb-o', viewType:'passwordreset', leaf:true}]}]}});
+Ext.define('Admin.store.NavigationTree', {
+    extend: 'Ext.data.TreeStore',
+
+    storeId: 'NavigationTree',
+
+    fields: [{
+        name: 'text'
+    }],
+
+    root: {
+        expanded: true,
+        children: [
+			{
+				text: '系统首页',
+                iconCls: 'x-fa  fa-home',
+                viewType: 'dashboard',
+                leaf: true
+			}
+			,
+			{
+				//text: '合同管理',
+                iconCls: 'x-fa  fa-home',
+                viewType: 'contract',
+                leaf: true
+			}
+            , {
+                iconCls: 'x-fa fa-leanpub',
+                expanded: false,
+                selectable: false,
+                routeId: 'pages-parent',
+                id: 'pages-parent',
+                children: [
+                    {
+                        text: 'Blank Page',
+                        iconCls: 'x-fa fa-file-o',
+                        viewType: 'pageblank',
+                        leaf: true
+                    },
+
+                    {
+                        text: '404 Error',
+                        iconCls: 'x-fa fa-exclamation-triangle',
+                        viewType: 'page404',
+                        leaf: true
+                    },
+                    {
+                        text: '500 Error',
+                        iconCls: 'x-fa fa-times-circle',
+                        viewType: 'page500',
+                        leaf: true
+                    },
+                    {
+                        text: 'Lock Screen',
+                        iconCls: 'x-fa fa-lock',
+                        viewType: 'lockscreen',
+                        leaf: true
+                    },
+
+                    {
+                        text: 'Login',
+                        iconCls: 'x-fa fa-check',
+                        viewType: 'login',
+                        leaf: true
+                    },
+                    {
+                        text: 'Register',
+                        iconCls: 'x-fa fa-pencil-square-o',
+                        viewType: 'register',
+                        leaf: true
+                    },
+                    {
+                        text: 'Password Reset',
+                        iconCls: 'x-fa fa-lightbulb-o',
+                        viewType: 'passwordreset',
+                        leaf: true
+                    }
+                ]
+            }
+        ]
+    }
+});
 Ext.define('Admin.store.activiti.activitiDeploymentStore', {extend:Ext.data.Store, alias:'store.activitiDeploymentStore', model:'Admin.model.activiti.activitiDeploymentStoreModel', proxy:{type:'ajax', url:'repository/deployments', reader:{type:'json', rootProperty:'data', totalProperty:'total'}, extraParams:{size:15}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
 Ext.define('Admin.store.activiti.activitiModelerStore', {extend:Ext.data.Store, alias:'store.activitiModelerStore', model:'Admin.model.activiti.activitiModelerModel', proxy:{type:'ajax', url:'repository/models', reader:{type:'json', rootProperty:'data', totalProperty:'total'}, extraParams:{size:15}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'createTime'}});
 Ext.define('Admin.store.activiti.activitiProcessInstanceStore', {extend:Ext.data.Store, alias:'store.activitiProcessInstanceStore', model:'Admin.model.activiti.activitiProcessInstanceStoreModel', proxy:{type:'ajax', url:'runtime/process-instances', reader:{type:'json', rootProperty:'data', totalProperty:'total'}, extraParams:{size:15}, simpleSortMode:true}, pageSize:15, autoLoad:true, remoteSort:true, sorters:{direction:'DESC', property:'id'}});
@@ -102400,79 +102479,135 @@ Ext.define('Admin.view.department.DepartmentTree', {extend:Ext.tree.Panel, id:'d
   tree.up('panel').deptFind = record;
   Ext.getCmp('postGrid').getStore().load({params:{deptId:record.get('id')}});
 }}, tbar:Ext.create('Ext.Toolbar', {items:[{text:'新增部门', iconCls:'x-fa fa-plus', ui:'soft-blue', handler:'deptGridOpenAddWindow'}, '-', {text:'删除', iconCls:'x-fa fa-trash', handler:'deptGridDeleteOne'}, '-', {text:'修改', iconCls:'x-fa fa-edit', handler:'deptGridOpenEditWindow'}]})});
-Ext.define('Admin.view.dept.DepartmentViewController', {extend:Ext.app.ViewController, alias:'controller.departmentViewController', deptGridOpenAddWindow:function(btn) {
-  Ext.widget('deptWindow', {title:'新增部门', items:[{xtype:'deptForm'}]});
-}, deptGridDeleteOne:function(tree, rowIndex, colIndex) {
-  if (Ext.getCmp('postGrid').getStore().getAt(0) == null) {
-    Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
-      if (button == 'yes' && tree.up('panel').deptment != undefined) {
-        var record = tree.up('panel').getStore().getAt(tree.up('panel').deptment).get('id');
-        Ext.Ajax.request({url:'dept/delete', method:'post', params:{deptId:record}});
-        tree.up('panel').getStore().reload();
-        tree.up('panel').deptment = undefined;
-        Ext.getCmp('postForm').store.reload();
-      }
-    });
-  } else {
-    Ext.Msg.alert('提示', '该部门有职位使用中');
-  }
-}, deptGridOpenEditWindow:function(tree, rowIndex, colIndex) {
-  if (tree.up('panel').deptment != undefined) {
-    var parentId = tree.up('panel').getStore().getAt(tree.up('panel').deptment);
-    var record = tree.up('panel').deptFind;
-    var deptWindow = Ext.widget('deptWindow', {title:'修改部门', items:[{xtype:'deptForm'}]});
-    deptWindow.down('form').items.getAt(0).setValue(record.get('id'));
-    alert(parentId.get('leaf'));
-    if (parentId.get('leaf') != false) {
-      deptWindow.down('form').getForm().loadRecord(parentId);
-    }
-    deptWindow.down('form').items.getAt(2).setValue(record.get('text'));
-  }
-}, deptGridFormSubmit:function(btn) {
-  var deptGridForm = btn.up('form').getForm();
-  var win = btn.up('window');
-  deptGridForm.submit({url:'dept/saveOrUpdate', method:'post', success:function(form, action) {
-    Ext.Msg.alert('提示', action.result.msg);
-    win.close();
-    Ext.getCmp('departmentTree').store.reload();
-    Ext.getCmp('postForm').items.getAt(1).store.reload();
-  }, failure:function(form, action) {
-    Ext.Msg.alert('提示', action.result.msg);
-  }});
-}, deptGridWindowClose:function(btn) {
-  var win = btn.up('window');
-  if (win) {
-    win.close();
-  }
-}, postGridFormSubmit:function(btn) {
-  var deptGridForm = btn.up('form').getForm();
-  var win = btn.up('window');
-  deptGridForm.submit({url:'post/saveOrUpdate', method:'post', success:function(form, action) {
-    Ext.Msg.alert('提示', action.result.msg);
-    Ext.getCmp('postGrid').store.reload();
-    Ext.getCmp('postForm').getForm().reset();
-  }, failure:function(form, action) {
-    Ext.Msg.alert('提示', action.result.msg);
-  }});
-}, postGridDeleteOne:function(grid, rowIndex, colIndex) {
-  Ext.Msg.confirm('警告', '确定要删除吗？', function(button) {
-    if (button == 'yes') {
-      var record = Ext.getCmp('postGrid').deleteId;
-      Ext.Ajax.request({url:'post/delete', method:'post', params:{postId:record.get('postId')}, success:function(response, options) {
-        var json = Ext.util.JSON.decode(response.responseText);
-        if (json.success) {
-          Ext.Msg.alert('操作成功', json.msg);
-          Ext.getCmp('postGrid').store.reload();
-          Ext.getCmp('postForm').getForm().reset();
-        } else {
-          Ext.Msg.alert('操作失败', json.msg);
-        }
-      }});
-    } else {
-      Ext.Msg.alert('警告', '请选择一行数据进行编辑');
-    }
-  });
-}});
+Ext.define('Admin.view.dept.DepartmentViewController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.departmentViewController',
+	
+    deptGridOpenAddWindow: function(btn) {
+			Ext.widget('deptWindow',{
+				title:'新增部门',
+				items: [{xtype: 'deptForm'}]
+			});
+    },
+
+	
+	deptGridDeleteOne:function(tree,rowIndex, colIndex){
+		if(Ext.getCmp('postGrid').getStore().getAt(0)==null){
+		   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+			if (button == "yes"&&tree.up('panel').deptment!=undefined) {
+				   var record=tree.up('panel').getStore().getAt(tree.up('panel').deptment).get('id');
+				   Ext.Ajax.request({ 
+						url : 'dept/delete', 
+						method : 'post', 
+						params : { 
+								deptId:record
+						},  
+					
+			   });
+			tree.up('panel').getStore().reload();
+			tree.up('panel').deptment=undefined;
+			Ext.getCmp("postForm").store.reload();
+			}
+			})
+		}else{
+			Ext.Msg.alert('提示','该部门有职位使用中');
+		}
+   },
+	  
+	  deptGridOpenEditWindow:function(tree, rowIndex, colIndex){
+		  if(tree.up('panel').deptment!=undefined){
+			var parentId=tree.up('panel').getStore().getAt(tree.up('panel').deptment);
+			var record=tree.up('panel').deptFind;
+		   var deptWindow = Ext.widget('deptWindow',{
+				title:'修改部门',
+				items: [{
+					xtype: 'deptForm',
+					}]
+			});
+		  //让form加载选中记录
+		  deptWindow.down("form").items.getAt(0).setValue(record.get('id'));
+		  if(parentId.get('leaf')!=false){
+			  deptWindow.down("form").getForm().loadRecord(parentId);
+		  };
+          deptWindow.down("form").items.getAt(2).setValue(record.get('text'));
+		  }
+	},
+	
+	
+	deptGridFormSubmit: function(btn) {
+		
+		var deptGridForm = btn.up('form').getForm();
+		var win = btn.up('window');
+			deptGridForm.submit( { 
+				url : 'dept/saveOrUpdate', 
+				method : 'post', 
+				success : function(form, action) { 
+					Ext.Msg.alert("提示",action.result.msg); 
+					win.close();
+					Ext.getCmp("departmentTree").store.reload();
+					Ext.getCmp("postForm").items.getAt(1).store.reload();
+				}, 
+				failure : function(form, action) { 
+					Ext.Msg.alert("提示",action.result.msg); 
+					
+				} 
+			}); 
+    },
+	
+	deptGridWindowClose: function(btn) {
+		var win = btn.up('window');
+		if(win){
+			win.close();
+		}
+    },
+	
+	
+	postGridFormSubmit: function(btn) {
+		var deptGridForm = btn.up('form').getForm();
+		var win = btn.up('window');
+			deptGridForm.submit( { 
+				url : 'post/saveOrUpdate', 
+				method : 'post', 
+				success : function(form, action) { 
+					Ext.Msg.alert("提示",action.result.msg); 
+					Ext.getCmp("postGrid").store.reload();
+					Ext.getCmp("postForm").getForm().reset();
+				}, 
+				failure : function(form, action) { 
+					Ext.Msg.alert("提示",action.result.msg); 
+					
+				} 
+			}); 
+    },
+	
+	postGridDeleteOne:function(grid, rowIndex, colIndex){
+	   Ext.Msg.confirm("警告", "确定要删除吗？", function (button) {
+		if (button == "yes") {
+			var record=Ext.getCmp("postGrid").deleteId;
+			   Ext.Ajax.request({ 
+					url : 'post/delete', 
+					method : 'post', 
+					params : { 
+							postId:record.get('postId')
+					},  
+				success: function(response, options) {
+			                var json = Ext.util.JSON.decode(response.responseText);
+				            if(json.success){
+				            	Ext.Msg.alert('操作成功', json.msg);
+				               	Ext.getCmp("postGrid").store.reload();
+								Ext.getCmp("postForm").getForm().reset();
+					        }else{
+					        	Ext.Msg.alert('操作失败', json.msg);
+					        }
+			     }
+		   });
+		
+		}else{
+			Ext.Msg.alert('警告','请选择一行数据进行编辑')
+		}
+	   })
+   },
+});
 Ext.define('Admin.view.department.DepartmentViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.departmentViewModel', stores:{deptLists:{type:'departmentStore', autoLoad:true}, postLists:{type:'postStore', autoLoad:true}}});
 Ext.define('Admin.view.department.DepartmentWindow', {extend:Ext.window.Window, alias:'widget.deptWindow', autoShow:true, modal:true, layout:'fit', width:200, height:200, afterRender:function() {
   var me = this;

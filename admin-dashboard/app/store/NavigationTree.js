@@ -15,20 +15,20 @@ Ext.define('Admin.store.NavigationTree', {
                 iconCls: 'x-fa  fa-home',
                 viewType: 'dashboard',
                 leaf: true
-			},
+			}
+			,
 			{
-				text: '合同管理',
+				//text: '合同管理',
                 iconCls: 'x-fa  fa-home',
                 viewType: 'contract',
                 leaf: true
-			},
-            {
-                text: 'Pages',
+			}
+            , {
                 iconCls: 'x-fa fa-leanpub',
                 expanded: false,
                 selectable: false,
-                //routeId: 'pages-parent',
-                //id: 'pages-parent',
+                routeId: 'pages-parent',
+                id: 'pages-parent',
                 children: [
                     {
                         text: 'Blank Page',

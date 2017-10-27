@@ -45,7 +45,6 @@ Ext.define('Admin.view.dept.DepartmentViewController', {
 			});
 		  //让form加载选中记录
 		  deptWindow.down("form").items.getAt(0).setValue(record.get('id'));
-		  alert(parentId.get('leaf'));
 		  if(parentId.get('leaf')!=false){
 			  deptWindow.down("form").getForm().loadRecord(parentId);
 		  };
