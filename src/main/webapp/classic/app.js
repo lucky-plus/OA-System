@@ -103163,27 +103163,39 @@ Ext.define('Admin.view.personalNotes.PersonalNotes', {extend:Ext.container.Conta
 Ext.define('Admin.view.personalNotes.PersonalNotesGrid', {extend:Ext.grid.Panel, xtype:'personalNotesGrid', title:'\x3cb\x3e人事记录\x3c/b\x3e', bind:'{personalNotesLists}', id:'personalNotesGrid', columns:[{text:'记录编号', sortable:true, dataIndex:'notesId', hidden:true}, {text:'申请人', dataIndex:'realName', width:150}, {text:'申请时间', sortable:true, dataIndex:'examineTime', width:150, renderer:Ext.util.Format.dateRenderer('Y/m/d')}, {text:'申请流程', dataIndex:'notesName', width:150}, {text:'申请结果', dataIndex:'examineResult', 
 width:150}], bbar:Ext.create('Ext.PagingToolbar', {bind:'{personalNotesLists}', displayInfo:true, displayMsg:'第 {0} - {1}条， 共 {2}条', emptyMsg:'No topics to display'})});
 Ext.define('Admin.view.personalNotes.PersonalNotesViewModel', {extend:Ext.app.ViewModel, alias:'viewmodel.personalNotesViewModel', stores:{personalNotesLists:{type:'personalNotesStore', autoLoad:true}}});
-Ext.define('Admin.view.profile.FileUploadForm', {extend:Ext.form.Panel, alias:'widget.fileUploadForm', imageWidth:300, notice:'', initComponent:function() {
+Ext.define('Admin.view.profile.FileUploadForm', {extend:Ext.form.Panel, alias:'widget.fileUploadForm', items:[{xtype:'box', width:300, maxWidth:300, autoEl:{tag:'img'}}, {xtype:'component', html:''}, {xtype:'hiddenfield', name:'userId', value:window.userIdTmp}], buttons:[{xtype:'filefield', buttonOnly:true, buttonText:'选择图片', name:'photo', listeners:{change:function(fileFiled, value, eOpts) {
   var me = this;
-  Ext.apply(this, {items:[{xtype:'box', width:me.imageWidth, maxWidth:300, reference:'imageShow', autoEl:{tag:'img'}}, {xtype:'filefield', buttonOnly:true, buttonText:'选择图片', listeners:{change:me.changeSelect}}, {xtype:'component', html:me.notice}, {xtype:'hiddenfield', name:me.name}]});
-  this.callParent();
-}, changeSelect:function(fileFiled, value, eOpts) {
-  var me = this;
-  var image = me.up().down('box').getEl().dom;
-  var hidden = me.up().down('hiddenfield');
+  var image = me.up('panel').down('box').getEl().dom;
   var file = fileFiled.fileInputEl.dom.files.item(0);
   var fileReader = new FileReader(value);
   fileReader.readAsDataURL(file);
   fileReader.onload = function(e) {
+    window.uploadImag = e.target.result;
     image.src = e.target.result;
-    hidden.setValue(e.target.result);
   };
-  me.value = '';
-}, getValue:function() {
-  var me = this;
-  var hidden = me.up().down('hiddenfield');
-  return hidden.getValue();
-}, bbar:{overflowHandler:'menu', items:['-\x3e', {xtype:'button', text:'上传', handler:'imageFileUpload'}, {xtype:'button', text:'取消', handler:'profileGridWindowClose'}]}});
+}}}, '-\x3e', {text:'确定', handler:function(btn) {
+  var photoForm = btn.up('panel');
+  if (photoForm.getForm().getFields().items[1].lastValue) {
+    photoForm.submit({url:'staff/updatePicture', method:'POST', success:function(form, result) {
+      var win = btn.up('window');
+      var image = Ext.getCmp('socialCard').down('image').getEl().dom;
+      image.src = window.uploadImag;
+      window.uploadImag = null;
+      Ext.Msg.alert('Success', '上传成功');
+      if (win) {
+        win.close();
+      }
+    }});
+  } else {
+    Ext.Msg.alert('Error', '未选择图片');
+  }
+}}, {text:'取消', handler:function(btn) {
+  var win = btn.up('window');
+  if (win) {
+    window.uploadImag = null;
+    win.close();
+  }
+}}]});
 Ext.define('Admin.view.profile.FileUploadFormWindow', {extend:Ext.window.Window, alias:'widget.fileUploadFormWindow', autoShow:true, modal:true, layout:'fit', controller:'profileViewController', view:'fileUploadContainer', afterRender:function() {
   var me = this;
   me.callParent(arguments);
