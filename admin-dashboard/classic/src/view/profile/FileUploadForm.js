@@ -1,72 +1,78 @@
 Ext.define('Admin.view.profile.FileUploadForm', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.fileUploadForm',
-    imageWidth:300,
-    notice:'',
-    initComponent:function(){
-        var me = this;
-        Ext.apply(this,{
-            //layout:'column',
-            items:[
-                {
-                    xtype:'box',
-                    width:me.imageWidth,
-                    maxWidth:300,
-                    reference:'imageShow',
-                    autoEl:{
-                        tag:'img',
-                        // src:MoenSun.moensun.constant.Image.noPicture,
-                       // onerror:"javascript:this.src='"+MoenSun.moensun.constant.Image.noPicture+"'"
-                    }
-                },
-                {
-                    xtype:'filefield',
-                    buttonOnly:true,
-                    buttonText: '选择图片',
-                    listeners:{
-                        change:me.changeSelect
-                    }
-                },
-                {
-                    xtype:'component',
-                    html:me.notice
-                },
-                {
-                    xtype:'hiddenfield',
-                    name: me.name
-                }
-            ]
-        });
-        this.callParent();
-    },
-    changeSelect :function(fileFiled,value,eOpts){
-        var me = this;
-        var image = me.up().down('box').getEl().dom;
-        var hidden = me.up().down('hiddenfield');
-        var file = fileFiled.fileInputEl.dom.files.item(0);
-        var fileReader = new FileReader(value);
-        fileReader.readAsDataURL(file);
-        fileReader.onload=function(e){
-            image.src = e.target.result;
-            hidden.setValue(e.target.result);
+    alias:'widget.fileUploadForm',
+    //layout: 'column',
+    items:[
+        {
+            xtype: 'box',
+            width: 300,
+            maxWidth: 300,
+            autoEl:{
+                tag: 'img'
+            }
+        },
+        {
+            xtype: 'component',
+            html: ''
+        },
+        {
+            xtype: 'hiddenfield',
+            name: 'userId',
+            value: window.userIdTmp
         }
-        me.value = '';
-    },
-    getValue:function(){
-        var me = this;
-        var hidden = me.up().down('hiddenfield');
-        return hidden.getValue();
-    },
-    bbar: {
-    overflowHandler: 'menu',
-    items: ['->',{
-        xtype: 'button',
-        text: '上传',
-        handler: 'imageFileUpload'
-    },{
-        xtype: 'button',
-        text: '取消',
-        handler: 'profileGridWindowClose'
-    }]
-    }
+    ],
+    buttons: [
+        {
+            xtype:'filefield',
+            buttonOnly:true,
+            buttonText: '选择图片',
+            name: 'photo',
+            listeners:{
+                change:function(fileFiled,value,eOpts){
+                    var me = this;
+                    var image = me.up('panel').down('box').getEl().dom;
+                    var file = fileFiled.fileInputEl.dom.files.item(0);
+                    var fileReader = new FileReader(value);
+                    fileReader.readAsDataURL(file);
+                    fileReader.onload=function(e){
+                        window.uploadImag = e.target.result;
+                        image.src = e.target.result;
+                    };
+                }
+            }
+        },'->',
+        {
+            text: '确定',
+            handler: function(btn){
+                var photoForm = btn.up('panel');
+                if(photoForm.getForm().getFields().items[1].lastValue){
+                    photoForm.submit({
+                            url: 'staff/updatePicture',
+                            method: 'POST',
+                            success: function(form, result){
+                                var win = btn.up('window');
+                                    var image = Ext.getCmp('socialCard').down('image').getEl().dom;
+                                    image.src = window.uploadImag;
+                                    window.uploadImag = null;
+                                    Ext.Msg.alert('Success', '上传成功');
+                                if(win){
+                                    win.close();
+                                }
+                            }
+                        }
+                    );
+                }else{
+                    Ext.Msg.alert('Error', '未选择图片');
+                }
+            }
+        },{
+            text: '取消',
+            handler:function(btn) {
+                var win = btn.up('window');
+                if(win){
+                   window.uploadImag = null;
+                   win.close();
+                }
+            }
+        }]
 });
