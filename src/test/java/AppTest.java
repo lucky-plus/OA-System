@@ -8,7 +8,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 		"classpath*:ApplicationContext.xml"})
 public class AppTest {
 
-    int a = 88888;
+    int a = 888881;
 
 	int b = 10000;
 
