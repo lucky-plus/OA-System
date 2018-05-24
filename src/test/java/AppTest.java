@@ -7,6 +7,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 		"classpath*:ApplicationContext-jpa.xml",
 		"classpath*:ApplicationContext.xml"})
 public class AppTest {
-	
+
+	int a = 111111;
 
 }
